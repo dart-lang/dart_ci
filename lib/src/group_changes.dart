@@ -281,7 +281,7 @@ String htmlPage(Map<int, Map<int, Map<String, List<ByConfigSetData>>>> data,
             idCounter++;
             final id = "p$idCounter";
             page.write("<span class='expand_off' onclick='showInline(\"$id\")' "
-                "id='$id-off'>${entry.key}... </span>");
+                "id='$id-off'> ${entry.key}... </span>");
             page.write("<span class='expand_on' onclick='showInline(\"$id\")' "
                 "id='$id-on' style='display:none'>");
             page.write(" ${entry.value.join(' ')} </span>");

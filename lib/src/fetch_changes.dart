@@ -18,7 +18,7 @@ List<Map<String, dynamic>> changes;
 
 Future<void> fetchData() async {
   if (useStaticData) {
-    final changesPath = Resource("package:log/src/resources/changes.json");
+    final changesPath = Resource("package:dart_ci/src/resources/changes.json");
     changes = await loadJsonLines(changesPath);
     return;
   }
