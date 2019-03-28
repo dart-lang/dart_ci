@@ -7,22 +7,34 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:log/src/get_log.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:dart_ci/src/get_log.dart';
+import 'package:dart_ci/src/group_changes.dart';
+import 'package:dart_ci/src/fetch_changes.dart';
+
+String changesPage;
+
 void main() async {
+  await fetchData();
+  changesPage = await createChangesPage();
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
+  Timer.periodic(Duration(minutes: 10), (timer) async {
+    await fetchData();
+    changesPage = await createChangesPage();
+  });
 }
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
-    if (request.uri.path.startsWith('/log/')) {
-      await serveLog(request);
-      return;
-    } else if (request.uri.path == '/') {
+    if (request.uri.path == '/') {
       return await redirectPermanent(request, '/changes/');
+    } else if (request.uri.path.startsWith('/log/')) {
+      return await serveLog(request);
+    } else if (request.uri.path.startsWith('/changes')) {
+      return await serveChanges(request);
     } else {
       return await notFound(request);
     }
@@ -60,6 +72,13 @@ Future<void> redirectPermanent(HttpRequest request, String newPath) {
   request.response.headers.add(HttpHeaders.locationHeader, newPath);
   request.response.statusCode = HttpStatus.movedPermanently;
   return request.response.close();
+}
+
+Future<void> serveChanges(HttpRequest request) {
+  final response = request.response;
+  response.headers.contentType = ContentType.html;
+  response.write(changesPage);
+  return response.close();
 }
 
 Future<void> notFound(HttpRequest request) {
