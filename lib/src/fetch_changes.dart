@@ -60,7 +60,7 @@ WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)
     }
   }
 
-  while (numRows > changes.length) {
+  while (numRows > newChanges.length) {
     var job = response.jobReference;
     GetQueryResultsResponse pageResponse = await bigQuery.jobs.getQueryResults(
         job.projectId, job.jobId,
