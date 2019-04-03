@@ -7,7 +7,7 @@
 
 import 'package:args/args.dart';
 
-import 'package:log/src/get_log.dart';
+import 'package:dart_ci/src/get_log.dart';
 
 void main(List<String> args) {
   final parser = new ArgParser();

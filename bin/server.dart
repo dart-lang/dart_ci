@@ -7,22 +7,43 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:log/src/get_log.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:dart_ci/src/get_log.dart';
+import 'package:dart_ci/src/group_changes.dart';
+import 'package:dart_ci/src/fetch_changes.dart';
+
+String changesPage;
+
 void main() async {
+  await fetchData();
+  changesPage = await createChangesPage();
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
+  Timer.periodic(Duration(minutes: 10), (timer) async {
+    try {
+      await refresh();
+    } catch (e, t) {
+      print(e);
+      print(t);
+    }
+  });
+}
+
+Future<void> refresh() async {
+  await fetchData();
+  changesPage = await createChangesPage();
 }
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
-    if (request.uri.path.startsWith('/log/')) {
-      await serveLog(request);
-      return;
-    } else if (request.uri.path == '/') {
-      return await redirectPermanent(request, '/changes/');
+    if (request.uri.path == '/') {
+      return await redirectTemporary(request, '/changes/');
+    } else if (request.uri.path.startsWith('/log/')) {
+      return await serveLog(request);
+    } else if (request.uri.path.startsWith('/changes')) {
+      return await serveChanges(request);
     } else {
       return await notFound(request);
     }
@@ -42,7 +63,7 @@ Future<void> serveLog(HttpRequest request) async {
 
   if (build == 'latest') {
     final actualBuild = await getLatestBuildNumber(builder);
-    return redirectPermanent(
+    return redirectTemporary(
         request, '/log/$builder/$configuration/$actualBuild/$test');
   }
   final log = await getLog(builder, build, configuration, test);
@@ -56,10 +77,17 @@ Future<void> serveLog(HttpRequest request) async {
   return response.close();
 }
 
-Future<void> redirectPermanent(HttpRequest request, String newPath) {
+Future<void> redirectTemporary(HttpRequest request, String newPath) {
   request.response.headers.add(HttpHeaders.locationHeader, newPath);
-  request.response.statusCode = HttpStatus.movedPermanently;
+  request.response.statusCode = HttpStatus.movedTemporarily;
   return request.response.close();
+}
+
+Future<void> serveChanges(HttpRequest request) async {
+  final response = request.response;
+  response.headers.contentType = ContentType.html;
+  response.write(changesPage);
+  return response.close();
 }
 
 Future<void> notFound(HttpRequest request) {
@@ -68,7 +96,7 @@ Future<void> notFound(HttpRequest request) {
 }
 
 Future<void> noLog(
-    HttpRequest request, String builder, String build, String test) {
+    HttpRequest request, String builder, String build, String test) async {
   request.response.headers.contentType = ContentType.text;
   request.response
       .write("No log for test $test on build $build of builder $builder");
