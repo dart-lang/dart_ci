@@ -8,12 +8,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:resource/resource.dart' show Resource;
 import 'package:googleapis/bigquery/v2.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:resource/resource.dart' show Resource;
 
-final String PROJECT = "dart-ci";
-final bool useStaticData = false; // Used during local testing only.
+const String project = "dart-ci";
+const bool useStaticData = false; // Used during local testing only.
 List<Map<String, dynamic>> changes;
 
 Future<void> fetchData() async {
@@ -45,18 +45,18 @@ WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)
   };
 
   final queryRequest = QueryRequest.fromJson(queryRequestJson);
-  QueryResponse response = await bigQuery.jobs.query(queryRequest, "dart-ci");
+  QueryResponse response = await bigQuery.jobs.query(queryRequest, project);
   int numRows;
   String pageToken;
+  final newChanges = <Map<String, dynamic>>[];
   if (response.errors != null && response.errors.isNotEmpty) {
     response.errors.forEach((e) => print(e.toJson().toString()));
     return;
   } else {
     numRows = int.parse(response.totalRows);
     pageToken = response.pageToken;
-    changes = <Map<String, dynamic>>[];
     for (var row in response.rows) {
-      changes.add(json.decode(row.f[0].v));
+      newChanges.add(json.decode(row.f[0].v));
     }
   }
 
@@ -70,16 +70,19 @@ WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)
         timeoutMs: 10000);
     pageToken = pageResponse.pageToken;
     for (var row in response.rows) {
-      changes.add(json.decode(row.f[0].v));
+      newChanges.add(json.decode(row.f[0].v));
     }
+  }
+  if (newChanges.isNotEmpty) {
+    changes = newChanges;
   }
 }
 
-Future<Object> loadJsonLines(Resource resource) async {
-  final json = await resource
+Future<List<Map<String, dynamic>>> loadJsonLines(Resource resource) async {
+  final lines = await resource
       .openRead()
       .transform(utf8.decoder)
       .transform(LineSplitter())
       .toList();
-  return List<Map<String, dynamic>>.from(json.map(jsonDecode));
+  return List<Map<String, dynamic>>.from(lines.map(jsonDecode));
 }
