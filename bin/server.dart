@@ -7,8 +7,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
-
+import 'package:dart_ci/src/approvals_feed.dart';
 import 'package:dart_ci/src/get_log.dart';
 import 'package:dart_ci/src/group_changes.dart';
 import 'package:dart_ci/src/fetch_changes.dart';
@@ -16,8 +15,7 @@ import 'package:dart_ci/src/fetch_changes.dart';
 String changesPage;
 
 void main() async {
-  await fetchData();
-  changesPage = await createChangesPage();
+  await refresh();
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
@@ -34,16 +32,19 @@ void main() async {
 Future<void> refresh() async {
   await fetchData();
   changesPage = await createChangesPage();
+  await getApprovals();
 }
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
     if (request.uri.path == '/') {
-      return await redirectTemporary(request, '/changes/');
+      return await serveFrontPage(request);
     } else if (request.uri.path.startsWith('/log/')) {
       return await serveLog(request);
     } else if (request.uri.path.startsWith('/changes')) {
       return await serveChanges(request);
+    } else if (request.uri.path.startsWith('/approvals/')) {
+      return await serveApprovals(request);
     } else {
       return await notFound(request);
     }
@@ -52,6 +53,24 @@ Future<void> dispatchingServer(HttpRequest request) async {
     print(t);
     serverError(request);
   }
+}
+
+void serveFrontPage(HttpRequest request) async {
+  request.response.headers.contentType = ContentType.html;
+  request.response.write("""<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Dart Continuous Integration</title>
+  </head>
+  <body>
+    <h1>Dart Continuous Integration</h1>
+    <h2><a href="changes/">Results Feed</a></h2>
+    <h2><a href="approvals/">Approvals Feed</a></h2>
+  </body>
+</html>
+""");
+  request.response.close();
 }
 
 Future<void> serveLog(HttpRequest request) async {
@@ -104,6 +123,10 @@ Future<void> noLog(
 }
 
 Future<void> serverError(HttpRequest request) {
-  request.response.statusCode = HttpStatus.internalServerError;
+  try {
+    request.response.statusCode = HttpStatus.internalServerError;
+  } catch (e) {
+    print(e);
+  }
   return request.response.close();
 }

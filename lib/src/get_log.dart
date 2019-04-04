@@ -28,6 +28,18 @@ Future<String> getCloudFile(String bucket, String path) async {
 Future<String> getLatestBuildNumber(String builder) =>
     getCloudFile(resultsBucket, "builders/$builder/latest");
 
+Future<String> getApproval(String builder) async {
+  try {
+    final bucket = "dart-test-results";
+    String build = await getCloudFile(bucket, "builders/$builder/latest");
+    return await getCloudFile(
+        bucket, "builders/$builder/$build/approved_results.json");
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
 /// Fetches a log or logs and formats them for output.
 /// If a failure occurs, signal error on the returned future.
 Future<String> getLog(
