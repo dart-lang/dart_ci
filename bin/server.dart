@@ -15,10 +15,10 @@ import 'package:dart_ci/src/fetch_changes.dart';
 String changesPage;
 
 void main() async {
+  await refresh();
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
-  await refresh();
   Timer.periodic(Duration(minutes: 10), (timer) async {
     try {
       await refresh();
@@ -30,8 +30,8 @@ void main() async {
 }
 
 Future<void> refresh() async {
-  //await fetchData();
-  //changesPage = await createChangesPage();
+  await fetchData();
+  changesPage = await createChangesPage();
   await getApprovals();
 }
 
@@ -49,7 +49,7 @@ Future<void> dispatchingServer(HttpRequest request) async {
       return await notFound(request);
     }
   } catch (e, t) {
-    print(e);1
+    print(e);
     print(t);
     serverError(request);
   }
@@ -123,6 +123,10 @@ Future<void> noLog(
 }
 
 Future<void> serverError(HttpRequest request) {
-  request.response.statusCode = HttpStatus.internalServerError;
+  try {
+    request.response.statusCode = HttpStatus.internalServerError;
+  } catch (e) {
+    print(e);
+  }
   return request.response.close();
 }
