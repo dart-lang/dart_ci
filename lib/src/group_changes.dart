@@ -32,12 +32,36 @@ class MinMax {
 /// sets as keys in a later map, so we use the keys, and can recover the sets.
 Map<String, List<String>> configSets;
 
+class Result {
+  Result(Map<String, dynamic> data)
+      : previous = data['previous_result'],
+        current = data['result'],
+        expected = data['expected'],
+        // Different methods of accessing BigQuery give different types here.
+        matches = data['matches'] || data['matches'] == 'true',
+        key = [data['previous_result'], data['result'], data['expected']]
+            .join(' ');
+
+  final String previous;
+  final String current;
+  final String expected;
+  final String key;
+  final bool matches;
+
+  bool get newFailure => previous == null && !matches;
+  bool get newPass => previous == null && matches;
+  bool operator ==(dynamic other) => other is Result && key == other.key;
+  int get hashCode => key.hashCode;
+}
+
 class SummaryData {
   final String configSetKey;
-  final String test;
 
   /// Test name, including suite
-  final String change;
+  final String test;
+
+  /// Results for this test on the configs in configSet (they all agree).
+  final Result result;
 
   /// Change in results, as string "was, now, expected"
   final MinMax previousCommits;
@@ -47,7 +71,7 @@ class SummaryData {
 
   /// MinMax of indices of commits after or at this change.
 
-  SummaryData(this.configSetKey, this.test, this.change, this.previousCommits,
+  SummaryData(this.configSetKey, this.test, this.result, this.previousCommits,
       this.commits);
 }
 
@@ -127,23 +151,27 @@ List<SummaryData> summarizePageData(
   final Map<String, int> hashIndex = Map.fromEntries(
       Iterable.generate(hashes.length, (i) => MapEntry(hashes[i], i)));
 
+  // New tests don't have a previous commit or result.
+  // for our heuristic, we group them together if they are within
+  // 10 commits of each other.
+  int previousHashIndex(Map<String, dynamic> change) {
+    if (change['previous_commit_hash'] == null) {
+      return hashIndex[change['commit_hash']] + 10;
+    } else {
+      return hashIndex[change['previous_commit_hash']];
+    }
+  }
+
   final resultsForTestAndChange =
-      Map<String, Map<String, List<Map<String, dynamic>>>>();
+      Map<String, Map<Result, List<Map<String, dynamic>>>>();
 
   for (final Map<String, dynamic> change in changes) {
-    String key;
-    if ('true' == change['matches'] ||
-        change['matches'] is bool && change['matches']) {
-      key =
-          "${change['previous_result']} -> <strong>${change['result']} &#x2714;</strong>";
-    } else {
-      key =
-          "${change['previous_result']} -> <strong>${change['result']}</strong>  (expected ${change['expected']})";
-    }
+    final name = change['name'];
+    final result = Result(change);
+    if (result.newPass) continue;
     resultsForTestAndChange
-        .putIfAbsent(
-            change['name'], () => Map<String, List<Map<String, dynamic>>>())
-        .putIfAbsent(key, () => <Map<String, dynamic>>[])
+        .putIfAbsent(name, () => <Result, List<Map<String, dynamic>>>{})
+        .putIfAbsent(result, () => <Map<String, dynamic>>[])
         .add(change);
   }
 
@@ -156,7 +184,7 @@ List<SummaryData> summarizePageData(
       while (changesToProcess.isNotEmpty) {
         final previousHashIndexes = MinMax();
         for (final change in changesToProcess) {
-          previousHashIndexes.add(hashIndex[change["previous_commit_hash"]]);
+          previousHashIndexes.add(previousHashIndex(change));
         }
         // SectionLimit is the index of the latest commit where a change
         // is known to happen _after_ that point.
@@ -184,7 +212,7 @@ List<SummaryData> summarizePageData(
         final commits = MinMax();
         for (var change in firstSection) {
           configs.add(change["configuration"]);
-          previousCommits.add(hashIndex[change["previous_commit_hash"]]);
+          previousCommits.add(previousHashIndex(change));
           commits.add(hashIndex[change["commit_hash"]]);
         }
         configs.sort();
@@ -212,6 +240,7 @@ String prelude() => '''
   td.nopad      {padding: 0px;}
   td.nomatch    {background-color: Salmon;}
   td.match      {background-color: PaleGreen;}
+  td.newFailure {background-color: Pink;}
 </style>
 <script>function showBlamelist(id) {
   if (document.getElementById(id + "-off").style.display == "none") {
@@ -321,16 +350,27 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
       }
       page.write("</div>");
 
+      String formattedResult(Result result) {
+        if (result.newFailure) {
+          return "New test <strong>${result.current}</strong>"
+              " (expected ${result.expected})";
+        } else if (result.matches) {
+          return "${result.previous} -> <strong>${result.current} ✔</strong>";
+        } else {
+          return "${result.previous} -> <strong>${result.current}</strong>"
+              " (expected ${result.expected})";
+        }
+      }
+
       for (final configSetList in blamelistList) {
         page.write("<table>");
         for (final summary in configSetList) {
           var testclass = "nomatch";
-          if (summary.change.endsWith("&#x2714;</strong>")) {
-            // Test matches
-            testclass = "match";
-          }
+          if (summary.result.matches) testclass = "match";
+          if (summary.result.newFailure) testclass = "newFailure";
           page.write("<tr><td class='$testclass'>${summary.test}</td>"
-              "<td class='$testclass'> &nbsp;&nbsp;${summary.change}</td></tr>");
+              "<td class='$testclass'> &nbsp;&nbsp;"
+              "${formattedResult(summary.result)}</td></tr>");
         }
         page.write("</table>");
 
