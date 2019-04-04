@@ -32,10 +32,9 @@ FROM `dart-ci.results.results` as t
 WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY) 
   AND NOT ENDS_WITH(builder_name, '-dev') 
   AND NOT ENDS_WITH(builder_name, '-stable') 
-  AND previous_result IS NOT NULL 
   AND changed 
   AND NOT flaky 
-  AND NOT previous_flaky
+  AND (previous_flaky IS NULL OR NOT previous_flaky)
 """,
     "maxResults": 5000,
     "timeoutMs": 30000,
