@@ -142,7 +142,7 @@ Future<String> createChangesPage() async {
 Future<Map<String, dynamic>> commitInformation() async {
   final client = HttpClient();
   final request = await client.getUrl(Uri.parse(
-      "https://dart.googlesource.com/sdk/+log/master?n=400&format=JSON"));
+      "https://dart.googlesource.com/sdk/+log/master?n=1400&format=JSON"));
   final response = await request.close();
   return (await response
       .transform(utf8.decoder)

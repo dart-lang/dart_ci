@@ -13,7 +13,7 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:resource/resource.dart' show Resource;
 
 const String project = "dart-ci";
-const bool useStaticData = false; // Used during local testing only.
+const bool useStaticData = true; // Used during local testing only.
 List<Map<String, dynamic>> changes;
 
 Future<void> fetchData() async {
@@ -24,26 +24,28 @@ Future<void> fetchData() async {
   }
   final client = await auth.clientViaMetadataServer();
   var bigQuery = BigqueryApi(client);
+  try {
   var queryRequestJson = {
     "kind": "bigquery#queryRequest",
     "query": """
 SELECT TO_JSON_STRING(t)
 FROM `dart-ci.results.results` as t
-WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY) 
+WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) 
   AND NOT ENDS_WITH(builder_name, '-dev') 
   AND NOT ENDS_WITH(builder_name, '-stable') 
   AND changed 
   AND NOT flaky 
   AND (previous_flaky IS NULL OR NOT previous_flaky)
 """,
-    "maxResults": 5000,
-    "timeoutMs": 30000,
+    "maxResults": 10000,
+    "timeoutMs": 60000,
     "useQueryCache": true,
     "useLegacySql": false,
     "location": "US"
   };
 
   final queryRequest = QueryRequest.fromJson(queryRequestJson);
+  print("Starting query $queryRequestJson");
   QueryResponse response = await bigQuery.jobs.query(queryRequest, project);
   int numRows;
   String pageToken;
@@ -58,23 +60,31 @@ WHERE _PARTITIONTIME > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)
       newChanges.add(json.decode(row.f[0].v));
     }
   }
-
-  while (numRows > newChanges.length) {
+  print("numRows: $numRows newchanges.length: ${newChanges.length}");
+  while (numRows > newChanges.length  && newChanges.length < 50000) {
+    print("Getting another page of query responses");
     var job = response.jobReference;
     GetQueryResultsResponse pageResponse = await bigQuery.jobs.getQueryResults(
         job.projectId, job.jobId,
         location: job.location,
-        maxResults: 5000,
+        maxResults: 10000,
         pageToken: pageToken,
         timeoutMs: 10000);
     pageToken = pageResponse.pageToken;
-    for (var row in response.rows) {
+    print("numrows: $numRows rows.length ${pageResponse.rows.length} newChagnes.length ${newChanges.length} new numrows: ${pageResponse.totalRows}");  
+    for (var row in pageResponse.rows) {
       newChanges.add(json.decode(row.f[0].v));
     }
   }
   if (newChanges.isNotEmpty) {
     changes = newChanges;
   }
+} catch (e) {
+  print(e);
+} finally {
+  print("closing client");
+  client.close();
+}
 }
 
 Future<List<Map<String, dynamic>>> loadJsonLines(Resource resource) async {
