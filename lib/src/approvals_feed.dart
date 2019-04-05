@@ -193,10 +193,7 @@ void serveApprovals(HttpRequest request) async {
   <body>
     <h1>Approvals Feed</h1>
 """);
-  for (final event in approvalEvents.values
-      .toList()
-      .reversed
-      .take(100)) {
+  for (final event in approvalEvents.values.toList().reversed.take(100)) {
     final time = event.approvedAt.replaceAll("T", " ").substring(0, 19);
     final approver = event.approver;
     final action = event.changeId != null

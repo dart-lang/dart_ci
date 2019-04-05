@@ -106,6 +106,7 @@ int compare4keys(SummaryData a, SummaryData b) {
 }
 
 Future<String> createChangesPage() async {
+  if (changes == null) return "Unable to fetch changes";
   final hashes = <String>[];
   final commitData = <String>[];
   final reviewLinks = <String>[];
@@ -142,7 +143,7 @@ Future<String> createChangesPage() async {
 Future<Map<String, dynamic>> commitInformation() async {
   final client = HttpClient();
   final request = await client.getUrl(Uri.parse(
-      "https://dart.googlesource.com/sdk/+log/master?n=1400&format=JSON"));
+      "https://dart.googlesource.com/sdk/+log/master?n=400&format=JSON"));
   final response = await request.close();
   return (await response
       .transform(utf8.decoder)
@@ -381,13 +382,17 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
 
       for (final configSetList in blamelistList) {
         page.write("<table>");
-        for (final summary in configSetList) {
+        for (final summary in configSetList.take(50)) {
           var testclass = "nomatch";
           if (summary.result.matches) testclass = "match";
           if (summary.result.newFailure) testclass = "newfailure";
           page.write("<tr><td class='$testclass'>${summary.test}</td>"
               "<td class='$testclass'> &nbsp;&nbsp;"
               "${formattedResult(summary.result)}</td></tr>");
+        }
+        if (configSetList.length > 50) {
+          page.write("<tr><td class='nomatch'>&hellip;</td>"
+              "<td class='nomatch'> &nbsp;&nbsp;&hellip;</td></tr>");
         }
         page.write("</table>");
 
