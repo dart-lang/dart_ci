@@ -28,32 +28,51 @@ class MinMax {
 }
 
 /// A map containing sorted lists of configurations as values.  The keys
-/// are the configurations in that set joined by "<br>". We need these
+/// are the configurations in that set sorted and joined by " ". We need these
 /// sets as keys in a later map, so we use the keys, and can recover the sets.
 Map<String, List<String>> configSets;
 
+/// The previous and current value of a changed result of a test,
+/// and its expected value. Also contains the "matches" value
+/// from the test result, saying whether current is compatible with expected.
+/// Contains a "key" value combining the fields, to be used in grouping
+/// changes with identical results together.
 class Result {
-  Result(Map<String, dynamic> data)
-      : previous = data['previous_result'],
-        current = data['result'],
-        expected = data['expected'],
-        // Different methods of accessing BigQuery give different types here.
-        matches = data['matches'] || data['matches'] == 'true',
-        key = [data['previous_result'], data['result'], data['expected']]
-            .join(' ');
+  Result(this.previous, this.current, this.expected, this.matches);
+
+  Result.fromJson(Map<String, dynamic> data)
+      : this(
+            data['previous_result'],
+            data['result'],
+            data['expected'],
+            // Different methods of accessing BigQuery give different types here.
+            data['matches'] || data['matches'] == 'true');
 
   final String previous;
   final String current;
   final String expected;
-  final String key;
   final bool matches;
 
   bool get newFailure => previous == null && !matches;
   bool get newPass => previous == null && matches;
-  bool operator ==(dynamic other) => other is Result && key == other.key;
-  int get hashCode => key.hashCode;
+  bool operator ==(Object other) =>
+      other is Result &&
+      previous == other.previous &&
+      current == other.current &&
+      expected == other.expected &&
+      matches == other.matches;
+  int get hashCode => "$previous$current$expected$matches".hashCode;
 }
 
+/// This object represents a set of changes that agree on the
+/// test name and Results object (changes to the result), with a
+/// non-empty intersection of their blamelists.  A change whose
+/// blamelist has no commits shared with these changes must go into
+/// a different SummaryData object.
+/// SummaryData contains the test name and the Result that all these
+/// changes share, and accumulates their configurations into a set
+/// and their blamelists into the min and max of the blamelist starts
+/// and ends (giving the union and intersection of these intervals).
 class SummaryData {
   final String configSetKey;
 
@@ -63,13 +82,11 @@ class SummaryData {
   /// Results for this test on the configs in configSet (they all agree).
   final Result result;
 
-  /// Change in results, as string "was, now, expected"
+  /// MinMax of indices of commits before this change
   final MinMax previousCommits;
 
-  /// MinMax of indices of commits before this change
-  final MinMax commits;
-
   /// MinMax of indices of commits after or at this change.
+  final MinMax commits;
 
   SummaryData(this.configSetKey, this.test, this.result, this.previousCommits,
       this.commits);
@@ -167,7 +184,7 @@ List<SummaryData> summarizePageData(
 
   for (final Map<String, dynamic> change in changes) {
     final name = change['name'];
-    final result = Result(change);
+    final result = Result.fromJson(change);
     if (result.newPass) continue;
     resultsForTestAndChange
         .putIfAbsent(name, () => <Result, List<Map<String, dynamic>>>{})
@@ -216,7 +233,7 @@ List<SummaryData> summarizePageData(
           commits.add(hashIndex[change["commit_hash"]]);
         }
         configs.sort();
-        final configSetKey = configs.join(",<br>");
+        final configSetKey = configs.join(" ");
         configSets[configSetKey] = configs;
         summarizedData.add(
             SummaryData(configSetKey, test, results, previousCommits, commits));
@@ -240,7 +257,7 @@ String prelude() => '''
   td.nopad      {padding: 0px;}
   td.nomatch    {background-color: Salmon;}
   td.match      {background-color: PaleGreen;}
-  td.newFailure {background-color: Pink;}
+  td.newfailure {background-color: Pink;}
 </style>
 <script>function showBlamelist(id) {
   if (document.getElementById(id + "-off").style.display == "none") {
@@ -367,7 +384,7 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
         for (final summary in configSetList) {
           var testclass = "nomatch";
           if (summary.result.matches) testclass = "match";
-          if (summary.result.newFailure) testclass = "newFailure";
+          if (summary.result.newFailure) testclass = "newfailure";
           page.write("<tr><td class='$testclass'>${summary.test}</td>"
               "<td class='$testclass'> &nbsp;&nbsp;"
               "${formattedResult(summary.result)}</td></tr>");
