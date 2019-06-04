@@ -11,4 +11,3 @@ dependencies:
   googleapis: ^0.51.0
   googleapis_auth: ^0.2.7
   http: ^0.11.1+1
-  resource: ^2.1.5
