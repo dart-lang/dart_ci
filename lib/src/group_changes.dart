@@ -10,8 +10,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:resource/resource.dart' show Resource;
-
 import 'package:dart_ci/src/fetch_changes.dart';
 
 class MinMax {
@@ -322,7 +320,6 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
   }
 
   StringBuffer page = StringBuffer(prelude());
-  page.write("<table>");
 
   int commit = 0;
   for (final blamelistEndList in groups) {
@@ -426,15 +423,4 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
   }
   page.write(postlude());
   return page.toString();
-}
-
-Future<List<String>> loadLines(Resource resource) => resource
-    .openRead()
-    .transform(utf8.decoder)
-    .transform(LineSplitter())
-    .toList();
-
-Future<Object> loadJson(Resource resource) async {
-  final json = await resource.openRead().transform(utf8.decoder).join();
-  return jsonDecode(json);
 }
