@@ -322,7 +322,6 @@ String htmlPage(List<SummaryData> data, List<String> hashes,
   }
 
   StringBuffer page = StringBuffer(prelude());
-  page.write("<table>");
 
   int commit = 0;
   for (final blamelistEndList in groups) {
