@@ -1,0 +1,9 @@
+.material-header {
+    height: 64px;
+    position: fixed;
+    left: 0;
+    top: 0px;
+    z-index: 100;
+    width: 100%;
+    margin: 0px;
+}

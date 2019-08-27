@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "dart-ci-staging",
+    "staging": "dart-ci-staging",
+    "production": "dart-ci"
+  }
+}

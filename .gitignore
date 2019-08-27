@@ -1,0 +1,16 @@
+# Logs
+logs
+*.log
+
+# Firebase cache
+.firebase/
+
+# Dependency directories
+node_modules/
+
+results_feed/.dart_tool/
+results_feed/.idea/
+results_feed/.packages
+results_feed/.pub/
+results_feed/build/
+results_feed/results_feed.iml
