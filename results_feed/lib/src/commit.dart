@@ -38,12 +38,31 @@ List<List<T>> grouped<T>(List<T> list, dynamic groupBy(T t)) {
   return result;
 }
 
-class Commit {
+class IntRange implements Comparable {
+  IntRange(this.start, this.end);
+
+  final int start;
+  final int end;
+
+  bool contains(int i) => i >= start && i <= end;
+  int get length => end - start + 1;
+
+  int compareTo(dynamic other) {
+    IntRange o = other; // Throw TypeError if not an IntRange
+    return end == o.end ? start.compareTo(o.start) : end.compareTo(o.end);
+  }
+
+  String toString() => "IntRange($start, $end)";
+}
+
+class Commit implements Comparable {
   String hash;
   String author;
   String title;
   DateTime created;
   int index;
+  IntRange range;
+  List<Commit> commits;
   List<List<List<Change>>> changesByConfigsByResult;
 
   Commit(this.hash, this.author, this.title, this.created, this.index);
@@ -55,6 +74,22 @@ class Commit {
     created = document.get('created');
     index = document.get('index');
     changesByConfigsByResult = [];
+    range = IntRange(index, index);
+    commits = [this];
+  }
+
+  Commit.fromRange(IntRange this.range, Iterable<Commit> allCommits) {
+    index = range.end;
+    changesByConfigsByResult = [];
+    commits = allCommits
+        .where((commit) => range.contains(commit.index))
+        .toList()
+          ..sort();
+  }
+
+  int compareTo(other) {
+    Commit o = other;
+    return o.range.compareTo(range); // Sort in reverse chronological order.
   }
 
   void addChanges(List<Change> changes) {

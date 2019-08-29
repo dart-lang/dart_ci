@@ -2,8 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:angular/angular.dart';
+import 'dart:collection';
 
+import 'package:angular/angular.dart';
 import 'package:angular_components/app_layout/material_temporary_drawer.dart';
 import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
@@ -39,9 +40,13 @@ import 'build_service.dart';
     ])
 class AppComponent implements OnInit {
   String title = 'Results Feed (Angular Dart)';
-  List<Commit> commits = [];
+  Map<IntRange, Commit> blamelists = SplayTreeMap();
+  Map<int, Commit> commits = SplayTreeMap();
   int firstIndex;
   int lastIndex;
+
+  List<Commit> get allResults =>
+      List.from(commits.values.followedBy(blamelists.values))..sort();
 
   FirestoreService _firestoreService;
 
@@ -54,22 +59,29 @@ class AppComponent implements OnInit {
   }
 
   Future fetchCommits() async {
-    commits.addAll((await _firestoreService.fetchCommits(firstIndex, 50))
-        .map((x) => Commit.fromDocument(x)));
+    final newCommits = (await _firestoreService.fetchCommits(firstIndex, 50))
+        .map((x) => Commit.fromDocument(x));
+    for (Commit commit in newCommits) commits[commit.index] = commit;
     final previousFirstIndex = firstIndex;
-    firstIndex = commits.last.index;
-    lastIndex = commits.first.index;
-    var resultsData = await _firestoreService.fetchChanges(
+    firstIndex = commits.keys.first;
+    lastIndex = commits.keys.last;
+    final resultsData = await _firestoreService.fetchChanges(
         firstIndex, previousFirstIndex ?? lastIndex);
-    var results = <int, List<Change>>{};
+    final results = <IntRange, List<Change>>{};
     for (var resultData in resultsData) {
-      var result = Change.fromDocument(resultData);
-      results
-          .putIfAbsent(result.blamelistStartIndex, () => <Change>[])
-          .add(result);
+      final result = Change.fromDocument(resultData);
+      final range =
+          IntRange(result.blamelistStartIndex, result.blamelistEndIndex);
+      results.putIfAbsent(range, () => <Change>[]).add(result);
     }
-    for (var commit in commits) {
-      commit.addChanges(results[commit.index]);
+    for (IntRange range in results.keys) {
+      if (range.length == 1) {
+        commits[range.end].addChanges(results[range]);
+      } else {
+        blamelists
+            .putIfAbsent(range, () => Commit.fromRange(range, commits.values))
+            .addChanges(results[range]);
+      }
     }
   }
 }

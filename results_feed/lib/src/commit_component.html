@@ -1,11 +1,13 @@
 <div class='mdc-card commit' style="margin: 8px" *ngIf="commit.show(filterService)">
-    <div class="commit-card_primary">
-        <b>{{commit.title}}</b><br>
-        {{commit.author}} {{commit.created.toString().substring(0,16)}}<br>
-        <span class="faint"><a href="https://github.com/dart-lang/sdk/commit/{{commit.hash}}" target="_blank">{{commit.hash}}</a> ({{commit.index}})</span><br>
+    <div class="commit-card_primary" style="padding-bottom: 0px">
+        <div *ngFor="let c of commit.commits" style="margin-bottom: 8px">
+            <b>{{c.title}}</b><br>
+            {{c.author}} {{c.created.toString().substring(0,16)}}<br>
+            <span class="faint"><a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}" target="_blank">{{c.hash}}</a> ({{c.index}})</span><br>
+        </div>
     </div>
     <div class="commit-card_secondary" *ngIf="commit.changesByConfigsByResult.isNotEmpty">
-        <div *ngFor="let configurationGroup of commit.changesByConfigsByResult" style="margin-top: 16px">
+        <div *ngFor="let configurationGroup of commit.changesByConfigsByResult">
             <material-chips>
                 <template ngFor  let-configuration [ngForOf]="configurationGroup.first.first.configurations.summaries.keys">
                     <material-chip tooltipTarget #chip="tooltipTarget" [removable]="false" displayNameRenderer>{{configuration}}</material-chip>
@@ -28,5 +30,4 @@
             </div>
         </div>
     </div>
-    <div class="mdc-card__actions"></div>
 </div>

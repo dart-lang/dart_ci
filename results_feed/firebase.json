@@ -1,5 +1,5 @@
-f{
+{
   "hosting": {
-    "public": "build"
+    "public": "build/web"
   }
 }
