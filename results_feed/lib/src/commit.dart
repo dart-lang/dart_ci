@@ -44,6 +44,11 @@ class IntRange implements Comparable {
   final int start;
   final int end;
 
+  bool operator==(other) =>
+    other is IntRange && other.start == start && other.end == end;
+
+  int get hashCode=> start + end * 40927 % 63703;
+
   bool contains(int i) => i >= start && i <= end;
   int get length => end - start + 1;
 
@@ -95,7 +100,7 @@ class Commit implements Comparable {
   void addChanges(List<Change> changes) {
     if (changes == null) return;
     changes.sort();
-    this.changesByConfigsByResult = grouped(
+    changesByConfigsByResult = grouped(
         grouped(changes, (Change change) => change.changesText),
         (group) => group.first.configurationsText);
   }

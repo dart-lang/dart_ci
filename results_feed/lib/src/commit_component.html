@@ -1,12 +1,12 @@
-<div class='mdc-card commit' style="margin: 8px" *ngIf="commit.show(filterService)">
-    <div class="commit-card_primary" style="padding-bottom: 0px">
+<div class="commit" *ngIf="commit.show(filterService)">
+    <div class="commit-subblock">
         <div *ngFor="let c of commit.commits" style="margin-bottom: 8px">
             <b>{{c.title}}</b><br>
             {{c.author}} {{c.created.toString().substring(0,16)}}<br>
             <span class="faint"><a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}" target="_blank">{{c.hash}}</a> ({{c.index}})</span><br>
         </div>
     </div>
-    <div class="commit-card_secondary" *ngIf="commit.changesByConfigsByResult.isNotEmpty">
+    <div *ngIf="commit.changesByConfigsByResult.isNotEmpty" class="commit-subblock">
         <div *ngFor="let configurationGroup of commit.changesByConfigsByResult">
             <material-chips>
                 <template ngFor  let-configuration [ngForOf]="configurationGroup.first.first.configurations.summaries.keys">
@@ -30,4 +30,5 @@
             </div>
         </div>
     </div>
+    <div style="clear: both"></div>
 </div>
