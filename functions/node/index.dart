@@ -133,7 +133,7 @@ Future<void> storeChange(Map<String, dynamic> change,
       .where('result', isEqualTo: result)
       .where('previous_result', isEqualTo: previousResult)
       .where('expected', isEqualTo: change['expected'])
-      .limit(5)
+      .limit(5) // We will pick the right one, probably the latest.
       .get();
 
   // Find an existing change group with a blamelist that intersects this change.
@@ -269,7 +269,6 @@ const months = const {
 DateTime parseGitilesDateTime(String gitiles) {
   final parts = gitiles.split(' ');
   final year = parts[4];
-  info("parts $parts");
   final month = months[parts[1]];
   final day = parts[2].padLeft(2, '0');
   return DateTime.parse('$year-$month-$day ${parts[3]} ${parts[5]}');
