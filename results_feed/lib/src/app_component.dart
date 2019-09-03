@@ -40,13 +40,12 @@ import 'build_service.dart';
     ])
 class AppComponent implements OnInit {
   String title = 'Results Feed (Angular Dart)';
-  Map<IntRange, Commit> blamelists = SplayTreeMap();
-  Map<int, Commit> commits = SplayTreeMap();
+  // We often want changeGroups and commits ordered from latest to earliest.
+  Map<IntRange, ChangeGroup> changeGroups =
+      SplayTreeMap((key1, key2) => key2.compareTo(key1));
+  Map<int, Commit> commits = SplayTreeMap((key1, key2) => key2.compareTo(key1));
   int firstIndex;
   int lastIndex;
-
-  List<Commit> get allResults =>
-      List.from(commits.values.followedBy(blamelists.values))..sort();
 
   FirestoreService _firestoreService;
 
@@ -61,12 +60,25 @@ class AppComponent implements OnInit {
   Future fetchCommits() async {
     final newCommits = (await _firestoreService.fetchCommits(firstIndex, 50))
         .map((x) => Commit.fromDocument(x));
-    for (Commit commit in newCommits) commits[commit.index] = commit;
-    final previousFirstIndex = firstIndex;
-    firstIndex = commits.keys.first;
-    lastIndex = commits.keys.last;
-    final resultsData = await _firestoreService.fetchChanges(
-        firstIndex, previousFirstIndex ?? lastIndex);
+    for (Commit commit in newCommits) {
+      commits[commit.index] = commit;
+      final range = IntRange(commit.index, commit.index);
+      changeGroups.putIfAbsent(
+          range, () => ChangeGroup.fromRange(range, [commit]));
+    }
+    lastIndex = commits.keys.first;
+    final previousFirstIndex = firstIndex ?? lastIndex;
+    firstIndex = commits.keys.last;
+    // Add new commits to previously loaded blamelists that included them.
+    for (ChangeGroup changeGroup in changeGroups.values) {
+      if (changeGroup.range.contains(previousFirstIndex - 1) &&
+          changeGroup.range.length > changeGroup.commits.length) {
+        changeGroup.commits.addAll(newCommits
+            .where((commit) => changeGroup.range.contains(commit.index)));
+      }
+    }
+    final resultsData =
+        await _firestoreService.fetchChanges(firstIndex, previousFirstIndex);
     final results = <IntRange, List<Change>>{};
     for (var resultData in resultsData) {
       final result = Change.fromDocument(resultData);
@@ -75,13 +87,10 @@ class AppComponent implements OnInit {
       results.putIfAbsent(range, () => <Change>[]).add(result);
     }
     for (IntRange range in results.keys) {
-      if (range.length == 1) {
-        commits[range.end].addChanges(results[range]);
-      } else {
-        blamelists
-            .putIfAbsent(range, () => Commit.fromRange(range, commits.values))
-            .addChanges(results[range]);
-      }
+      changeGroups
+          .putIfAbsent(
+              range, () => ChangeGroup.fromRange(range, commits.values))
+          .addChanges(results[range]);
     }
   }
 }

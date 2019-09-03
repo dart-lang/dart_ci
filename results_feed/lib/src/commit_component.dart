@@ -46,7 +46,7 @@ class CommitComponent {
   FilterService filterService;
 
   @Input()
-  Commit commit;
+  ChangeGroup commit;
 
   final preferredTooltipPositions = [
     RelativePosition.OffsetBottomLeft,

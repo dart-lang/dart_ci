@@ -24,7 +24,7 @@
                     <material-tooltip-card [for]="logs" [preferredPositions]="preferredTooltipPositions">
                         <h4>Logs</h4>
                         <dart-log *ngFor="let configuration of change.configurations.configurations"
-                                  [configuration]="configuration" [index]="commit.index" [test]="change.name"></dart-log>
+                                  [configuration]="configuration" [index]="commit.range.end" [test]="change.name"></dart-log>
                         </material-tooltip-card>
                 </div>
             </div>

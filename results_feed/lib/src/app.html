@@ -8,7 +8,7 @@
 </header>
 <material-content style="margin:0px; background-color:ghostwhite; margin-top:64px">
     <material-drawer temporary #drawer="drawer"><app-filter style="padding: 16px"></app-filter></material-drawer>
-    <dart-commit *ngFor="let commit of allResults" [commit]="commit"></dart-commit>
+    <dart-commit *ngFor="let changeGroup of changeGroups.values" [commit]="changeGroup"></dart-commit>
     <div style="text-align: center">
         <material-button raised class="blue" (trigger)="fetchCommits()">More</material-button>
     </div>

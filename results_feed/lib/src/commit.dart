@@ -44,10 +44,10 @@ class IntRange implements Comparable {
   final int start;
   final int end;
 
-  bool operator==(other) =>
-    other is IntRange && other.start == start && other.end == end;
+  bool operator ==(other) =>
+      other is IntRange && other.start == start && other.end == end;
 
-  int get hashCode=> start + end * 40927 % 63703;
+  int get hashCode => start + end * 40927 % 63703;
 
   bool contains(int i) => i >= start && i <= end;
   int get length => end - start + 1;
@@ -61,30 +61,33 @@ class IntRange implements Comparable {
 }
 
 class Commit implements Comparable {
-  String hash;
-  String author;
-  String title;
-  DateTime created;
-  int index;
+  final String hash;
+  final String author;
+  final String title;
+  final DateTime created;
+  final int index;
+
+  Commit(this.hash, this.author, this.title, this.created, this.index);
+
+  Commit.fromDocument(firestore.DocumentSnapshot document)
+      : hash = document.id,
+        author = document.get('author'),
+        title = document.get('title'),
+        created = document.get('created'),
+        index = document.get('index');
+
+  /// Sort in reverse index order.
+  int compareTo(other) => (other as Commit).index.compareTo(index);
+
+  String toString() => "$index $hash $author $created $title";
+}
+
+class ChangeGroup implements Comparable {
   IntRange range;
   List<Commit> commits;
   List<List<List<Change>>> changesByConfigsByResult;
 
-  Commit(this.hash, this.author, this.title, this.created, this.index);
-
-  Commit.fromDocument(firestore.DocumentSnapshot document) {
-    hash = document.id;
-    author = document.get('author');
-    title = document.get('title');
-    created = document.get('created');
-    index = document.get('index');
-    changesByConfigsByResult = [];
-    range = IntRange(index, index);
-    commits = [this];
-  }
-
-  Commit.fromRange(IntRange this.range, Iterable<Commit> allCommits) {
-    index = range.end;
+  ChangeGroup.fromRange(IntRange this.range, Iterable<Commit> allCommits) {
     changesByConfigsByResult = [];
     commits = allCommits
         .where((commit) => range.contains(commit.index))
@@ -92,10 +95,8 @@ class Commit implements Comparable {
           ..sort();
   }
 
-  int compareTo(other) {
-    Commit o = other;
-    return o.range.compareTo(range); // Sort in reverse chronological order.
-  }
+  /// Sort in reverse chronological order.
+  int compareTo(other) => (other as ChangeGroup).range.compareTo(range);
 
   void addChanges(List<Change> changes) {
     if (changes == null) return;
@@ -115,8 +116,6 @@ class Commit implements Comparable {
         .any(configurationEnabled))) return true;
     return false;
   }
-
-  String toString() => "$index $hash $author $created $title";
 }
 
 /// A list of configurations affected by a result change.
