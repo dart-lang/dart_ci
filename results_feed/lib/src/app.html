@@ -10,6 +10,6 @@
     <material-drawer temporary #drawer="drawer"><app-filter style="padding: 16px"></app-filter></material-drawer>
     <dart-commit *ngFor="let changeGroup of changeGroups.values" [commit]="changeGroup"></dart-commit>
     <div style="text-align: center">
-        <material-button raised class="blue" (trigger)="fetchCommits()">More</material-button>
+        <span #infiniteScroll >fetching commits ...</span>
     </div>
 </material-content>

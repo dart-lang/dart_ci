@@ -3,7 +3,7 @@ description: The Dart results feed in Angular using Firebase
 version: 0.0.1
 
 environment:
-  sdk: '>=2.1.0 <3.0.0'
+  sdk: '>=2.4.0 <3.0.0'
 
 dependencies:
   angular: ^6.0.0-alpha

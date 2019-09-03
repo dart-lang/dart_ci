@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:collection';
+import 'dart:html';
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/app_layout/material_temporary_drawer.dart';
@@ -46,51 +47,75 @@ class AppComponent implements OnInit {
   Map<int, Commit> commits = SplayTreeMap((key1, key2) => key2.compareTo(key1));
   int firstIndex;
   int lastIndex;
+  bool _fetching = false;
+  num infiniteScrollVisibleRatio = 0;
 
+  ApplicationRef _applicationRef;
   FirestoreService _firestoreService;
 
-  AppComponent(this._firestoreService);
+  AppComponent(this._firestoreService, this._applicationRef);
+
+  @ViewChild("infiniteScroll")
+  Element infiniteScroll;
 
   @override
   void ngOnInit() async {
     await _firestoreService.getFirebaseClient();
     await fetchCommits();
+    IntersectionObserver(infiniteScrollCallback).observe(infiniteScroll);
+  }
+
+  void infiniteScrollCallback(
+      List entries, IntersectionObserver observer) async {
+    infiniteScrollVisibleRatio = entries[0].intersectionRatio;
+    // The event stream will write to infiniteScrollVisible, stopping the loop.
+    while (infiniteScrollVisibleRatio > 0) {
+      await fetchCommits();
+      await Future.delayed(Duration(seconds: 2));
+    }
   }
 
   Future fetchCommits() async {
-    final newCommits = (await _firestoreService.fetchCommits(firstIndex, 50))
-        .map((x) => Commit.fromDocument(x));
-    for (Commit commit in newCommits) {
-      commits[commit.index] = commit;
-      final range = IntRange(commit.index, commit.index);
-      changeGroups.putIfAbsent(
-          range, () => ChangeGroup.fromRange(range, [commit]));
-    }
-    lastIndex = commits.keys.first;
-    final previousFirstIndex = firstIndex ?? lastIndex;
-    firstIndex = commits.keys.last;
-    // Add new commits to previously loaded blamelists that included them.
-    for (ChangeGroup changeGroup in changeGroups.values) {
-      if (changeGroup.range.contains(previousFirstIndex - 1) &&
-          changeGroup.range.length > changeGroup.commits.length) {
-        changeGroup.commits.addAll(newCommits
-            .where((commit) => changeGroup.range.contains(commit.index)));
+    if (_fetching) return;
+    _fetching = true;
+    try {
+      final newCommits = (await _firestoreService.fetchCommits(firstIndex, 50))
+          .map((x) => Commit.fromDocument(x));
+      for (Commit commit in newCommits) {
+        commits[commit.index] = commit;
+        final range = IntRange(commit.index, commit.index);
+        changeGroups.putIfAbsent(
+            range, () => ChangeGroup.fromRange(range, [commit]));
       }
-    }
-    final resultsData =
-        await _firestoreService.fetchChanges(firstIndex, previousFirstIndex);
-    final results = <IntRange, List<Change>>{};
-    for (var resultData in resultsData) {
-      final result = Change.fromDocument(resultData);
-      final range =
-          IntRange(result.blamelistStartIndex, result.blamelistEndIndex);
-      results.putIfAbsent(range, () => <Change>[]).add(result);
-    }
-    for (IntRange range in results.keys) {
-      changeGroups
-          .putIfAbsent(
-              range, () => ChangeGroup.fromRange(range, commits.values))
-          .addChanges(results[range]);
+      lastIndex = commits.keys.first;
+      final previousFirstIndex = firstIndex ?? lastIndex;
+      firstIndex = commits.keys.last;
+      // Add new commits to previously loaded blamelists that included them.
+      for (ChangeGroup changeGroup in changeGroups.values) {
+        if (changeGroup.range.contains(previousFirstIndex - 1) &&
+            changeGroup.range.length > changeGroup.commits.length) {
+          changeGroup.commits.addAll(newCommits
+              .where((commit) => changeGroup.range.contains(commit.index)));
+        }
+      }
+      final resultsData =
+          await _firestoreService.fetchChanges(firstIndex, previousFirstIndex);
+      final results = <IntRange, List<Change>>{};
+      for (var resultData in resultsData) {
+        final result = Change.fromDocument(resultData);
+        final range =
+            IntRange(result.blamelistStartIndex, result.blamelistEndIndex);
+        results.putIfAbsent(range, () => <Change>[]).add(result);
+      }
+      for (IntRange range in results.keys) {
+        changeGroups
+            .putIfAbsent(
+                range, () => ChangeGroup.fromRange(range, commits.values))
+            .addChanges(results[range]);
+      }
+    } finally {
+      _fetching = false;
+      _applicationRef.tick();
     }
   }
 }

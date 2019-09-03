@@ -15,12 +15,23 @@ import 'filter_service.dart';
   MaterialSelectComponent,
   MaterialSelectItemComponent
 ], template: '''
-    <material-toggle [(checked)]="filterService.showAllCommits" label="Show all commits">
+    <material-toggle
+        [checked]="filterService.showAllCommits"
+        (checkedChange)="filterService.checkedChange(\$event)"
+        label="Show all commits">
     </material-toggle>
     <hr>
     <b>Show changes on builders:</b>
-    <material-select focusList [selection]="filterService.groupSelector" (selection)="onSelection(\$event)" class="bordered-list" [itemRenderer]="identityFunction">
-      <material-select-item *ngFor="let group of filterService.builderGroups" focusItem [value]="group"></material-select-item>
+    <material-select
+        class="bordered-list"
+        focusList
+        [selection]="filterService.groupSelector"
+        [itemRenderer]="identityFunction">
+      <material-select-item
+          *ngFor="let group of filterService.defaultBuilderGroups"
+          focusItem
+          [value]="group">
+      </material-select-item>
     </material-select>
   ''')
 class FilterComponent {
@@ -29,8 +40,4 @@ class FilterComponent {
   String identityFunction(t) => t;
   @Input()
   FilterService filterService;
-  onSelection(event) {
-    filterService.enabledBuilderGroups = event.toList();
-    print("bar $event");
-  }
 }
