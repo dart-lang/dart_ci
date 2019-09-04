@@ -15,22 +15,15 @@ import 'filter_service.dart';
   MaterialSelectComponent,
   MaterialSelectItemComponent
 ], template: '''
-    <material-toggle
-        [checked]="filterService.showAllCommits"
-        (checkedChange)="filterService.checkedChange(\$event)"
-        label="Show all commits">
+    <material-toggle  (checkedChange)="filterService.showAllCommitsEvent(\$event)"  label="Show all commits">
     </material-toggle>
     <hr>
-    <b>Show changes on builders:</b>
-    <material-select
-        class="bordered-list"
-        focusList
-        [selection]="filterService.groupSelector"
-        [itemRenderer]="identityFunction">
-      <material-select-item
-          *ngFor="let group of filterService.defaultBuilderGroups"
-          focusItem
-          [value]="group">
+    <material-toggle  (checkedChange)="filterService.showLatestFailuresEvent(\$event)"  label="Show only latest failures">
+    </material-toggle>
+    <hr>
+   <b>Show changes on builders:</b>
+    <material-select class="bordered-list"  focusList [selection]="filterService.groupSelector"  [itemRenderer]="identityFunction">
+      <material-select-item  *ngFor="let group of filterService.defaultBuilderGroups"   focusItem   [value]="group">
       </material-select-item>
     </material-select>
   ''')

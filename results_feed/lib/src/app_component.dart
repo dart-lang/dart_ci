@@ -45,6 +45,8 @@ class AppComponent implements OnInit {
   Map<IntRange, ChangeGroup> changeGroups =
       SplayTreeMap((key1, key2) => key2.compareTo(key1));
   Map<int, Commit> commits = SplayTreeMap((key1, key2) => key2.compareTo(key1));
+  Map<String, List<Change>> changes = {};
+
   int firstIndex;
   int lastIndex;
   bool _fetching = false;
@@ -105,17 +107,32 @@ class AppComponent implements OnInit {
         final result = Change.fromDocument(resultData);
         final range =
             IntRange(result.blamelistStartIndex, result.blamelistEndIndex);
+        changes.putIfAbsent(result.name, () => <Change>[]).add(result);
         results.putIfAbsent(range, () => <Change>[]).add(result);
       }
       for (IntRange range in results.keys) {
-        changeGroups
-            .putIfAbsent(
-                range, () => ChangeGroup.fromRange(range, commits.values))
-            .addChanges(results[range]);
+        changeGroups.putIfAbsent(
+            range, () => ChangeGroup.fromRange(range, commits.values))
+          ..addChanges(results[range])
+          ..addLatestChanges(results[range].expand(_selectCurrent));
       }
     } finally {
       _fetching = false;
       _applicationRef.tick();
     }
+  }
+
+  List<Change> _selectCurrent(Change change) {
+    final name = change.name;
+    final laterChanges = changes[name].where((laterChange) =>
+        laterChange.blamelistEndIndex > change.blamelistEndIndex);
+    Set<String> configurations = change.configurations.configurations.toSet();
+    for (final laterChange in laterChanges) {
+      configurations.removeAll(laterChange.configurations.configurations);
+    }
+    if (configurations.isEmpty) return [];
+    if (configurations.length == change.configurations.configurations.length)
+      return [change];
+    return [change.copy(newConfigurations: configurations.toList())];
   }
 }

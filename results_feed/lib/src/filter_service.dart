@@ -36,12 +36,19 @@ class FilterService {
   /// We need this field because Angular cannot access the static member.
   final List<String> defaultBuilderGroups = allBuilderGroups;
   List<String> enabledBuilderGroups;
-  static const defaultShowAllCommits = false;
+  static const defaultShowAllCommits = true;
   bool showAllCommits;
+  static const defaultShowLatestFailures = false;
+  bool showLatestFailures;
   SelectionModel<String> groupSelector;
 
-  void checkedChange(event) {
+  void showAllCommitsEvent(event) {
     showAllCommits = event;
+    updateUrl();
+  }
+
+  void showLatestFailuresEvent(event) {
+    showLatestFailures = event;
     updateUrl();
   }
 
@@ -49,7 +56,9 @@ class FilterService {
     final settings = {
       if (showAllCommits != defaultShowAllCommits) 'showAll': showAllCommits,
       if (enabledBuilderGroups.length != defaultBuilderGroups.length)
-        'enabled': enabledBuilderGroups
+        'enabled': enabledBuilderGroups,
+      if (showLatestFailures != defaultShowLatestFailures)
+        'latestFailures': showLatestFailures
     };
     final fragment =
         settings.isEmpty ? '' : Uri.encodeComponent(jsonEncode(settings));
@@ -66,5 +75,6 @@ class FilterService {
     showAllCommits = settings['showAll'] ?? defaultShowAllCommits;
     enabledBuilderGroups =
         List<String>.from(settings['enabled'] ?? defaultBuilderGroups);
+    showLatestFailures = settings['showAll'] ?? defaultShowLatestFailures;
   }
 }

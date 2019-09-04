@@ -9,35 +9,6 @@ import 'dart:core';
 import 'package:dart_results_feed/src/filter_service.dart';
 import 'package:firebase/firestore.dart' as firestore;
 
-int compareList(Iterable<Comparable> aList, Iterable bList) {
-  final a = aList.iterator;
-  final b = bList.iterator;
-  while (true) {
-    if (!a.moveNext()) return b.moveNext() ? -1 : 0;
-    if (!b.moveNext()) return 1;
-    final comp = a.current.compareTo(b.current);
-    if (comp != 0) return comp;
-  }
-}
-
-/// Groups a list into sublists of all elements that agree on groupBy.
-List<List<T>> grouped<T>(List<T> list, dynamic groupBy(T t)) {
-  if (list.isEmpty) return <List<T>>[];
-  var previous = list.first;
-  final result = [
-    [previous]
-  ];
-  for (final current in list.skip(1)) {
-    if (groupBy(previous) == groupBy(current)) {
-      result.last.add(current);
-    } else {
-      result.add([current]);
-    }
-    previous = current;
-  }
-  return result;
-}
-
 class IntRange implements Comparable {
   IntRange(this.start, this.end);
 
@@ -85,10 +56,10 @@ class Commit implements Comparable {
 class ChangeGroup implements Comparable {
   IntRange range;
   List<Commit> commits;
-  List<List<List<Change>>> changesByConfigsByResult;
+  Changes changes = Changes();
+  Changes latestChanges = Changes();
 
   ChangeGroup.fromRange(IntRange this.range, Iterable<Commit> allCommits) {
-    changesByConfigsByResult = [];
     commits = allCommits
         .where((commit) => range.contains(commit.index))
         .toList()
@@ -98,24 +69,19 @@ class ChangeGroup implements Comparable {
   /// Sort in reverse chronological order.
   int compareTo(other) => (other as ChangeGroup).range.compareTo(range);
 
-  void addChanges(List<Change> changes) {
-    if (changes == null) return;
-    changes.sort();
-    changesByConfigsByResult = grouped(
-        grouped(changes, (Change change) => change.changesText),
-        (group) => group.first.configurationsText);
+  void addChanges(Iterable<Change> newChanges) {
+    newChanges.forEach(changes.add);
   }
 
-  bool show(FilterService filter) {
-    if (filter.showAllCommits) return true;
-    if (changesByConfigsByResult.isEmpty) return false;
-    bool configurationEnabled(configuration) =>
-        filter.enabledBuilderGroups.any(configuration.startsWith);
-    if (changesByConfigsByResult.any((configGroup) => configGroup
-        .first.first.configurations.configurations
-        .any(configurationEnabled))) return true;
-    return false;
+  void addLatestChanges(Iterable<Change> newChanges) {
+    newChanges.forEach(latestChanges.add);
   }
+
+  bool show(FilterService filter) =>
+      filter.showAllCommits || shownChanges(filter).show(filter);
+
+  Changes shownChanges(FilterService filterService) =>
+      filterService.showLatestFailures ? latestChanges : changes;
 }
 
 /// A list of configurations affected by a result change.
@@ -151,9 +117,12 @@ class Configurations {
             ? list.first
             : list.first.split('-').first + '...');
   }
+
+  bool show(FilterService filter) => configurations.any((configuration) =>
+      filter.enabledBuilderGroups.any(configuration.startsWith));
 }
 
-class Change implements Comparable {
+class Change {
   Change._(
       this.name,
       this.configurations,
@@ -175,6 +144,7 @@ class Change implements Comparable {
             document.get('blamelist_start_index'),
             document.get('blamelist_end_index'),
             document.get('trivial_blamelist'));
+
   final String name;
   final Configurations configurations;
   final String result;
@@ -186,7 +156,56 @@ class Change implements Comparable {
   final String configurationsText;
   final String changesText;
 
-  int compareTo(other) => compareList([configurationsText, changesText, name],
-      [other.configurationsText, other.changesText, other.name]);
-  String resultStyle() => result == expected ? 'success' : 'failure';
+  Change copy({List<String> newConfigurations}) => Change._(
+      name,
+      newConfigurations == null
+          ? configurations
+          : Configurations(newConfigurations),
+      result,
+      previousResult,
+      expected,
+      blamelistStartIndex,
+      blamelistEndIndex,
+      trivialBlamelist);
+
+  String get resultStyle => result == expected ? 'success' : 'failure';
+}
+
+class ResultGroup extends MapView<String, Change> {
+  final String changesText;
+  ResultGroup(this.changesText) : super(SplayTreeMap());
+
+  bool show(FilterService filterService) =>
+      !filterService.showLatestFailures ||
+      values.first.resultStyle == 'failure';
+}
+
+class ConfigGroup extends MapView<String, ResultGroup> {
+  final Configurations configurations;
+  ConfigGroup(this.configurations) : super(SplayTreeMap());
+
+  ResultGroup operator [](Object resultText) =>
+      putIfAbsent(resultText, () => ResultGroup(resultText));
+
+  Iterable<ResultGroup> shown(FilterService filter) =>
+      values.where((group) => group.show(filter));
+  bool show(FilterService filter) =>
+      configurations.show(filter) && shown(filter).isNotEmpty;
+}
+
+class Changes extends MapView<String, ConfigGroup> {
+  Changes() : super(SplayTreeMap());
+
+  ConfigGroup operator [](Object configuration) =>
+      configuration is Configurations
+          ? putIfAbsent(configuration.text, () => ConfigGroup(configuration))
+          : null;
+
+  void add(Change change) {
+    this[change.configurations][change.changesText][change.name] = change;
+  }
+
+  Iterable<ConfigGroup> shown(FilterService filterService) =>
+      values.where((group) => group.show(filterService));
+  bool show(FilterService filterService) => shown(filterService).isNotEmpty;
 }
