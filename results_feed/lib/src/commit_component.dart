@@ -4,6 +4,7 @@
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
+import 'package:angular_components/content/deferred_content.dart';
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_components/laminate/enums/alignment.dart';
 import 'package:angular_components/material_chips/material_chips.dart';
@@ -22,6 +23,7 @@ import 'commit.dart';
     directives: [
       coreDirectives,
       formDirectives,
+      DeferredContentDirective,
       LogComponent,
       MaterialChipComponent,
       MaterialChipsComponent,

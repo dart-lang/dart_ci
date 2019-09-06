@@ -6,8 +6,12 @@ import 'dart:collection';
 import 'dart:html';
 
 import 'package:angular/angular.dart';
+import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/app_layout/material_temporary_drawer.dart';
+import 'package:angular_components/laminate/components/modal/modal.dart';
+import 'package:angular_components/laminate/overlay/module.dart';
 import 'package:angular_components/material_button/material_button.dart';
+import 'package:angular_components/material_dialog/material_dialog.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
 import 'package:dart_results_feed/src/filter_component.dart';
@@ -22,17 +26,21 @@ import 'build_service.dart';
     selector: 'my-app',
     directives: [
       coreDirectives,
+      AutoDismissDirective,
       CommitComponent,
       FilterComponent,
       MaterialIconComponent,
       MaterialButtonComponent,
+      MaterialDialogComponent,
       MaterialTemporaryDrawerComponent,
-      MaterialToggleComponent
+      MaterialToggleComponent,
+      ModalComponent
     ],
     providers: [
       ClassProvider(FirestoreService),
       ClassProvider(FilterService),
-      ClassProvider(BuildService)
+      ClassProvider(BuildService),
+      overlayBindings
     ],
     templateUrl: 'app.html',
     styleUrls: [
@@ -51,6 +59,7 @@ class AppComponent implements OnInit {
   int lastIndex;
   bool _fetching = false;
   num infiniteScrollVisibleRatio = 0;
+  bool showFilter = false;
 
   ApplicationRef _applicationRef;
   FirestoreService _firestoreService;

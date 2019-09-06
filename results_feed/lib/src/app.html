@@ -1,15 +1,35 @@
 <header class="material-header shadow">
-    <div class="material-header-row">
-        <material-button icon class="material-drawer-button" (trigger)="drawer.toggle()">
-            <material-icon icon="filter_list"></material-icon>
-        </material-button>
-        <span class="material-header-title">{{title}}</span>
-    </div>
+  <div class="material-header-row">
+    <material-button
+        icon
+        class="material-drawer-button"
+        (trigger)="showFilter = true">
+      <material-icon icon="filter_list"></material-icon>
+    </material-button>
+    <span class="material-header-title">{{title}}</span>
+  </div>
 </header>
-<material-content style="margin:0px; background-color:ghostwhite; margin-top:64px">
-    <material-drawer temporary #drawer="drawer"><app-filter style="padding: 16px"></app-filter></material-drawer>
-    <dart-commit *ngFor="let changeGroup of changeGroups.values" [commit]="changeGroup"></dart-commit>
-    <div style="text-align: center">
-        <span #infiniteScroll >fetching commits ...</span>
-    </div>
+<material-content
+    style="margin:0px; background-color:ghostwhite; margin-top:64px">
+  <modal [(visible)]="showFilter">
+    <material-dialog
+        info
+        class="info-dialog"
+        [autoDismissable]="showFilter"
+        (dismiss)="showFilter = false">
+      <h1 header>
+        Filter
+        <material-button icon autoFocus (trigger)="showFilter = false">
+          <material-icon icon="close"></material-icon>
+        </material-button>
+      </h1>
+      <app-filter style="padding: 16px; position: fixed"></app-filter>
+    </material-dialog>
+  </modal>
+  <dart-commit
+      *ngFor="let changeGroup of changeGroups.values"
+      [commit]="changeGroup"></dart-commit>
+  <div style="text-align: center">
+    <span #infiniteScroll>fetching commits ...</span>
+  </div>
 </material-content>

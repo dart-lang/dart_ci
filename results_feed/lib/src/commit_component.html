@@ -1,34 +1,62 @@
 <div class="commit" *ngIf="commit.show(filterService)">
-    <div class="commit-subblock">
-        <div *ngFor="let c of commit.commits" style="margin-bottom: 8px">
-            <b>{{c.title}}</b><br>
-            {{c.author}} {{c.created.toString().substring(0,16)}}<br>
-            <span class="faint"><a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}" target="_blank">{{c.hash}}</a> ({{c.index}})</span><br>
-        </div>
+  <div class="commit-subblock">
+    <div *ngFor="let c of commit.commits" style="margin-bottom: 8px">
+      <b>{{c.title}}</b><br>
+      {{c.author}} {{c.created.toString().substring(0,16)}}<br>
+      <span class="faint">
+        <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}" target="_blank">
+          {{c.hash}}
+        </a>
+        ({{c.index}})
+      </span><br>
     </div>
-    <div *ngIf="commit.shownChanges(filterService).show(filterService)" class="commit-subblock">
-        <div *ngFor="let configurationGroup of commit.shownChanges(filterService).shown(filterService)">
-           <material-chips>
-                <template ngFor  let-configuration [ngForOf]="configurationGroup.configurations.summaries.keys">
-                    <material-chip tooltipTarget #chip="tooltipTarget" [removable]="false" displayNameRenderer>{{configuration}}</material-chip>
-                    <material-tooltip-card [for]="chip">
-                        <span *ngFor="let singleConfiguration of configurationGroup.configurations.summaries[configuration]"
-                             >{{singleConfiguration}}<br></span>
-                    </material-tooltip-card>
-                </template>
-           </material-chips>
-            <div *ngFor="let resultGroup of configurationGroup.shown(filterService)" style="margin-left: 16px">
-                <span [class]="resultGroup.values.first.resultStyle">{{resultGroup.changesText}}</span>
-                <div *ngFor="let change of resultGroup.values" tooltipTarget #logs="tooltipTarget" style="cursor: pointer">
-                    {{change.name}}
-                    <material-tooltip-card [for]="logs" [preferredPositions]="preferredTooltipPositions">
-                        <h4>Logs</h4>
-                        <dart-log *ngFor="let configuration of change.configurations.configurations"
-                                  [configuration]="configuration" [index]="commit.range.end" [test]="change.name"></dart-log>
-                    </material-tooltip-card>
-                </div>
+  </div>
+  <div *ngIf="commit.shownChanges(filterService).show(filterService)"
+       class="commit-subblock">
+    <div *ngFor="let configurationGroup of commit.shownChanges(filterService).shown(filterService)">
+      <material-chips>
+        <template
+            ngFor
+            let-configuration
+            [ngForOf]="configurationGroup.configurations.summaries.keys">
+          <material-chip
+              tooltipTarget
+              #chip="tooltipTarget"
+              [removable]="false"
+              displayNameRenderer>
+            {{configuration}}
+          </material-chip>
+          <material-tooltip-card [for]="chip">
+            <div *deferredContent>
+              <span *ngFor="let singleConfiguration of configurationGroup.configurations.summaries[configuration]">
+                {{singleConfiguration}}<br>
+              </span>
             </div>
+          </material-tooltip-card>
+        </template>
+      </material-chips>
+      <div *ngFor="let resultGroup of configurationGroup.shown(filterService)" style="margin-left: 16px">
+        <span [class]="resultGroup.first.resultStyle">{{resultGroup.changesText}}</span>
+        <div *ngFor="let change of resultGroup"
+            tooltipTarget #logs="tooltipTarget" 
+            style="cursor: pointer">
+          {{change.name}}
+          <material-tooltip-card
+              [for]="logs"
+              [preferredPositions]="preferredTooltipPositions">
+            <div *deferredContent>
+              <h4>Logs</h4>
+              <dart-log
+                  *ngFor="let configuration of change.configurations.configurations"
+                  [configuration]="configuration"
+                  [index]="commit.range.end"
+                  [test]="change.name">
+              </dart-log>
+            </div>
+          </material-tooltip-card>
         </div>
+      </div>
     </div>
-    <div style="clear: both"></div>
+  </div>
+  <div style="clear: both"></div>
 </div>

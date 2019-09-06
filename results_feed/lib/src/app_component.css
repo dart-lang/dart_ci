@@ -7,3 +7,8 @@
     width: 100%;
     margin: 0px;
 }
+
+.info-dialog {
+    width: 50%;
+    height: 70%;
+}

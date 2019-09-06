@@ -171,41 +171,48 @@ class Change {
   String get resultStyle => result == expected ? 'success' : 'failure';
 }
 
-class ResultGroup extends MapView<String, Change> {
+class ResultGroup with IterableMixin<Change> {
   final String changesText;
-  ResultGroup(this.changesText) : super(SplayTreeMap());
+  final Map<String, Change> _map = SplayTreeMap();
+  ResultGroup(this.changesText);
+
+  get iterator => _map.values.iterator;
+  void operator []=(Object resultText, Object change) {
+    _map[resultText] = change;
+  }
 
   bool show(FilterService filterService) =>
-      !filterService.showLatestFailures ||
-      values.first.resultStyle == 'failure';
+      !filterService.showLatestFailures || first.resultStyle == 'failure';
 }
 
-class ConfigGroup extends MapView<String, ResultGroup> {
+class ConfigGroup with IterableMixin<ResultGroup> {
   final Configurations configurations;
-  ConfigGroup(this.configurations) : super(SplayTreeMap());
+  final Map<String, ResultGroup> _map = SplayTreeMap();
+  ConfigGroup(this.configurations);
 
-  ResultGroup operator [](Object resultText) =>
-      putIfAbsent(resultText, () => ResultGroup(resultText));
+  ResultGroup operator [](String resultText) =>
+      _map.putIfAbsent(resultText, () => ResultGroup(resultText));
 
+  get iterator => _map.values.iterator;
   Iterable<ResultGroup> shown(FilterService filter) =>
-      values.where((group) => group.show(filter));
+      where((group) => group.show(filter));
   bool show(FilterService filter) =>
       configurations.show(filter) && shown(filter).isNotEmpty;
 }
 
-class Changes extends MapView<String, ConfigGroup> {
-  Changes() : super(SplayTreeMap());
+class Changes with IterableMixin<ConfigGroup> {
+  final Map<String, ConfigGroup> _map = SplayTreeMap();
+  Changes();
+  get iterator => _map.values.iterator;
 
-  ConfigGroup operator [](Object configuration) =>
-      configuration is Configurations
-          ? putIfAbsent(configuration.text, () => ConfigGroup(configuration))
-          : null;
+  ConfigGroup operator [](Configurations configuration) =>
+      _map.putIfAbsent(configuration.text, () => ConfigGroup(configuration));
 
   void add(Change change) {
     this[change.configurations][change.changesText][change.name] = change;
   }
 
   Iterable<ConfigGroup> shown(FilterService filterService) =>
-      values.where((group) => group.show(filterService));
+      where((group) => group.show(filterService));
   bool show(FilterService filterService) => shown(filterService).isNotEmpty;
 }
