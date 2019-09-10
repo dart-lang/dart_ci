@@ -131,6 +131,7 @@ class Change {
       this.expected,
       this.blamelistStartIndex,
       this.blamelistEndIndex,
+      this.pinnedIndex,
       this.trivialBlamelist)
       : changesText = '$previousResult -> $result (expected $expected)',
         configurationsText = configurations.text;
@@ -143,6 +144,7 @@ class Change {
             document.get('expected'),
             document.get('blamelist_start_index'),
             document.get('blamelist_end_index'),
+            document.get('pinned_index'),
             document.get('trivial_blamelist'));
 
   final String name;
@@ -152,6 +154,7 @@ class Change {
   final String expected;
   int blamelistStartIndex;
   int blamelistEndIndex;
+  int pinnedIndex;
   bool trivialBlamelist;
   final String configurationsText;
   final String changesText;
@@ -166,6 +169,7 @@ class Change {
       expected,
       blamelistStartIndex,
       blamelistEndIndex,
+      pinnedIndex,
       trivialBlamelist);
 
   String get resultStyle => result == expected ? 'success' : 'failure';

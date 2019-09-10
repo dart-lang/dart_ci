@@ -114,8 +114,8 @@ class AppComponent implements OnInit {
       final results = <IntRange, List<Change>>{};
       for (var resultData in resultsData) {
         final result = Change.fromDocument(resultData);
-        final range =
-            IntRange(result.blamelistStartIndex, result.blamelistEndIndex);
+        final range = IntRange(result.pinnedIndex ?? result.blamelistStartIndex,
+            result.pinnedIndex ?? result.blamelistEndIndex);
         changes.putIfAbsent(result.name, () => <Change>[]).add(result);
         results.putIfAbsent(range, () => <Change>[]).add(result);
       }

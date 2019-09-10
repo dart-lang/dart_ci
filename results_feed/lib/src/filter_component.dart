@@ -15,10 +15,16 @@ import 'filter_service.dart';
   MaterialSelectComponent,
   MaterialSelectItemComponent
 ], template: '''
-    <material-toggle  (checkedChange)="filterService.showAllCommitsEvent(\$event)"  label="Show all commits">
+    <material-toggle
+        (checkedChange)="filterService.showAllCommitsEvent(\$event)"
+        [checked]="filterService.showAllCommits"
+        label="Show all commits">
     </material-toggle>
     <hr>
-    <material-toggle  (checkedChange)="filterService.showLatestFailuresEvent(\$event)"  label="Show only latest failures">
+    <material-toggle
+        (checkedChange)="filterService.showLatestFailuresEvent(\$event)"
+        [checked]="filterService.showLatestFailures"
+        label="Show only latest failures">
     </material-toggle>
     <hr>
    <b>Show changes on builders:</b>
