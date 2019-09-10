@@ -1,14 +1,18 @@
 <div class="commit" *ngIf="commit.show(filterService)">
-  <div class="commit-subblock">
-    <div *ngFor="let c of commit.commits" style="margin-bottom: 8px">
-      <b>{{c.title}}</b><br>
-      {{c.author}} {{c.created.toString().substring(0,16)}}<br>
-      <span class="faint">
-        <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}" target="_blank">
-          {{c.hash}}
-        </a>
-        ({{c.index}})
-      </span><br>
+  <div
+      class="commit-subblock"
+      (click)="collapsedBlamelist = !collapsedBlamelist">
+    <div *ngFor="let c of commit.commits; let i=index" style="margin-bottom: 8px">
+      <div *ngIf="showBlamelistEntry(i)">
+        <b>{{c.title}}</b><br>
+        <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
+           target="_blank">
+          {{c.hash.substring(6)}}
+        </a> {{c.author}} {{c.created.toString().substring(5,16)}}<br>
+      </div>
+      <div *ngIf="showDots(i)"><b>&vellip;</b>({{commit.range.length - 4}}
+        commits)
+      </div>
     </div>
   </div>
   <div *ngIf="commit.shownChanges(filterService).show(filterService)"
@@ -35,12 +39,16 @@
           </material-tooltip-card>
         </template>
       </material-chips>
-      <div *ngFor="let resultGroup of configurationGroup.shown(filterService)" style="margin-left: 16px">
-        <span [class]="resultGroup.first.resultStyle">{{resultGroup.changesText}}</span>
-        <div *ngFor="let change of resultGroup"
-            tooltipTarget #logs="tooltipTarget" 
-            style="cursor: pointer">
-          {{change.name}}
+      <div
+          *ngFor="let resultGroup of configurationGroup.shown(filterService)"
+          style="margin-left: 16px">
+        <span [class]="resultGroup.first.resultStyle">
+          {{resultGroup.changesText}}
+        </span><br>
+        <span *ngFor="let change of resultGroup"
+              tooltipTarget #logs="tooltipTarget"
+              style="cursor: pointer">
+          {{change.name}}<br>
           <material-tooltip-card
               [for]="logs"
               [preferredPositions]="preferredTooltipPositions">
@@ -54,7 +62,7 @@
               </dart-log>
             </div>
           </material-tooltip-card>
-        </div>
+        </span>
       </div>
     </div>
   </div>

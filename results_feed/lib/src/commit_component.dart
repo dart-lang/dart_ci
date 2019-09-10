@@ -50,6 +50,13 @@ class CommitComponent {
   @Input()
   ChangeGroup commit;
 
+  bool collapsedBlamelist = true;
+
+  bool showBlamelistEntry(int index) =>
+      !collapsedBlamelist || index < 2 || index >= commit.range.length - 2;
+  bool showDots(int index) =>
+      collapsedBlamelist && index == 2 && commit.range.length > 4;
+
   final preferredTooltipPositions = [
     RelativePosition.OffsetBottomLeft,
     RelativePosition.OffsetTopLeft
