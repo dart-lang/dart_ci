@@ -51,11 +51,12 @@ class CommitComponent {
   ChangeGroup commit;
 
   bool collapsedBlamelist = true;
+  int resultLimit = 200;
 
   bool showBlamelistEntry(int index) =>
-      !collapsedBlamelist || index < 2 || index >= commit.range.length - 2;
+      !collapsedBlamelist || index < 1 || index >= commit.range.length - 1;
   bool showDots(int index) =>
-      collapsedBlamelist && index == 2 && commit.range.length > 4;
+      collapsedBlamelist && index == 1 && commit.range.length > 2;
 
   final preferredTooltipPositions = [
     RelativePosition.OffsetBottomLeft,

@@ -7,6 +7,11 @@
       <material-icon icon="filter_list"></material-icon>
     </material-button>
     <span class="material-header-title">{{title}}</span>
+    <div class="material-spacer"></div>
+    <span *ngIf="fetching">
+      <material-icon icon="autorenew"></material-icon>
+      fetching results...
+    </span>
   </div>
 </header>
 <material-content

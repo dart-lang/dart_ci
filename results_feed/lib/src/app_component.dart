@@ -57,7 +57,7 @@ class AppComponent implements OnInit {
 
   int firstIndex;
   int lastIndex;
-  bool _fetching = false;
+  bool fetching = false;
   num infiniteScrollVisibleRatio = 0;
   bool showFilter = false;
 
@@ -87,10 +87,10 @@ class AppComponent implements OnInit {
   }
 
   Future fetchCommits() async {
-    if (_fetching) return;
-    _fetching = true;
+    if (fetching) return;
+    fetching = true;
     try {
-      final newCommits = (await _firestoreService.fetchCommits(firstIndex, 50))
+      final newCommits = (await _firestoreService.fetchCommits(firstIndex, 30))
           .map((x) => Commit.fromDocument(x));
       for (Commit commit in newCommits) {
         commits[commit.index] = commit;
@@ -126,7 +126,7 @@ class AppComponent implements OnInit {
           ..addLatestChanges(results[range].expand(_selectCurrent));
       }
     } finally {
-      _fetching = false;
+      fetching = false;
       _applicationRef.tick();
     }
   }
