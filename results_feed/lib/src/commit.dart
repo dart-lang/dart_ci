@@ -77,11 +77,11 @@ class ChangeGroup implements Comparable {
     newChanges.forEach(latestChanges.add);
   }
 
-  bool show(FilterService filter) =>
+  bool show(Filter filter) =>
       filter.showAllCommits || shownChanges(filter).show(filter);
 
-  Changes shownChanges(FilterService filterService) =>
-      filterService.showLatestFailures ? latestChanges : changes;
+  Changes shownChanges(Filter filter) =>
+      filter.showLatestFailures ? latestChanges : changes;
 }
 
 /// A list of configurations affected by a result change.
@@ -118,8 +118,8 @@ class Configurations {
             : list.first.split('-').first + '...');
   }
 
-  bool show(FilterService filter) => configurations.any((configuration) =>
-      filter.enabledBuilderGroups.any(configuration.startsWith));
+  bool show(Filter filter) => configurations.any((configuration) =>
+      filter.configurationGroups.any(configuration.startsWith));
 }
 
 class Change {
@@ -185,8 +185,8 @@ class ResultGroup with IterableMixin<Change> {
     _map[resultText] = change;
   }
 
-  bool show(FilterService filterService) =>
-      !filterService.showLatestFailures || first.resultStyle == 'failure';
+  bool show(Filter filter) =>
+      !filter.showLatestFailures || first.resultStyle == 'failure';
 }
 
 class ConfigGroup with IterableMixin<ResultGroup> {
@@ -198,9 +198,9 @@ class ConfigGroup with IterableMixin<ResultGroup> {
       _map.putIfAbsent(resultText, () => ResultGroup(resultText));
 
   get iterator => _map.values.iterator;
-  Iterable<ResultGroup> shown(FilterService filter) =>
+  Iterable<ResultGroup> shown(Filter filter) =>
       where((group) => group.show(filter));
-  bool show(FilterService filter) =>
+  bool show(Filter filter) =>
       configurations.show(filter) && shown(filter).isNotEmpty;
 }
 
@@ -216,7 +216,7 @@ class Changes with IterableMixin<ConfigGroup> {
     this[change.configurations][change.changesText][change.name] = change;
   }
 
-  Iterable<ConfigGroup> shown(FilterService filterService) =>
-      where((group) => group.show(filterService));
-  bool show(FilterService filterService) => shown(filterService).isNotEmpty;
+  Iterable<ConfigGroup> shown(Filter filter) =>
+      where((group) => group.show(filter));
+  bool show(Filter filter) => shown(filter).isNotEmpty;
 }

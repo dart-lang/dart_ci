@@ -24,6 +24,7 @@ import 'build_service.dart';
 
 @Component(
     selector: 'my-app',
+    pipes: [commonPipes],
     directives: [
       coreDirectives,
       AutoDismissDirective,
@@ -63,8 +64,10 @@ class AppComponent implements OnInit {
 
   ApplicationRef _applicationRef;
   FirestoreService _firestoreService;
+  FilterService filterService;
 
-  AppComponent(this._firestoreService, this._applicationRef);
+  AppComponent(
+      this._firestoreService, this.filterService, this._applicationRef);
 
   @ViewChild("infiniteScroll")
   Element infiniteScroll;

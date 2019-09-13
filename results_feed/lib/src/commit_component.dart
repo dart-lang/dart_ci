@@ -39,19 +39,19 @@ import 'commit.dart';
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]))
 class CommitComponent {
-  CommitComponent(this.firestoreService, this.filterService);
+  CommitComponent(this.firestoreService);
 
   @Input()
   FirestoreService firestoreService;
 
   @Input()
-  FilterService filterService;
+  Filter filter;
 
   @Input()
   ChangeGroup commit;
 
   bool collapsedBlamelist = true;
-  int resultLimit = 200;
+  int resultLimit = 50;
 
   bool showBlamelistEntry(int index) =>
       !collapsedBlamelist || index < 1 || index >= commit.range.length - 1;

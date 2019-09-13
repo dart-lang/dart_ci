@@ -1,4 +1,4 @@
-<div class="commit" *ngIf="commit.show(filterService)">
+<div class="commit" *ngIf="commit.show(filter)">
   <div
       class="commit-subblock"
       (click)="collapsedBlamelist = !collapsedBlamelist">
@@ -15,9 +15,9 @@
       </div>
     </div>
   </div>
-  <div *ngIf="commit.shownChanges(filterService).show(filterService)"
+  <div *ngIf="commit.shownChanges(filter).show(filter)"
        class="commit-subblock">
-    <div *ngFor="let configurationGroup of commit.shownChanges(filterService).shown(filterService)">
+    <div *ngFor="let configurationGroup of commit.shownChanges(filter).shown(filter)">
       <material-chips>
         <template
             ngFor
@@ -40,7 +40,7 @@
         </template>
       </material-chips>
       <div
-          *ngFor="let resultGroup of configurationGroup.shown(filterService)"
+          *ngFor="let resultGroup of configurationGroup.shown(filter)"
           style="margin-left: 16px">
         <span [class]="resultGroup.first.resultStyle">
           {{resultGroup.changesText}}

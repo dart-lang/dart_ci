@@ -33,7 +33,8 @@
   </modal>
   <dart-commit
       *ngFor="let changeGroup of changeGroups.values"
-      [commit]="changeGroup"></dart-commit>
+      [commit]="changeGroup"
+      [filter]="filterService.filter"></dart-commit>
   <div style="text-align: center">
     <span #infiniteScroll>fetching commits ...</span>
   </div>

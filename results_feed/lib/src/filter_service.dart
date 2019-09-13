@@ -3,23 +3,69 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:html';
-import 'dart:convert';
 
-import 'package:angular_components/angular_components.dart';
+class Filter {
+  final List<String> configurationGroups;
+  final bool showAllCommits;
+  final bool showLatestFailures;
 
-class FilterService {
-  FilterService() {
-    updateFromUrl();
-    groupSelector = SelectionModel.multi(selectedValues: enabledBuilderGroups);
-    groupSelector.selectionChanges.listen((_) {
-      enabledBuilderGroups = groupSelector.selectedValues.toList();
-      if (enabledBuilderGroups.isEmpty) {
-        showAllCommits = true;
-      }
-      updateUrl();
-    });
+  const Filter._(
+      this.configurationGroups, this.showAllCommits, this.showLatestFailures);
+  Filter(this.configurationGroups, showAllCommits, this.showLatestFailures)
+      : showAllCommits = configurationGroups.isEmpty || showAllCommits;
+
+  static const defaultFilter = Filter._(
+      allConfigurationGroups, defaultShowAllCommits, defaultShowLatestFailures);
+  static const noneFilter = Filter._(allConfigurationGroups, true, false);
+
+  Filter copy(
+          {List<String> configurationGroups,
+          bool showAllCommits,
+          bool showLatestFailures}) =>
+      Filter(
+          configurationGroups ?? this.configurationGroups,
+          showAllCommits ?? this.showAllCommits,
+          showLatestFailures ?? this.showLatestFailures);
+
+  String fragment() => [
+        if (showAllCommits != defaultShowAllCommits)
+          'showAllCommits=$showAllCommits',
+        if (showLatestFailures != defaultShowLatestFailures)
+          'showLatestFailures=$showLatestFailures',
+        if (configurationGroups.length != allConfigurationGroups.length)
+          'configurationGroups=${configurationGroups.join(',')}'
+      ].join('&');
+
+  void updateUrl() {
+    final newFragment = fragment();
+    Uri old = Uri.parse(window.location.href);
+    if (old.fragment != newFragment) {
+      window.location.replace(old.replace(fragment: newFragment).toString());
+    }
   }
-  static const allBuilderGroups = <String>[
+
+  factory Filter.fromUrl() {
+    final fragment = Uri.parse(window.location.href).fragment;
+    Filter result = defaultFilter;
+    if (fragment.isEmpty) return result;
+    for (final setting in fragment.split('&')) {
+      final key = setting.split('=').first;
+      final value = setting.split('=').last;
+      if (key == 'showAllCommits') {
+        result = result.copy(showAllCommits: value == 'true');
+      } else if (key == 'showLatestFailures') {
+        result = result.copy(showLatestFailures: value == 'true');
+      } else if (key == 'configurationGroups') {
+        final configurationGroups = value.split(',');
+        result = result.copy(configurationGroups: configurationGroups);
+      }
+    }
+    return result;
+  }
+
+  static const defaultShowAllCommits = true;
+  static const defaultShowLatestFailures = false;
+  static const allConfigurationGroups = <String>[
     'analyzer',
     'app_jitk',
     'dart2js',
@@ -32,49 +78,10 @@ class FilterService {
     'unittest',
     'vm'
   ];
+}
 
-  /// We need this field because Angular cannot access the static member.
-  final List<String> defaultBuilderGroups = allBuilderGroups;
-  List<String> enabledBuilderGroups;
-  static const defaultShowAllCommits = true;
-  bool showAllCommits;
-  static const defaultShowLatestFailures = false;
-  bool showLatestFailures;
-  SelectionModel<String> groupSelector;
+class FilterService {
+  FilterService();
 
-  void showAllCommitsEvent(event) {
-    showAllCommits = event;
-    updateUrl();
-  }
-
-  void showLatestFailuresEvent(event) {
-    showLatestFailures = event;
-    updateUrl();
-  }
-
-  void updateUrl() {
-    final settings = {
-      if (showAllCommits != defaultShowAllCommits) 'showAll': showAllCommits,
-      if (enabledBuilderGroups.length != defaultBuilderGroups.length)
-        'enabled': enabledBuilderGroups,
-      if (showLatestFailures != defaultShowLatestFailures)
-        'latestFailures': showLatestFailures
-    };
-    final fragment =
-        settings.isEmpty ? '' : Uri.encodeComponent(jsonEncode(settings));
-    Uri old = Uri.parse(window.location.href);
-    if (old.fragment != fragment) {
-      window.location.replace(old.replace(fragment: fragment).toString());
-    }
-  }
-
-  void updateFromUrl() {
-    final fragment = Uri.parse(window.location.href).fragment;
-    final settings =
-        fragment.isEmpty ? {} : jsonDecode(Uri.decodeComponent(fragment));
-    showAllCommits = settings['showAll'] ?? defaultShowAllCommits;
-    enabledBuilderGroups =
-        List<String>.from(settings['enabled'] ?? defaultBuilderGroups);
-    showLatestFailures = settings['showAll'] ?? defaultShowLatestFailures;
-  }
+  Filter filter = Filter.fromUrl();
 }
