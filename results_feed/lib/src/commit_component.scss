@@ -6,7 +6,7 @@
 .success { background-color:lightGreen; }
 .commit { margin: 12px; background-color: white; box-shadow: 8px 8px 5px lightgray; }
 dart-commit { padding: 8px * 2; }
-.commit-subblock { margin: 8px; }
+.commit-panel { margin: 8px; }
 @media screen and (min-width: 992px) {
-  .commit-subblock { width: 45%; float: left; }
+  .commit-panel { width: 45%; float: left; }
 }

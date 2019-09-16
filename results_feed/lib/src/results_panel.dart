@@ -12,39 +12,43 @@ import 'package:angular_components/material_chips/material_chip.dart';
 import 'package:angular_components/material_tooltip/material_tooltip.dart';
 import 'package:angular_components/material_tooltip/module.dart' as tooltip;
 
-import 'blamelist_component.dart';
-import 'firestore_service.dart';
-import 'filter_service.dart';
 import 'log_component.dart';
-import 'results_panel.dart';
 
 import 'commit.dart';
 
 @Component(
-    selector: 'dart-commit',
+    selector: 'results-panel',
     directives: [
       coreDirectives,
       formDirectives,
-      BlamelistComponent,
-      ResultsPanel
+      DeferredContentDirective,
+      LogComponent,
+      MaterialChipComponent,
+      MaterialChipsComponent,
+      MaterialPaperTooltipComponent,
+      MaterialTooltipDirective,
+      MaterialTooltipTargetDirective,
+      RelativePosition
     ],
     providers: [popupBindings, tooltip.materialTooltipBindings],
-    templateUrl: 'commit_component.html',
+    templateUrl: 'results_panel.html',
     styleUrls: ([
       'commit_component.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]))
-class CommitComponent {
-  CommitComponent(this.firestoreService);
+class ResultsPanel {
+  ResultsPanel();
 
   @Input()
-  FirestoreService firestoreService;
+  Changes changes;
 
   @Input()
-  Filter filter;
+  IntRange range;
 
-  @Input()
-  ChangeGroup commit;
+  int resultLimit = 50;
 
-  String toString() => commit.toString();
+  final preferredTooltipPositions = [
+    RelativePosition.OffsetBottomLeft,
+    RelativePosition.OffsetTopLeft
+  ];
 }

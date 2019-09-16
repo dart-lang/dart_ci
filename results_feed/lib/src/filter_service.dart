@@ -27,13 +27,15 @@ class Filter {
           showAllCommits ?? this.showAllCommits,
           showLatestFailures ?? this.showLatestFailures);
 
+  bool get allGroups =>
+      configurationGroups.length == allConfigurationGroups.length;
+
   String fragment() => [
         if (showAllCommits != defaultShowAllCommits)
           'showAllCommits=$showAllCommits',
         if (showLatestFailures != defaultShowLatestFailures)
           'showLatestFailures=$showLatestFailures',
-        if (configurationGroups.length != allConfigurationGroups.length)
-          'configurationGroups=${configurationGroups.join(',')}'
+        if (!allGroups) 'configurationGroups=${configurationGroups.join(',')}'
       ].join('&');
 
   void updateUrl() {

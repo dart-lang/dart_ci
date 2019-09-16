@@ -1,0 +1,14 @@
+<div (click)="collapsedBlamelist = !collapsedBlamelist">
+  <div *ngFor="let c of commits; let i=index" style="margin-bottom: 8px">
+    <div *ngIf="showBlamelistEntry(i)">
+      <b>{{c.title}}</b><br>
+      <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
+         target="_blank">
+        {{c.hash.substring(6)}}
+      </a> {{c.author}} {{c.created.toString().substring(5,16)}}<br>
+    </div>
+    <div *ngIf="showDots(i)"><b>&vellip;</b>({{range.length - 2}}
+      commits)
+    </div>
+  </div>
+</div>

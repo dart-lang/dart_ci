@@ -1,76 +1,11 @@
 <div class="commit" *ngIf="commit.show(filter)">
-  <div
-      class="commit-subblock"
-      (click)="collapsedBlamelist = !collapsedBlamelist">
-    <div *ngFor="let c of commit.commits; let i=index" style="margin-bottom: 8px">
-      <div *ngIf="showBlamelistEntry(i)">
-        <b>{{c.title}}</b><br>
-        <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
-           target="_blank">
-          {{c.hash.substring(6)}}
-        </a> {{c.author}} {{c.created.toString().substring(5,16)}}<br>
-      </div>
-      <div *ngIf="showDots(i)"><b>&vellip;</b>({{commit.range.length - 2}}
-        commits)
-      </div>
-    </div>
-  </div>
-  <div *ngIf="commit.shownChanges(filter).show(filter)"
-       class="commit-subblock">
-    <div *ngFor="let configurationGroup of commit.shownChanges(filter).shown(filter)">
-      <material-chips>
-        <template
-            ngFor
-            let-configuration
-            [ngForOf]="configurationGroup.configurations.summaries.keys">
-          <material-chip
-              tooltipTarget
-              #chip="tooltipTarget"
-              [removable]="false"
-              displayNameRenderer>
-            {{configuration}}
-          </material-chip>
-          <material-tooltip-card [for]="chip">
-            <div *deferredContent>
-              <span *ngFor="let singleConfiguration of configurationGroup.configurations.summaries[configuration]">
-                {{singleConfiguration}}<br>
-              </span>
-            </div>
-          </material-tooltip-card>
-        </template>
-      </material-chips>
-      <div
-          *ngFor="let resultGroup of configurationGroup.shown(filter)"
-          style="margin-left: 16px">
-        <span [class]="resultGroup.first.resultStyle">
-          {{resultGroup.changesText}}
-        </span><br>
-        <span *ngFor="let change of resultGroup.take(resultLimit)"
-              tooltipTarget #logs="tooltipTarget"
-              style="cursor: pointer">
-          {{change.name}}<br>
-          <material-tooltip-card
-              [for]="logs"
-              [preferredPositions]="preferredTooltipPositions">
-            <div *deferredContent>
-              <h4>Logs</h4>
-              <dart-log
-                  *ngFor="let configuration of change.configurations.configurations"
-                  [configuration]="configuration"
-                  [index]="commit.range.end"
-                  [test]="change.name">
-              </dart-log>
-            </div>
-          </material-tooltip-card>
-        </span>
-        <div
-            *ngIf="resultGroup.length > resultLimit"
-            (click)="resultLimit = resultGroup.length"
-            style="cursor: pointer">
-          &vellip; {{resultGroup.length - resultLimit}} more changed results
-        </div>
-      </div>
-    </div>
-  </div>
+  <blamelist-panel
+      class="commit-panel"
+      [commits]="commit.commits"
+      [range]="commit.range"></blamelist-panel>
+  <results-panel
+      class="commit-panel"
+      [changes]="commit.filteredChanges(filter)"
+      [range]="commit.range"></results-panel>
   <div style="clear: both"></div>
 </div>
