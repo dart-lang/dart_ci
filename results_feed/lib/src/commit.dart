@@ -140,6 +140,7 @@ class Configurations {
 
 class Change {
   Change._(
+      this.id,
       this.name,
       this.configurations,
       this.result,
@@ -154,6 +155,7 @@ class Change {
 
   Change.fromDocument(firestore.DocumentSnapshot document)
       : this._(
+            document.id,
             document.get('name'),
             Configurations(document.get('configurations')),
             document.get('result'),
@@ -164,19 +166,21 @@ class Change {
             document.get('pinned_index'),
             document.get('trivial_blamelist'));
 
+  final String id;
   final String name;
   final Configurations configurations;
   final String result;
   final String previousResult;
   final String expected;
-  int blamelistStartIndex;
-  int blamelistEndIndex;
+  final int blamelistStartIndex;
+  final int blamelistEndIndex;
   int pinnedIndex;
   bool trivialBlamelist;
   final String configurationsText;
   final String changesText;
 
   Change copy({List<String> newConfigurations}) => Change._(
+      id,
       name,
       newConfigurations == null
           ? configurations

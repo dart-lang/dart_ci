@@ -149,6 +149,8 @@ class AppComponent implements OnInit {
     return [change.copy(newConfigurations: configurations.toList())];
   }
 
+  bool get loginEnabled => Uri.parse(window.location.href).fragment.contains('&login');
+
   String get loginIcon =>
       _firestoreService.isLoggedIn ? 'highlight_off' : 'account_circle';
 

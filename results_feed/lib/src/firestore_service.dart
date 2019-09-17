@@ -70,6 +70,15 @@ class FirestoreService {
     return snapshot.docs;
   }
 
+  Future pinResults(int pin, List<String> resultIds) async {
+    final batch = app.firestore().batch();
+    final results = app.firestore().collection('results');
+    for (final id in resultIds) {
+      batch.update(results.doc(id), fieldsAndValues: ['pinned_index', pin]);
+    }
+    return batch.commit();
+  }
+
   void getFirebaseClient() async {
     if (app != null) return;
     // Firebase api key is public, and must be sent to client for use.

@@ -3,22 +3,27 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:angular/angular.dart';
+import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import 'blamelist_component.dart';
+import 'blamelist_picker.dart';
+import 'commit.dart';
 import 'firestore_service.dart';
 import 'filter_service.dart';
 import 'results_panel.dart';
-
-import 'commit.dart';
+import 'results_selector_panel.dart';
 
 @Component(
     selector: 'dart-commit',
     directives: [
       coreDirectives,
       formDirectives,
+      MaterialButtonComponent,
       BlamelistComponent,
-      ResultsPanel
+      BlamelistPicker,
+      ResultsPanel,
+      ResultsSelectorPanel,
     ],
     templateUrl: 'commit_component.html',
     styleUrls: ([
@@ -37,5 +42,16 @@ class CommitComponent {
   @Input()
   ChangeGroup commit;
 
-  String toString() => commit.toString();
+  bool collapsedBlamelist = true;
+  int resultLimit = 10;
+
+  bool chooseCommit = false;
+
+  final selected = Set<Change>();
+  Commit selectedCommit;
+
+  Future pinCommit(int pin, List<Change> results) {
+    return firestoreService.pinResults(
+        selectedCommit.index, [for (Change result in results) result.id]);
+  }
 }

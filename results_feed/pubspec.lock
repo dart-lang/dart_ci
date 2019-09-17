@@ -112,7 +112,7 @@ packages:
       name: build_daemon
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   build_modules:
     dependency: transitive
     description:
@@ -133,14 +133,14 @@ packages:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.9"
+    version: "1.7.0"
   build_runner_core:
     dependency: transitive
     description:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.1"
+    version: "4.0.0"
   build_test:
     dependency: "direct dev"
     description:
@@ -154,7 +154,7 @@ packages:
       name: build_web_compilers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.4.0"
   built_collection:
     dependency: transitive
     description:
@@ -231,7 +231,7 @@ packages:
       name: dart_internal
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.6"
+    version: "0.1.7"
   dart_style:
     dependency: transitive
     description:
@@ -441,7 +441,7 @@ packages:
       name: protobuf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.15"
+    version: "0.13.16+1"
   pub_semver:
     dependency: transitive
     description:
@@ -469,7 +469,7 @@ packages:
       name: sass
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.22.10"
+    version: "1.22.12"
   sass_builder:
     dependency: "direct dev"
     description:
@@ -653,4 +653,4 @@ packages:
     source: hosted
     version: "2.1.16"
 sdks:
-  dart: ">=2.5.0-dev.1.0 <=2.6.0-dev.0.0"
+  dart: ">=2.5.0-dev.1.0 <2.7.0"

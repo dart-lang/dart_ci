@@ -1,0 +1,71 @@
+<div *ngFor="let configurationGroup of selectableChanges">
+  <material-chips>
+    <material-checkbox
+        class="result-checkbox"
+        [checked]="configurationGroup.checkbox.checked"
+        (change)="configurationGroup.onChange($event)"
+        [indeterminate]="configurationGroup.checkbox.indeterminate">
+    </material-checkbox>
+    <template
+        ngFor
+        let-configuration
+        [ngForOf]="configurationGroup.summaries.keys">
+      <material-chip
+          tooltipTarget
+          #chip="tooltipTarget"
+          [removable]="false"
+          displayNameRenderer>
+        {{configuration}}
+      </material-chip>
+      <material-tooltip-card [for]="chip">
+        <div *deferredContent>
+              <span *ngFor="let singleConfiguration of configurationGroup.summaries[configuration]">
+                {{singleConfiguration}}<br>
+              </span>
+        </div>
+      </material-tooltip-card>
+    </template>
+  </material-chips>
+  <span *ngFor="let resultGroup of configurationGroup.resultGroups"
+        style="margin-left: 16px">
+    <material-checkbox
+        no-ink
+        [checked]="resultGroup.checkbox.checked"
+        (change)="resultGroup.onChange($event)"
+        [indeterminate]="resultGroup.checkbox.indeterminate">
+    </material-checkbox>
+    <span [class]="resultGroup.changes.first.change.resultStyle">
+          {{resultGroup.changes.first.change.changesText}}
+    </span><br>
+    <span class="nonbreaking" *ngFor="let change of resultGroup.changes.take(resultLimit)"
+          tooltipTarget
+          #logs="tooltipTarget"
+          style="cursor: pointer; margin-left: 16px; height: 16px">
+      <material-checkbox
+              no-ink
+              [checked]="change.selected"
+              (checkedChange)="change.onChange($event)">
+      </material-checkbox>
+      <span tooltipTarget #logs="tooltipTarget">{{change.change.name}}</span><br>
+      <material-tooltip-card
+              [for]="logs"
+              [preferredPositions]="preferredTooltipPositions">
+        <div *deferredContent>
+          <h4>Logs</h4>
+          <dart-log
+                  *ngFor="let configuration of change.change.configurations.configurations"
+                  [configuration]="configuration"
+                  [index]="commit.range.end"
+                  [test]="change.change.name">
+          </dart-log>
+        </div>
+      </material-tooltip-card>
+    </span>
+    <div
+        *ngIf="resultGroup.changes.length > resultLimit"
+        (click)="resultLimit = resultGroup.changes.length"
+        style="cursor: pointer">
+      &vellip; {{resultGroup.changes.length - resultLimit}} more changed results
+    </div>
+  </span>
+</div>

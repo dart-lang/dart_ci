@@ -45,7 +45,7 @@ class ResultsPanel {
   @Input()
   IntRange range;
 
-  int resultLimit = 50;
+  int resultLimit = 10;
 
   final preferredTooltipPositions = [
     RelativePosition.OffsetBottomLeft,
