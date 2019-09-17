@@ -12,6 +12,12 @@
       <material-icon icon="autorenew"></material-icon>
       fetching results...
     </span>
+    <material-button
+        icon
+        class="material-drawer-button"
+        (trigger)="toggleLogin()">
+      <material-icon [icon]="loginIcon"></material-icon>
+    </material-button>
   </div>
 </header>
 <material-content

@@ -50,6 +50,7 @@ import 'build_service.dart';
     ])
 class AppComponent implements OnInit {
   String title = 'Results Feed (Angular Dart)';
+
   // We often want changeGroups and commits ordered from latest to earliest.
   Map<IntRange, ChangeGroup> changeGroups =
       SplayTreeMap((key1, key2) => key2.compareTo(key1));
@@ -146,5 +147,16 @@ class AppComponent implements OnInit {
     if (configurations.length == change.configurations.configurations.length)
       return [change];
     return [change.copy(newConfigurations: configurations.toList())];
+  }
+
+  String get loginIcon =>
+      _firestoreService.isLoggedIn ? 'highlight_off' : 'account_circle';
+
+  void toggleLogin() {
+    if (_firestoreService.isLoggedIn) {
+      _firestoreService.logOut();
+    } else {
+      _firestoreService.logIn();
+    }
   }
 }

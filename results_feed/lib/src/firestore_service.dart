@@ -6,9 +6,31 @@ import 'package:firebase/firebase.dart' as firebase;
 import 'package:firebase/firestore.dart' as firestore;
 
 class FirestoreService {
+  static const bool loginEnabled = true;
+
   firebase.App app;
 
   bool get isLoggedIn => app?.auth()?.currentUser != null;
+
+  Future logIn() async {
+    if (isLoggedIn) return;
+    if (loginEnabled) {
+      final provider = firebase.GoogleAuthProvider();
+      provider.addScope('openid https://www.googleapis.com/auth/datastore');
+      try {
+        firebase.UserCredential user =
+            await app.auth().signInWithPopup(provider);
+        // Our application settings already disallow non-org users,
+        // so we don't even get to this additional check.
+        if (!user.user.email.endsWith('@google.com')) logOut();
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+    return;
+  }
+
+  Future logOut() => app.auth().signOut();
 
   Future<List<firestore.DocumentSnapshot>> fetchCommits(
       int beforeIndex, int limit) async {
@@ -61,6 +83,5 @@ class FirestoreService {
         storageBucket: "dart-ci.appspot.com",
         messagingSenderId: "410721018617");
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
-    return;
   }
 }
