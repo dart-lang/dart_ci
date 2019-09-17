@@ -21,6 +21,7 @@ class IntRange implements Comparable {
   int get hashCode => start + end * 40927 % 63703;
 
   bool contains(int i) => i >= start && i <= end;
+
   int get length => end - start + 1;
 
   int compareTo(dynamic other) {
@@ -131,8 +132,10 @@ class Configurations {
             : list.first.split('-').first + '...');
   }
 
-  bool show(Filter filter) => configurations.any((configuration) =>
-      filter.configurationGroups.any(configuration.startsWith));
+  bool show(Filter filter) =>
+      filter.allGroups ||
+      configurations.any((configuration) =>
+          filter.configurationGroups.any(configuration.startsWith));
 }
 
 class Change {
@@ -148,6 +151,7 @@ class Change {
       this.trivialBlamelist)
       : changesText = '$previousResult -> $result (expected $expected)',
         configurationsText = configurations.text;
+
   Change.fromDocument(firestore.DocumentSnapshot document)
       : this._(
             document.get('name'),
@@ -191,9 +195,11 @@ class Change {
 class ResultGroup with IterableMixin<Change> {
   final String changesText;
   final Map<String, Change> _map = SplayTreeMap();
+
   ResultGroup(this.changesText);
 
   get iterator => _map.values.iterator;
+
   void operator []=(Object resultText, Object change) {
     _map[resultText] = change;
   }
@@ -205,6 +211,7 @@ class ResultGroup with IterableMixin<Change> {
 class ConfigGroup with IterableMixin<ResultGroup> {
   final Configurations configurations;
   final Map<String, ResultGroup> _map;
+
   ConfigGroup(this.configurations, {Map<String, ResultGroup> map})
       : _map = map ?? SplayTreeMap();
 
@@ -212,25 +219,24 @@ class ConfigGroup with IterableMixin<ResultGroup> {
       _map.putIfAbsent(resultText, () => ResultGroup(resultText));
 
   get iterator => _map.values.iterator;
+
   ConfigGroup filtered(Filter filter) {
-    if (filter.allGroups) return this;
-    if (configurations.show(filter)) {
-      if (!filter.showLatestFailures || every((group) => group.show(filter))) {
-        return this;
-      } else {
-        return ConfigGroup(configurations,
-            map: Map.fromEntries(
-                _map.entries.where((e) => e.value.show(filter))));
-      }
-    } else {
+    if (!configurations.show(filter)) {
       return ConfigGroup(configurations, map: {});
     }
+    final newMap =
+        Map.fromEntries(_map.entries.where((e) => e.value.show(filter)));
+    return newMap.length == _map.length
+        ? this
+        : ConfigGroup(configurations, map: newMap);
   }
 }
 
 class Changes with IterableMixin<ConfigGroup> {
   final Map<String, ConfigGroup> _map;
+
   Changes({Map map}) : _map = map ?? SplayTreeMap();
+
   get iterator => _map.values.iterator;
 
   ConfigGroup operator [](Configurations configuration) =>
@@ -241,11 +247,15 @@ class Changes with IterableMixin<ConfigGroup> {
   }
 
   Changes filtered(Filter filter) {
-    final newMap = Map<String, ConfigGroup>.fromIterables(
-        _map.keys, _map.values.map((group) => group.filtered(filter)))
-      ..removeWhere((k, v) => v.isEmpty);
-    return (_map.keys.any((key) => _map[key] != newMap[key]))
-        ? Changes(map: newMap)
-        : this;
+    final newMap = <String, ConfigGroup>{};
+    bool changed = false;
+    for (final key in _map.keys) {
+      final newValue = _map[key].filtered(filter);
+      changed = changed || newValue != _map[key];
+      if (!newValue.isEmpty) {
+        newMap[key] = newValue;
+      }
+    }
+    return changed ? Changes(map: newMap) : this;
   }
 }

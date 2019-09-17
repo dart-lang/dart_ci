@@ -3,19 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:angular/angular.dart';
-import 'package:angular_components/angular_components.dart';
-import 'package:angular_components/content/deferred_content.dart';
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
-import 'package:angular_components/laminate/enums/alignment.dart';
-import 'package:angular_components/material_chips/material_chips.dart';
-import 'package:angular_components/material_chips/material_chip.dart';
-import 'package:angular_components/material_tooltip/material_tooltip.dart';
-import 'package:angular_components/material_tooltip/module.dart' as tooltip;
 
 import 'blamelist_component.dart';
 import 'firestore_service.dart';
 import 'filter_service.dart';
-import 'log_component.dart';
 import 'results_panel.dart';
 
 import 'commit.dart';
@@ -28,7 +20,6 @@ import 'commit.dart';
       BlamelistComponent,
       ResultsPanel
     ],
-    providers: [popupBindings, tooltip.materialTooltipBindings],
     templateUrl: 'commit_component.html',
     styleUrls: ([
       'commit_component.css',
