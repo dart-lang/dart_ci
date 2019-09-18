@@ -9,10 +9,6 @@ import 'dart:io';
 
 import 'package:dart_ci/src/approvals_feed.dart';
 import 'package:dart_ci/src/get_log.dart';
-import 'package:dart_ci/src/group_changes.dart';
-import 'package:dart_ci/src/fetch_changes.dart';
-
-String changesPage;
 
 void main() async {
   await refresh();
@@ -30,8 +26,6 @@ void main() async {
 }
 
 Future<void> refresh() async {
-  await fetchData();
-  changesPage = await createChangesPage();
   await getApprovals();
 }
 
@@ -65,7 +59,7 @@ void serveFrontPage(HttpRequest request) async {
   </head>
   <body>
     <h1>Dart Continuous Integration</h1>
-    <h2><a href="changes/">Results Feed</a></h2>
+    <h2><a href="https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true">Results Feed</a></h2>
     <h2><a href="approvals/">Approvals Feed</a></h2>
   </body>
 </html>
@@ -103,10 +97,9 @@ Future<void> redirectTemporary(HttpRequest request, String newPath) {
 }
 
 Future<void> serveChanges(HttpRequest request) async {
-  final response = request.response;
-  response.headers.contentType = ContentType.html;
-  response.write(changesPage);
-  return response.close();
+  return request.response.redirect(Uri.parse(
+      'https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true'),
+      status: HttpStatus.movedPermanently);
 }
 
 Future<void> notFound(HttpRequest request) {
