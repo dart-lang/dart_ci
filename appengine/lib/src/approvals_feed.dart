@@ -211,7 +211,7 @@ void serveApprovals(HttpRequest request) async {
       request.response.write("<td><b style='color: $color;'>$what</b></td>");
       request.response.write("<td>${approval.builder}</td>");
       request.response.write("<td>${approval.configuration}</td>");
-      request.response.write("<tr/>\n");
+      request.response.write("</tr>\n");
     }
     request.response.write("</table>\n");
   }
