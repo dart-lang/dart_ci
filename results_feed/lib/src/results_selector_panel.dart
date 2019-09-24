@@ -93,7 +93,8 @@ class SelectableChange {
   final SelectableConfigurationGroup configurationGroup;
   final ResultsSelectorPanel panel;
 
-  SelectableChange(this.change, this.resultGroup, this.configurationGroup, this.panel);
+  SelectableChange(
+      this.change, this.resultGroup, this.configurationGroup, this.panel);
 
   void onChange(bool event) {
     if (selected == event) return;
@@ -113,7 +114,8 @@ class SelectableResultGroup {
   SelectableConfigurationGroup configurationGroup;
   FixedMixedCheckbox checkbox = FixedMixedCheckbox();
 
-  SelectableResultGroup(ResultGroup group, this.configurationGroup, ResultsSelectorPanel panel) {
+  SelectableResultGroup(
+      ResultGroup group, this.configurationGroup, ResultsSelectorPanel panel) {
     changes = [
       for (final change in group)
         SelectableChange(change, this, configurationGroup, panel)
@@ -121,7 +123,6 @@ class SelectableResultGroup {
   }
 
   void onChange(String event) {
-    print("ResultGroup onChange $event");
     if (checkbox.eventMatchesState(event)) return;
     assert(event != 'mixed');
     bool newChecked = event == 'true';
@@ -137,7 +138,8 @@ class SelectableConfigurationGroup {
   List<SelectableResultGroup> resultGroups;
   FixedMixedCheckbox checkbox = FixedMixedCheckbox();
 
-  SelectableConfigurationGroup(ConfigGroup configGroup, ResultsSelectorPanel panel) {
+  SelectableConfigurationGroup(
+      ConfigGroup configGroup, ResultsSelectorPanel panel) {
     resultGroups = [
       for (final resultGroup in configGroup)
         SelectableResultGroup(resultGroup, this, panel)

@@ -55,8 +55,8 @@ class FilterComponent {
   get filter => service.filter;
 
   FilterComponent(this.service) {
-    groupSelector =
-        SelectionModel.multi(selectedValues: Filter.allConfigurationGroups);
+    groupSelector = SelectionModel.multi(
+        selectedValues: service.filter.configurationGroups);
     groupSelector.selectionChanges.listen(onSelectionChange);
   }
 

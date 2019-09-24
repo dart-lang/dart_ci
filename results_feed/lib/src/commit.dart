@@ -9,7 +9,24 @@ import 'dart:core';
 import 'filter_service.dart';
 import 'package:firebase/firestore.dart' as firestore;
 
-class IntRange implements Comparable {
+int reverse(key1, key2) => key2.compareTo(key1);
+
+class IntRangeIterator implements Iterator<int> {
+  int current;
+  int end;
+
+  IntRangeIterator(int start, this.end) {
+    current = start - 1;
+  }
+
+  bool moveNext() {
+    current++;
+    if (current > end) current = null;
+    return current != null;
+  }
+}
+
+class IntRange with IterableMixin<int> implements Comparable {
   IntRange(this.start, this.end);
 
   final int start;
@@ -20,7 +37,9 @@ class IntRange implements Comparable {
 
   int get hashCode => start + end * 40927 % 63703;
 
-  bool contains(int i) => i >= start && i <= end;
+  Iterator<int> get iterator => IntRangeIterator(start, end);
+
+  bool contains(Object i) => i as int >= start && i as int <= end;
 
   int get length => end - start + 1;
 
@@ -55,18 +74,19 @@ class Commit implements Comparable {
 }
 
 class ChangeGroup implements Comparable {
-  IntRange range;
+  final IntRange range;
   List<Commit> commits;
-  Changes changes = Changes();
-  Changes latestChanges = Changes();
+  final Changes changes;
+  final Changes latestChanges;
   Changes _filteredChanges;
   Filter _filter = Filter.defaultFilter;
 
-  ChangeGroup.fromRange(IntRange this.range, Iterable<Commit> allCommits) {
-    commits = allCommits
-        .where((commit) => range.contains(commit.index))
-        .toList()
-          ..sort();
+  ChangeGroup(IntRange this.range, Map<int, Commit> allCommits,
+      Iterable<Change> changeList, Iterable<Change> liveChangeList)
+      : changes = Changes(changeList),
+        latestChanges = Changes(liveChangeList) {
+    commits = [for (int i in range) if (allCommits[i] != null) allCommits[i]]
+      ..sort(reverse);
   }
 
   /// Sort in reverse chronological order.
@@ -239,7 +259,9 @@ class ConfigGroup with IterableMixin<ResultGroup> {
 class Changes with IterableMixin<ConfigGroup> {
   final Map<String, ConfigGroup> _map;
 
-  Changes({Map map}) : _map = map ?? SplayTreeMap();
+  Changes(Iterable<Change> changes, {Map map}) : _map = map ?? SplayTreeMap() {
+    changes.forEach(add);
+  }
 
   get iterator => _map.values.iterator;
 
@@ -260,6 +282,6 @@ class Changes with IterableMixin<ConfigGroup> {
         newMap[key] = newValue;
       }
     }
-    return changed ? Changes(map: newMap) : this;
+    return changed ? Changes([], map: newMap) : this;
   }
 }
