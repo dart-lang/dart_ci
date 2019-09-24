@@ -40,7 +40,7 @@ class CommitComponent {
   Filter filter;
 
   @Input()
-  ChangeGroup commit;
+  ChangeGroup changeGroup;
 
   bool collapsedBlamelist = true;
   int resultLimit = 10;

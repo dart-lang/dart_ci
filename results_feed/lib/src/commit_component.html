@@ -1,29 +1,29 @@
-<div class="commit" *ngIf="commit.show(filter)">
+<div class="commit" *ngIf="changeGroup.show(filter)">
   <div *ngIf="!chooseCommit">
     <blamelist-panel
         class="commit-panel"
-        [commits]="commit.commits"
-        [range]="commit.range"></blamelist-panel>
+        [commits]="changeGroup.commits"
+        [range]="changeGroup.range"></blamelist-panel>
     <results-panel
         class="commit-panel"
-        [changes]="commit.filteredChanges(filter)"
-        [range]="commit.range"></results-panel>
+        [changes]="changeGroup.filteredChanges(filter)"
+        [range]="changeGroup.range"></results-panel>
   </div>
   <div *ngIf="chooseCommit">
     <blamelist-picker
         class="commit-panel"
-        [commits]="commit.commits"
-        [range]="commit.range"
+        [commits]="changeGroup.commits"
+        [range]="changeGroup.range"
         (selected)="selectedCommit=$event"></blamelist-picker>
     <results-selector-panel
         class="commit-panel"
-        [changes]="commit.filteredChanges(filter)"
-        [range]="commit.range"
+        [changes]="changeGroup.filteredChanges(filter)"
+        [range]="changeGroup.range"
         [selected]="selected"></results-selector-panel>
   </div>
   <div style="clear: both; padding: 8px">
     <material-button
-        *ngIf="firestoreService.isLoggedIn && commit.range.length > 1"
+        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1"
         raised
         style="text-align: center; clear: both"
         [disabled]="chooseCommit"
@@ -31,7 +31,7 @@
       Narrow blamelist
     </material-button>
     <material-button
-        *ngIf="firestoreService.isLoggedIn && commit.range.length > 1"
+        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1"
         raised
         style="text-align: center; clear: both"
         [disabled]="!chooseCommit"
