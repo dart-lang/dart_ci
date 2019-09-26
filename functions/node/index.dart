@@ -36,7 +36,7 @@ Future<void> receiveChanges(Message message, EventContext context) async {
   final stats = Statistics();
   var buildInfo = await storeBuildInfo(results, stats);
   await Future.forEach(results.where(isChangedResult),
-  (result) => storeChange(result, buildInfo, stats));
+      (result) => storeChange(result, buildInfo, stats));
   stats.report();
 }
 
@@ -88,12 +88,13 @@ Future<Map<String, int>> storeBuildInfo(
   final int buildNumber = int.parse(change['build_number']);
   stats.buildNumber = buildNumber;
   final Set<String> configurations =
-  results.map((change) => change['configuration'] as String)
-  .toSet();
+      results.map((change) => change['configuration'] as String).toSet();
   for (final configuration in configurations) {
-    final record = await firestore.document('configurations/$configuration').get();
+    final record =
+        await firestore.document('configurations/$configuration').get();
     if (!record.exists || record.data.getString('builder') != builder) {
-      await firestore.document('configurations/$configuration')
+      await firestore
+          .document('configurations/$configuration')
           .setData(DocumentData.fromMap({'builder': builder}));
       if (!record.exists) {
         info('Configuration document $configuration -> $builder created');
@@ -107,17 +108,16 @@ Future<Map<String, int>> storeBuildInfo(
   final documentRef = firestore.document('builds/$builder:$endIndex');
   final record = await documentRef.get();
   if (!record.exists) {
-    await documentRef
-        .setData(DocumentData.fromMap(
+    await documentRef.setData(DocumentData.fromMap(
         {'builder': builder, 'build_number': buildNumber, 'index': endIndex}));
     info('Created build record: '
         'builder: $builder, build_number: $buildNumber, index: $endIndex');
-
   } else if (record.data.getInt('index') != endIndex) {
-      error('Build $buildNumber of $builder had commit index ${record.data.getInt('index')},'
-          'should be $endIndex.');
+    error(
+        'Build $buildNumber of $builder had commit index ${record.data.getInt('index')},'
+        'should be $endIndex.');
   }
- return {"startIndex": startIndex, "endIndex": endIndex};
+  return {"startIndex": startIndex, "endIndex": endIndex};
 }
 
 Future<void> storeChange(Map<String, dynamic> change,
@@ -137,8 +137,8 @@ Future<void> storeChange(Map<String, dynamic> change,
       .get();
 
   // Find an existing change group with a blamelist that intersects this change.
-   final startIndex = buildInfo['startIndex'];
-   final endIndex = buildInfo['endIndex'];
+  final startIndex = buildInfo['startIndex'];
+  final endIndex = buildInfo['endIndex'];
 
   bool blamelistIncludesChange(DocumentSnapshot groupDocument) {
     var group = groupDocument.data;
