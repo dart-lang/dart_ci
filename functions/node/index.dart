@@ -64,6 +64,7 @@ Future<Map<String, int>> storeBuildInfo(
   // Get indices of change.  Range includes startIndex and endIndex.
   final change = results.first;
   final hash = change['commit_hash'] as String;
+  if (hash.startsWith('refs/changes')) return {}; // No buildInfo for try jobs.
   final docRef = await firestore.document('commits/$hash');
   var docSnapshot = await docRef.get();
   if (!docSnapshot.exists) {
