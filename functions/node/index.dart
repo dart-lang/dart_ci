@@ -123,6 +123,9 @@ Future<Map<String, int>> storeBuildInfo(
 Future<void> storeChange(Map<String, dynamic> change,
     Map<String, int> buildInfo, Statistics stats) async {
   stats.changes++;
+  if ((change['commit_hash'] as String).startsWith('refs/changes')) {
+    return storeTryChange(change);
+  }
   String name = change['name'];
   String result = change['result'];
   String previousResult = change['previous_result'] ?? 'new test';
@@ -190,6 +193,40 @@ Future<void> storeChange(Map<String, dynamic> change,
   }
 
   return firestore.runTransaction(updateGroup);
+}
+
+Future<void> storeTryChange(Map<String, dynamic> change) async {
+  String name = change['name'];
+  String result = change['result'];
+  String expected = change['expected'];
+  String patch = change['commit_hash'];
+  String previousResult = change['previous_result'] ?? 'new test';
+  QuerySnapshot snapshot = await firestore
+      .collection('try_results')
+      .where('patch', isEqualTo: patch)
+      .where('name', isEqualTo: name)
+      .where('result', isEqualTo: result)
+      .where('previous_result', isEqualTo: previousResult)
+      .where('expected', isEqualTo: expected)
+      .limit(1)
+      .get();
+
+  if (snapshot.isEmpty) {
+    info("Adding group for $name");
+    return firestore.collection('try_results').add(DocumentData.fromMap({
+          'name': name,
+          'result': result,
+          'previous_result': previousResult,
+          'expected': expected,
+          'patch': patch,
+          'configurations': <String>[change['configuration']]
+        }));
+  } else {
+    final update = UpdateData()
+      ..setFieldValue('configurations',
+          Firestore.fieldValues.arrayUnion([change['configuration']]));
+    snapshot.documents.first.reference.updateData(update);
+  }
 }
 
 bool isChangedResult(Map<String, dynamic> result) =>
