@@ -5,12 +5,11 @@ description: >-
   A Firebase cloud function that processes new changes
 
 environment:
-  sdk: '>=2.4.0 <3.0.0'
+  sdk: '>=2.5.0 <3.0.0'
 
-dependencies:
-  firebase_functions_interop: ^1.0.0
+  firebase_functions_interop: ^1.0.2
 
 dev_dependencies:
-  build_runner: ^1.0.0
-  build_node_compilers: ^0.2.0
+  build_runner: ^1.7.1
+  build_node_compilers: ^0.2.3
 
