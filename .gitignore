@@ -1,14 +1,14 @@
-# Logs
-logs
-*.log
+appengine/.packages
 
-# Firebase cache
-.firebase/
-
-# Dependency directories
-node_modules/
+functions/.dart_tool/
+functions/.idea/
+functions/.packages
+functions/build/
+functions/node_modules
+functions/package-lock.json
 
 results_feed/.dart_tool/
+results_feed/.firebase/
 results_feed/.idea/
 results_feed/.packages
 results_feed/.pub/
