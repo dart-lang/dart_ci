@@ -3,7 +3,7 @@
     <template
         ngFor
         let-configuration
-        [ngForOf]="configurationGroup.configurations.summaries.keys">
+        [ngForOf]="summaries(configurationGroup).keys">
       <material-chip
           tooltipTarget
           #chip="tooltipTarget"
@@ -13,7 +13,7 @@
       </material-chip>
       <material-tooltip-card [for]="chip">
         <div *deferredContent>
-              <span *ngFor="let singleConfiguration of configurationGroup.configurations.summaries[configuration]">
+              <span *ngFor="let singleConfiguration of summaries(configurationGroup)[configuration]">
                 {{singleConfiguration}}<br>
               </span>
         </div>
@@ -24,7 +24,7 @@
       *ngFor="let resultGroup of configurationGroup"
       style="margin-left: 16px">
         <span [class]="resultGroup.first.resultStyle">
-          {{resultGroup.changesText}}
+          {{resultGroup.first.changesText}}
         </span><br>
     <span *ngFor="let change of resultGroup.take(resultLimit)"
           tooltipTarget #logs="tooltipTarget"

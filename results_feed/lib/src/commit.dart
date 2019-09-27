@@ -92,16 +92,6 @@ class ChangeGroup implements Comparable {
   /// Sort in reverse chronological order.
   int compareTo(other) => (other as ChangeGroup).range.compareTo(range);
 
-  void addChanges(Iterable<Change> newChanges) {
-    newChanges.forEach(changes.add);
-    computeFilteredChanges(_filter);
-  }
-
-  void addLatestChanges(Iterable<Change> newChanges) {
-    newChanges.forEach(latestChanges.add);
-    computeFilteredChanges(_filter);
-  }
-
   bool show(Filter filter) =>
       filter.showAllCommits || filteredChanges(filter).isNotEmpty;
 
@@ -133,6 +123,7 @@ class Configurations {
         summaries = _summarize(configurations);
 
   factory Configurations(List configs) {
+    if (configs.isEmpty) return null;
     configs.sort();
     return _instances.putIfAbsent(
         configs.join(' '), () => Configurations._(configs.toList()));
@@ -216,72 +207,73 @@ class Change {
   String get resultStyle => result == expected ? 'success' : 'failure';
 }
 
-class ResultGroup with IterableMixin<Change> {
-  final String changesText;
-  final Map<String, Change> _map = SplayTreeMap();
+class Changes with IterableMixin<List<List<Change>>> {
+  final List<List<List<Change>>> changes;
 
-  ResultGroup(this.changesText);
+  Changes(Iterable<Change> newChanges) : this.grouped(group(newChanges));
 
-  get iterator => _map.values.iterator;
+  Changes.grouped(List<List<List<Change>>> this.changes);
 
-  void operator []=(Object resultText, Object change) {
-    _map[resultText] = change;
-  }
+  get iterator => changes.iterator;
 
-  bool show(Filter filter) =>
-      !filter.showLatestFailures || first.resultStyle == 'failure';
-}
-
-class ConfigGroup with IterableMixin<ResultGroup> {
-  final Configurations configurations;
-  final Map<String, ResultGroup> _map;
-
-  ConfigGroup(this.configurations, {Map<String, ResultGroup> map})
-      : _map = map ?? SplayTreeMap();
-
-  ResultGroup operator [](String resultText) =>
-      _map.putIfAbsent(resultText, () => ResultGroup(resultText));
-
-  get iterator => _map.values.iterator;
-
-  ConfigGroup filtered(Filter filter) {
-    if (!configurations.show(filter)) {
-      return ConfigGroup(configurations, map: {});
+  /// The changes, grouped first by Configurations object, then by
+  /// changesText (the change in the results). Should not be modified
+  /// after it is created by this call.
+  static List<List<List<Change>>> group(Iterable<Change> newChanges) {
+    final map = SplayTreeMap<String, SplayTreeMap<String, List<Change>>>();
+    for (final change in newChanges) {
+      map
+          .putIfAbsent(change.configurations.text,
+              () => SplayTreeMap<String, List<Change>>())
+          .putIfAbsent(change.changesText, () => List<Change>())
+          .add(change);
     }
-    final newMap =
-        Map.fromEntries(_map.entries.where((e) => e.value.show(filter)));
-    return newMap.length == _map.length
-        ? this
-        : ConfigGroup(configurations, map: newMap);
-  }
-}
-
-class Changes with IterableMixin<ConfigGroup> {
-  final Map<String, ConfigGroup> _map;
-
-  Changes(Iterable<Change> changes, {Map map}) : _map = map ?? SplayTreeMap() {
-    changes.forEach(add);
+    return [
+      for (final configuration in map.keys)
+        [
+          for (final change in map[configuration].keys)
+            map[configuration][change]
+        ]
+    ];
   }
 
-  get iterator => _map.values.iterator;
-
-  ConfigGroup operator [](Configurations configuration) =>
-      _map.putIfAbsent(configuration.text, () => ConfigGroup(configuration));
-
-  void add(Change change) {
-    this[change.configurations][change.changesText][change.name] = change;
-  }
+  static bool empty(x, f) => x.isEmpty;
 
   Changes filtered(Filter filter) {
-    final newMap = <String, ConfigGroup>{};
+    final newChanges =
+        applyFilter<List<List<Change>>>(configurationFilter, changes, filter);
+    return newChanges == changes ? this : Changes.grouped(newChanges);
+  }
+
+  /// Process a list by applying elementFilter to its elements, then throw
+  /// out empty or otherwise filtered elements with the emptyTest filter.
+  /// If no elements are modified or dropped, returns the input list object.
+  static applyFilter<T>(
+      T elementFilter(T t, Filter f), List<T> list, Filter filter,
+      [bool emptyTest(dynamic, Filter) = empty]) {
+    final newList = <T>[];
     bool changed = false;
-    for (final key in _map.keys) {
-      final newValue = _map[key].filtered(filter);
-      changed = changed || newValue != _map[key];
-      if (!newValue.isEmpty) {
-        newMap[key] = newValue;
-      }
+    for (final element in list) {
+      final T newElement = elementFilter(element, filter);
+      changed = changed || newElement != element;
+      if (!emptyTest(newElement, filter)) newList.add(newElement);
     }
-    return changed ? Changes([], map: newMap) : this;
+    return changed ? newList : list;
+  }
+
+  List<List<Change>> configurationFilter(
+      List<List<Change>> list, Filter filter) {
+    if (list.first.first.configurations.show(filter)) {
+      return applyFilter<List<Change>>(resultFilter, list, filter);
+    }
+    return [];
+  }
+
+  List<Change> resultFilter(List<Change> list, Filter filter) {
+    if (filter.showLatestFailures && list.first.resultStyle != 'failure') {
+      return [];
+    }
+    return applyFilter<Change>((c, f) => c, list, filter,
+        (change, filter) => filter.showUnapprovedOnly && !change.approved);
   }
 }

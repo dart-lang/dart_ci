@@ -45,6 +45,9 @@ class ResultsPanel {
   @Input()
   IntRange range;
 
+  Map<String, List<String>> summaries(List<List<Change>> group) =>
+      group.first.first.configurations.summaries;
+
   int resultLimit = 10;
 
   final preferredTooltipPositions = [

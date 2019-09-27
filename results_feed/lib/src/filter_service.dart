@@ -8,24 +8,30 @@ class Filter {
   final List<String> configurationGroups;
   final bool showAllCommits;
   final bool showLatestFailures;
+  final bool showUnapprovedOnly;
 
-  const Filter._(
-      this.configurationGroups, this.showAllCommits, this.showLatestFailures);
-  Filter(this.configurationGroups, showAllCommits, this.showLatestFailures)
+  const Filter._(this.configurationGroups, this.showAllCommits,
+      this.showLatestFailures, this.showUnapprovedOnly);
+  Filter(this.configurationGroups, showAllCommits, this.showLatestFailures,
+      this.showUnapprovedOnly)
       : showAllCommits = configurationGroups.isEmpty || showAllCommits;
 
   static const defaultFilter = Filter._(
-      allConfigurationGroups, defaultShowAllCommits, defaultShowLatestFailures);
-  static const noneFilter = Filter._(allConfigurationGroups, true, false);
+      allConfigurationGroups,
+      defaultShowAllCommits,
+      defaultShowLatestFailures,
+      defaultShowUnapprovedOnly);
 
   Filter copy(
           {List<String> configurationGroups,
           bool showAllCommits,
-          bool showLatestFailures}) =>
+          bool showLatestFailures,
+          bool showUnapprovedOnly}) =>
       Filter(
           configurationGroups ?? this.configurationGroups,
           showAllCommits ?? this.showAllCommits,
-          showLatestFailures ?? this.showLatestFailures);
+          showLatestFailures ?? this.showLatestFailures,
+          showUnapprovedOnly ?? this.showUnapprovedOnly);
 
   bool get allGroups =>
       configurationGroups.length == allConfigurationGroups.length;
@@ -67,6 +73,7 @@ class Filter {
 
   static const defaultShowAllCommits = true;
   static const defaultShowLatestFailures = false;
+  static const defaultShowUnapprovedOnly = false;
   static const allConfigurationGroups = <String>[
     'analyzer',
     'app_jitk',

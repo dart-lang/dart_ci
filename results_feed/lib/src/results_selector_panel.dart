@@ -48,14 +48,23 @@ class ResultsSelectorPanel {
   @Input()
   set changes(Changes changes) {
     _changes = changes;
-    selectableChanges = [
-      for (ConfigGroup c in changes) SelectableConfigurationGroup(c, this)
-    ];
+    for (final configurationGroup in changes) {
+      configurationCheckboxes[configurationGroup] = FixedMixedCheckbox();
+      for (final resultGroup in configurationGroup) {
+        resultCheckboxes[resultGroup] = FixedMixedCheckbox();
+        for (final change in resultGroup) {
+          checked[change] = true;
+        }
+      }
+    }
     initializeSelected();
   }
 
   @Input()
   ChangeGroup commit;
+
+  @Input()
+  IntRange range;
 
   @Input()
   set selected(Set<Change> selected) {
@@ -65,7 +74,10 @@ class ResultsSelectorPanel {
 
   Changes _changes;
   Set<Change> _selected;
-  List<SelectableConfigurationGroup> selectableChanges;
+
+  final checked = Map<Change, bool>();
+  final resultCheckboxes = Map<List<Change>, FixedMixedCheckbox>();
+  final configurationCheckboxes = Map<List<List<Change>>, FixedMixedCheckbox>();
   int resultLimit = 10;
 
   Changes get changes => _changes;
@@ -75,89 +87,58 @@ class ResultsSelectorPanel {
     RelativePosition.OffsetTopLeft
   ];
 
+  Map<String, List<String>> summaries(List<List<Change>> group) =>
+      group.first.first.configurations.summaries;
+
   void initializeSelected() {
     if (_selected != null && _changes != null) {
-      _selected.addAll([
-        for (final c in selectableChanges)
-          for (SelectableResultGroup r in c.resultGroups)
-            for (SelectableChange h in r.changes) h.change
-      ]);
+      _selected.addAll(checked.keys);
     }
   }
-}
 
-class SelectableChange {
-  final Change change;
-  bool selected = true;
-  final SelectableResultGroup resultGroup;
-  final SelectableConfigurationGroup configurationGroup;
-  final ResultsSelectorPanel panel;
-
-  SelectableChange(
-      this.change, this.resultGroup, this.configurationGroup, this.panel);
-
-  void onChange(bool event) {
-    if (selected == event) return;
-    selected = event;
+  bool setCheckbox(Change change, bool event) {
+    if (checked[change] == event) return false;
+    checked[change] = event;
     if (event) {
-      panel._selected.add(this.change);
+      _selected.add(change);
     } else {
-      panel._selected.remove(this.change);
+      _selected.remove(change);
     }
-    resultGroup.checkbox.setMixed();
-    configurationGroup.checkbox.setMixed();
-  }
-}
-
-class SelectableResultGroup {
-  List<SelectableChange> changes;
-  SelectableConfigurationGroup configurationGroup;
-  FixedMixedCheckbox checkbox = FixedMixedCheckbox();
-
-  SelectableResultGroup(
-      ResultGroup group, this.configurationGroup, ResultsSelectorPanel panel) {
-    changes = [
-      for (final change in group)
-        SelectableChange(change, this, configurationGroup, panel)
-    ];
+    return true;
   }
 
-  void onChange(String event) {
+  void onChange(bool event, Change change, List<Change> resultGroup,
+      List<List<Change>> configurationGroup) {
+    if (setCheckbox(change, event)) {
+      configurationCheckboxes[configurationGroup].setMixed();
+      resultCheckboxes[resultGroup].setMixed();
+    }
+  }
+
+  void onResultChange(String event, List<Change> resultGroup,
+      List<List<Change>> configurationGroup) {
+    final checkbox = resultCheckboxes[resultGroup];
     if (checkbox.eventMatchesState(event)) return;
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final change in changes) {
-      change.selected = newChecked;
+    for (final change in resultGroup) {
+      setCheckbox(change, newChecked);
     }
-    configurationGroup.checkbox.setMixed();
-  }
-}
-
-class SelectableConfigurationGroup {
-  List<SelectableResultGroup> resultGroups;
-  FixedMixedCheckbox checkbox = FixedMixedCheckbox();
-
-  SelectableConfigurationGroup(
-      ConfigGroup configGroup, ResultsSelectorPanel panel) {
-    resultGroups = [
-      for (final resultGroup in configGroup)
-        SelectableResultGroup(resultGroup, this, panel)
-    ];
+    configurationCheckboxes[configurationGroup].setMixed();
   }
 
-  get summaries =>
-      resultGroups.first.changes.first.change.configurations.summaries;
-
-  void onChange(String event) {
+  void onConfigurationChange(
+      String event, List<List<Change>> configurationGroup) {
+    final checkbox = configurationCheckboxes[configurationGroup];
     if (checkbox.eventMatchesState(event)) return;
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final group in resultGroups) {
-      group.checkbox.setState(newChecked, false);
-      for (final change in group.changes) {
-        change.selected = newChecked;
+    for (final subgroup in configurationGroup) {
+      resultCheckboxes[subgroup].setState(newChecked, false);
+      for (final change in subgroup) {
+        setCheckbox(change, newChecked);
       }
     }
   }
@@ -166,6 +147,7 @@ class SelectableConfigurationGroup {
 class FixedMixedCheckbox {
   bool checked = true;
   bool indeterminate = false;
+
   // Model change indeterminate <-> checked generates a bad 'unchecked' event.
   // Workaround for issue https://github.com/dart-lang/angular_components/issues/434
   bool expectBadEvent = false;
