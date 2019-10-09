@@ -9,6 +9,7 @@ dependencies:
   angular: ^6.0.0-alpha
   angular_components: '>=0.13.0'
   angular_forms: ^2.0.0-alpha
+  angular_router: ^2.0.0-alpha+22
   firebase: ^5.0.0
   googleapis: '>=0.53.0'
   googleapis_auth: ^0.2.7

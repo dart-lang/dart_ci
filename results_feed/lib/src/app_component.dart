@@ -14,6 +14,7 @@ import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_components/material_dialog/material_dialog.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
+import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/filter_component.dart';
 
 import 'commit_component.dart';
@@ -38,7 +39,6 @@ import 'build_service.dart';
       ModalComponent
     ],
     providers: [
-      ClassProvider(FirestoreService),
       ClassProvider(FilterService),
       ClassProvider(BuildService),
       overlayBindings
@@ -48,7 +48,7 @@ import 'build_service.dart';
       'package:angular_components/app_layout/layout.scss.css',
       'app_component.css'
     ])
-class AppComponent implements OnInit {
+class AppComponent implements OnInit, CanReuse {
   String title = 'Results Feed (Angular Dart)';
 
   Map<IntRange, ChangeGroup> changeGroups = SplayTreeMap(reverse);
@@ -82,6 +82,12 @@ class AppComponent implements OnInit {
     await fetchData();
     IntersectionObserver(infiniteScrollCallback).observe(infiniteScroll);
   }
+
+  /// We do not want to create a new AppComponent object each time the
+  /// route changes, which includes changes to the fragment.
+  /// It is always acceptable to use the same AppComponent.
+  @override
+  Future<bool> canReuse(_, __) async => true;
 
   void infiniteScrollCallback(
       List entries, IntersectionObserver observer) async {

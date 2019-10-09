@@ -45,11 +45,7 @@ class Filter {
       ].join('&');
 
   void updateUrl() {
-    final newFragment = fragment();
-    Uri old = Uri.parse(window.location.href);
-    if (old.fragment != newFragment) {
-      window.location.replace(old.replace(fragment: newFragment).toString());
-    }
+    window.location.hash = fragment();
   }
 
   factory Filter.fromUrl() {
