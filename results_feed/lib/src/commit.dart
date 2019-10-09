@@ -9,8 +9,6 @@ import 'dart:core';
 import 'filter_service.dart';
 import 'package:firebase/firestore.dart' as firestore;
 
-int reverse(key1, key2) => key2.compareTo(key1);
-
 class IntRangeIterator implements Iterator<int> {
   int current;
   int end;
@@ -86,7 +84,7 @@ class ChangeGroup implements Comparable {
       : changes = Changes(changeList),
         latestChanges = Changes(liveChangeList) {
     commits = [for (int i in range) if (allCommits[i] != null) allCommits[i]]
-      ..sort(reverse);
+      ..sort();
   }
 
   /// Sort in reverse chronological order.
