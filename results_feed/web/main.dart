@@ -6,9 +6,9 @@ import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/routing_wrapper_component.template.dart'
     as ng;
-
 import 'main.template.dart' as self;
 
+// Local testing use @GenerateInjector(routerProvidersHash)
 @GenerateInjector(routerProviders)
 final InjectorFactory injector = self.injector$Injector;
 

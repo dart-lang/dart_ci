@@ -1,0 +1,13 @@
+<div *ngIf="changeInfo != null">
+  <h2>
+    <a href="http://dart-review.googlesource.com/c/sdk/+/{{change}}/{{patch}}"
+       target="_blank">{{changeInfo.title}}</a>
+  </h2>
+
+<h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
+<results-panel
+    [changes]="changeGroup.changes"
+    [range]="range">
+
+</results-panel>
+</div>

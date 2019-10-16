@@ -5,28 +5,65 @@
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 
-import 'firestore_service.dart';
-import 'route_paths.dart';
+import 'commit.dart';
+import 'results_panel.dart';
+import 'try_data_service.dart';
 
 @Component(
     selector: 'try-results',
-    directives: [coreDirectives, routerDirectives],
-    template: '''
-    <h1>Placeholder for try results page</h1>
-    change(CL) number: {{change}}<br>
-    patchset number: {{patch}}<br>
-    Link to results feed page:
-    <a [routerLink]="feedLink">Results feed</a>
-   ''')
+    directives: [coreDirectives, routerDirectives, ResultsPanel],
+    providers: [
+      ClassProvider(TryDataService),
+    ],
+    templateUrl: 'try_results_component.html',
+    styles: ['div {padding: 8px;}'])
 class TryResultsComponent implements OnActivate {
-  FirestoreService firestoreService;
+  TryDataService _tryDataService;
+  ApplicationRef _applicationRef;
 
-  TryResultsComponent(this.firestoreService);
-
-  get feedLink => feedPath.toUrl();
-
-  int patch;
   int change;
+  int patch;
+  ChangeInfo changeInfo;
+  ChangeGroup changeGroup = ChangeGroup(null, {}, [], []);
+  int cachedPatch;
+  int cachedChange;
+  List<Change> changes;
+  IntRange range = IntRange(1, 0);
+  bool updating = false;
+  bool updatePending = false;
+
+  TryResultsComponent(this._tryDataService, this._applicationRef);
+
+  void tryUpdate() async {
+    if (updating) {
+      updatePending = true;
+    } else {
+      updating = true;
+      try {
+        await update();
+      } finally {
+        updating = false;
+        if (updatePending) {
+          updatePending = false;
+          tryUpdate(); // Not awaited, tail call.
+        }
+        print(changeGroup.changes);
+        // TODO: better change management.
+        _applicationRef.tick();
+      }
+    }
+  }
+
+  Future<void> update() async {
+    if (change != changeInfo?.change)
+      changeInfo = await _tryDataService.changeInfo(change);
+    if (change != cachedChange || patch != cachedPatch) {
+      changes = await _tryDataService.changes(change, patch);
+      cachedChange = change;
+      cachedPatch = patch;
+      changeGroup = ChangeGroup(null, {}, changes, []);
+    }
+  }
 
   @override
   void onActivate(_, RouterState current) {
@@ -34,5 +71,6 @@ class TryResultsComponent implements OnActivate {
     change = changeParam == null ? null : int.parse(changeParam);
     final patchParam = current.parameters['patch'];
     patch = patchParam == null ? null : int.parse(patchParam);
+    tryUpdate();
   }
 }

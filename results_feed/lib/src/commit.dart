@@ -83,8 +83,10 @@ class ChangeGroup implements Comparable {
       Iterable<Change> changeList, Iterable<Change> liveChangeList)
       : changes = Changes(changeList),
         latestChanges = Changes(liveChangeList) {
-    commits = [for (int i in range) if (allCommits[i] != null) allCommits[i]]
-      ..sort();
+    commits = [
+      if (range != null)
+        for (int i in range) if (allCommits[i] != null) allCommits[i]
+    ]..sort();
   }
 
   /// Sort in reverse chronological order.

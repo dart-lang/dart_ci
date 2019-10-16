@@ -53,6 +53,19 @@ class FirestoreService {
     return snapshot.docs;
   }
 
+  Future<firestore.DocumentSnapshot> fetchChangeInfo(int change) async {
+    await getFirebaseClient();
+    return app.firestore().doc('gerrit_changes/$change').get();
+  }
+
+  Future<List<firestore.DocumentSnapshot>> fetchTryChanges(
+      int cl, int patch) async {
+    final results = app.firestore().collection('try_results');
+    final firestore.QuerySnapshot snapshot =
+        await results.where('patch', '==', 'refs/changes/$cl/$patch').get();
+    return snapshot.docs;
+  }
+
   Future<firestore.DocumentSnapshot> fetchBuild(
       String builder, int index) async {
     final builds = app.firestore().collection('builds');
@@ -79,7 +92,7 @@ class FirestoreService {
     return batch.commit();
   }
 
-  void getFirebaseClient() async {
+  Future<void> getFirebaseClient() async {
     if (app != null) return;
     // Firebase api key is public, and must be sent to client for use.
     // It is invalid over any connection except https to the app URL.
