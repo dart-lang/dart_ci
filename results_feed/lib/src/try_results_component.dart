@@ -47,7 +47,6 @@ class TryResultsComponent implements OnActivate {
           updatePending = false;
           tryUpdate(); // Not awaited, tail call.
         }
-        print(changeGroup.changes);
         // TODO: better change management.
         _applicationRef.tick();
       }
@@ -58,7 +57,7 @@ class TryResultsComponent implements OnActivate {
     if (change != changeInfo?.change)
       changeInfo = await _tryDataService.changeInfo(change);
     if (change != cachedChange || patch != cachedPatch) {
-      changes = await _tryDataService.changes(change, patch);
+      changes = await _tryDataService.changes(changeInfo, patch);
       cachedChange = change;
       cachedPatch = patch;
       changeGroup = ChangeGroup(null, {}, changes, []);

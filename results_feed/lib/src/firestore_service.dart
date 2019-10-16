@@ -55,7 +55,19 @@ class FirestoreService {
 
   Future<firestore.DocumentSnapshot> fetchChangeInfo(int change) async {
     await getFirebaseClient();
+
     return app.firestore().doc('gerrit_changes/$change').get();
+
+  }
+
+  Future<List<firestore.DocumentSnapshot>> fetchChangePatchsetInfo(
+      int change) async {
+    await getFirebaseClient();
+    final collection =
+        await app.firestore().collection('gerrit_change_patchsets');
+    final firestore.QuerySnapshot snapshot =
+        await collection.where('change', '==', change).orderBy('number').get();
+    return snapshot.docs;
   }
 
   Future<List<firestore.DocumentSnapshot>> fetchTryChanges(
