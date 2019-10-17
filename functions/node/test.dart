@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'index.dart';
+import 'gerrit_change.dart';
 
 String resultJson = '''
 {
@@ -60,10 +61,11 @@ void main() async {
   print("starting test");
   Map<String, dynamic> result = jsonDecode(resultJson);
   final stats = Statistics();
-  final info = await storeBuildInfo([result], stats);
+  final info = await storeBuildCommitsInfo(result, stats);
   print("info: $info");
   stats.report();
   await storeChange(result, info, stats);
   stats.report();
   await storeTryChange(jsonDecode(tryResultJson) as Map<String, dynamic>);
+  await GerritInfo('refs/changes/119860/5', firestore).update();
 }

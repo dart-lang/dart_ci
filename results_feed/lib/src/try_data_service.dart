@@ -8,7 +8,7 @@ class TryDataService {
   final FirestoreService _firestoreService;
   TryDataService(this._firestoreService);
 
-  Future<List<Change>> changes(ChangeInfo changeInfo, int patch) async {
+  Future<List<Change>> changes(ReviewInfo changeInfo, int patch) async {
     final patchsets = changeInfo.patchsets;
     // Patchset numbers start at 1, not 0.
     int patchsetGroup = patchsets[patch - 1].patchsetGroup;
@@ -18,36 +18,28 @@ class TryDataService {
     for (var patchset in patchsets) {
       if (patchset.patchsetGroup == patchsetGroup) {
         docs.addAll(await _firestoreService.fetchTryChanges(
-            changeInfo.change, patchset.number));
+            changeInfo.review, patchset.number));
       }
     }
     return [for (final data in docs) Change.fromDocument(data)];
   }
 
-  Future<ChangeInfo> changeInfo(int change) async {
-    return ChangeInfo.fromDocument(
-        await _firestoreService.fetchChangeInfo(change))
-      ..setPatchsets(await _firestoreService.fetchChangePatchsetInfo(change));
+  Future<ReviewInfo> reviewInfo(int review) async {
+    return ReviewInfo.fromDocument(
+        await _firestoreService.fetchReviewInfo(review))
+      ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review));
   }
 }
 
-class ChangeInfo {
-  int change;
-  String authorName;
-  String authorEmail;
-  DateTime created;
-  String message;
+class ReviewInfo {
+  int review;
   String title;
   List<Patchset> patchsets;
 
-  ChangeInfo.fromDocument(DocumentSnapshot doc) {
+  ReviewInfo.fromDocument(DocumentSnapshot doc) {
     final data = doc.data();
-    change = data['change'];
-    authorName = data['owner_name'];
-    authorEmail = data['owner_email'];
-    created = data['created'];
+    review = int.parse(doc.id);
     title = data['subject'];
-    message = title;
   }
 
   void setPatchsets(List<DocumentSnapshot> docs) {
@@ -64,8 +56,7 @@ class Patchset implements Comparable<Patchset> {
   Patchset.fromDocument(DocumentSnapshot doc) {
     final data = doc.data();
     number = data['number'];
-    patchsetGroup =
-        data['patchsetGroup']; // Todo: change database field to patchset_group.
+    patchsetGroup = data['patchset_group'];
     description = data['description'];
     kind = data['kind'];
   }

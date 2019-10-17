@@ -53,28 +53,25 @@ class FirestoreService {
     return snapshot.docs;
   }
 
-  Future<firestore.DocumentSnapshot> fetchChangeInfo(int change) async {
+  Future<firestore.DocumentSnapshot> fetchReviewInfo(int review) async {
     await getFirebaseClient();
 
-    return app.firestore().doc('gerrit_changes/$change').get();
-
+    return app.firestore().doc('reviews/$review').get();
   }
 
-  Future<List<firestore.DocumentSnapshot>> fetchChangePatchsetInfo(
-      int change) async {
+  Future<List<firestore.DocumentSnapshot>> fetchPatchsetInfo(int review) async {
     await getFirebaseClient();
     final collection =
-        await app.firestore().collection('gerrit_change_patchsets');
-    final firestore.QuerySnapshot snapshot =
-        await collection.where('change', '==', change).orderBy('number').get();
-    return snapshot.docs;
+        await app.firestore().collection('reviews/$review/patchsets');
+    return (await collection.orderBy('number').get()).docs;
   }
 
   Future<List<firestore.DocumentSnapshot>> fetchTryChanges(
       int cl, int patch) async {
     final results = app.firestore().collection('try_results');
-    final firestore.QuerySnapshot snapshot =
-        await results.where('patch', '==', 'refs/changes/$cl/$patch').get();
+    final firestore.QuerySnapshot snapshot = await results
+        .where('review_path', '==', 'refs/changes/$cl/$patch')
+        .get();
     return snapshot.docs;
   }
 

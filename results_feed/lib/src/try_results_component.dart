@@ -23,7 +23,7 @@ class TryResultsComponent implements OnActivate {
 
   int change;
   int patch;
-  ChangeInfo changeInfo;
+  ReviewInfo changeInfo;
   ChangeGroup changeGroup = ChangeGroup(null, {}, [], []);
   int cachedPatch;
   int cachedChange;
@@ -54,8 +54,8 @@ class TryResultsComponent implements OnActivate {
   }
 
   Future<void> update() async {
-    if (change != changeInfo?.change)
-      changeInfo = await _tryDataService.changeInfo(change);
+    if (change != changeInfo?.review)
+      changeInfo = await _tryDataService.reviewInfo(change);
     if (change != cachedChange || patch != cachedPatch) {
       changes = await _tryDataService.changes(changeInfo, patch);
       cachedChange = change;

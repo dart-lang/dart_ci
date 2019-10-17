@@ -8,6 +8,10 @@ import 'dart:math' show max, min;
 import 'package:firebase_functions_interop/firebase_functions_interop.dart';
 import 'package:node_http/node_http.dart' as http;
 
+import 'gerrit_change.dart';
+
+const prefix = ")]}'\n";
+
 void info(Object message) {
   print("Info: $message");
 }
@@ -31,12 +35,30 @@ Firestore createFirestore() {
     ..settings(FirestoreSettings(timestampsInSnapshots: true));
 }
 
+bool isChangedResult(Map<String, dynamic> result) =>
+    result['changed'] && !result['flaky'] && !result['previous_flaky'];
+
 Future<void> receiveChanges(Message message, EventContext context) async {
-  final results = (message.json as List).cast<Map<String, dynamic>>();
   final stats = Statistics();
-  var buildInfo = await storeBuildInfo(results, stats);
-  await Future.forEach(results.where(isChangedResult),
-      (result) => storeChange(result, buildInfo, stats));
+  final results = (message.json as List).cast<Map<String, dynamic>>();
+  final first = results.first;
+  final String commit = first['commit_hash'];
+  final String builder = first['builder'];
+  final int buildNumber = int.parse(first['build_number']);
+
+  if (commit.startsWith('refs/changes')) {
+    await GerritInfo(commit, firestore).update();
+    await Future.forEach(
+        results.where(isChangedResult), (result) => storeTryChange(result));
+  } else {
+    var blamelist = await storeBuildCommitsInfo(first, stats);
+    final configurations =
+        results.map((change) => change['configuration'] as String).toSet();
+    await storeConfigurationsInfo(builder, configurations);
+    await storeBuildInfo(builder, buildNumber, blamelist['endIndex']);
+    await Future.forEach(results.where(isChangedResult),
+        (result) => storeChange(result, blamelist, stats));
+  }
   stats.report();
 }
 
@@ -58,13 +80,13 @@ class Statistics {
   }
 }
 
-Future<Map<String, int>> storeBuildInfo(
-    List<Map<String, dynamic>> results, Statistics stats) async {
-  stats.results = results.length;
+/// Stores the commit info for the blamelist of result.
+/// If the info is already there does nothing.
+/// Returns the commit indices of the start and end of the blamelist.
+Future<Map<String, int>> storeBuildCommitsInfo(
+    Map<String, dynamic> result, Statistics stats) async {
   // Get indices of change.  Range includes startIndex and endIndex.
-  final change = results.first;
-  final hash = change['commit_hash'] as String;
-  if (hash.startsWith('refs/changes')) return {}; // No buildInfo for try jobs.
+  final hash = result['commit_hash'] as String;
   final docRef = await firestore.document('commits/$hash');
   var docSnapshot = await docRef.get();
   if (!docSnapshot.exists) {
@@ -77,19 +99,17 @@ Future<Map<String, int>> storeBuildInfo(
   final endIndex = docSnapshot.data.getInt('index');
   // If this is a new builder, use the current commit as a trivial blamelist.
   var startIndex = endIndex;
-  if (change['previous_commit_hash'] != null) {
+  if (result['previous_commit_hash'] != null) {
     final commit = await firestore
-        .document('commits/${change['previous_commit_hash']}')
+        .document('commits/${result['previous_commit_hash']}')
         .get();
     startIndex = commit.data.getInt('index') + 1;
   }
+  return {"startIndex": startIndex, "endIndex": endIndex};
+}
 
-  final String builder = change['builder_name'];
-  stats.builder = builder;
-  final int buildNumber = int.parse(change['build_number']);
-  stats.buildNumber = buildNumber;
-  final Set<String> configurations =
-      results.map((change) => change['configuration'] as String).toSet();
+Future<void> storeConfigurationsInfo(
+    String builder, Iterable<String> configurations) async {
   for (final configuration in configurations) {
     final record =
         await firestore.document('configurations/$configuration').get();
@@ -105,28 +125,30 @@ Future<Map<String, int>> storeBuildInfo(
       }
     }
   }
+}
 
-  final documentRef = firestore.document('builds/$builder:$endIndex');
+Future<void> storeBuildInfo(
+    String builder, int buildNumber, int commitIndex) async {
+  final documentRef = firestore.document('builds/$builder:$commitIndex');
   final record = await documentRef.get();
   if (!record.exists) {
-    await documentRef.setData(DocumentData.fromMap(
-        {'builder': builder, 'build_number': buildNumber, 'index': endIndex}));
+    await documentRef.setData(DocumentData.fromMap({
+      'builder': builder,
+      'build_number': buildNumber,
+      'index': commitIndex
+    }));
     info('Created build record: '
-        'builder: $builder, build_number: $buildNumber, index: $endIndex');
-  } else if (record.data.getInt('index') != endIndex) {
+        'builder: $builder, build_number: $buildNumber, index: $commitIndex');
+  } else if (record.data.getInt('index') != commitIndex) {
     error(
         'Build $buildNumber of $builder had commit index ${record.data.getInt('index')},'
-        'should be $endIndex.');
+        'should be $commitIndex.');
   }
-  return {"startIndex": startIndex, "endIndex": endIndex};
 }
 
 Future<void> storeChange(Map<String, dynamic> change,
     Map<String, int> buildInfo, Statistics stats) async {
   stats.changes++;
-  if ((change['commit_hash'] as String).startsWith('refs/changes')) {
-    return storeTryChange(change);
-  }
   String name = change['name'];
   String result = change['result'];
   String previousResult = change['previous_result'] ?? 'new test';
@@ -200,11 +222,11 @@ Future<void> storeTryChange(Map<String, dynamic> change) async {
   String name = change['name'];
   String result = change['result'];
   String expected = change['expected'];
-  String patch = change['commit_hash'];
+  String reviewPath = change['commit_hash'];
   String previousResult = change['previous_result'] ?? 'new test';
   QuerySnapshot snapshot = await firestore
       .collection('try_results')
-      .where('patch', isEqualTo: patch)
+      .where('review_path', isEqualTo: reviewPath)
       .where('name', isEqualTo: name)
       .where('result', isEqualTo: result)
       .where('previous_result', isEqualTo: previousResult)
@@ -214,12 +236,19 @@ Future<void> storeTryChange(Map<String, dynamic> change) async {
 
   if (snapshot.isEmpty) {
     info("Adding group for $name");
+
+    final reviewInfo = GerritInfo(reviewPath, firestore);
+    int review = int.parse(reviewInfo.review);
+    int patchset = int.parse(reviewInfo.patchset);
+
     return firestore.collection('try_results').add(DocumentData.fromMap({
           'name': name,
           'result': result,
           'previous_result': previousResult,
           'expected': expected,
-          'patch': patch,
+          'review_path': reviewPath,
+          'review': review,
+          'patchset': patchset,
           'configurations': <String>[change['configuration']]
         }));
   } else {
@@ -229,9 +258,6 @@ Future<void> storeTryChange(Map<String, dynamic> change) async {
     snapshot.documents.first.reference.updateData(update);
   }
 }
-
-bool isChangedResult(Map<String, dynamic> result) =>
-    result['changed'] && !result['flaky'] && !result['previous_flaky'];
 
 Future<void> getMissingCommits(String hash, Statistics stats) async {
   final client = http.NodeClient();
@@ -248,15 +274,11 @@ Future<void> getMissingCommits(String hash, Statistics stats) async {
   final parameters = ['format=JSON', 'topo-order', 'n=1000'];
   final url = '$logUrl$range?${parameters.join('&')}';
   final response = await client.get(url);
-  final log = response.body;
-  // Expect XSSI protection.
-  if (!log.startsWith(")]}'")) {
-    error('Got response from gerrit API without XSSI protection: ' + log);
-    throw ('Got response from gerrit API without XSSI protection: ' + log);
-  }
-  // Remove first line when XSSI protection is there.
-  final commits =
-      jsonDecode(log.substring(log.indexOf('\n') + 1))['log'] as List<dynamic>;
+  final protectedJson = response.body;
+  if (!protectedJson.startsWith(prefix))
+    throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
+  final commits = jsonDecode(protectedJson.substring(prefix.length))['log']
+      as List<dynamic>;
   if (commits.isEmpty) {
     info('Found no new commits between $lastHash and master');
     return;
