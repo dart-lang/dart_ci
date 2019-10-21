@@ -43,7 +43,7 @@ Future<void> receiveChanges(Message message, EventContext context) async {
   final results = (message.json as List).cast<Map<String, dynamic>>();
   final first = results.first;
   final String commit = first['commit_hash'];
-  final String builder = first['builder'];
+  final String builder = first['builder_name'];
   final int buildNumber = int.parse(first['build_number']);
 
   if (commit.startsWith('refs/changes')) {
