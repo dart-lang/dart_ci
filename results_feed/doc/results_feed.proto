@@ -1,0 +1,124 @@
+syntax = "proto3";
+package results_feed;
+
+import "google/protobuf/timestamp.proto";
+
+// Documentation of the data stored in the dart_ci Firestore database.
+// This data is used by result_feed to display and approve new test failures.
+// This proto definition file is not actually used in any of the code.
+// No generated protobuf code for Dart is created from this.
+// This file is currently just documentation.
+
+// Describes a changed result on a test, on one or more configurations,
+// that occurs on builds that test the commits in a given blamelist.
+// When a test result is reported on a configuration that agrees in
+// name, result, and previous result with this record, and the blamelist
+// of this test run overlaps the blamelist of this record, then the
+// configuration is added to the list of configurations and the blamelist
+// is intersected with the blamelist of this run.
+message Result {
+  // Unique document ID created by Firestore for this document.
+  // Not a field in the document.
+  string id = 1;
+  string name = 2; // The full path of the test, as output by test.py.
+  string result = 3; // The new result of the test.
+
+  // The result of the test on builds immediately before these builds.
+  string previous_result = 4;
+
+  // The expected result of this test, given in the test source.
+  // Some tests are written to produce an error of a specific type.
+  // This is not the approval status of the test.
+  string expected = 5;
+
+  // The configurations that produced this changed result when tested.
+  repeated string configurations = 6;
+
+  // Commits to sdk/master are indexed consecutively in the table 'commits'.
+  int32 blamelist_start_index = 7;
+  int32 blamelist_end_index = 8;  // Inclusive: this commit is in the blamelist.
+  bool trivial_blamelist = 9; // True if blamelist contains only one commit. Not currently used.
+
+  // Optional: The index of a the commit that is responsible for these changes.
+  // Chosen by a user in the results feed UI.
+  int32 pinned_index = 10;
+}
+
+// Similar to a Result message, but representing a result of a try builder on the CQ.
+// There is no blamelist, instead, a patchset on a Gerrit CL describes the build.
+message TryResult {
+  // Unique document ID created by Firestore for this document.
+  string id = 1;
+  string name = 2; // The full path of the test, as output by test.py.
+  string result = 3; // The new result of the test.
+
+  // The result of the test on builds immediately before these builds.
+  string previous_result = 4;
+
+  // The expected result of this test, given in the test source.
+  // Some tests are written to produce an error of a specific type.
+  // This is not the approval status of the test.
+  string expected = 5;
+
+  // The configurations that produced this changed result when tested.
+  repeated string configurations = 6;
+
+  // Used in Result.  We may want to merge the two types later.
+  reserved 7 to 10;
+
+  // The Gerrit CL number. Field is currently named gerritChange in Firestore.
+  // Change it to gerrit_change.
+  int32 gerrit_change = 11;
+  int32 patchset = 12;
+}
+
+// Represents a single build of a CI builder
+message Build {
+  // The document ID is the concatenation of builder, a colon ':', and index.
+  string id = 1;
+  int32 build_number = 2; // The build number from buildbucket.
+  string builder = 3;
+  int32 index = 4; // The index of the commit this build built.
+}
+
+message Commit {
+  // The hash of a commit in the dart-sdk repo.
+  // Stored as the document ID, not a field.
+  string id = 1;
+
+  // The position of the commit in the sdk master branch, only considering
+  // the first parent of each commit, a linear chain.
+  int32 index = 2;
+  string author = 3; // The author of the commit, as an email address.
+  google.protobuf.Timestamp created = 4;
+  string title = 5; // The first line of the commit message.
+}
+
+// A map from configuration names to builder names.
+// Currently some configurations are on multiple builders, so unstable. Fix.
+message Configuration {
+  string id = 1; // The name of the configuration. Stored as the document ID.
+  string builder = 2;
+}
+
+// A Gerrit review. Only the information needed for our display of try results.
+message Review {
+  string id = 1; // The Gerrit review number (CL number)
+  string subject = 2; // The first line of the commit message.
+
+  message Patchset {
+    string id = 1; // The patchset number.
+    string description = 2; // The description of this patchset.
+
+    // The string giving the type of patchset, a rebase, changed commit message,
+    //  or a new upload, which is called 'REWORK'.
+    string kind = 3;
+    int32 number = 4; // Identical to id.
+
+    // The number of the first patchset that differs from this patchset only by
+    // rebases and commit message changes.
+    int32 patchset_group = 5;
+  }
+
+  repeated Patchset patchsets
+}
