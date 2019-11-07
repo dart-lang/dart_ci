@@ -8,11 +8,12 @@ in the projects 'dart-ci' and 'dart-ci-staging'
 
 ## Installation
 
-Run "pub get"
-Run "npm install"
-Run "pub run build_runner build --output=build"
-Run "firebase -P dart-ci-staging deploy --only functions"
-
+````
+pub get
+npm install
+pub run build_runner build --output=build
+firebase -P dart-ci-staging deploy --only functions
+````
 
 
 

@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'index.dart';
-import 'gerrit_change.dart';
+import '../index.dart';
+import '../gerrit_change.dart';
 
 String resultJson = '''
 {
