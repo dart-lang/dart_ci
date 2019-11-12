@@ -42,6 +42,12 @@ message Result {
   // Optional: The index of a the commit that is responsible for these changes.
   // Chosen by a user in the results feed UI.
   int32 pinned_index = 10;
+
+  // If the result has been approved, or subsequently unapproved, by a comment,
+  // this field is present and has the appropriate boolean value.
+  // If this field is present, then there is a comment record containing this
+  // result's "id" field in its "results" repeated field.
+  bool approved = 13;
 }
 
 // Similar to a Result message, but representing a result of a try builder on the CQ.
@@ -70,6 +76,12 @@ message TryResult {
   // Change it to gerrit_change.
   int32 gerrit_change = 11;
   int32 patchset = 12;
+
+  // If the try result has been approved, or subsequently unapproved, by a
+  // comment, this field is present and has the appropriate boolean value.
+  // If this field is present, then there is a comment record containing this
+  // try result's "id" field in its "try_results" repeated field.
+  bool approved = 13;
 }
 
 // Represents a single build of a CI builder
@@ -121,4 +133,48 @@ message Review {
   }
 
   repeated Patchset patchsets
+}
+
+message comment {
+  // Unique document ID created by Firestore for this document.
+  string id = 1;
+
+  // The email address of the user who made this comment/approval.
+  string user = 2;
+
+  // The time that the comment/approval was entered
+  google.protobuf.Timestamp created = 3;
+
+  // The text of the comment (optional if link is present).
+  string comment = 4;
+
+  // The URL of a link to an issue (optional).
+  string link = 5;
+
+  // If approved is true, this comment approves the linked tests
+  // If approved is false, it unapproves them, removing earlier approvals
+  // If the field is missing, it does not change the current approval status
+  bool approved = 6;
+
+  // The results that this comment approves or disapproves.
+  // The field values are the document IDs of the Result or TryResult records
+  // If the comment is just a reply, and does not approve anything, these
+  // fields will be missing.
+  repeated string results = 7;
+  repeated string try_results = 8;
+
+  // The base comment, if this comment is a reply to a previous comment.
+  // All comments link to the beginning of their reply chain, not to the
+  // previous comment, and are only ordered by timestamp.
+  string base_comment = 9;
+
+  // These are copies of the fields in the results this comment refers to.
+  // These are the fields from a Result message
+  int32 blamelist_start_index = 10;
+  int32 blamelist_end_index = 11;
+  int32 pinned_index = 12;
+  // These are the fields from a TryResult message
+  int32 gerrit_change = 13;
+  int32 patchset = 14;
+
 }
