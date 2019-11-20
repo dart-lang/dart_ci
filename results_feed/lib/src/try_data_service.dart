@@ -10,6 +10,7 @@ class TryDataService {
 
   Future<List<Change>> changes(ReviewInfo changeInfo, int patch) async {
     final patchsets = changeInfo.patchsets;
+    if (patchsets.length < patch) return [];
     // Patchset numbers start at 1, not 0.
     int patchsetGroup = patchsets[patch - 1].patchsetGroup;
     // Workaround while [ ... await foo() ] does not work in dartdevc.
@@ -25,9 +26,13 @@ class TryDataService {
   }
 
   Future<ReviewInfo> reviewInfo(int review) async {
-    return ReviewInfo.fromDocument(
-        await _firestoreService.fetchReviewInfo(review))
-      ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review));
+    final doc = await _firestoreService.fetchReviewInfo(review);
+    if (doc.exists) {
+      return ReviewInfo.fromDocument(doc)
+        ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review));
+    } else {
+      return ReviewInfo(review, "No results received yet for CL $review", []);
+    }
   }
 }
 
@@ -35,6 +40,8 @@ class ReviewInfo {
   int review;
   String title;
   List<Patchset> patchsets;
+
+  ReviewInfo(this.review, this.title, this.patchsets);
 
   ReviewInfo.fromDocument(DocumentSnapshot doc) {
     final data = doc.data();
