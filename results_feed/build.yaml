@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      # Disabling the cleanup leaves the map files, so they are deployed
+      # If they aren't deployed, fetches from the devtools are redirected
+      # to fetch index.html from the map file URL.
+      build_web_compilers|dart_source_cleanup:
+        release_options:
+          enabled: false

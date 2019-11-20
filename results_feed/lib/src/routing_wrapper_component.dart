@@ -8,13 +8,9 @@ import 'package:angular_router/angular_router.dart';
 import 'route_paths.dart';
 import 'app_component.template.dart';
 import 'try_results_component.template.dart';
-import 'firestore_service.dart';
 
 @Component(
-    selector: 'routing-wrapper',
-    directives: [routerDirectives],
-    providers: [ClassProvider(FirestoreService)],
-    template: '''
+    selector: 'routing-wrapper', directives: [routerDirectives], template: '''
       <router-outlet [routes]="routes"></router-outlet>
     ''')
 class RoutingWrapperComponent {

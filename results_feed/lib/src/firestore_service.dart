@@ -4,6 +4,7 @@
 
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:firebase/firestore.dart' as firestore;
+import 'package:quiver/iterables.dart' as iterables;
 
 class FirestoreService {
   static const bool loginEnabled = true;
@@ -75,6 +76,28 @@ class FirestoreService {
     return snapshot.docs;
   }
 
+  Future<firestore.DocumentSnapshot> fetchComment(String id) =>
+      app.firestore().collection('comments').doc(id).get();
+
+  Future<List<firestore.DocumentSnapshot>> fetchCommentThread(
+      String baseId) async {
+    final results = app.firestore().collection('comments');
+    final firestore.DocumentSnapshot doc = await results.doc(baseId).get();
+    final firestore.QuerySnapshot snapshot =
+        await results.where('base_comment', '==', baseId).get();
+    return [doc, ...snapshot.docs];
+  }
+
+  Future<List<firestore.DocumentSnapshot>> fetchCommentsForRange(
+      int start, int end) async {
+    final results = app.firestore().collection('comments');
+    final firestore.QuerySnapshot snapshot = await results
+        .where('index', '>=', start)
+        .where('index', '<=', end)
+        .get();
+    return snapshot.docs;
+  }
+
   Future<firestore.DocumentSnapshot> fetchBuild(
       String builder, int index) async {
     final builds = app.firestore().collection('builds');
@@ -114,5 +137,78 @@ class FirestoreService {
         storageBucket: "dart-ci.appspot.com",
         messagingSenderId: "410721018617");
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
+  }
+}
+
+class StagingFirestoreService extends FirestoreService {
+  // StagingFirestoreService uses the Firestore database at
+  // dart-ci-staging.
+  // It adds additional methods used by integration tests.
+  Future<void> getFirebaseClient() async {
+    if (app != null) return;
+    // Firebase api key is public, and must be sent to client for use.
+    // It is invalid over any connection except https to the app URL.
+    // It is not used for security, only usage accounting.
+    app = firebase.initializeApp(
+        apiKey: "AIzaSyBky7KGq1dbVn_J48iAI6oVyKRcMrRanns",
+        authDomain: "dart-ci-staging.firebaseapp.com",
+        databaseURL: "https://dart-ci-staging.firebaseio.com",
+        messagingSenderId: "287461583823",
+        projectId: "dart-ci-staging",
+        storageBucket: "dart-ci-staging.appspot.com");
+    await app.auth().setPersistence(firebase.Persistence.LOCAL);
+  }
+
+  Future<void> writeDocumentsFrom(Map<String, dynamic> documents,
+      {bool delete: false}) async {
+    for (final keys in iterables.partition(documents.keys, 500)) {
+      final batch = app.firestore().batch();
+      for (final key in keys) {
+        if (delete) {
+          batch.delete(app.firestore().doc(key));
+        } else {
+          batch.set(app.firestore().doc(key), documents[key]);
+        }
+      }
+      await batch.commit();
+    }
+  }
+
+  Future<void> mergeDocumentsFrom(Map<String, dynamic> documents,
+      {bool delete: false}) async {
+    for (final keys in iterables.partition(documents.keys, 500)) {
+      final batch = app.firestore().batch();
+      for (final key in keys) {
+        Map<String, dynamic> update = documents[key];
+        if (delete) {
+          update = Map.fromIterable(update.keys,
+              value: (_) => firestore.FieldValue.delete());
+        }
+        batch.update(app.firestore().doc(key), data: update);
+      }
+      await batch.commit();
+    }
+  }
+
+  Future logIn() async {
+    //  final provider = firebase.GoogleAuthProvider();
+    //  provider.addScope('openid https://www.googleapis.com/auth/datastore');
+    try {
+      firebase.UserCredential user = await app
+          .auth()
+          .signInWithEmailAndPassword('whesse+dummy@google.com',
+              r''); // Password must be entered locally before testing.
+      // Because this is running in a browser, cannot read password from
+      // a file or environment variable. Investigate what testing framework
+      // supports for local secrets.
+
+      // Our application settings already disallow non-org users,
+      // so we don't even get to this additional check.
+      if (!user.user.email.endsWith('@google.com')) logOut();
+      print(user.user.email);
+    } catch (e) {
+      print(e.toString());
+    }
+    return;
   }
 }

@@ -241,3 +241,15 @@ class AppComponent implements OnInit, CanReuse {
 
 // We often want changeGroups and commits ordered from latest to earliest.
 int reverse(key1, key2) => key2.compareTo(key1);
+
+/// Exposes private members of AppComponent for testing purposes.
+/// Only usable on the staging Firestore instance.
+class AppComponentTest {
+  AppComponent appComponent;
+
+  AppComponentTest(this.appComponent);
+
+  StagingFirestoreService get firestoreService =>
+      appComponent._firestoreService;
+  ApplicationRef get applicationRef => appComponent._applicationRef;
+}

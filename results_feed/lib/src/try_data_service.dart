@@ -1,4 +1,3 @@
-import 'package:angular_components/angular_components.dart';
 import 'package:firebase/src/firestore.dart';
 
 import 'commit.dart';
