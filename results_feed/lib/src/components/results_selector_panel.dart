@@ -16,7 +16,7 @@ import 'package:angular_components/material_tooltip/module.dart' as tooltip;
 
 import 'log_component.dart';
 
-import 'commit.dart';
+import '../model/commit.dart';
 
 @Component(
     selector: 'results-selector-panel',

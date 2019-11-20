@@ -1,6 +1,6 @@
 import 'package:firebase/src/firestore.dart';
 
-import 'commit.dart';
+import '../model/commit.dart';
 import 'firestore_service.dart';
 
 class TryDataService {

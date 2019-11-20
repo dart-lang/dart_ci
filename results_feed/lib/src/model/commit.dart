@@ -6,7 +6,7 @@ import 'dart:collection';
 import 'dart:core';
 
 // import 'package:angular/angular.dart';
-import 'filter_service.dart';
+import '../services/filter_service.dart';
 import 'package:firebase/firestore.dart' as firestore;
 
 class IntRangeIterator implements Iterator<int> {

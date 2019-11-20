@@ -5,7 +5,7 @@
 import 'package:angular/angular.dart';
 // import 'package:angular_components/angular_components.dart';
 
-import 'build_service.dart';
+import '../services/build_service.dart';
 
 @Component(
   selector: 'dart-log',

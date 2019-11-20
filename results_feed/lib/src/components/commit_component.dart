@@ -8,9 +8,9 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import 'blamelist_component.dart';
 import 'blamelist_picker.dart';
-import 'commit.dart';
-import 'firestore_service.dart';
-import 'filter_service.dart';
+import '../model/commit.dart';
+import '../services/firestore_service.dart';
+import '../services/filter_service.dart';
 import 'results_panel.dart';
 import 'results_selector_panel.dart';
 

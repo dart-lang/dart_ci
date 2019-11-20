@@ -10,7 +10,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_radio/material_radio_group.dart';
 
-import 'commit.dart';
+import '../model/commit.dart';
 
 @Component(
     selector: 'blamelist-picker',

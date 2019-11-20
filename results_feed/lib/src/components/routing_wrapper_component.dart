@@ -5,7 +5,7 @@
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 
-import 'route_paths.dart';
+import '../route_paths.dart';
 import 'app_component.template.dart';
 import 'try_results_component.template.dart';
 

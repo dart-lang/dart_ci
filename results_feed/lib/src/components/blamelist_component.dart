@@ -2,7 +2,7 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/laminate/enums/alignment.dart';
 import 'package:angular_forms/angular_forms.dart';
 
-import 'commit.dart';
+import '../model/commit.dart';
 
 @Component(
   selector: 'blamelist-panel',

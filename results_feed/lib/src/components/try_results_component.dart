@@ -5,9 +5,9 @@
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 
-import 'commit.dart';
+import '../model/commit.dart';
 import 'results_panel.dart';
-import 'try_data_service.dart';
+import '../services/try_data_service.dart';
 
 @Component(
     selector: 'try-results',

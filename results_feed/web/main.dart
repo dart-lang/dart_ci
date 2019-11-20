@@ -4,8 +4,8 @@
 
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:dart_results_feed/src/firestore_service.dart';
-import 'package:dart_results_feed/src/routing_wrapper_component.template.dart'
+import 'package:dart_results_feed/src/services/firestore_service.dart';
+import 'package:dart_results_feed/src/components/routing_wrapper_component.template.dart'
     as ng;
 import 'main.template.dart' as self;
 
