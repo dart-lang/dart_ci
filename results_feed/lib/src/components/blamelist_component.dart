@@ -2,13 +2,14 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/laminate/enums/alignment.dart';
 import 'package:angular_forms/angular_forms.dart';
 
+import '../formatting.dart';
 import '../model/commit.dart';
 
 @Component(
-  selector: 'blamelist-panel',
-  directives: [coreDirectives, formDirectives, RelativePosition],
-  templateUrl: 'blamelist_component.html',
-)
+    selector: 'blamelist-panel',
+    directives: [coreDirectives, formDirectives, RelativePosition],
+    templateUrl: 'blamelist_component.html',
+    exports: [formatted])
 class BlamelistComponent {
   BlamelistComponent();
 

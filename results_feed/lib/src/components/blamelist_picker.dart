@@ -10,6 +10,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_radio/material_radio_group.dart';
 
+import '../formatting.dart';
 import '../model/commit.dart';
 
 @Component(
@@ -24,7 +25,8 @@ import '../model/commit.dart';
     styleUrls: ([
       'commit_component.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
-    ]))
+    ]),
+    exports: [formatted])
 class BlamelistPicker {
   @Input()
   List<Commit> commits;

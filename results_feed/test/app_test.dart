@@ -5,7 +5,8 @@
 @TestOn('browser')
 
 import 'package:dart_results_feed/src/components/app_component.dart';
-import 'package:dart_results_feed/src/components/app_component.template.dart' as ng;
+import 'package:dart_results_feed/src/components/app_component.template.dart'
+    as ng;
 import 'package:angular_test/angular_test.dart';
 import 'package:test/test.dart';
 

@@ -12,6 +12,7 @@ dependencies:
   angular_router: ^2.0.0-alpha+22
   firebase: ^5.0.0
   http: ^0.12.0
+  intl: ^0.15.0
   quiver: ^2.1.0
   service_worker: ^0.2.2
 

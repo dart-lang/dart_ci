@@ -5,7 +5,7 @@
       <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
          target="_blank">
         {{c.hash.substring(6)}}
-      </a> {{c.author}} {{c.created.toString().substring(5,16)}}<br>
+      </a> {{c.author}} {{formatted(c.created)}}<br>
     </div>
     <div *ngIf="showDots(i)"><b>&vellip;</b>({{range.length - 2}}
       commits)

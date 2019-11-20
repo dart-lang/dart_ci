@@ -6,7 +6,8 @@
 import 'package:angular/di.dart';
 import 'package:angular_test/angular_test.dart';
 import 'package:dart_results_feed/src/components/app_component.dart';
-import 'package:dart_results_feed/src/components/app_component.template.dart' as ng;
+import 'package:dart_results_feed/src/components/app_component.template.dart'
+    as ng;
 import 'package:dart_results_feed/src/model/comment.dart';
 import 'package:dart_results_feed/src/services/firestore_service.dart';
 import 'package:test/test.dart';
