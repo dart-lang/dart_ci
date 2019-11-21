@@ -3,11 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:collection';
-import 'dart:core';
 
-// import 'package:angular/angular.dart';
-import '../services/filter_service.dart';
 import 'package:firebase/firestore.dart' as firestore;
+
+import '../services/filter_service.dart';
+import 'comment.dart';
 
 class IntRangeIterator implements Iterator<int> {
   int current;
@@ -74,13 +74,18 @@ class Commit implements Comparable {
 class ChangeGroup implements Comparable {
   final IntRange range;
   List<Commit> commits;
+  List<Comment> comments;
   final Changes changes;
   final Changes latestChanges;
   Changes _filteredChanges;
   Filter _filter = Filter.defaultFilter;
 
-  ChangeGroup(IntRange this.range, Map<int, Commit> allCommits,
-      Iterable<Change> changeList, Iterable<Change> liveChangeList)
+  ChangeGroup(
+      IntRange this.range,
+      Map<int, Commit> allCommits,
+      List<Comment> this.comments,
+      Iterable<Change> changeList,
+      Iterable<Change> liveChangeList)
       : changes = Changes(changeList),
         latestChanges = Changes(liveChangeList) {
     commits = [

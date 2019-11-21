@@ -11,7 +11,7 @@ import 'main.template.dart' as self;
 
 // Local testing use @GenerateInjector(routerProvidersHash)
 // Use for deploying on staging website:
-// providers: [ClassProvider(FirestoreService, useClass: StagingFirestoreService)],
+// @GenerateInjector([ClassProvider(FirestoreService, useClass: StagingFirestoreService), ...routerProviders])
 
 @GenerateInjector([ClassProvider(FirestoreService), ...routerProviders])
 final InjectorFactory injector = self.injector$Injector;

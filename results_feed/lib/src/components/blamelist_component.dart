@@ -3,6 +3,7 @@ import 'package:angular_components/laminate/enums/alignment.dart';
 import 'package:angular_forms/angular_forms.dart';
 
 import '../formatting.dart';
+import '../model/comment.dart';
 import '../model/commit.dart';
 
 @Component(
@@ -18,6 +19,9 @@ class BlamelistComponent {
 
   @Input()
   IntRange range;
+
+  @Input()
+  List<Comment> comments;
 
   bool collapsedBlamelist = true;
 

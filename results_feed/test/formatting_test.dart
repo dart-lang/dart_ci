@@ -4,7 +4,7 @@
 
 import 'package:test/test.dart';
 
-import '../lib/src/formatting.dart';
+import 'package:dart_results_feed/src/formatting.dart';
 
 main() {
   test('Test current year format', () {

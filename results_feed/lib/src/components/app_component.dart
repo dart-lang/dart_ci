@@ -19,6 +19,7 @@ import 'package:dart_results_feed/src/services/filter_component.dart';
 
 import 'commit_component.dart';
 import '../model/commit.dart';
+import '../model/comment.dart';
 import '../services/filter_service.dart';
 import '../services/firestore_service.dart';
 import '../services/build_service.dart';
@@ -53,6 +54,7 @@ class AppComponent implements OnInit, CanReuse {
 
   Map<IntRange, ChangeGroup> changeGroups = SplayTreeMap(reverse);
   Map<int, Commit> commits = SplayTreeMap(reverse);
+  Map<IntRange, List<Comment>> comments = SplayTreeMap(reverse);
   Map<String, Map<IntRange, List<Change>>> changesByName = {};
   Map<String, Map<IntRange, List<Change>>> liveChangesByName = {};
   Map<IntRange, List<Change>> changes = SplayTreeMap(reverse);
@@ -108,6 +110,7 @@ class AppComponent implements OnInit, CanReuse {
           final before = commits.isEmpty ? null : commits.keys.last;
           final range = await fetchEarlierCommits(before);
           await fetchResults(range);
+          await fetchComments(range);
           updateLiveChanges();
           updateRanges();
         } finally {
@@ -128,7 +131,7 @@ class AppComponent implements OnInit, CanReuse {
       commits[commit.index] = commit;
       final range = IntRange(commit.index, commit.index);
       changeGroups.putIfAbsent(
-          range, () => ChangeGroup(range, commits, [], []));
+          range, () => ChangeGroup(range, commits, [], [], []));
     }
     final range = IntRange(
         commits.keys.last, before == null ? commits.keys.first : before - 1);
@@ -156,6 +159,27 @@ class AppComponent implements OnInit, CanReuse {
       getInMap(changesByName, change.name, range).add(change);
       modifiedRanges.add(range);
       modifiedNames.add(change.name);
+    }
+  }
+
+  Future fetchComments(IntRange commitRange) async {
+    final commentsData = await _firestoreService.fetchCommentsForRange(
+        commitRange.start, commitRange.end);
+    final newComments = [
+      for (final doc in commentsData) Comment.fromDocument(doc)
+    ];
+    for (final comment in newComments) {
+      IntRange range = null;
+      if (comment.pinnedIndex != null) {
+        range = IntRange(comment.pinnedIndex, comment.pinnedIndex);
+      } else if (comment.blamelistStartIndex != null) {
+        range =
+            IntRange(comment.blamelistStartIndex, comment.blamelistEndIndex);
+      }
+      if (range != null) {
+        comments.putIfAbsent(range, () => []).add(comment);
+        modifiedRanges.add(range);
+      }
     }
   }
 
@@ -215,8 +239,8 @@ class AppComponent implements OnInit, CanReuse {
       if (changes[range].isEmpty && liveChanges[range].isEmpty) {
         changeGroups.remove(range);
       } else {
-        changeGroups[range] =
-            ChangeGroup(range, commits, changes[range], liveChanges[range]);
+        changeGroups[range] = ChangeGroup(range, commits, comments[range] ?? [],
+            changes[range], liveChanges[range]);
       }
     }
     modifiedRanges.clear();

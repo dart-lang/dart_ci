@@ -49,8 +49,11 @@ class Comment {
         tryResults = List<String>.from(document.get('tryResults') ?? []),
         baseComment = document.get('base_comment'),
         blamelistStartIndex = document.get('blamelist_start_index'),
-        blamelistEndIndex = document.get('blamelist_start_index'),
+        blamelistEndIndex = document.get('blamelist_end_index'),
         pinnedIndex = document.get('pinned_index'),
         gerritChange = document.get('gerrit_change'),
         patchset = document.get('patchset');
+
+  String approvedText() =>
+      (approved == null) ? "" : approved ? "approved" : "disapproved";
 }

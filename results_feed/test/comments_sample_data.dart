@@ -10,10 +10,14 @@
 final commentId1 = 'sampleId00001';
 final commentThreadId = 'sampleId00002';
 final commentId2 = 'sampleId00003';
+final commentId3 = 'sampleId00004';
 
 final result1 = "1d91eLOxn3mWjJY9qsEO";
 final result2 = "RyMWa5iGfYCjUms0FBU7";
 final result3 = "FkCKOa7uZQdtEpidTYbe";
+final result4 = "JCXiPwG5O7td1X5wjSzA";
+final result5 = "rjDBqGpGiIDOJgimyIid";
+final result6 = "";
 
 // These documents are added to the sample database for testing, then removed.
 Map<String, dynamic> commentsSampleData = {
@@ -45,6 +49,15 @@ Map<String, dynamic> commentsSampleData = {
     "blamelist_start_index": 66235,
     "blamelist_end_index": 66235
   },
+  "comments/$commentId3": {
+    "author": "user2@example.com",
+    "created": DateTime.parse("2019-10-31 23:19:00Z"),
+    "comment": "Sample comment on a non-trivial blamelist",
+    "approved": true,
+    "results": [result4, result5],
+    "blamelist_start_index": 66148,
+    "blamelist_end_index": 66151
+  },
 };
 
 // These fields are merged into existing documents, and removed after testing.
@@ -52,4 +65,6 @@ Map<String, dynamic> commentsSampleDataMerges = {
   "results/$result1": {"approved": true, "comment": commentId1},
   "results/$result2": {"approved": true, "comment": commentThreadId},
   "results/$result3": {"approved": false, "comment": commentId2},
+  "results/$result4": {"approved": true, "comment": commentId3},
+  "results/$result5": {"approved": true, "comment": commentId3}
 };

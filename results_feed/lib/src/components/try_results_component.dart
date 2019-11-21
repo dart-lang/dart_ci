@@ -24,7 +24,7 @@ class TryResultsComponent implements OnActivate {
   int change;
   int patch;
   ReviewInfo changeInfo;
-  ChangeGroup changeGroup = ChangeGroup(null, {}, [], []);
+  ChangeGroup changeGroup = ChangeGroup(null, {}, [], [], []);
   int cachedPatch;
   int cachedChange;
   List<Change> changes;
@@ -60,7 +60,7 @@ class TryResultsComponent implements OnActivate {
       changes = await _tryDataService.changes(changeInfo, patch);
       cachedChange = change;
       cachedPatch = patch;
-      changeGroup = ChangeGroup(null, {}, changes, []);
+      changeGroup = ChangeGroup(null, {}, [] /* comments here */, changes, []);
     }
   }
 

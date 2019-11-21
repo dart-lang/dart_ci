@@ -11,6 +11,7 @@ import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_radio/material_radio_group.dart';
 
 import '../formatting.dart';
+import '../model/comment.dart';
 import '../model/commit.dart';
 
 @Component(
@@ -33,6 +34,9 @@ class BlamelistPicker {
 
   @Input()
   IntRange range;
+
+  @Input()
+  List<Comment> comments;
 
   @Output()
   Stream<Commit> get selected => _selectedCommit.stream;

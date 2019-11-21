@@ -6,7 +6,11 @@
     <b>{{c.title}}</b><br>
     <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
        target="_blank">
-      {{c.hash.substring(6)}}
+      {{c.hash.substring(0,6)}}
     </a> {{c.author}} {{formatted(c.created)}}<br>
   </material-radio>
+  <div *ngFor="let c of comments">
+    <b>{{c.approvedText()}}</b> {{c.author}} {{formatted(c.created)}}<br>
+    <div style="padding-left: 32px">{{c.comment}}</div>
+  </div>
 </material-radio-group>

@@ -3,7 +3,8 @@
     <blamelist-panel
         class="commit-panel"
         [commits]="changeGroup.commits"
-        [range]="changeGroup.range"></blamelist-panel>
+        [range]="changeGroup.range"
+        [comments]="changeGroup.comments"></blamelist-panel>
     <results-panel
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
@@ -14,6 +15,7 @@
         class="commit-panel"
         [commits]="changeGroup.commits"
         [range]="changeGroup.range"
+        [comments]="changeGroup.comments"
         (selected)="selectedCommit=$event"></blamelist-picker>
     <results-selector-panel
         class="commit-panel"

@@ -92,8 +92,8 @@ class FirestoreService {
       int start, int end) async {
     final results = app.firestore().collection('comments');
     final firestore.QuerySnapshot snapshot = await results
-        .where('index', '>=', start)
-        .where('index', '<=', end)
+        .where('blamelist_end_index', '>=', start)
+        .where('blamelist_end_index', '<=', end)
         .get();
     return snapshot.docs;
   }
