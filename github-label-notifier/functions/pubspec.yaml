@@ -1,0 +1,22 @@
+name: github_label_notifier
+description: >-
+  Cloud Function that can serve as a GitHub WebHook which sends notifications
+  to developers subscribed to a particular label.
+version: 0.0.1
+
+environment:
+  sdk: '>=2.3.0 <3.0.0'
+
+dependencies:
+  firebase_functions_interop: ^1.0.0
+  node_http: ^1.0.0
+  node_interop: ^1.0.3
+  node_io: ^1.0.1
+  js: any
+  test: any
+
+dev_dependencies:
+  # Needed to compile Dart to valid Node.js module.
+  build_runner: ^1.0.0
+  build_node_compilers: ^0.2.0
+  pedantic: any
