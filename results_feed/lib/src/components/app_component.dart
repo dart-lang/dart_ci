@@ -62,7 +62,7 @@ class AppComponent implements OnInit, CanReuse {
 
   int firstIndex;
   int lastIndex;
-  bool fetching = false;
+  Future fetching;
   num infiniteScrollVisibleRatio = 0;
   bool showFilter = false;
 
@@ -103,22 +103,20 @@ class AppComponent implements OnInit, CanReuse {
       .putIfAbsent(name, () => SplayTreeMap<IntRange, List<Change>>(reverse))
       .putIfAbsent(range, () => <Change>[]);
 
-  Future fetchData() async {
-    if (fetching) return;
-    fetching = true;
-    try {
-      final before = commits.isEmpty ? null : commits.keys.last;
-      final range = await fetchEarlierCommits(before);
-      await fetchResults(range);
-      updateLiveChanges();
-      updateRanges();
-    } finally {
-      fetching = false;
-      // Force a reevaluation of changed views
-      filterService.filter = filterService.filter.copy();
-      _applicationRef.tick();
-    }
-  }
+  Future fetchData() => fetching ??= () async {
+        try {
+          final before = commits.isEmpty ? null : commits.keys.last;
+          final range = await fetchEarlierCommits(before);
+          await fetchResults(range);
+          updateLiveChanges();
+          updateRanges();
+        } finally {
+          // Force a reevaluation of changed views
+          filterService.filter = filterService.filter.copy();
+          fetching = null;
+          _applicationRef.tick();
+        }
+      }();
 
   Future<IntRange> fetchEarlierCommits(int before) async {
     final newCommits = (await _firestoreService.fetchCommits(before, 30))
