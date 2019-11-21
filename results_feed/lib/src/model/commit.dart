@@ -154,7 +154,7 @@ class Configurations {
           filter.configurationGroups.any(configuration.startsWith));
 }
 
-class Change {
+class Change implements Comparable {
   Change._(
       this.id,
       this.name,
@@ -209,6 +209,8 @@ class Change {
       pinnedIndex,
       trivialBlamelist);
 
+  int compareTo(Object other) => name.compareTo((other as Change).name);
+
   String get resultStyle => result == expected ? 'success' : 'failure';
 }
 
@@ -237,7 +239,7 @@ class Changes with IterableMixin<List<List<Change>>> {
       for (final configuration in map.keys)
         [
           for (final change in map[configuration].keys)
-            map[configuration][change]
+            map[configuration][change]..sort()
         ]
     ];
   }
