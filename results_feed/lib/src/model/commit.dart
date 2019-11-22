@@ -80,12 +80,8 @@ class ChangeGroup implements Comparable {
   Changes _filteredChanges;
   Filter _filter = Filter.defaultFilter;
 
-  ChangeGroup(
-      IntRange this.range,
-      Map<int, Commit> allCommits,
-      List<Comment> this.comments,
-      Iterable<Change> changeList,
-      Iterable<Change> liveChangeList)
+  ChangeGroup(this.range, Map<int, Commit> allCommits, this.comments,
+      Iterable<Change> changeList, Iterable<Change> liveChangeList)
       : changes = Changes(changeList),
         latestChanges = Changes(liveChangeList) {
     commits = [
@@ -219,7 +215,7 @@ class Changes with IterableMixin<List<List<Change>>> {
 
   Changes(Iterable<Change> newChanges) : this.grouped(group(newChanges));
 
-  Changes.grouped(List<List<List<Change>>> this.changes);
+  Changes.grouped(this.changes);
 
   get iterator => changes.iterator;
 
@@ -257,7 +253,7 @@ class Changes with IterableMixin<List<List<Change>>> {
   /// If no elements are modified or dropped, returns the input list object.
   static applyFilter<T>(
       T elementFilter(T t, Filter f), List<T> list, Filter filter,
-      [bool emptyTest(dynamic, Filter) = empty]) {
+      [bool emptyTest(dynamic element, Filter f) = empty]) {
     final newList = <T>[];
     bool changed = false;
     for (final element in list) {

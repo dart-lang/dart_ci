@@ -169,7 +169,7 @@ class AppComponent implements OnInit, CanReuse {
       for (final doc in commentsData) Comment.fromDocument(doc)
     ];
     for (final comment in newComments) {
-      IntRange range = null;
+      IntRange range;
       if (comment.pinnedIndex != null) {
         range = IntRange(comment.pinnedIndex, comment.pinnedIndex);
       } else if (comment.blamelistStartIndex != null) {

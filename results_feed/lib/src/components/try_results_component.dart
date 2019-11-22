@@ -54,8 +54,9 @@ class TryResultsComponent implements OnActivate {
   }
 
   Future<void> update() async {
-    if (change != changeInfo?.review)
+    if (change != changeInfo?.review) {
       changeInfo = await _tryDataService.reviewInfo(change);
+    }
     if (change != cachedChange || patch != cachedPatch) {
       changes = await _tryDataService.changes(changeInfo, patch);
       cachedChange = change;

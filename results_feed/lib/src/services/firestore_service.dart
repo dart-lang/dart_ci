@@ -23,7 +23,7 @@ class FirestoreService {
             await app.auth().signInWithPopup(provider);
         // Our application settings already disallow non-org users,
         // so we don't even get to this additional check.
-        if (!user.user.email.endsWith('@google.com')) logOut();
+        if (!user.user.email.endsWith('@google.com')) await logOut();
       } catch (e) {
         print(e.toString());
       }
@@ -160,7 +160,7 @@ class StagingFirestoreService extends FirestoreService {
   }
 
   Future<void> writeDocumentsFrom(Map<String, dynamic> documents,
-      {bool delete: false}) async {
+      {bool delete = false}) async {
     for (final keys in iterables.partition(documents.keys, 500)) {
       final batch = app.firestore().batch();
       for (final key in keys) {
@@ -175,7 +175,7 @@ class StagingFirestoreService extends FirestoreService {
   }
 
   Future<void> mergeDocumentsFrom(Map<String, dynamic> documents,
-      {bool delete: false}) async {
+      {bool delete = false}) async {
     for (final keys in iterables.partition(documents.keys, 500)) {
       final batch = app.firestore().batch();
       for (final key in keys) {
@@ -194,18 +194,12 @@ class StagingFirestoreService extends FirestoreService {
     //  final provider = firebase.GoogleAuthProvider();
     //  provider.addScope('openid https://www.googleapis.com/auth/datastore');
     try {
-      firebase.UserCredential user = await app
-          .auth()
-          .signInWithEmailAndPassword('whesse+dummy@google.com',
-              r''); // Password must be entered locally before testing.
+      await app.auth().signInWithEmailAndPassword(
+          'dartresultsfeedtestuser@example.com',
+          r''); // Password must be entered locally before testing.
       // Because this is running in a browser, cannot read password from
       // a file or environment variable. Investigate what testing framework
       // supports for local secrets.
-
-      // Our application settings already disallow non-org users,
-      // so we don't even get to this additional check.
-      if (!user.user.email.endsWith('@google.com')) logOut();
-      print(user.user.email);
     } catch (e) {
       print(e.toString());
     }
