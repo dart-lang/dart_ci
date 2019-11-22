@@ -1,0 +1,37 @@
+@import 'package:angular_components/css/material/material';
+@import 'package:angular_components/material_button/mixins';
+
+@mixin colorize($selector, $color) {
+    $raised: $selector + '[raised]';
+    @include button-background-color($raised, $color);
+    @include button-color($raised, $mat-white);
+
+    $not-raised: $selector + ':not([raised])';
+    @include button-color($not-raised, $color);
+}
+
+:host {
+    font-family: monospace !important;
+
+    @include colorize("material-button.blue", $mat-blue);
+    @include button-dense-theme('.subscribe-button');
+}
+
+.subscribe-row {
+    padding: 10px;
+}
+
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ul.repo-list {
+    li {
+        list-style-type: none;
+    }
+
+    > li > div {
+        border-bottom: 1px dashed black;
+    }
+}

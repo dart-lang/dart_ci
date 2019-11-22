@@ -1,0 +1,20 @@
+name: src
+description: UI for managing label subscriptions for GitHub Label Notifier.
+
+environment:
+  sdk: '>=2.2.0 <3.0.0'
+
+dependencies:
+  angular: any
+  angular_components: any
+  firebase: ^6.0.0
+  github: any
+
+dev_dependencies:
+  angular_test: any
+  build_runner: any
+  build_test: any
+  build_web_compilers: any
+  pedantic: any
+  test: any
+  sass_builder: any
