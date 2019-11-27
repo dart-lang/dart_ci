@@ -8,9 +8,16 @@ int _year = DateTime.now().year;
 final _noYearFormat = DateFormat('H:mm EEE MMM d');
 final _yearFormat = DateFormat('H:mm EEE MMM d, y');
 
-String formatted(DateTime date) {
+String formattedDate(DateTime date) {
   if (date.year == _year) return _noYearFormat.format(date);
   if (date.year < _year) return _yearFormat.format(date);
   _year = DateTime.now().year;
   return _yearFormat.format(date);
+}
+
+String formattedEmail(String email) {
+  if (email.endsWith('@google.com')) {
+    return email.split('@').first;
+  }
+  return email;
 }

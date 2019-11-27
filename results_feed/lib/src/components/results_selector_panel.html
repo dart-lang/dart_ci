@@ -1,6 +1,7 @@
 <div *ngFor="let configurationGroup of changes">
   <material-chips>
     <material-checkbox
+        *ngIf="showConfigurationCheckbox(configurationGroup)"
         class="result-checkbox"
         [checked]="configurationCheckboxes[configurationGroup].checked"
         [indeterminate]="configurationCheckboxes[configurationGroup].indeterminate"
@@ -29,6 +30,7 @@
   <span *ngFor="let resultGroup of configurationGroup"
         style="margin-left: 16px">
     <material-checkbox
+        *ngIf="showResultGroupCheckbox(resultGroup)"
         no-ink
         [checked]="resultCheckboxes[resultGroup].checked"
         (change)="onResultChange($event, resultGroup, configurationGroup)"
@@ -42,6 +44,7 @@
           #logs="tooltipTarget"
           style="cursor: pointer; margin-left: 16px; height: 16px">
       <material-checkbox
+          *ngIf="showCheckbox(change)"
           no-ink
           [checked]="checked[change]"
           (checkedChange)="onChange($event, change, resultGroup, configurationGroup)">

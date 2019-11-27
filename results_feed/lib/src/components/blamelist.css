@@ -5,3 +5,4 @@
 
 .commit { margin-bottom: 8px; }
 .comment-body { padding-left: 32px; }
+span.nowrap { white-space: nowrap; }

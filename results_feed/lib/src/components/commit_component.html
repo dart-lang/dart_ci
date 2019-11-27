@@ -1,5 +1,5 @@
 <div class="commit" *ngIf="changeGroup.show(filter)">
-  <div *ngIf="!chooseCommit">
+  <div *ngIf="!chooseCommit && !approving">
     <blamelist-panel
         class="commit-panel"
         [commits]="changeGroup.commits"
@@ -23,22 +23,71 @@
         [range]="changeGroup.range"
         [selected]="selected"></results-selector-panel>
   </div>
-  <div style="clear: both; padding: 8px">
+  <div *ngIf="approving">
+    <blamelist-panel
+        class="commit-panel"
+        [commits]="changeGroup.commits"
+        [range]="changeGroup.range"
+        [comments]="changeGroup.comments"></blamelist-panel>
+    <results-selector-panel
+        class="commit-panel"
+        [changes]="changeGroup.filteredChanges(filter)"
+        [range]="changeGroup.range"
+        [selected]="selected"
+        failuresOnly></results-selector-panel>
+  </div>
+  <div *ngIf="approving" class="commit-bottom">
+    Comment:<br>
+    <material-input
+        multiline
+        label="Comment"
+        required
+        rows="3"
+        [(ngModel)]="commentText"></material-input>
+  </div>
+  <div class="commit-bottom">
     <material-button
-        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1"
+        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1 && !approving"
         raised
-        style="text-align: center; clear: both"
         [disabled]="chooseCommit"
         (click)="chooseCommit = true">
-      Narrow blamelist
+      Narrow blamelist...
     </material-button>
     <material-button
-        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1"
+        *ngIf="firestoreService.isLoggedIn && changeGroup.range.length > 1 && chooseCommit"
         raised
-        style="text-align: center; clear: both"
-        [disabled]="!chooseCommit"
-        (click)="pinCommit(selectedCommit.index, selected.toList())">
+        (click)="pinCommit()">
       Assign changes to commit
+    </material-button>
+    <material-button
+        *ngIf="approveEnabled && !approving"
+        raised
+        (click)="approving = true">
+      Approve/Comment...
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approving = false">
+      Cancel
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(false)">
+      Revoke Selected Approvals
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(null)">
+      Comment without Approving
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(true)">
+      Approve
     </material-button>
   </div>
 </div>

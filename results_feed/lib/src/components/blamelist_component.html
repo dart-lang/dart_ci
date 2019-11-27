@@ -5,14 +5,16 @@
       <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
          target="_blank">
         {{c.hash.substring(0,6)}}
-      </a> {{c.author}} {{formatted(c.created)}}<br>
+      </a> {{formattedEmail(c.author)}}
+        <span class="nowrap">{{formattedDate(c.created)}}</span><br>
     </div>
     <div *ngIf="showDots(i)"><b>&vellip;</b>({{range.length - 2}}
       commits)
     </div>
   </div>
   <div *ngFor="let c of comments" class="comment">
-    <b>{{c.approvedText()}}</b> {{c.author}} {{formatted(c.created)}}<br>
+    <b>{{c.approvedText()}}</b> {{formattedEmail(c.author)}}
+    <span class="nowrap">{{formattedDate(c.created)}}</span><br>
     <div class="comment-body">{{c.comment}}</div>
   </div>
 </div>

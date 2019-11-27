@@ -10,7 +10,6 @@ class FirestoreService {
   static const bool loginEnabled = true;
 
   firebase.App app;
-
   bool get isLoggedIn => app?.auth()?.currentUser != null;
 
   Future logIn() async {
@@ -116,12 +115,41 @@ class FirestoreService {
   }
 
   Future pinResults(int pin, List<String> resultIds) async {
-    final batch = app.firestore().batch();
-    final results = app.firestore().collection('results');
-    for (final id in resultIds) {
-      batch.update(results.doc(id), fieldsAndValues: ['pinned_index', pin]);
+    final collection = app.firestore().collection('results');
+    // If resultIds.length > 500, break into multiple batches.
+    for (final results in iterables.partition(resultIds, 500)) {
+      final batch = app.firestore().batch();
+      for (final id in results) {
+        batch
+            .update(collection.doc(id), fieldsAndValues: ['pinned_index', pin]);
+      }
+      await batch.commit();
     }
-    return batch.commit();
+  }
+
+  Future saveApproval(bool approve, String comment, List<String> resultIds,
+      String baseComment, blamelistStart, blamelistEnd) async {
+    app.firestore().collection('comments').add({
+      'author': app.auth().currentUser.email,
+      if (comment != null) 'comment': comment,
+      'created': DateTime.now(),
+      if (approve != null) 'approved': approve,
+      'results': resultIds,
+      'blamelist_start_index': blamelistStart,
+      'blamelist_end_index': blamelistEnd
+    });
+    // Update approved field in results documents.
+    if (approve == null) return;
+    // If resultIds.length > 500, break into multiple batches.
+    for (final results in iterables.partition(resultIds, 500)) {
+      final batch = app.firestore().batch();
+      final collection = app.firestore().collection('results');
+      for (final id in results) {
+        batch
+            .update(collection.doc(id), fieldsAndValues: ['approved', approve]);
+      }
+      await batch.commit();
+    }
   }
 
   Future<void> getFirebaseClient() async {
@@ -157,6 +185,7 @@ class StagingFirestoreService extends FirestoreService {
         projectId: "dart-ci-staging",
         storageBucket: "dart-ci-staging.appspot.com");
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
+    await logIn();
   }
 
   Future<void> writeDocumentsFrom(Map<String, dynamic> documents,
@@ -190,15 +219,11 @@ class StagingFirestoreService extends FirestoreService {
     }
   }
 
-  bool get isLoggedIn => true;
-
   Future logIn() async {
-    //  final provider = firebase.GoogleAuthProvider();
-    //  provider.addScope('openid https://www.googleapis.com/auth/datastore');
     try {
       await app.auth().signInWithEmailAndPassword(
-          'dartresultsfeedtestuser@example.com',
-          r''); // Password must be entered locally before testing.
+          'dartresultsfeedtestuser@example.com', r'');
+      // Password must be entered locally before testing.
       // Because this is running in a browser, cannot read password from
       // a file or environment variable. Investigate what testing framework
       // supports for local secrets.

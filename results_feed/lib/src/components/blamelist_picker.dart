@@ -27,7 +27,7 @@ import '../model/commit.dart';
       'commit_component.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]),
-    exports: [formatted])
+    exports: [formattedDate, formattedEmail])
 class BlamelistPicker {
   @Input()
   List<Commit> commits;

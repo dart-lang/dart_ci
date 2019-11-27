@@ -11,5 +11,8 @@ dart-commit { padding: 8px * 2; }
 @media screen and (min-width: 992px) {
   .commit-panel { width: 45%; float: left; }
 }
+.commit-bottom { clear: both; padding: 8px; }
 material-checkbox { height: 8px }
 .nonbreaking { white-space: nowrap; }
+material-button {text-align: center; clear: both; }
+material-input { width: 80% }

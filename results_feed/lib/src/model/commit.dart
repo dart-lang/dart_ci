@@ -80,7 +80,7 @@ class ChangeGroup implements Comparable {
   Changes _filteredChanges;
   Filter _filter = Filter.defaultFilter;
 
-  ChangeGroup(this.range, Map<int, Commit> allCommits, this.comments,
+  ChangeGroup(this.range, Map<int, Commit> allCommits, List<Comment> comments,
       Iterable<Change> changeList, Iterable<Change> liveChangeList)
       : changes = Changes(changeList),
         latestChanges = Changes(liveChangeList) {
@@ -88,6 +88,7 @@ class ChangeGroup implements Comparable {
       if (range != null)
         for (int i in range) if (allCommits[i] != null) allCommits[i]
     ]..sort();
+    this.comments = comments..sort();
   }
 
   /// Sort in reverse chronological order.
@@ -227,6 +228,8 @@ class Changes with IterableMixin<List<List<Change>>> {
   Changes.grouped(this.changes);
 
   get iterator => changes.iterator;
+
+  Iterable<Change> get flat => changes.expand((l) => l.expand((l) => l));
 
   /// The changes, grouped first by Configurations object, then by
   /// changesText (the change in the results). Should not be modified

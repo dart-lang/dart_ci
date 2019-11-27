@@ -72,12 +72,31 @@ class ResultsSelectorPanel {
     initializeSelected();
   }
 
+  @Input()
+  bool failuresOnly;
+
   Changes _changes;
   Set<Change> _selected;
 
   final checked = Map<Change, bool>();
   final resultCheckboxes = Map<List<Change>, FixedMixedCheckbox>();
+  final _showResultGroupCheckbox = Map<List<Change>, bool>();
   final configurationCheckboxes = Map<List<List<Change>>, FixedMixedCheckbox>();
+  final _showConfigurationCheckbox = Map<List<List<Change>>, bool>();
+
+  // When pinning results to a blamelist, we select all results.
+  // When approving results, we only show checkboxes for the failures.
+  bool showCheckbox(Change change) =>
+      !failuresOnly || change.result != change.expected;
+  bool showResultGroupCheckbox(List<Change> group) =>
+      !failuresOnly ||
+      _showResultGroupCheckbox.putIfAbsent(
+          group, () => group.any(showCheckbox));
+  bool showConfigurationCheckbox(List<List<Change>> group) =>
+      !failuresOnly ||
+      _showConfigurationCheckbox.putIfAbsent(
+          group, () => group.any(showResultGroupCheckbox));
+
   int resultLimit = 10;
 
   Changes get changes => _changes;
@@ -98,7 +117,7 @@ class ResultsSelectorPanel {
 
   void initializeSelected() {
     if (_selected != null && _changes != null) {
-      _selected.addAll(checked.keys);
+      _selected.addAll(checked.keys.where(showCheckbox));
     }
   }
 
@@ -128,7 +147,7 @@ class ResultsSelectorPanel {
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final change in resultGroup) {
+    for (final change in resultGroup.where(showCheckbox)) {
       setCheckbox(change, newChecked);
     }
     configurationCheckboxes[configurationGroup].setMixed();
@@ -141,9 +160,9 @@ class ResultsSelectorPanel {
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final subgroup in configurationGroup) {
+    for (final subgroup in configurationGroup.where(showResultGroupCheckbox)) {
       resultCheckboxes[subgroup].setState(newChecked, false);
-      for (final change in subgroup) {
+      for (final change in subgroup.where(showCheckbox)) {
         setCheckbox(change, newChecked);
       }
     }

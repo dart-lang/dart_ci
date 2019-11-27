@@ -11,7 +11,7 @@ import '../model/commit.dart';
     directives: [coreDirectives, formDirectives, RelativePosition],
     templateUrl: 'blamelist_component.html',
     styleUrls: ['blamelist.css'],
-    exports: [formatted])
+    exports: [formattedDate, formattedEmail])
 class BlamelistComponent {
   BlamelistComponent();
 

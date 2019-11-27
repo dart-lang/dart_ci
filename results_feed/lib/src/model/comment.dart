@@ -4,7 +4,7 @@
 
 import 'package:firebase/firestore.dart' show DocumentSnapshot;
 
-class Comment {
+class Comment implements Comparable {
   final String id;
   final String author;
   final DateTime created;
@@ -56,4 +56,6 @@ class Comment {
 
   String approvedText() =>
       (approved == null) ? "" : approved ? "approved" : "disapproved";
+
+  int compareTo(Object other) => created.compareTo((other as Comment).created);
 }

@@ -4,6 +4,8 @@
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/material_button/material_button.dart';
+import 'package:angular_components/material_input/material_input.dart';
+import 'package:angular_components/material_input/material_input_multiline.dart';
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import 'blamelist_component.dart';
@@ -19,7 +21,9 @@ import 'results_selector_panel.dart';
     directives: [
       coreDirectives,
       formDirectives,
+      materialInputDirectives,
       MaterialButtonComponent,
+      MaterialMultilineInputComponent,
       BlamelistComponent,
       BlamelistPicker,
       ResultsPanel,
@@ -46,12 +50,35 @@ class CommitComponent {
   int resultLimit = 10;
 
   bool chooseCommit = false;
+  bool approving = false;
 
+  bool get approveEnabled =>
+      firestoreService.isLoggedIn &&
+      changeGroup.latestChanges.flat
+          .any((change) => change.result != change.expected);
   final selected = Set<Change>();
   Commit selectedCommit;
+  String commentText;
 
-  Future pinCommit(int pin, List<Change> results) {
+  Future pinCommit() {
     return firestoreService.pinResults(
-        selectedCommit.index, [for (Change result in results) result.id]);
+        selectedCommit.index, [for (Change result in selected) result.id]);
+  }
+
+  Future approve(bool approval) {
+    approving = false;
+    for (Change result in selected) {
+      result.approved = approval ?? result.approved;
+    }
+    return firestoreService.saveApproval(
+        approval,
+        commentText,
+        [for (Change result in selected) result.id],
+        changeGroup.comments.isEmpty
+            ? null
+            : changeGroup.comments.last.baseComment ??
+                changeGroup.comments.last.id,
+        changeGroup.range.start,
+        changeGroup.range.end);
   }
 }
