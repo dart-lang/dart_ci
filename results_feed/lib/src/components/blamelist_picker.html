@@ -1,7 +1,7 @@
 <material-radio-group (selectedChange)="chosen($event)">
   <material-radio
       *ngFor="let c of commits"
-      class="commit-blamelist-entry"
+      class="commit"
       [value]="c">
     <b>{{c.title}}</b><br>
     <a href="https://github.com/dart-lang/sdk/commit/{{c.hash}}"
@@ -9,8 +9,8 @@
       {{c.hash.substring(0,6)}}
     </a> {{c.author}} {{formatted(c.created)}}<br>
   </material-radio>
-  <div *ngFor="let c of comments">
+  <div *ngFor="let c of comments" class="comment">
     <b>{{c.approvedText()}}</b> {{c.author}} {{formatted(c.created)}}<br>
-    <div style="padding-left: 32px">{{c.comment}}</div>
+    <div class="comment-body">{{c.comment}}</div>
   </div>
 </material-radio-group>

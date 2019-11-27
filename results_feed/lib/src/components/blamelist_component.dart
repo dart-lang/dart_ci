@@ -10,6 +10,7 @@ import '../model/commit.dart';
     selector: 'blamelist-panel',
     directives: [coreDirectives, formDirectives, RelativePosition],
     templateUrl: 'blamelist_component.html',
+    styleUrls: ['blamelist.css'],
     exports: [formatted])
 class BlamelistComponent {
   BlamelistComponent();

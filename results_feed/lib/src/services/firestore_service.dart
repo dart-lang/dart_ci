@@ -190,6 +190,8 @@ class StagingFirestoreService extends FirestoreService {
     }
   }
 
+  bool get isLoggedIn => true;
+
   Future logIn() async {
     //  final provider = firebase.GoogleAuthProvider();
     //  provider.addScope('openid https://www.googleapis.com/auth/datastore');

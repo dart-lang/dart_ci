@@ -10,10 +10,13 @@ import 'package:dart_results_feed/src/components/app_component.template.dart'
     as ng;
 import 'package:dart_results_feed/src/model/comment.dart';
 import 'package:dart_results_feed/src/services/firestore_service.dart';
+import 'package:pageloader/html.dart';
 import 'package:test/test.dart';
 
 import 'comments_sample_data.dart';
 import 'comments_test.template.dart' as self;
+import 'page_objects/app_po.dart';
+import 'page_objects/blamelist_po.dart';
 
 // pub run build_runner test --fail-on-severe -- -p chrome comments_test.dart
 
@@ -23,7 +26,6 @@ import 'comments_test.template.dart' as self;
 final InjectorFactory rootInjector = self.rootInjector$Injector;
 
 void main() {
-  print("entering main");
   final testBed = NgTestBed.forComponent<AppComponent>(ng.AppComponentNgFactory,
       rootInjector: rootInjector);
   NgTestFixture<AppComponent> fixture;
@@ -32,7 +34,6 @@ void main() {
     // Because the FirestoreService can only be initialized once, set up the
     // testBed (and component, and root injectors, and injected FirestoreService
     // instance, in a setupAll function that is created once.
-    print('setting up');
     fixture = await testBed.create();
     final firestore =
         AppComponentTest(fixture.assertOnlyInstance).firestoreService;
@@ -88,7 +89,6 @@ void main() {
     final commentDocument = await firestore.fetchComment(commentId1);
     final comment = Comment.fromDocument(commentDocument);
     final original = commentsSampleData['comments/$commentId1'];
-    print('running test');
     testEqual(comment, original, commentId1);
   });
 
@@ -106,7 +106,67 @@ void main() {
   });
 
   test('check comment ui', () async {
-    // verify that UI for a commit shows the approvals and comments for that
-    // commit.
+    Future fetcher;
+    final context =
+        HtmlPageLoaderElement.createFromElement(fixture.rootElement);
+    fetchMoreCommits(AppComponent app) {
+      fetcher = app.fetchData();
+    }
+
+    while (fixture.assertOnlyInstance.commits.length < 100) {
+      await fixture.update(fetchMoreCommits);
+      await fetcher;
+    }
+
+    var app = AppPO.create(context);
+
+    // Take commit with a non-trival buildlist, press button on it.
+    final unpinned = app.commits
+        .where((commit) =>
+            commit.blamelist.commentBodies.isNotEmpty &&
+            commit.blamelist.firstCommit != commit.blamelist.lastCommit)
+        .single;
+    await fixture.update((AppComponent app) => unpinned.pressPickerButton());
+
+    // Create a new AppPO because AppPO fields are final and cached, and the
+    // DOM has changed.
+    app = AppPO.create(context);
+    final commits = app.commits
+        .where((commit) => commit.blamelist.commentBodies.isNotEmpty)
+        .toList();
+
+    final data = commentsSampleData;
+    var expected = {
+      'comments': [
+        data["comments/$commentThreadId"]["comment"],
+        data["comments/$commentId2"]["comment"]
+      ],
+      'author': data["comments/$commentThreadId"]["author"],
+      'date': '21:19 Thu Nov 21',
+      'first_commit': '80fc4d',
+      'last_commit': '80fc4d'
+    };
+
+    checkComments(commits[0].blamelist, expected);
+    expected = {
+      'comments': [
+        data["comments/$commentId3"]["comment"],
+      ],
+      'author': data["comments/$commentId3"]["author"],
+      'date': '0:19 Fri Nov 1',
+      'first_commit': '8a09d7',
+      'last_commit': '924ec3',
+      'is_blamelist_picker': true
+    };
+    checkComments(commits[1].blamelist, expected);
   });
+}
+
+void checkComments(BlamelistPO blamelist, Map<String, dynamic> data) {
+  expect(blamelist.commentBodies, equals(data['comments']));
+  expect(blamelist.comments.first, matches(data['author']));
+  expect(blamelist.comments.first, matches(data['date']));
+  expect(blamelist.firstCommit, data['first_commit']);
+  expect(blamelist.lastCommit, data['last_commit']);
+  expect(blamelist.hasRadioButtons, data['is_blamelist_picker'] ?? false);
 }
