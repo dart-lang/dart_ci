@@ -1,5 +1,6 @@
 import 'package:firebase/src/firestore.dart';
 
+import '../model/comment.dart';
 import '../model/commit.dart';
 import 'firestore_service.dart';
 
@@ -32,6 +33,11 @@ class TryDataService {
     } else {
       return ReviewInfo(review, "No results received yet for CL $review", []);
     }
+  }
+
+  Future<List<Comment>> comments(int review) async {
+    final docs = await _firestoreService.fetchCommentsForReview(review);
+    return [for (final doc in docs) Comment.fromDocument(doc)];
   }
 }
 

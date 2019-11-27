@@ -97,6 +97,15 @@ class FirestoreService {
     return snapshot.docs;
   }
 
+  Future<List<firestore.DocumentSnapshot>> fetchCommentsForReview(
+      int review) async {
+    final results = app.firestore().collection('comments');
+    final firestore.QuerySnapshot snapshot = await results
+        .where('gerrit_change', '==', review)
+        .get();
+    return snapshot.docs;
+  }
+
   Future<firestore.DocumentSnapshot> fetchBuild(
       String builder, int index) async {
     final builds = app.firestore().collection('builds');

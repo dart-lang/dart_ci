@@ -4,10 +4,14 @@
        target="_blank">{{changeInfo.title}}</a>
   </h2>
 
-<h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
-<results-panel
-    [changes]="changeGroup.changes"
-    [range]="range">
+  <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
+  <results-panel
+      [changes]="changeGroup.changes"
+      [range]="range">
+  </results-panel>
+  <div *ngFor="let c of changeGroup.comments">
+    <b>{{c.approvedText()}}</b> {{c.author}} {{formatted(c.created)}}<br>
+    <div style="padding-left: 32px">{{c.comment}}</div>
+  </div>
 
-</results-panel>
 </div>

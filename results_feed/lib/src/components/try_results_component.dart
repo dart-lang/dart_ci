@@ -5,6 +5,7 @@
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 
+import '../model/comment.dart';
 import '../model/commit.dart';
 import 'results_panel.dart';
 import '../services/try_data_service.dart';
@@ -28,6 +29,7 @@ class TryResultsComponent implements OnActivate {
   int cachedPatch;
   int cachedChange;
   List<Change> changes;
+  List<Comment> comments;
   IntRange range = IntRange(1, 0);
   bool updating = false;
   bool updatePending = false;
@@ -54,14 +56,17 @@ class TryResultsComponent implements OnActivate {
   }
 
   Future<void> update() async {
-    if (change != changeInfo?.review) {
+    if (change == null) return;
+    if (changeInfo == null || change != changeInfo.review) {
       changeInfo = await _tryDataService.reviewInfo(change);
     }
     if (change != cachedChange || patch != cachedPatch) {
       changes = await _tryDataService.changes(changeInfo, patch);
+      comments = await _tryDataService.comments(changeInfo.review);
+      comments..sort();
       cachedChange = change;
       cachedPatch = patch;
-      changeGroup = ChangeGroup(null, {}, [] /* comments here */, changes, []);
+      changeGroup = ChangeGroup(null, {}, comments, changes, []);
     }
   }
 

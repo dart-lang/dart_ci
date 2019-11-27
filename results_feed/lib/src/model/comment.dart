@@ -54,6 +54,8 @@ class Comment implements Comparable {
         gerritChange = document.get('gerrit_change'),
         patchset = document.get('patchset');
 
+  int compareTo(other) => created.compareTo((other as Comment).created);
+
   String approvedText() =>
       (approved == null) ? "" : approved ? "approved" : "disapproved";
 
