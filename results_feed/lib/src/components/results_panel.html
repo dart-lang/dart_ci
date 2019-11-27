@@ -29,7 +29,7 @@
     <span *ngFor="let change of resultGroup.take(resultLimit)"
           tooltipTarget #logs="tooltipTarget"
           style="cursor: pointer">
-          {{change.name}}<br>
+          {{approvalContent(change)}}{{change.name}}<br>
           <material-tooltip-card
               *ngIf="range.length > 0"
               [for]="logs"

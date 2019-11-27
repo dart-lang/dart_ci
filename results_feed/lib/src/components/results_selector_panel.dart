@@ -90,6 +90,12 @@ class ResultsSelectorPanel {
   Map<String, List<String>> summaries(List<List<Change>> group) =>
       group.first.first.configurations.summaries;
 
+  String approvalContent(Change change) {
+    if (change.approved) return "\u2714 ";
+    if (change.disapproved) return "\u274C ";
+    return "";
+  }
+
   void initializeSelected() {
     if (_selected != null && _changes != null) {
       _selected.addAll(checked.keys);

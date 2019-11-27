@@ -108,7 +108,7 @@ void main() {
   test('check comment ui', () async {
     Future fetcher;
     final context =
-        HtmlPageLoaderElement.createFromElement(fixture.rootElement);
+    HtmlPageLoaderElement.createFromElement(fixture.rootElement);
     fetchMoreCommits(AppComponent app) {
       fetcher = app.fetchData();
     }
@@ -123,8 +123,8 @@ void main() {
     // Take commit with a non-trival buildlist, press button on it.
     final unpinned = app.commits
         .where((commit) =>
-            commit.blamelist.commentBodies.isNotEmpty &&
-            commit.blamelist.firstCommit != commit.blamelist.lastCommit)
+    commit.blamelist.commentBodies.isNotEmpty &&
+        commit.blamelist.firstCommit != commit.blamelist.lastCommit)
         .single;
     await fixture.update((AppComponent app) => unpinned.pressPickerButton());
 

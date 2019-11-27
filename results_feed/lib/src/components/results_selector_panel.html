@@ -46,7 +46,9 @@
           [checked]="checked[change]"
           (checkedChange)="onChange($event, change, resultGroup, configurationGroup)">
       </material-checkbox>
-      <span tooltipTarget #logs="tooltipTarget">{{change.name}}</span><br>
+      <span tooltipTarget #logs="tooltipTarget">
+        {{approvalContent(change)}}{{change.name}}
+      </span><br>
       <material-tooltip-card
           [for]="logs"
           [preferredPositions]="preferredTooltipPositions">

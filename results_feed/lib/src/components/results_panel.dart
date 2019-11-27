@@ -54,4 +54,10 @@ class ResultsPanel {
     RelativePosition.OffsetBottomLeft,
     RelativePosition.OffsetTopLeft
   ];
+
+  String approvalContent(Change change) {
+    if (change.approved) return "\u2714 ";
+    if (change.disapproved) return "\u274C ";
+    return "";
+  }
 }
