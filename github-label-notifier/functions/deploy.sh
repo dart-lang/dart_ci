@@ -25,6 +25,6 @@ cp build/node/index.dart.js deploy/build/node
 cp package.json deploy/
 
 # Deploy the function.
-gcloud functions deploy githubWebhook --source deploy --trigger-http \
+gcloud functions deploy githubWebhook --project dart-ci --source deploy --trigger-http \
     --runtime nodejs10 --memory 128MB \
     --set-env-vars GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET

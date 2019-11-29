@@ -1,0 +1,18 @@
+{
+  "targets": {
+    "dart-ci-staging": {
+      "hosting": {
+        "dart-github-notifier": [
+          "dart-github-notifier-staging"
+        ]
+      }
+    },
+    "dart-ci": {
+      "hosting": {
+        "dart-github-notifier": [
+          "dart-github-label-notifier"
+        ]
+      }
+    }
+  }
+}
