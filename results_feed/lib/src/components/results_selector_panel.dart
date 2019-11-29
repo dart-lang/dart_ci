@@ -5,18 +5,18 @@
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/content/deferred_content.dart';
-import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_components/laminate/enums/alignment.dart';
 import 'package:angular_components/material_checkbox/material_checkbox.dart';
-import 'package:angular_components/material_chips/material_chips.dart';
 import 'package:angular_components/material_chips/material_chip.dart';
+import 'package:angular_components/material_chips/material_chips.dart';
 import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_tooltip/material_tooltip.dart';
 import 'package:angular_components/material_tooltip/module.dart' as tooltip;
+import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
-import 'log_component.dart';
-
+import '../formatting.dart' as formatting;
 import '../model/commit.dart';
+import 'log_component.dart';
 
 @Component(
     selector: 'results-selector-panel',
@@ -110,8 +110,8 @@ class ResultsSelectorPanel {
       group.first.first.configurations.summaries;
 
   String approvalContent(Change change) {
-    if (change.approved) return "\u2714 ";
-    if (change.disapproved) return "\u274C ";
+    if (change.approved) return formatting.checkmark;
+    if (change.disapproved) return formatting.bigRedX;
     return "";
   }
 
