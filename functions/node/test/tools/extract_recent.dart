@@ -113,7 +113,7 @@ Future<Map<String, dynamic>> fetchTryResults(
   for (final review in reviews.keys) {
     QuerySnapshot snapshot = await firestore
         .collection('try_results')
-        .where('gerritChange', isEqualTo: int.parse(review.split('/').last))
+        .where('review', isEqualTo: int.parse(review.split('/').last))
         .get();
     result.addAll(documentsToMap(snapshot.documents));
   }

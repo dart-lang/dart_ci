@@ -113,7 +113,6 @@ class FirestoreServiceImpl implements FirestoreService {
         .firstWhere(blamelistIncludesChange, orElse: () => null);
 
     if (group == null) {
-      info("Adding group for $name");
       return firestore.collection('results').add(DocumentData.fromMap({
             'name': name,
             'result': result,
@@ -121,7 +120,6 @@ class FirestoreServiceImpl implements FirestoreService {
             'expected': change['expected'],
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
-            'trivial_blamelist': startIndex == endIndex,
             'configurations': <String>[change['configuration']]
           }));
     }
@@ -134,17 +132,9 @@ class FirestoreServiceImpl implements FirestoreService {
       final data = groupSnapshot.data;
       final newStart = max(startIndex, data.getInt('blamelist_start_index'));
       final newEnd = min(endIndex, data.getInt('blamelist_end_index'));
-      final updateMap = <String, dynamic>{
-        'blamelist_start_index':
-            max(startIndex, data.getInt('blamelist_start_index')),
-        'blamelist_end_index': min(endIndex, data.getInt('blamelist_end_index'))
-      };
-      updateMap['trivial_blamelist'] = (updateMap['blamelist_start_index'] ==
-          updateMap['blamelist_end_index']);
       final update = UpdateData.fromMap({
         'blamelist_start_index': newStart,
         'blamelist_end_index': newEnd,
-        'trivial_blamelist': newStart == newEnd
       });
       update.setFieldValue('configurations',
           Firestore.fieldValues.arrayUnion([change['configuration']]));
@@ -163,7 +153,8 @@ class FirestoreServiceImpl implements FirestoreService {
     String previousResult = change['previous_result'] ?? 'new test';
     QuerySnapshot snapshot = await firestore
         .collection('try_results')
-        .where('review_path', isEqualTo: reviewPath)
+        .where('review', isEqualTo: review)
+        .where('patchset', isEqualTo: patchset)
         .where('name', isEqualTo: name)
         .where('result', isEqualTo: result)
         .where('previous_result', isEqualTo: previousResult)
@@ -172,14 +163,11 @@ class FirestoreServiceImpl implements FirestoreService {
         .get();
 
     if (snapshot.isEmpty) {
-      info("Adding group for $name");
-
       return firestore.collection('try_results').add(DocumentData.fromMap({
             'name': name,
             'result': result,
             'previous_result': previousResult,
             'expected': expected,
-            'review_path': reviewPath,
             'review': review,
             'patchset': patchset,
             'configurations': <String>[change['configuration']]

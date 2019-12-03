@@ -79,7 +79,7 @@ void main() {
     expect(comment.blamelistStartIndex, original['blamelist_start_index']);
     expect(comment.blamelistEndIndex, original['blamelist_end_index']);
     expect(comment.pinnedIndex, original['pinned_index']);
-    expect(comment.gerritChange, original['gerrit_change']);
+    expect(comment.review, original['review']);
     expect(comment.patchset, original['patchset']);
   }
 

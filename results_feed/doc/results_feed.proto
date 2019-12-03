@@ -37,7 +37,6 @@ message Result {
   // Commits to sdk/master are indexed consecutively in the table 'commits'.
   int32 blamelist_start_index = 7;
   int32 blamelist_end_index = 8;  // Inclusive: this commit is in the blamelist.
-  bool trivial_blamelist = 9; // True if blamelist contains only one commit. Not currently used.
 
   // Optional: The index of a the commit that is responsible for these changes.
   // Chosen by a user in the results feed UI.
@@ -72,9 +71,8 @@ message TryResult {
   // Used in Result.  We may want to merge the two types later.
   reserved 7 to 10;
 
-  // The Gerrit CL number. Field is currently named gerritChange in Firestore.
-  // Change it to gerrit_change.
-  int32 gerrit_change = 11;
+  // The Gerrit CL number.
+  int32 review = 11;
   int32 patchset = 12;
 
   // If the try result has been approved, or subsequently unapproved, by a
@@ -135,7 +133,7 @@ message Review {
   repeated Patchset patchsets
 }
 
-message comment {
+message Comment {
   // Unique document ID created by Firestore for this document.
   string id = 1;
 
@@ -174,7 +172,6 @@ message comment {
   int32 blamelist_end_index = 11;
   int32 pinned_index = 12;
   // These are the fields from a TryResult message
-  int32 gerrit_change = 13;
+  int32 review = 13;
   int32 patchset = 14;
-
 }

@@ -17,7 +17,7 @@ class Comment implements Comparable {
   final int blamelistStartIndex;
   final int blamelistEndIndex;
   final int pinnedIndex;
-  final int gerritChange;
+  final int review;
   final int patchset;
 
   Comment(
@@ -33,7 +33,7 @@ class Comment implements Comparable {
       this.blamelistStartIndex,
       this.blamelistEndIndex,
       this.pinnedIndex,
-      this.gerritChange,
+      this.review,
       this.patchset)
       : results = List<String>.from(_results),
         tryResults = List<String>.from(_tryResults);
@@ -51,7 +51,7 @@ class Comment implements Comparable {
         blamelistStartIndex = document.get('blamelist_start_index'),
         blamelistEndIndex = document.get('blamelist_end_index'),
         pinnedIndex = document.get('pinned_index'),
-        gerritChange = document.get('gerrit_change'),
+        review = document.get('review'),
         patchset = document.get('patchset');
 
   String approvedText() =>

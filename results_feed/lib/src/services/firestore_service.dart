@@ -70,7 +70,8 @@ class FirestoreService {
       int cl, int patch) async {
     final results = app.firestore().collection('try_results');
     final firestore.QuerySnapshot snapshot = await results
-        .where('review_path', '==', 'refs/changes/$cl/$patch')
+        .where('review', '==', cl)
+        .where('patchset', '==', patch)
         .get();
     return snapshot.docs;
   }
@@ -101,7 +102,7 @@ class FirestoreService {
       int review) async {
     final results = app.firestore().collection('comments');
     final firestore.QuerySnapshot snapshot =
-        await results.where('gerrit_change', '==', review).get();
+        await results.where('review', '==', review).get();
     return snapshot.docs;
   }
 
@@ -150,7 +151,7 @@ class FirestoreService {
       if (tryResultIds != null) 'try_results': tryResultIds,
       if (blamelistStart != null) 'blamelist_start_index': blamelistStart,
       if (blamelistStart != null) 'blamelist_end_index': blamelistEnd,
-      if (review != null) 'gerrit_change': review
+      if (review != null) 'review': review
     });
     if (approve == null) return;
     // Update approved field in results documents.
