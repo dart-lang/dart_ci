@@ -21,7 +21,7 @@ import 'page_objects/blamelist_po.dart';
 // pub run build_runner test --fail-on-severe -- -p chrome comments_test.dart
 
 @GenerateInjector([
-  ClassProvider(FirestoreService, useClass: StagingFirestoreService),
+  ClassProvider(FirestoreService, useClass: TestingFirestoreService),
 ])
 final InjectorFactory rootInjector = self.rootInjector$Injector;
 

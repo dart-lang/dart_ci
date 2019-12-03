@@ -53,6 +53,7 @@
         {{approvalContent(change)}}{{change.name}}
       </span><br>
       <material-tooltip-card
+          *ngIf="range.length > 0"
           [for]="logs"
           [preferredPositions]="preferredTooltipPositions">
         <div *deferredContent>

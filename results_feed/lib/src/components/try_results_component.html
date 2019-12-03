@@ -5,13 +5,63 @@
   </h2>
 
   <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
-  <results-panel
+  <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
       [range]="range">
   </results-panel>
+  <results-selector-panel *ngIf="approving"
+      [changes]="changeGroup.changes"
+      [range]="range"
+      [selected]="selected"
+      failuresOnly>
+  </results-selector-panel>
   <div *ngFor="let c of changeGroup.comments">
-    <b>{{c.approvedText()}}</b> {{c.author}} {{formatted(c.created)}}<br>
+    <b>{{c.approvedText()}}</b>
+    <span class="nowrap">{{formattedDate(c.created)}}</span>
+    {{formattedEmail(c.author)}}<br>
     <div style="padding-left: 32px">{{c.comment}}</div>
+  </div>
+  <div *ngIf="approving">
+    Comment:<br>
+    <material-input
+        multiline
+        style="width: 80%"
+        label="Comment"
+        required
+        rows="3"
+        [(ngModel)]="commentText"></material-input>
+  </div>
+  <div>
+    <material-button
+        *ngIf="approveEnabled && !approving"
+        raised
+        (click)="approving = true">
+      Approve/Comment ...
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approving = false">
+      Cancel
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(false)">
+      Revoke Selected Approvals
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(null)">
+      Comment without Approving
+    </material-button>
+    <material-button
+        *ngIf="approving"
+        raised
+        (click)="approve(true)">
+      Approve
+    </material-button>
   </div>
 
 </div>

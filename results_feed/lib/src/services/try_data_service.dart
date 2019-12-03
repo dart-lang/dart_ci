@@ -8,6 +8,9 @@ class TryDataService {
   final FirestoreService _firestoreService;
   TryDataService(this._firestoreService);
 
+  Future logIn() => _firestoreService.logIn();
+  bool get isLoggedIn => _firestoreService.isLoggedIn;
+
   Future<List<Change>> changes(ReviewInfo changeInfo, int patch) async {
     final patchsets = changeInfo.patchsets;
     if (patchsets.length < patch) return [];
@@ -39,6 +42,11 @@ class TryDataService {
     final docs = await _firestoreService.fetchCommentsForReview(review);
     return [for (final doc in docs) Comment.fromDocument(doc)];
   }
+
+  Future saveApproval(bool approve, String comment, String baseComment,
+          Iterable<String> resultIds, int review) =>
+      _firestoreService.saveApproval(approve, comment, baseComment,
+          tryResultIds: resultIds, review: review);
 }
 
 class ReviewInfo {

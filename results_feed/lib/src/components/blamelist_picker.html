@@ -12,8 +12,8 @@
   </material-radio>
   <div *ngFor="let c of comments" class="comment">
     <b>{{c.approvedText()}}</b>
-    {{formattedEmail(c.author)}}
     <span class="nowrap">{{formattedDate(c.created)}}</span><br>
+    {{formattedEmail(c.author)}}
     <div class="comment-body">{{c.comment}}</div>
   </div>
 </material-radio-group>

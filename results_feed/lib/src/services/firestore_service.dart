@@ -135,29 +135,41 @@ class FirestoreService {
     }
   }
 
-  Future saveApproval(bool approve, String comment, List<String> resultIds,
-      String baseComment, blamelistStart, blamelistEnd) async {
-    app.firestore().collection('comments').add({
+  Future saveApproval(bool approve, String comment, String baseComment,
+      {List<String> resultIds,
+      List<String> tryResultIds,
+      int blamelistStart,
+      int blamelistEnd,
+      int review}) async {
+    await app.firestore().collection('comments').add({
       'author': app.auth().currentUser.email,
       if (comment != null) 'comment': comment,
       'created': DateTime.now(),
       if (approve != null) 'approved': approve,
-      'results': resultIds,
-      'blamelist_start_index': blamelistStart,
-      'blamelist_end_index': blamelistEnd
+      if (resultIds != null) 'results': resultIds,
+      if (tryResultIds != null) 'try_results': tryResultIds,
+      if (blamelistStart != null) 'blamelist_start_index': blamelistStart,
+      if (blamelistStart != null) 'blamelist_end_index': blamelistEnd,
+      if (review != null) 'gerrit_change': review
     });
-    // Update approved field in results documents.
     if (approve == null) return;
-    // If resultIds.length > 500, break into multiple batches.
-    for (final results in iterables.partition(resultIds, 500)) {
-      final batch = app.firestore().batch();
-      final collection = app.firestore().collection('results');
-      for (final id in results) {
-        batch
-            .update(collection.doc(id), fieldsAndValues: ['approved', approve]);
+    // Update approved field in results documents.
+    Future<void> approveResults(List<String> ids, String collectionName) async {
+      if (ids == null) return;
+      // If resultIds.length > 500, break into multiple batches.
+      for (final results in iterables.partition(ids, 500)) {
+        final batch = app.firestore().batch();
+        final collection = app.firestore().collection(collectionName);
+        for (final id in results) {
+          batch.update(collection.doc(id),
+              fieldsAndValues: ['approved', approve]);
+        }
+        await batch.commit();
       }
-      await batch.commit();
     }
+
+    await approveResults(resultIds, 'results');
+    await approveResults(tryResultIds, 'try_results');
   }
 
   Future<void> getFirebaseClient() async {
@@ -177,9 +189,6 @@ class FirestoreService {
 }
 
 class StagingFirestoreService extends FirestoreService {
-  // StagingFirestoreService uses the Firestore database at
-  // dart-ci-staging.
-  // It adds additional methods used by integration tests.
   Future<void> getFirebaseClient() async {
     if (app != null) return;
     // Firebase api key is public, and must be sent to client for use.
@@ -193,7 +202,32 @@ class StagingFirestoreService extends FirestoreService {
         projectId: "dart-ci-staging",
         storageBucket: "dart-ci-staging.appspot.com");
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
+  }
+}
+
+class TestingFirestoreService extends StagingFirestoreService {
+  // TestingFirestoreService uses the Firestore database at
+  // dart-ci-staging.
+  // It adds additional methods used by integration tests.
+  // It includes local password-based authentication for
+  // tests that write to staging.
+  Future<void> getFirebaseClient() async {
+    await super.getFirebaseClient();
     await logIn();
+  }
+
+  Future logIn() async {
+    try {
+      await app.auth().signInWithEmailAndPassword(
+          'dartresultsfeedtestuser@example.com', r'');
+      // Password must be entered locally before testing.
+      // Because this is running in a browser, cannot read password from
+      // a file or environment variable. Investigate what testing framework
+      // supports for local secrets.
+    } catch (e) {
+      print(e.toString());
+    }
+    return;
   }
 
   Future<void> writeDocumentsFrom(Map<String, dynamic> documents,
@@ -225,19 +259,5 @@ class StagingFirestoreService extends FirestoreService {
       }
       await batch.commit();
     }
-  }
-
-  Future logIn() async {
-    try {
-      await app.auth().signInWithEmailAndPassword(
-          'dartresultsfeedtestuser@example.com', r'');
-      // Password must be entered locally before testing.
-      // Because this is running in a browser, cannot read password from
-      // a file or environment variable. Investigate what testing framework
-      // supports for local secrets.
-    } catch (e) {
-      print(e.toString());
-    }
-    return;
   }
 }

@@ -13,8 +13,9 @@
     </div>
   </div>
   <div *ngFor="let c of comments" class="comment">
-    <b>{{c.approvedText()}}</b> {{formattedEmail(c.author)}}
-    <span class="nowrap">{{formattedDate(c.created)}}</span><br>
+    <b>{{c.approvedText()}}</b>
+    <span class="nowrap">{{formattedDate(c.created)}}</span>
+    {{formattedEmail(c.author)}}<br>
     <div class="comment-body">{{c.comment}}</div>
   </div>
 </div>

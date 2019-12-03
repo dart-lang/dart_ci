@@ -271,7 +271,7 @@ class AppComponentTest {
 
   AppComponentTest(this.appComponent);
 
-  StagingFirestoreService get firestoreService =>
+  TestingFirestoreService get firestoreService =>
       appComponent._firestoreService;
   ApplicationRef get applicationRef => appComponent._applicationRef;
 }

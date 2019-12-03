@@ -73,12 +73,12 @@ class CommitComponent {
     return firestoreService.saveApproval(
         approval,
         commentText,
-        [for (Change result in selected) result.id],
         changeGroup.comments.isEmpty
             ? null
             : changeGroup.comments.last.baseComment ??
                 changeGroup.comments.last.id,
-        changeGroup.range.start,
-        changeGroup.range.end);
+        resultIds: [for (Change result in selected) result.id],
+        blamelistStart: changeGroup.range.start,
+        blamelistEnd: changeGroup.range.end);
   }
 }
