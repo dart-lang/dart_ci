@@ -4,68 +4,26 @@
 
 import 'dart:convert';
 
-import '../index.dart';
-import '../gerrit_change.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 
-String resultJson = '''
-{
-"name":"dart2js_extra/local_function_signatures_strong_test/none",
-"configuration":"dart2js-new-rti-linux-x64-d8",
-"suite":"dart2js_extra",
-"test_name":"local_function_signatures_strong_test/none",
-"time_ms":2384,
-"result":"Pass",
-"expected":"Pass",
-"matches":true,
-"bot_name":"luci-dart-try-xenial-70-8fkh",
-"commit_hash":"9cd47ac2e6ac024e5a0fd1d5667d94a8c2fd2d5e",
-"commit_time":1563576771,
-"build_number":"307",
-"builder_name":"dart2js-rti-linux-x64-d8",
-"flaky":false,
-"previous_flaky":false,
-"previous_result":"RuntimeError",
-"previous_commit_hash":"ebc180be95efd89b8745ddffcedf970af6e36dc1",
-"previous_commit_time":1563576211,
-"previous_build_number":"306",
-"changed":true
-}
-''';
-
-String tryResultJson = '''
-{
-"name":"dart2js_extra/local_function_signatures_strong_test/none",
-"configuration":"dart2js-new-rti-linux-x64-d8",
-"suite":"dart2js_extra",
-"test_name":"local_function_signatures_strong_test/none",
-"time_ms":2384,
-"result":"Pass",
-"expected":"Pass",
-"matches":true,
-"bot_name":"luci-dart-try-xenial-70-8fkh",
-"commit_hash":"refs/changes/12345/2",
-"commit_time":1563576771,
-"build_number":"307",
-"builder_name":"dart2js-rti-linux-x64-d8",
-"flaky":false,
-"previous_flaky":false,
-"previous_result":"RuntimeError",
-"previous_commit_hash":"ebc180be95efd89b8745ddffcedf970af6e36dc1",
-"previous_commit_time":1563576211,
-"previous_build_number":"306",
-"changed":true
-}
-''';
+import '../builder.dart';
+import 'firestore_mock.dart';
+import 'test_data.dart';
 
 void main() async {
-  print("starting test");
-  Map<String, dynamic> result = jsonDecode(resultJson);
-  final stats = Statistics();
-  final info = await storeBuildCommitsInfo(result, stats);
-  print("info: $info");
-  stats.report();
-  await storeChange(result, info, stats);
-  stats.report();
-  await storeTryChange(jsonDecode(tryResultJson) as Map<String, dynamic>);
-  await GerritInfo('refs/changes/119860/5', firestore).update();
+  test("Store already existing commit", () async {
+    final firestore = FirestoreServiceMock();
+    final change = alreadyExistingCommitChange;
+    final hash = change['commit_hash'];
+
+    final builder = Build(existingCommitHash, change, firestore);
+    await builder.storeBuildCommitsInfo();
+    expect(builder.endIndex, existingCommit['index']);
+    expect(builder.startIndex, previousCommit['index'] + 1);
+    verifyInOrder([
+      firestore.getCommit(existingCommitHash),
+      firestore.getCommit(previousCommitHash)
+    ]);
+  });
 }

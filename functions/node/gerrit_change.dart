@@ -4,12 +4,12 @@
 
 import 'dart:convert';
 
-import 'package:firebase_functions_interop/firebase_functions_interop.dart';
 import 'package:node_http/node_http.dart' as http;
+
+import 'firestore.dart';
 
 class GerritInfo {
   static const gerritUrl = 'https://dart-review.googlesource.com/changes';
-  static final reviewRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   static const trivialKinds = const {
     'TRIVIAL_REBASE',
     'NO_CHANGE',
@@ -17,23 +17,19 @@ class GerritInfo {
   };
   static const prefix = ")]}'\n";
 
-  Firestore firestore;
+  FirestoreService firestore;
   String review;
   String patchset;
 
-  GerritInfo(String changeRef, this.firestore) {
-    final match = reviewRefRegExp.matchAsPrefix(changeRef);
-    review = match[1];
-    patchset = match[2];
+  GerritInfo(int review, int patchset, this.firestore) {
+    this.review = review.toString();
+    this.patchset = patchset.toString();
   }
 
 // Fetch the owner, changeId, message, and date of a Gerrit change.
   Future<void> update() async {
+    if (await firestore.hasPatchset(review, patchset)) return;
     final client = http.NodeClient();
-    var patchsetRef = firestore.document('reviews/$review/patchsets/$patchset');
-    DocumentSnapshot patchsetDoc = await patchsetRef.get();
-    if (patchsetDoc.exists) return;
-
     // Get the Gerrit change's commit from the Gerrit API.
     final url = '$gerritUrl/$review?o=ALL_REVISIONS&o=DETAILED_ACCOUNTS';
     final response = await client.get(url);
@@ -42,9 +38,7 @@ class GerritInfo {
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
     final reviewInfo = jsonDecode(protectedJson.substring(prefix.length))
         as Map<String, dynamic>;
-    final reviewRef = firestore.document('reviews/$review');
-    await reviewRef
-        .setData(DocumentData.fromMap({'subject': reviewInfo['subject']}));
+    await firestore.storeReview(review, {'subject': reviewInfo['subject']});
 
     // Add the patchset information to the patchsets subcollection.
     final revisions = reviewInfo['revisions'].values.toList()
@@ -55,14 +49,12 @@ class GerritInfo {
       if (!trivialKinds.contains(revision['kind'])) {
         patchsetGroupFirst = number;
       }
-      patchsetRef = firestore.document('reviews/$review/patchsets/$number');
-
-      await patchsetRef.setData(DocumentData.fromMap({
+      await firestore.storePatchset(review, number, {
         'number': number,
         'patchset_group': patchsetGroupFirst,
         'description': revision['description'],
         'kind': revision['kind']
-      }));
+      });
     }
   }
 }
