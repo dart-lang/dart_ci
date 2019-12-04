@@ -62,7 +62,7 @@
     <material-button
         *ngIf="approveEnabled && !approving"
         raised
-        (click)="approving = true">
+        (click)="approving = true; chooseCommit = false">
       Approve/Comment...
     </material-button>
     <material-button

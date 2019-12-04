@@ -73,7 +73,7 @@ class ResultsSelectorPanel {
   }
 
   @Input()
-  bool failuresOnly;
+  bool failuresOnly = false;
 
   Changes _changes;
   Set<Change> _selected;
