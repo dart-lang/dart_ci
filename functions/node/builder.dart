@@ -57,6 +57,7 @@ class Build {
   int buildNumber;
   int startIndex;
   int endIndex;
+  Set<String> tryApprovals;
 
   Statistics stats = Statistics();
 
@@ -93,6 +94,12 @@ class Build {
       }
     }
     endIndex = commit['index'];
+    if (commit.containsKey('review')) {
+      tryApprovals = {
+        for (final result in await firestore.tryApprovals(commit['review']))
+          testResult(result)
+      };
+    }
     // If this is a new builder, use the current commit as a trivial blamelist.
     if (firstResult['previous_commit_hash'] == null) {
       startIndex = endIndex;
@@ -102,8 +109,11 @@ class Build {
     }
   }
 
+  /// This function is idempotent, so every call of it should write the
+  /// same info to new Firestore documents.  It is save to call multiple
+  /// times simultaneously.
   Future<void> getMissingCommits() async {
-    final lastCommit = await firestore.getLastCommit(commitHash);
+    final lastCommit = await firestore.getLastCommit();
     final lastHash = lastCommit['id'];
     final lastIndex = lastCommit['index'];
 
@@ -137,14 +147,30 @@ class Build {
     }
     var index = lastIndex + 1;
     for (Map<String, dynamic> commit in commits.reversed) {
+      final review = _review(commit);
       await firestore.addCommit(commit['commit'], {
         'author': commit['author']['email'],
         'created': parseGitilesDateTime(commit['committer']['time']),
         'index': index,
-        'title': commit['message'].split('\n').first
+        'title': commit['message'].split('\n').first,
+        if (review != null) 'review': review
       });
+      if (review != null) {
+        await landReview(commit, index);
+      }
       ++index;
     }
+  }
+
+  /// This function is idempotent and may be called multiple times
+  /// concurrently.
+  Future<void> landReview(Map<String, dynamic> commit, int index) async {
+    int review = _review(commit);
+    // Optimization to avoid duplicate work: if another instance has linked
+    // the review to its landed commit, do nothing.
+    if (await firestore.reviewIsLanded(review)) return;
+    await firestore.linkReviewToCommit(review, index);
+    await firestore.linkCommentsToCommit(review, index);
   }
 
   Future<void> storeConfigurationsInfo(Iterable<String> configurations) async {
@@ -154,10 +180,28 @@ class Build {
   }
 
   Future<void> storeChange(Map<String, dynamic> change) async {
-    firestore.storeChange(change, startIndex, endIndex);
+    firestore.storeChange(change, startIndex, endIndex,
+        approved: tryApprovals?.contains(testResult(change)) ?? false);
     stats.changes++;
   }
 }
+
+final reviewRegExp = RegExp(
+    '^Reviewed-on: https://dart-review.googlesource.com/c/sdk/\\+/(\\d+)\$',
+    multiLine: true);
+
+int _review(Map<String, dynamic> commit) {
+  final match = reviewRegExp.firstMatch(commit['message']);
+  if (match != null) return int.parse(match.group(1));
+  return null;
+}
+
+String testResult(Map<String, dynamic> change) => [
+      change['name'],
+      change['result'],
+      change['previous_result'],
+      change['expected']
+    ].join(' ');
 
 class Statistics {
   int results = 0;

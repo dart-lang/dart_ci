@@ -102,6 +102,7 @@ message Commit {
   string author = 3; // The author of the commit, as an email address.
   google.protobuf.Timestamp created = 4;
   string title = 5; // The first line of the commit message.
+  int32 review = 6; // If the commit is a landed Gerrit review, its number.
 }
 
 // A map from configuration names to builder names.
@@ -130,7 +131,8 @@ message Review {
     int32 patchset_group = 5;
   }
 
-  repeated Patchset patchsets
+  repeated Patchset patchsets = 3;
+  int32 landed_index = 4; // When a review lands, this is the index of the landed commit.
 }
 
 message Comment {

@@ -36,7 +36,7 @@ class FirestoreServiceImpl implements FirestoreService {
       .get()
       .then((s) => s.exists ? s.data.toMap() : null);
 
-  Future<Map<String, dynamic>> getLastCommit(String hash) async {
+  Future<Map<String, dynamic>> getLastCommit() async {
     QuerySnapshot lastCommit = await firestore
         .collection('commits')
         .orderBy('index', descending: true)
@@ -86,7 +86,8 @@ class FirestoreServiceImpl implements FirestoreService {
   }
 
   Future<void> storeChange(
-      Map<String, dynamic> change, int startIndex, int endIndex) async {
+      Map<String, dynamic> change, int startIndex, int endIndex,
+      {bool approved = false}) async {
     String name = change['name'];
     String result = change['result'];
     String previousResult = change['previous_result'] ?? 'new test';
@@ -120,7 +121,8 @@ class FirestoreServiceImpl implements FirestoreService {
             'expected': change['expected'],
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
-            'configurations': <String>[change['configuration']]
+            'configurations': <String>[change['configuration']],
+            if (approved) 'approved': true
           }));
     }
 
@@ -188,4 +190,40 @@ class FirestoreServiceImpl implements FirestoreService {
       firestore
           .document('reviews/$review/patchsets/$patchset')
           .setData(DocumentData.fromMap(data));
+
+  /// Returns true if a review record in the database has a landed_index field,
+  /// or if there is no record for the review in the database.  Reviews with no
+  /// test failures have no record, and don't need to be linked when landing.
+  Future<bool> reviewIsLanded(int review) =>
+      firestore.document('reviews/$review').get().then((document) =>
+          !document.exists || document.data.getInt('landed_index') != null);
+
+  Future<void> linkReviewToCommit(int review, int index) => firestore
+      .document('reviews/$review')
+      .updateData(UpdateData.fromMap({'landed_index': index}));
+
+  Future<void> linkCommentsToCommit(int review, int index) async {
+    QuerySnapshot comments = await firestore
+        .collection('comments')
+        .where('review', isEqualTo: review)
+        .get();
+    if (comments.isEmpty) return;
+    final batch = firestore.batch();
+    for (final comment in comments.documents) {
+      batch.updateData(
+          comment.reference,
+          UpdateData.fromMap(
+              {'blamelist_start_index': index, 'blamelist_end_index': index}));
+    }
+    await batch.commit();
+  }
+
+  Future<List<Map<String, dynamic>>> tryApprovals(int review) async {
+    QuerySnapshot approvals = await firestore
+        .collection('try_results')
+        .where('approved', isEqualTo: true)
+        .where('review', isEqualTo: review)
+        .get();
+    return [for (final document in approvals.documents) document.data.toMap()];
+  }
 }

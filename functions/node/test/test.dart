@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -15,7 +13,6 @@ void main() async {
   test("Store already existing commit", () async {
     final firestore = FirestoreServiceMock();
     final change = alreadyExistingCommitChange;
-    final hash = change['commit_hash'];
 
     final builder = Build(existingCommitHash, change, firestore);
     await builder.storeBuildCommitsInfo();
