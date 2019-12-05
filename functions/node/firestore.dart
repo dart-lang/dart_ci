@@ -28,7 +28,7 @@ abstract class FirestoreService {
 
   Future<void> storeReview(String review, Map<String, dynamic> data);
   Future<void> storePatchset(
-      String review, String patchset, Map<String, dynamic> data);
+      String review, int patchset, Map<String, dynamic> data);
 
   Future<bool> reviewIsLanded(int review);
 

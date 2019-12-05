@@ -43,9 +43,9 @@ class GerritInfo {
     // Add the patchset information to the patchsets subcollection.
     final revisions = reviewInfo['revisions'].values.toList()
       ..sort((a, b) => (a['_number'] as int).compareTo(b['_number']));
-    var patchsetGroupFirst;
+    int patchsetGroupFirst;
     for (Map<String, dynamic> revision in revisions) {
-      final number = revision['_number'];
+      int number = revision['_number'];
       if (!trivialKinds.contains(revision['kind'])) {
         patchsetGroupFirst = number;
       }

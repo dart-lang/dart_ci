@@ -186,7 +186,7 @@ class FirestoreServiceImpl implements FirestoreService {
       firestore.document('reviews/$review').setData(DocumentData.fromMap(data));
 
   Future<void> storePatchset(
-          String review, String patchset, Map<String, dynamic> data) =>
+          String review, int patchset, Map<String, dynamic> data) =>
       firestore
           .document('reviews/$review/patchsets/$patchset')
           .setData(DocumentData.fromMap(data));
