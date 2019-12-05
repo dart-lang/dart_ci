@@ -4,7 +4,7 @@
 
 import 'dart:core';
 
-const Map<String, dynamic> alreadyExistingCommitChange = {
+const Map<String, dynamic> existingCommitChange = {
   "name": "dart2js_extra/local_function_signatures_strong_test/none",
   "configuration": "dart2js-new-rti-linux-x64-d8",
   "suite": "dart2js_extra",
@@ -43,3 +43,68 @@ Map<String, dynamic> previousCommit = {
   'index': 49,
   'title': 'A commit used for testing, with index 49'
 };
+
+const String landedCommitHash = 'a commit landing a CL hash';
+Map<String, dynamic> landedCommit = {
+  'author': 'gerrit_user@example.com',
+  'created': DateTime.parse('2019-11-29 15:15:00Z'),
+  'index': 54,
+  'title': 'A commit used for testing tryjob approvals, with index 54'
+};
+
+const Map<String, dynamic> landedCommitChange = {
+  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "configuration": "dart2js-new-rti-linux-x64-d8",
+  "suite": "dart2js_extra",
+  "test_name": "local_function_signatures_strong_test/none",
+  "time_ms": 2384,
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "matches": true,
+  "bot_name": "luci-dart-try-xenial-70-8fkh",
+  "commit_hash": landedCommitHash,
+  "commit_time": 1563576771,
+  "build_number": "308",
+  "builder_name": "dart2js-rti-linux-x64-d8",
+  "flaky": false,
+  "previous_flaky": false,
+  "previous_result": "Pass",
+  "previous_commit_hash": existingCommitHash,
+  "previous_commit_time": 1563576211,
+  "previous_build_number": "306",
+  "changed": true
+};
+
+const Map<String, dynamic> tryjobResult = {};
+
+String gitLogCommitHash = "a commit fetched from the git log";
+
+String gitilesLog = '''
+)]}'
+{
+  "log": [
+    {
+      "commit": "$landedCommitHash",
+      "parents": ["$gitLogCommitHash"],
+      "author": {
+        "email": "gerrit_user@example.com"
+      },
+      "committer": {
+        "time": "Fri Nov 29 15:15:00 2019 +0000"
+      },
+      "message": "A commit used for testing tryjob approvals, with index 54\\n\\nDescription of the landed commit\\nin multiple lines.\\n\\u003e Change-Id: I8dcc08b7571137e869a16ceea8cc73539eb02a5a\\n\\u003e Reviewed-on: https://dart-review.googlesource.com/c/sdk/+/33337\\n\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/44445\\n\\n"
+    },
+    {
+      "commit": "$gitLogCommitHash",
+      "parents": ["$existingCommitHash"],
+      "author": {
+        "email": "user@example.com"
+      },
+      "committer": {
+        "time": "Thu Nov 28 12:07:55 2019 +0000"
+      },
+      "message": "A commit on the git log\\n\\nThis commit does not have results from the CQ\\n\\nChange-Id: I481b2cb8b666885b5c2b9c53fff1177accd01830\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/77779\\nCommit-Queue: A user \\u003cuser9@example.com\\u003e\\nReviewed-by: Another user \\u003cuser10@example.com\\u003e\\n"
+    }
+  ]
+}
+''';
