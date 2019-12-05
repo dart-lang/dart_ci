@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:node_http/node_http.dart' as http;
+import 'package:http/http.dart' as http;
 
 import 'firestore.dart';
 
@@ -17,11 +17,12 @@ class GerritInfo {
   };
   static const prefix = ")]}'\n";
 
+  http.BaseClient httpClient;
   FirestoreService firestore;
   String review;
   String patchset;
 
-  GerritInfo(int review, int patchset, this.firestore) {
+  GerritInfo(int review, int patchset, this.firestore, this.httpClient) {
     this.review = review.toString();
     this.patchset = patchset.toString();
   }
@@ -29,10 +30,9 @@ class GerritInfo {
 // Fetch the owner, changeId, message, and date of a Gerrit change.
   Future<void> update() async {
     if (await firestore.hasPatchset(review, patchset)) return;
-    final client = http.NodeClient();
     // Get the Gerrit change's commit from the Gerrit API.
     final url = '$gerritUrl/$review?o=ALL_REVISIONS&o=DETAILED_ACCOUNTS';
-    final response = await client.get(url);
+    final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix))
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson');

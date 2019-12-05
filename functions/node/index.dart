@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:firebase_functions_interop/firebase_functions_interop.dart';
+import 'package:node_http/node_http.dart' as http;
 
 import 'builder.dart';
 import 'firestore_impl.dart';
@@ -19,8 +20,10 @@ Future<void> receiveChanges(Message message, EventContext context) async {
   final String commit = first['commit_hash'];
 
   if (commit.startsWith('refs/changes')) {
-    return Tryjob(commit, FirestoreServiceImpl()).process(results);
+    return Tryjob(commit, FirestoreServiceImpl(), http.NodeClient())
+        .process(results);
   } else {
-    return Build(commit, first, FirestoreServiceImpl()).process(results);
+    return Build(commit, first, FirestoreServiceImpl(), http.NodeClient())
+        .process(results);
   }
 }

@@ -3,9 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'package:node_http/node_http.dart' as http;
-// For testing, use instead: import 'package:http/http.dart' as http;
-// TODO(whesse): Inject http Client() through dependency injection.
+
+import 'package:http/http.dart' as http;
 
 import 'firestore.dart';
 
@@ -51,6 +50,7 @@ DateTime parseGitilesDateTime(String gitiles) {
 /// Tryjob builds are represented by a subclass Tryjob of this class.
 class Build {
   final FirestoreService firestore;
+  final http.BaseClient httpClient;
   final String commitHash;
   final Map<String, dynamic> firstResult;
   String builderName;
@@ -61,7 +61,7 @@ class Build {
 
   Statistics stats = Statistics();
 
-  Build(this.commitHash, this.firstResult, this.firestore)
+  Build(this.commitHash, this.firstResult, this.firestore, this.httpClient)
       : builderName = firstResult['builder_name'],
         buildNumber = int.parse(firstResult['build_number']);
 
@@ -121,9 +121,7 @@ class Build {
     final range = '$lastHash..master';
     final parameters = ['format=JSON', 'topo-order', 'n=1000'];
     final url = '$logUrl$range?${parameters.join('&')}';
-    final client = http.NodeClient();
-    // For testing, use http.Client();  TODO(whesse): Inject correct http.
-    final response = await client.get(url);
+    final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix))
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
