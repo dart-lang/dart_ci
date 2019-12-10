@@ -48,6 +48,20 @@ class ResultsSelectorPanel {
   @Input()
   set changes(Changes changes) {
     _changes = changes;
+    recomputeChanges();
+  }
+
+  Changes get changes => _changes;
+  Changes _changes;
+
+  // Removes passing changes if failuresOnly is set. Does not handle changing
+  // failuresOnly from true to false.
+  void recomputeChanges() {
+    if (_changes == null) return;
+    if (failuresOnly) {
+      _changes = Changes(
+          changes.flat.where((change) => change.result != change.expected));
+    }
     for (final configurationGroup in changes) {
       configurationCheckboxes[configurationGroup] = FixedMixedCheckbox();
       for (final resultGroup in configurationGroup) {
@@ -73,33 +87,22 @@ class ResultsSelectorPanel {
   }
 
   @Input()
-  bool failuresOnly = false;
+  set failuresOnly(bool value) {
+    _failuresOnly = value;
+    recomputeChanges();
+  }
 
-  Changes _changes;
+  bool get failuresOnly => _failuresOnly;
+
+  bool _failuresOnly = false;
+
   Set<Change> _selected;
 
   final checked = Map<Change, bool>();
   final resultCheckboxes = Map<List<Change>, FixedMixedCheckbox>();
-  final _showResultGroupCheckbox = Map<List<Change>, bool>();
   final configurationCheckboxes = Map<List<List<Change>>, FixedMixedCheckbox>();
-  final _showConfigurationCheckbox = Map<List<List<Change>>, bool>();
-
-  // When pinning results to a blamelist, we select all results.
-  // When approving results, we only show checkboxes for the failures.
-  bool showCheckbox(Change change) =>
-      !failuresOnly || change.result != change.expected;
-  bool showResultGroupCheckbox(List<Change> group) =>
-      !failuresOnly ||
-      _showResultGroupCheckbox.putIfAbsent(
-          group, () => group.any(showCheckbox));
-  bool showConfigurationCheckbox(List<List<Change>> group) =>
-      !failuresOnly ||
-      _showConfigurationCheckbox.putIfAbsent(
-          group, () => group.any(showResultGroupCheckbox));
 
   int resultLimit = 10;
-
-  Changes get changes => _changes;
 
   final preferredTooltipPositions = [
     RelativePosition.OffsetBottomLeft,
@@ -117,7 +120,7 @@ class ResultsSelectorPanel {
 
   void initializeSelected() {
     if (_selected != null && _changes != null) {
-      _selected.addAll(checked.keys.where(showCheckbox));
+      _selected.addAll(checked.keys);
     }
   }
 
@@ -147,7 +150,7 @@ class ResultsSelectorPanel {
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final change in resultGroup.where(showCheckbox)) {
+    for (final change in resultGroup) {
       setCheckbox(change, newChecked);
     }
     configurationCheckboxes[configurationGroup].setMixed();
@@ -160,9 +163,9 @@ class ResultsSelectorPanel {
     assert(event != 'mixed');
     bool newChecked = event == 'true';
     checkbox.setState(newChecked, false);
-    for (final subgroup in configurationGroup.where(showResultGroupCheckbox)) {
+    for (final subgroup in configurationGroup) {
       resultCheckboxes[subgroup].setState(newChecked, false);
-      for (final change in subgroup.where(showCheckbox)) {
+      for (final change in subgroup) {
         setCheckbox(change, newChecked);
       }
     }
