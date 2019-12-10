@@ -152,12 +152,13 @@ class FirestoreServiceImpl implements FirestoreService {
     return firestore.runTransaction(updateGroup);
   }
 
-  Future<void> storeTryChange(
+  Future<bool> storeTryChange(
       Map<String, dynamic> change, int review, int patchset) async {
     String name = change['name'];
     String result = change['result'];
     String expected = change['expected'];
     String previousResult = change['previous_result'] ?? 'new test';
+    // Find an existing TryResult for this test on this patchset.
     QuerySnapshot snapshot = await firestore
         .collection('try_results')
         .where('review', isEqualTo: review)
@@ -168,22 +169,40 @@ class FirestoreServiceImpl implements FirestoreService {
         .where('expected', isEqualTo: expected)
         .limit(1)
         .get();
-
     if (snapshot.isEmpty) {
-      return firestore.collection('try_results').add(DocumentData.fromMap({
+      // Is the previous result for this test on this review approved?
+      QuerySnapshot previous = await firestore
+          .collection('try_results')
+          .where('review', isEqualTo: review)
+          .where('name', isEqualTo: name)
+          .where('result', isEqualTo: result)
+          .where('previous_result', isEqualTo: previousResult)
+          .where('expected', isEqualTo: expected)
+          .orderBy('patchset', descending: true)
+          .limit(1)
+          .get();
+      // Create a TryResult for this test on this patchset.
+      final approved = previous.isNotEmpty &&
+          previous.documents.first.data.getBool('approved') == true;
+      await firestore.collection('try_results').add(DocumentData.fromMap({
             'name': name,
             'result': result,
             'previous_result': previousResult,
             'expected': expected,
             'review': review,
             'patchset': patchset,
-            'configurations': <String>[change['configuration']]
+            'configurations': <String>[change['configuration']],
+            if (approved) 'approved': true
           }));
+      return approved;
     } else {
+      // Update the TryResult for this test, adding this configuration.
       final update = UpdateData()
         ..setFieldValue('configurations',
             Firestore.fieldValues.arrayUnion([change['configuration']]));
-      snapshot.documents.first.reference.updateData(update);
+      await snapshot.documents.first.reference.updateData(update);
+      // Return true if this result is approved
+      return snapshot.documents.first.data.getBool('approved') == true;
     }
   }
 
@@ -259,4 +278,52 @@ class FirestoreServiceImpl implements FirestoreService {
         .document('builds/$builder:$index')
         .updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
+
+  Future<void> storeTryChunkStatus(
+      String builder, int review, int patchset, bool success) async {
+    final reference =
+        firestore.document('try_builds/$builder:$review:$patchset');
+    final snapshot = await reference.get();
+
+    if (!snapshot.exists || snapshot.data.getBool('completed') != null) {
+      await _createTryBuildRecord(builder, review, patchset);
+    }
+    Future<void> updateStatus(Transaction transaction) async {
+      final snapshot = await transaction.get(reference);
+      final data = snapshot.data.toMap();
+      final int chunks = data['num_chunks'];
+      final int processedChunks = data['processed_chunks'] ?? 0;
+      final bool completed = chunks == processedChunks + 1;
+
+      final update = UpdateData.fromMap({
+        'processed_chunks': processedChunks + 1,
+        'success': (data['success'] ?? true) && success,
+        if (completed) 'completed': true
+      });
+      transaction.update(reference, update);
+    }
+
+    return firestore.runTransaction(updateStatus);
+  }
+
+  Future<void> storeTryBuildChunkCount(
+      String builder, int review, int patchset, int numChunks) async {
+    final reference =
+        firestore.document('try_builds/$builder:$review:$patchset');
+    final snapshot = await reference.get();
+    if (!snapshot.exists || snapshot.data.getInt('num_chunks') != null) {
+      await _createTryBuildRecord(builder, review, patchset);
+    }
+    await reference.updateData(UpdateData.fromMap({'num_chunks': numChunks}));
+  }
+
+  Future<void> _createTryBuildRecord(
+          String builder, int review, int patchset) =>
+      firestore
+          .document('try_builds/$builder:$review:$patchset')
+          .setData(DocumentData.fromMap({
+            'builder': builder,
+            'review': review,
+            'patchset': patchset,
+          }));
 }

@@ -14,8 +14,10 @@ class Tryjob {
   static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   final http.BaseClient httpClient;
   final FirestoreService firestore;
+  String builderName;
   int review;
   int patchset;
+  bool success = true;
   final int countChunks;
 
   Tryjob(String changeRef, this.countChunks, this.firestore, this.httpClient) {
@@ -30,7 +32,18 @@ class Tryjob {
 
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
-    await Future.forEach(results.where(isChangedResult),
-        (change) => firestore.storeTryChange(change, review, patchset));
+    builderName = results.first['builder_name'];
+    await Future.forEach(results.where(isChangedResult), storeTryChange);
+
+    if (countChunks != null) {
+      await firestore.storeTryBuildChunkCount(
+          builderName, review, patchset, countChunks);
+    }
+    await firestore.storeTryChunkStatus(builderName, review, patchset, success);
+  }
+
+  Future<void> storeTryChange(change) async {
+    final approved = await firestore.storeTryChange(change, review, patchset);
+    if (!approved && !change['matches']) success = false;
   }
 }

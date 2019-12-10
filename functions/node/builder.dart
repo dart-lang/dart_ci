@@ -72,8 +72,7 @@ class Build {
     final configurations =
         results.map((change) => change['configuration'] as String).toSet();
     await update(configurations);
-    await Future.forEach(
-        results.where(isChangedResult), (result) => storeChange(result));
+    await Future.forEach(results.where(isChangedResult), storeChange);
     if (countChunks != null) {
       await firestore.storeBuildChunkCount(builderName, endIndex, countChunks);
     }

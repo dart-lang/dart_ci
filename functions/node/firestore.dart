@@ -29,7 +29,7 @@ abstract class FirestoreService {
   Future<bool> updateResult(
       String result, String configuration, int startIndex, int endIndex);
 
-  Future<void> storeTryChange(
+  Future<bool> storeTryChange(
       Map<String, dynamic> change, int review, int patchset);
 
   Future<void> storeReview(String review, Map<String, dynamic> data);
@@ -47,4 +47,10 @@ abstract class FirestoreService {
   Future<void> storeChunkStatus(String builder, int index, bool success);
 
   Future<void> storeBuildChunkCount(String builder, int index, int numChunks);
+
+  Future<void> storeTryChunkStatus(
+      String builder, int review, int patchset, bool success);
+
+  Future<void> storeTryBuildChunkCount(
+      String builder, int review, int patchset, int numChunks);
 }

@@ -93,6 +93,72 @@ const List<Map<String, dynamic>> tryjobResults = [
   },
 ];
 
+const testBuilder = 'test_builder';
+const testReview = 123;
+const testPatchset = 3;
+const testPreviousPatchset = 1;
+const testReviewPath = 'refs/changes/$testReview/$testPatchset';
+const testPreviousPatchsetPath =
+    'refs/changes/$testReview/$testPreviousPatchset';
+const Map<String, dynamic> tryjobFailingChange = {
+  "name": "test_suite/failing_test",
+  "configuration": "test_configuration",
+  "suite": "test_suite",
+  "test_name": "failing_test",
+  "time_ms": 2384,
+  "result": "CompileTimeError",
+  "expected": "Pass",
+  "matches": false,
+  "bot_name": "test_bot",
+  "commit_hash": testReviewPath,
+  "commit_time": 1563576771,
+  "build_number": "308",
+  "builder_name": testBuilder,
+  "flaky": false,
+  "previous_flaky": false,
+  "previous_result": "Pass",
+  "previous_commit_hash": existingCommitHash,
+  "previous_commit_time": 1563576211,
+  "previous_build_number": "1234",
+  "changed": true
+};
+
+final Map<String, dynamic> tryjobOtherFailingChange =
+    Map<String, dynamic>.from(tryjobFailingChange)
+      ..addAll({
+        "name": "test_suite/other_failing_test",
+        "test_name": "other_failing_test",
+        "result": "RuntimeError",
+        "expected": "Pass",
+        "matches": false,
+        "previous_result": "Pass",
+        "changed": true
+      });
+
+final Map<String, dynamic> tryjobExistingFailure =
+    Map<String, dynamic>.from(tryjobFailingChange)
+      ..addAll({
+        "name": "test_suite/existing_failure_test",
+        "test_name": "passing_test",
+        "result": "RuntimeError",
+        "expected": "Pass",
+        "matches": false,
+        "previous_result": "RuntimeError",
+        "changed": false
+      });
+
+final Map<String, dynamic> tryjobPassingChange =
+    Map<String, dynamic>.from(tryjobFailingChange)
+      ..addAll({
+        "name": "test_suite/passing_test",
+        "test_name": "passing_test",
+        "result": "Pass",
+        "expected": "Pass",
+        "matches": true,
+        "previous_result": "RuntimeError",
+        "changed": true
+      });
+
 String gitLogCommitHash = "a commit fetched from the git log";
 
 String gitilesLog = '''
