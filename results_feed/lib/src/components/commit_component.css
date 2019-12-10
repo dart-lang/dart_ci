@@ -1,0 +1,15 @@
+/**
+ * Copyright (c) 2019, the Dart project authors.  Please see the AUTHORS file
+ * for details. All rights reserved. Use of this source code is governed by a
+ * BSD-style license that can be found in the LICENSE file.
+ */
+
+material-button {text-align: center; clear: both; }
+material-input { width: 80% }
+
+.commit { margin: 12px; background-color: white; box-shadow: 8px 8px 5px lightgray; }
+.commit-panel { margin: 8px; }
+@media screen and (min-width: 992px) {
+  .commit-panel { width: 45%; float: left; }
+}
+.commit-bottom { clear: both; padding: 8px; }

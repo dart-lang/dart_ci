@@ -24,7 +24,7 @@ import '../model/commit.dart';
     ],
     templateUrl: 'blamelist_picker.html',
     styleUrls: ([
-      'commit_component.css',
+      'blamelist.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]),
     exports: [formattedDate, formattedEmail])

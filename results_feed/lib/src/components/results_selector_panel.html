@@ -27,8 +27,8 @@
       </material-tooltip-card>
     </template>
   </material-chips>
-  <span *ngFor="let resultGroup of configurationGroup"
-        style="margin-left: 16px">
+  <div *ngFor="let resultGroup of configurationGroup"
+        class="indent">
     <material-checkbox
         *ngIf="showResultGroupCheckbox(resultGroup)"
         no-ink
@@ -39,12 +39,14 @@
     <span [class]="resultGroup.first.resultStyle">
           {{resultGroup.first.changesText}}
     </span><br>
-    <span class="nonbreaking" *ngFor="let change of resultGroup.take(resultLimit)"
-          tooltipTarget
-          #logs="tooltipTarget"
-          style="cursor: pointer; margin-left: 16px; height: 16px">
+    <span
+        class="nowrap indent pointer"
+        *ngFor="let change of resultGroup.take(resultLimit)"
+        tooltipTarget
+        #logs="tooltipTarget">
       <material-checkbox
           *ngIf="showCheckbox(change)"
+          class="result-checkbox"
           no-ink
           [checked]="checked[change]"
           (checkedChange)="onChange($event, change, resultGroup, configurationGroup)">
@@ -73,5 +75,5 @@
         style="cursor: pointer">
       &vellip; {{resultGroup.length - resultLimit}} more changed results
     </div>
-  </span>
+  </div>
 </div>

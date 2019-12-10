@@ -33,7 +33,7 @@ import 'log_component.dart';
     providers: [popupBindings, tooltip.materialTooltipBindings],
     templateUrl: 'results_panel.html',
     styleUrls: ([
-      'commit_component.css',
+      'results.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]))
 class ResultsPanel {

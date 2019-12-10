@@ -4,17 +4,10 @@
  * BSD-style license that can be found in the LICENSE file.
  */
 
-.material-header {
-    height: 64px;
-    position: fixed;
-    left: 0;
-    top: 0px;
-    z-index: 100;
-    width: 100%;
-    margin: 0px;
-}
+.failure { background-color:lightCoral; }
+.success { background-color:lightGreen; }
 
-.info-dialog {
-    width: 50%;
-    height: 70%;
-}
+.indent { margin-left: 16px; }
+span.nowrap { white-space: nowrap; }
+.pointer { cursor: pointer; }
+.result-checkbox { height: 9px }
