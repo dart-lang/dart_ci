@@ -18,12 +18,16 @@ Future<void> receiveChanges(Message message, EventContext context) async {
   final results = (message.json as List).cast<Map<String, dynamic>>();
   final first = results.first;
   final String commit = first['commit_hash'];
-
-  if (commit.startsWith('refs/changes')) {
-    return Tryjob(commit, FirestoreServiceImpl(), http.NodeClient())
-        .process(results);
-  } else {
-    return Build(commit, first, FirestoreServiceImpl(), http.NodeClient())
-        .process(results);
+  try {
+    if (commit.startsWith('refs/changes')) {
+      return Tryjob(commit, FirestoreServiceImpl(), http.NodeClient())
+          .process(results);
+    } else {
+      return Build(commit, first, FirestoreServiceImpl(), http.NodeClient())
+          .process(results);
+    }
+  } catch (e) {
+    print('Exception when processing message. First record is:\n$first');
+    rethrow;
   }
 }
