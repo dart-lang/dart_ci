@@ -58,7 +58,7 @@ class Build {
   int buildNumber;
   int startIndex;
   int endIndex;
-  Set<String> tryApprovals;
+  Set<String> tryApprovals = {};
   bool success = true; // Changed to false if any unapproved failure is seen.
   int countChanges = 0;
   int commitsFetched;
@@ -98,27 +98,34 @@ class Build {
   /// Saves the commit indices of the start and end of the blamelist.
   Future<void> storeBuildCommitsInfo() async {
     // Get indices of change.  Range includes startIndex and endIndex.
-    var commit = await firestore.getCommit(commitHash);
-    if (commit == null) {
+    var endCommit = await firestore.getCommit(commitHash);
+    if (endCommit == null) {
       await getMissingCommits();
-      commit = await firestore.getCommit(commitHash);
-      if (commit == null) {
+      endCommit = await firestore.getCommit(commitHash);
+      if (endCommit == null) {
         error('Result received with unknown commit hash $commitHash');
       }
     }
-    endIndex = commit['index'];
-    if (commit.containsKey('review')) {
-      tryApprovals = {
-        for (final result in await firestore.tryApprovals(commit['review']))
-          testResult(result)
-      };
-    }
+    endIndex = endCommit['index'];
     // If this is a new builder, use the current commit as a trivial blamelist.
     if (firstResult['previous_commit_hash'] == null) {
       startIndex = endIndex;
     } else {
-      commit = await firestore.getCommit(firstResult['previous_commit_hash']);
-      startIndex = commit['index'] + 1;
+      final startCommit =
+          await firestore.getCommit(firstResult['previous_commit_hash']);
+      startIndex = startCommit['index'] + 1;
+    }
+    Future<void> fetchApprovals(Map<String, dynamic> commit) async {
+      if (commit.containsKey('review')) {
+        for (final result in await firestore.tryApprovals(commit['review'])) {
+          tryApprovals.add(testResult(result));
+        }
+      }
+    }
+
+    await fetchApprovals(endCommit);
+    for (var index = startIndex; index < endIndex; ++index) {
+      await fetchApprovals(await firestore.getCommitByIndex(index));
     }
   }
 
@@ -195,7 +202,7 @@ class Build {
     var approved;
     String result = await firestore.findResult(change, startIndex, endIndex);
     if (result == null) {
-      approved = tryApprovals?.contains(testResult(change)) ?? false;
+      approved = tryApprovals.contains(testResult(change));
       await firestore.storeResult(change, startIndex, endIndex,
           approved: approved);
     } else {

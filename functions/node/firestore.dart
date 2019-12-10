@@ -11,6 +11,8 @@ abstract class FirestoreService {
 
   Future<Map<String, dynamic>> getCommit(String hash);
 
+  Future<Map<String, dynamic>> getCommitByIndex(int index);
+
   Future<Map<String, dynamic>> getLastCommit();
 
   Future<void> addCommit(String id, Map<String, dynamic> data);

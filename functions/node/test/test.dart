@@ -27,6 +27,13 @@ void main() async {
         .thenAnswer((_) => Future.value(existingCommit));
     when(firestore.getCommit(previousCommitHash))
         .thenAnswer((_) => Future.value(previousCommit));
+    when(firestore.getCommitByIndex(any))
+        .thenAnswer((_) => Future.value(commit53));
+    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
+        tryjobResults
+            .where((result) => result['review'] == 77779)
+            .where((result) => result['approved'] == true)
+            .toList()));
 
     final builder = Build(
         existingCommitHash, existingCommitChange, null, firestore, client);
@@ -35,7 +42,11 @@ void main() async {
     expect(builder.startIndex, previousCommit['index'] + 1);
     verifyInOrder([
       firestore.getCommit(existingCommitHash),
-      firestore.getCommit(previousCommitHash)
+      firestore.getCommit(previousCommitHash),
+      firestore.getCommitByIndex(50),
+      firestore.tryApprovals(77779),
+      firestore.getCommitByIndex(51),
+      firestore.tryApprovals(77779),
     ]);
     verifyNoMoreInteractions(firestore);
     verifyZeroInteractions(client);
@@ -49,11 +60,18 @@ void main() async {
     final landedResponses = [null, landedCommit];
     when(firestore.getCommit(landedCommitHash))
         .thenAnswer((_) => Future(() => landedResponses.removeAt(0)));
+    when(firestore.getCommitByIndex(53))
+        .thenAnswer((_) => Future.value(commit53));
     when(firestore.getLastCommit()).thenAnswer(
         (_) => Future(() => {...existingCommit, 'id': existingCommitHash}));
     when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
         tryjobResults
             .where((result) => result['review'] == 44445)
+            .where((result) => result['approved'] == true)
+            .toList()));
+    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
+        tryjobResults
+            .where((result) => result['review'] == 77779)
             .where((result) => result['approved'] == true)
             .toList()));
     when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
@@ -66,11 +84,12 @@ void main() async {
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, landedCommit['index']);
     expect(builder.startIndex, existingCommit['index'] + 1);
-    expect(builder.tryApprovals, {testResult(tryjobResults[0])});
+    expect(builder.tryApprovals,
+        {testResult(tryjobResults[0]), testResult(tryjobResults[1])});
     verifyInOrder([
       verify(firestore.getCommit(landedCommitHash)).called(2),
       verify(firestore.getLastCommit()),
-      verify(firestore.addCommit(gitLogCommitHash, {
+      verify(firestore.addCommit(commit53Hash, {
         'author': 'user@example.com',
         'created': DateTime.parse('2019-11-28 12:07:55 +0000'),
         'index': 53,
@@ -88,7 +107,10 @@ void main() async {
       verify(firestore.reviewIsLanded(44445)),
       // We want to verify firestore.getCommit(landedCommitHash) here,
       // but it is already matched by the earlier check for the same call.
-      verify(firestore.getCommit(existingCommitHash))
+      verify(firestore.getCommit(existingCommitHash)),
+      verify(firestore.tryApprovals(44445)),
+      verify(firestore.getCommitByIndex(53)),
+      verify(firestore.tryApprovals(77779))
     ]);
   });
 
@@ -99,9 +121,16 @@ void main() async {
         .thenAnswer((_) => Future.value(existingCommit));
     when(firestore.getCommit(landedCommitHash))
         .thenAnswer((_) => Future.value(landedCommit));
+    when(firestore.getCommitByIndex(53))
+        .thenAnswer((_) => Future.value(commit53));
     when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
         tryjobResults
             .where((result) => result['review'] == 44445)
+            .where((result) => result['approved'] == true)
+            .toList()));
+    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
+        tryjobResults
+            .where((result) => result['review'] == 77779)
             .where((result) => result['approved'] == true)
             .toList()));
 
@@ -111,10 +140,10 @@ void main() async {
 
     verifyZeroInteractions(client);
     verifyInOrder([
-      verify(firestore.updateConfiguration(
-          "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8")),
-      verify(firestore.findResult(any, 53, 54)),
-      verify(firestore.storeResult(any, 53, 54, approved: true))
+      firestore.updateConfiguration(
+          "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8"),
+      firestore.findResult(any, 53, 54),
+      firestore.storeResult(any, 53, 54, approved: true)
     ]);
   });
 }

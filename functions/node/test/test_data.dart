@@ -44,6 +44,15 @@ Map<String, dynamic> previousCommit = {
   'title': 'A commit used for testing, with index 49'
 };
 
+const String commit53Hash = 'commit 53 landing CL 77779 hash';
+Map<String, dynamic> commit53 = {
+  'author': 'user@example.com',
+  'created': DateTime.parse('2019-11-28 12:07:55 +0000'),
+  'index': 53,
+  'title': 'A commit on the git log',
+  'review': 77779
+};
+
 const String landedCommitHash = 'a commit landing a CL hash';
 Map<String, dynamic> landedCommit = {
   'author': 'gerrit_user@example.com',
@@ -89,6 +98,16 @@ const List<Map<String, dynamic>> tryjobResults = [
     "result": "RuntimeError",
     "expected": "Pass",
     "previous_result": "Pass",
+    "approved": true
+  },
+  {
+    "review": 77779,
+    "configurations": ["test_configuration"],
+    "name": "test_suite/test_name",
+    "patchset": 5,
+    "result": "RuntimeError",
+    "expected": "CompileTimeError",
+    "previous_result": "CompileTimeError",
     "approved": true
   },
 ];
@@ -159,15 +178,13 @@ final Map<String, dynamic> tryjobPassingChange =
         "changed": true
       });
 
-String gitLogCommitHash = "a commit fetched from the git log";
-
 String gitilesLog = '''
 )]}'
 {
   "log": [
     {
       "commit": "$landedCommitHash",
-      "parents": ["$gitLogCommitHash"],
+      "parents": ["$commit53Hash"],
       "author": {
         "email": "gerrit_user@example.com"
       },
@@ -177,7 +194,7 @@ String gitilesLog = '''
       "message": "A commit used for testing tryjob approvals, with index 54\\n\\nDescription of the landed commit\\nin multiple lines.\\n\\u003e Change-Id: I8dcc08b7571137e869a16ceea8cc73539eb02a5a\\n\\u003e Reviewed-on: https://dart-review.googlesource.com/c/sdk/+/33337\\n\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/44445\\n\\n"
     },
     {
-      "commit": "$gitLogCommitHash",
+      "commit": "$commit53Hash",
       "parents": ["$existingCommitHash"],
       "author": {
         "email": "user@example.com"

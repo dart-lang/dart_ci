@@ -36,6 +36,12 @@ class FirestoreServiceImpl implements FirestoreService {
       .get()
       .then((s) => s.exists ? s.data.toMap() : null);
 
+  Future<Map<String, dynamic>> getCommitByIndex(int index) => firestore
+      .collection('commits')
+      .where('index', isEqualTo: index)
+      .get()
+      .then((s) => s.documents.first.data.toMap());
+
   Future<Map<String, dynamic>> getLastCommit() async {
     QuerySnapshot lastCommit = await firestore
         .collection('commits')
