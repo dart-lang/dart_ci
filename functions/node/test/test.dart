@@ -28,8 +28,8 @@ void main() async {
     when(firestore.getCommit(previousCommitHash))
         .thenAnswer((_) => Future.value(previousCommit));
 
-    final builder =
-        Build(existingCommitHash, existingCommitChange, firestore, client);
+    final builder = Build(
+        existingCommitHash, existingCommitChange, null, firestore, client);
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, existingCommit['index']);
     expect(builder.startIndex, previousCommit['index'] + 1);
@@ -62,7 +62,7 @@ void main() async {
         .thenAnswer((_) => Future(() => ResponseFake(gitilesLog)));
 
     final builder =
-        Build(landedCommitHash, landedCommitChange, firestore, client);
+        Build(landedCommitHash, landedCommitChange, null, firestore, client);
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, landedCommit['index']);
     expect(builder.startIndex, existingCommit['index'] + 1);
@@ -106,14 +106,15 @@ void main() async {
             .toList()));
 
     final builder =
-        Build(landedCommitHash, landedCommitChange, firestore, client);
+        Build(landedCommitHash, landedCommitChange, null, firestore, client);
     await builder.process([landedCommitChange]);
 
     verifyZeroInteractions(client);
     verifyInOrder([
       verify(firestore.updateConfiguration(
           "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8")),
-      verify(firestore.storeChange(any, 53, 54, approved: true))
+      verify(firestore.findResult(any, 53, 54)),
+      verify(firestore.storeResult(any, 53, 54, approved: true))
     ]);
   });
 }

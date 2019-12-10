@@ -53,15 +53,18 @@ class Build {
   final http.BaseClient httpClient;
   final String commitHash;
   final Map<String, dynamic> firstResult;
+  final int countChunks;
   String builderName;
   int buildNumber;
   int startIndex;
   int endIndex;
   Set<String> tryApprovals;
+  bool success = true; // Changed to false if any unapproved failure is seen.
+  int countChanges = 0;
+  int commitsFetched;
 
-  Statistics stats = Statistics();
-
-  Build(this.commitHash, this.firstResult, this.firestore, this.httpClient)
+  Build(this.commitHash, this.firstResult, this.countChunks, this.firestore,
+      this.httpClient)
       : builderName = firstResult['builder_name'],
         buildNumber = int.parse(firstResult['build_number']);
 
@@ -71,7 +74,18 @@ class Build {
     await update(configurations);
     await Future.forEach(
         results.where(isChangedResult), (result) => storeChange(result));
-    stats.report();
+    if (countChunks != null) {
+      await firestore.storeBuildChunkCount(builderName, endIndex, countChunks);
+    }
+    await firestore.storeChunkStatus(builderName, endIndex, success);
+
+    final report = [
+      "Processed ${results.length} results from $builderName build $buildNumber",
+      if (countChanges > 0) "Stored $countChanges changes",
+      if (commitsFetched != null) "Fetched $commitsFetched new commits",
+      if (!success) "Found unapproved new failures"
+    ];
+    print(report.join('\n'));
   }
 
   Future<void> update(Iterable<String> configurations) async {
@@ -131,7 +145,7 @@ class Build {
       info('Found no new commits between $lastHash and master');
       return;
     }
-    stats.commitsFetched = commits.length;
+    commitsFetched = commits.length;
     final first = commits.last as Map<String, dynamic>;
     if (first['parents'].first != lastHash) {
       error('First new commit ${first['parents'].first} is not'
@@ -178,9 +192,18 @@ class Build {
   }
 
   Future<void> storeChange(Map<String, dynamic> change) async {
-    firestore.storeChange(change, startIndex, endIndex,
-        approved: tryApprovals?.contains(testResult(change)) ?? false);
-    stats.changes++;
+    countChanges++;
+    var approved;
+    String result = await firestore.findResult(change, startIndex, endIndex);
+    if (result == null) {
+      approved = tryApprovals?.contains(testResult(change)) ?? false;
+      await firestore.storeResult(change, startIndex, endIndex,
+          approved: approved);
+    } else {
+      approved = await firestore.updateResult(
+          result, change['configuration'], startIndex, endIndex);
+    }
+    if (!approved && !change['matches']) success = false;
   }
 }
 

@@ -12,12 +12,13 @@ bool isChangedResult(Map<String, dynamic> result) =>
 
 class Tryjob {
   static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
-  http.BaseClient httpClient;
-  FirestoreService firestore;
+  final http.BaseClient httpClient;
+  final FirestoreService firestore;
   int review;
   int patchset;
+  final int countChunks;
 
-  Tryjob(String changeRef, this.firestore, this.httpClient) {
+  Tryjob(String changeRef, this.countChunks, this.firestore, this.httpClient) {
     final match = changeRefRegExp.matchAsPrefix(changeRef);
     review = int.parse(match[1]);
     patchset = int.parse(match[2]);

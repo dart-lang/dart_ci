@@ -18,12 +18,17 @@ Future<void> receiveChanges(Message message, EventContext context) async {
   final results = (message.json as List).cast<Map<String, dynamic>>();
   final first = results.first;
   final String commit = first['commit_hash'];
+  final int countChunks = message.attributes.containsKey('num_chunks')
+      ? int.parse(message.attributes['num_chunks'])
+      : null;
   try {
     if (commit.startsWith('refs/changes')) {
-      return Tryjob(commit, FirestoreServiceImpl(), http.NodeClient())
+      return Tryjob(
+              commit, countChunks, FirestoreServiceImpl(), http.NodeClient())
           .process(results);
     } else {
-      return Build(commit, first, FirestoreServiceImpl(), http.NodeClient())
+      return Build(commit, first, countChunks, FirestoreServiceImpl(),
+              http.NodeClient())
           .process(results);
     }
   } catch (e) {

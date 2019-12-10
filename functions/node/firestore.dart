@@ -19,9 +19,15 @@ abstract class FirestoreService {
 
   Future<void> updateBuildInfo(String builder, int buildNumber, int index);
 
-  Future<void> storeChange(
+  Future<String> findResult(
+      Map<String, dynamic> change, int startIndex, int endIndex);
+
+  Future<void> storeResult(
       Map<String, dynamic> change, int startIndex, int endIndex,
-      {bool approved});
+      {bool approved = false});
+
+  Future<bool> updateResult(
+      String result, String configuration, int startIndex, int endIndex);
 
   Future<void> storeTryChange(
       Map<String, dynamic> change, int review, int patchset);
@@ -37,4 +43,8 @@ abstract class FirestoreService {
   Future<void> linkCommentsToCommit(int review, int index);
 
   Future<List<Map<String, dynamic>>> tryApprovals(int review);
+
+  Future<void> storeChunkStatus(String builder, int index, bool success);
+
+  Future<void> storeBuildChunkCount(String builder, int index, int numChunks);
 }

@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:math' show max, min;
-import 'package:firebase_functions_interop/firebase_functions_interop.dart';
+import 'package:firebase_admin_interop/firebase_admin_interop.dart';
 
 import 'firestore.dart';
 
@@ -85,9 +85,8 @@ class FirestoreServiceImpl implements FirestoreService {
     }
   }
 
-  Future<void> storeChange(
-      Map<String, dynamic> change, int startIndex, int endIndex,
-      {bool approved = false}) async {
+  Future<String> findResult(
+      Map<String, dynamic> change, int startIndex, int endIndex) async {
     String name = change['name'];
     String result = change['result'];
     String previousResult = change['previous_result'] ?? 'new test';
@@ -101,8 +100,6 @@ class FirestoreServiceImpl implements FirestoreService {
         .limit(5) // We will pick the right one, probably the latest.
         .get();
 
-    // Find an existing change group with a blamelist that intersects this change.
-
     bool blamelistIncludesChange(DocumentSnapshot groupDocument) {
       var group = groupDocument.data;
       var groupStart = group.getInt('blamelist_start_index');
@@ -110,38 +107,47 @@ class FirestoreServiceImpl implements FirestoreService {
       return startIndex <= groupEnd && endIndex >= groupStart;
     }
 
-    DocumentSnapshot group = snapshot.documents
-        .firstWhere(blamelistIncludesChange, orElse: () => null);
+    return snapshot.documents
+        .firstWhere(blamelistIncludesChange, orElse: () => null)
+        ?.documentID;
+  }
 
-    if (group == null) {
-      return firestore.collection('results').add(DocumentData.fromMap({
-            'name': name,
-            'result': result,
-            'previous_result': previousResult,
+  Future<void> storeResult(
+          Map<String, dynamic> change, int startIndex, int endIndex,
+          {bool approved = false}) =>
+      firestore.collection('results').add(DocumentData.fromMap({
+            'name': change['name'],
+            'result': change['result'],
+            'previous_result': change['previous_result'] ?? 'new test',
             'expected': change['expected'],
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
             'configurations': <String>[change['configuration']],
             if (approved) 'approved': true
           }));
-    }
+
+  Future<bool> updateResult(
+      String result, String configuration, int startIndex, int endIndex) {
+    DocumentReference reference = firestore.document('results/$result');
 
     // Update the change group in a transaction.
-    // Add new configuration and narrow the blamelist.
-    Future<void> updateGroup(Transaction transaction) async {
-      final DocumentSnapshot groupSnapshot =
-          await transaction.get(group.reference);
-      final data = groupSnapshot.data;
-      final newStart = max(startIndex, data.getInt('blamelist_start_index'));
-      final newEnd = min(endIndex, data.getInt('blamelist_end_index'));
-      final update = UpdateData.fromMap({
-        'blamelist_start_index': newStart,
-        'blamelist_end_index': newEnd,
-      });
-      update.setFieldValue('configurations',
-          Firestore.fieldValues.arrayUnion([change['configuration']]));
-      group.reference.updateData(update);
-    }
+    Future<bool> updateGroup(Transaction transaction) =>
+        transaction.get(reference).then((resultSnapshot) {
+          final data = resultSnapshot.data;
+          bool approved = data.getBool('approved') ?? false;
+          // Add the new configuration and narrow the blamelist.
+          final newStart =
+              max(startIndex, data.getInt('blamelist_start_index'));
+          final newEnd = min(endIndex, data.getInt('blamelist_end_index'));
+          final update = UpdateData.fromMap({
+            'blamelist_start_index': newStart,
+            'blamelist_end_index': newEnd,
+          });
+          update.setFieldValue('configurations',
+              Firestore.fieldValues.arrayUnion([configuration]));
+          reference.updateData(update);
+          return approved;
+        });
 
     return firestore.runTransaction(updateGroup);
   }
@@ -151,7 +157,6 @@ class FirestoreServiceImpl implements FirestoreService {
     String name = change['name'];
     String result = change['result'];
     String expected = change['expected'];
-    String reviewPath = change['commit_hash'];
     String previousResult = change['previous_result'] ?? 'new test';
     QuerySnapshot snapshot = await firestore
         .collection('try_results')
@@ -225,5 +230,33 @@ class FirestoreServiceImpl implements FirestoreService {
         .where('review', isEqualTo: review)
         .get();
     return [for (final document in approvals.documents) document.data.toMap()];
+  }
+
+  Future<void> storeChunkStatus(String builder, int index, bool success) async {
+    final document = firestore.document('builds/$builder:$index');
+
+    Future<void> updateStatus(Transaction transaction) async {
+      final snapshot = await transaction.get(document);
+      final data = snapshot.data.toMap();
+      final int chunks = data['num_chunks'];
+      final int processedChunks = data['processed_chunks'] ?? 0;
+      final bool completed = chunks == processedChunks + 1;
+
+      final update = UpdateData.fromMap({
+        'processed_chunks': processedChunks + 1,
+        'success': (data['success'] ?? true) && success,
+        if (completed) 'completed': true
+      });
+      transaction.update(document, update);
+    }
+
+    return firestore.runTransaction(updateStatus);
+  }
+
+  Future<void> storeBuildChunkCount(
+      String builder, int index, int numChunks) async {
+    return firestore
+        .document('builds/$builder:$index')
+        .updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 }
