@@ -49,7 +49,8 @@ Map<String, dynamic> landedCommit = {
   'author': 'gerrit_user@example.com',
   'created': DateTime.parse('2019-11-29 15:15:00Z'),
   'index': 54,
-  'title': 'A commit used for testing tryjob approvals, with index 54'
+  'title': 'A commit used for testing tryjob approvals, with index 54',
+  'review': 44445
 };
 
 const Map<String, dynamic> landedCommitChange = {
@@ -60,7 +61,7 @@ const Map<String, dynamic> landedCommitChange = {
   "time_ms": 2384,
   "result": "RuntimeError",
   "expected": "Pass",
-  "matches": true,
+  "matches": false,
   "bot_name": "luci-dart-try-xenial-70-8fkh",
   "commit_hash": landedCommitHash,
   "commit_time": 1563576771,
@@ -75,7 +76,22 @@ const Map<String, dynamic> landedCommitChange = {
   "changed": true
 };
 
-const Map<String, dynamic> tryjobResult = {};
+const List<Map<String, dynamic>> tryjobResults = [
+  {
+    "review": 44445,
+    "configurations": [
+      "dart2js-new-rti-linux-x64-d8",
+      "dartk-reload-rollback-linux-debug-x64",
+      "dartk-reload-linux-debug-x64"
+    ],
+    "name": "dart2js_extra/local_function_signatures_strong_test/none",
+    "patchset": 1,
+    "result": "RuntimeError",
+    "expected": "Pass",
+    "previous_result": "Pass",
+    "approved": true
+  },
+];
 
 String gitLogCommitHash = "a commit fetched from the git log";
 

@@ -51,6 +51,11 @@ void main() async {
         .thenAnswer((_) => Future(() => landedResponses.removeAt(0)));
     when(firestore.getLastCommit()).thenAnswer(
         (_) => Future(() => {...existingCommit, 'id': existingCommitHash}));
+    when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
+        tryjobResults
+            .where((result) => result['review'] == 44445)
+            .where((result) => result['approved'] == true)
+            .toList()));
     when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
 
     when(client.get(any))
@@ -61,6 +66,7 @@ void main() async {
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, landedCommit['index']);
     expect(builder.startIndex, existingCommit['index'] + 1);
+    expect(builder.tryApprovals, {testResult(tryjobResults[0])});
     verifyInOrder([
       verify(firestore.getCommit(landedCommitHash)).called(2),
       verify(firestore.getLastCommit()),
@@ -83,6 +89,31 @@ void main() async {
       // We want to verify firestore.getCommit(landedCommitHash) here,
       // but it is already matched by the earlier check for the same call.
       verify(firestore.getCommit(existingCommitHash))
+    ]);
+  });
+
+  test("copy approvals from try results", () async {
+    final firestore = FirestoreServiceMock();
+    final client = HttpClientMock();
+    when(firestore.getCommit(existingCommitHash))
+        .thenAnswer((_) => Future.value(existingCommit));
+    when(firestore.getCommit(landedCommitHash))
+        .thenAnswer((_) => Future.value(landedCommit));
+    when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
+        tryjobResults
+            .where((result) => result['review'] == 44445)
+            .where((result) => result['approved'] == true)
+            .toList()));
+
+    final builder =
+        Build(landedCommitHash, landedCommitChange, firestore, client);
+    await builder.process([landedCommitChange]);
+
+    verifyZeroInteractions(client);
+    verifyInOrder([
+      verify(firestore.updateConfiguration(
+          "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8")),
+      verify(firestore.storeChange(any, 53, 54, approved: true))
     ]);
   });
 }
