@@ -246,11 +246,9 @@ class AppComponent implements OnInit, CanReuse {
     modifiedRanges.clear();
   }
 
-  bool get loginEnabled =>
-      Uri.parse(window.location.href).fragment.contains('&login');
 
-  String get loginIcon =>
-      _firestoreService.isLoggedIn ? 'highlight_off' : 'account_circle';
+  String get loginMessage =>
+      _firestoreService.isLoggedIn ? 'logout' : 'login';
 
   void toggleLogin() {
     if (_firestoreService.isLoggedIn) {

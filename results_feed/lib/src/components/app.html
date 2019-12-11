@@ -13,11 +13,9 @@
       fetching results...
     </span>
     <material-button
-        *ngIf="loginEnabled"
-        icon
         class="material-drawer-button"
         (trigger)="toggleLogin()">
-      <material-icon [icon]="loginIcon"></material-icon>
+      {{loginMessage}}
     </material-button>
   </div>
 </header>
