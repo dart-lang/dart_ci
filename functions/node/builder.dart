@@ -62,6 +62,8 @@ class Build {
   bool success = true; // Changed to false if any unapproved failure is seen.
   int countChanges = 0;
   int commitsFetched;
+  List<String> approvalMessages = [];
+  int countApprovalsCopied = 0;
 
   Build(this.commitHash, this.firstResult, this.countChunks, this.firestore,
       this.httpClient)
@@ -82,7 +84,12 @@ class Build {
       "Processed ${results.length} results from $builderName build $buildNumber",
       if (countChanges > 0) "Stored $countChanges changes",
       if (commitsFetched != null) "Fetched $commitsFetched new commits",
-      if (!success) "Found unapproved new failures"
+      if (!success) "Found unapproved new failures",
+      if (countApprovalsCopied > 0) ...[
+        "$countApprovalsCopied approvals copied",
+        ...approvalMessages,
+        if (countApprovalsCopied > 10) "..."
+      ]
     ];
     print(report.join('\n'));
   }
@@ -205,6 +212,12 @@ class Build {
       approved = tryApprovals.contains(testResult(change));
       await firestore.storeResult(change, startIndex, endIndex,
           approved: approved);
+      if (approved) {
+        countApprovalsCopied++;
+        if (countApprovalsCopied <= 10)
+          approvalMessages
+              .add("Copied approval of result ${testResult(change)}");
+      }
     } else {
       approved = await firestore.updateResult(
           result, change['configuration'], startIndex, endIndex);
@@ -226,7 +239,7 @@ int _review(Map<String, dynamic> commit) {
 String testResult(Map<String, dynamic> change) => [
       change['name'],
       change['result'],
-      change['previous_result'],
+      change['previous_result'] ?? 'new test',
       change['expected']
     ].join(' ');
 
