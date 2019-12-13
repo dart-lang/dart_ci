@@ -70,11 +70,11 @@ class TryResultsComponent implements OnActivate {
     }
   }
 
-  Future approve(bool approval) {
+  Future<void> approve(bool approval) async {
     for (Change result in selected) {
       result.approved = approval ?? result.approved;
     }
-    return _tryDataService.saveApproval(
+    final comment = await _tryDataService.saveApproval(
         approval,
         commentText,
         changeGroup.comments.isEmpty
@@ -83,6 +83,10 @@ class TryResultsComponent implements OnActivate {
                 changeGroup.comments.last.id,
         [for (Change result in selected) result.id],
         changeInfo.review);
+    comments
+      ..add(comment)
+      ..sort();
+    _approving = false;
   }
 
   void tryUpdate() async {

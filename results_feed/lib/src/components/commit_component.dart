@@ -13,6 +13,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'blamelist_component.dart';
 import 'blamelist_picker.dart';
 import '../model/commit.dart';
+import '../model/comment.dart';
 import '../services/firestore_service.dart';
 import '../services/filter_service.dart';
 import 'results_panel.dart';
@@ -68,12 +69,16 @@ class CommitComponent {
     ]).then((_) => window.location.reload());
   }
 
-  Future approve(bool approval) {
+  Future<void> approve(bool approval) async {
     approving = false;
     for (Change result in selected) {
       result.approved = approval ?? result.approved;
     }
-    return firestoreService.saveApproval(
+
+    await firestoreService.saveApprovals(
+        approve: approval,
+        resultIds: [for (Change result in selected) result.id]);
+    final comment = Comment.fromDocument(await firestoreService.saveComment(
         approval,
         commentText,
         changeGroup.comments.isEmpty
@@ -82,6 +87,12 @@ class CommitComponent {
                 changeGroup.comments.last.id,
         resultIds: [for (Change result in selected) result.id],
         blamelistStart: changeGroup.range.start,
-        blamelistEnd: changeGroup.range.end);
+        blamelistEnd: changeGroup.range.end));
+    // The list changeGroup.comments is the actual list object stored in the
+    // applications-level map of all comments, AppComponent.comments.
+    // So changing it here changes it everywhere.
+    changeGroup.comments
+      ..add(comment)
+      ..sort();
   }
 }

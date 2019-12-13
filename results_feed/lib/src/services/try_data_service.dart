@@ -6,9 +6,11 @@ import 'firestore_service.dart';
 
 class TryDataService {
   final FirestoreService _firestoreService;
+
   TryDataService(this._firestoreService);
 
   Future logIn() => _firestoreService.logIn();
+
   bool get isLoggedIn => _firestoreService.isLoggedIn;
 
   Future<List<Change>> changes(ReviewInfo changeInfo, int patch) async {
@@ -43,10 +45,14 @@ class TryDataService {
     return [for (final doc in docs) Comment.fromDocument(doc)];
   }
 
-  Future saveApproval(bool approve, String comment, String baseComment,
-          Iterable<String> resultIds, int review) =>
-      _firestoreService.saveApproval(approve, comment, baseComment,
-          tryResultIds: resultIds, review: review);
+  Future<Comment> saveApproval(bool approve, String comment, String baseComment,
+      Iterable<String> resultIds, int review) async {
+    await _firestoreService.saveApprovals(
+        approve: approve, tryResultIds: resultIds);
+    return Comment.fromDocument(await _firestoreService.saveComment(
+        approve, comment, baseComment,
+        tryResultIds: resultIds, review: review));
+  }
 }
 
 class ReviewInfo {

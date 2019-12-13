@@ -136,13 +136,14 @@ class FirestoreService {
     }
   }
 
-  Future saveApproval(bool approve, String comment, String baseComment,
+  Future<firestore.DocumentSnapshot> saveComment(
+      bool approve, String comment, String baseComment,
       {List<String> resultIds,
       List<String> tryResultIds,
       int blamelistStart,
       int blamelistEnd,
       int review}) async {
-    await app.firestore().collection('comments').add({
+    final reference = await app.firestore().collection('comments').add({
       'author': app.auth().currentUser.email,
       if (comment != null) 'comment': comment,
       'created': DateTime.now(),
@@ -153,6 +154,11 @@ class FirestoreService {
       if (blamelistStart != null) 'blamelist_end_index': blamelistEnd,
       if (review != null) 'review': review
     });
+    return reference.get();
+  }
+
+  Future<void> saveApprovals(
+      {bool approve, List<String> resultIds, List<String> tryResultIds}) async {
     if (approve == null) return;
     // Update approved field in results documents.
     Future<void> approveResults(List<String> ids, String collectionName) async {
