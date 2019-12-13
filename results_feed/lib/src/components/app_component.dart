@@ -50,7 +50,7 @@ import '../services/build_service.dart';
       'app_component.css'
     ])
 class AppComponent implements OnInit, CanReuse {
-  String title = 'Results Feed (Angular Dart)';
+  String title = 'Dart Results Feed';
 
   Map<IntRange, ChangeGroup> changeGroups = SplayTreeMap(reverse);
   Map<int, Commit> commits = SplayTreeMap(reverse);
@@ -246,9 +246,7 @@ class AppComponent implements OnInit, CanReuse {
     modifiedRanges.clear();
   }
 
-
-  String get loginMessage =>
-      _firestoreService.isLoggedIn ? 'logout' : 'login';
+  String get loginMessage => _firestoreService.isLoggedIn ? 'logout' : 'login';
 
   void toggleLogin() {
     if (_firestoreService.isLoggedIn) {
