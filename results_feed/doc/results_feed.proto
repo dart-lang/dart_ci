@@ -100,9 +100,10 @@ message TryBuild {
   // The document ID is the concatenation of builder, ':', review, ':',
   // and patchset.
   string id = 1;
-  string builder = 2;
-  int32 review = 3;
-  int32 patchset = 4;
+  int32 build_number = 2;
+  string builder = 3;
+  int32 review = 9;
+  int32 patchset = 10;
   int32 num_chunks = 5; // The number of chunks of results for this build.
   int32 processed_chunks = 6; // The number of results chunks received.
   // True if no new unapproved failures have been received.

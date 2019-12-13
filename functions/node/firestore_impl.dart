@@ -285,14 +285,14 @@ class FirestoreServiceImpl implements FirestoreService {
         .updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 
-  Future<void> storeTryChunkStatus(
-      String builder, int review, int patchset, bool success) async {
+  Future<void> storeTryChunkStatus(String builder, int buildNumber, int review,
+      int patchset, bool success) async {
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
     final snapshot = await reference.get();
 
     if (!snapshot.exists || snapshot.data.getBool('completed') != null) {
-      await _createTryBuildRecord(builder, review, patchset);
+      await _createTryBuildRecord(builder, buildNumber, review, patchset);
     }
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(reference);
@@ -312,23 +312,24 @@ class FirestoreServiceImpl implements FirestoreService {
     return firestore.runTransaction(updateStatus);
   }
 
-  Future<void> storeTryBuildChunkCount(
-      String builder, int review, int patchset, int numChunks) async {
+  Future<void> storeTryBuildChunkCount(String builder, int buildNumber,
+      int review, int patchset, int numChunks) async {
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
     final snapshot = await reference.get();
     if (!snapshot.exists || snapshot.data.getInt('num_chunks') != null) {
-      await _createTryBuildRecord(builder, review, patchset);
+      await _createTryBuildRecord(builder, buildNumber, review, patchset);
     }
     await reference.updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 
   Future<void> _createTryBuildRecord(
-          String builder, int review, int patchset) =>
+          String builder, int buildNumber, int review, int patchset) =>
       firestore
           .document('try_builds/$builder:$review:$patchset')
           .setData(DocumentData.fromMap({
             'builder': builder,
+            'build_number': buildNumber,
             'review': review,
             'patchset': patchset,
           }));

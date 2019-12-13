@@ -113,6 +113,7 @@ const List<Map<String, dynamic>> tryjobResults = [
 ];
 
 const testBuilder = 'test_builder';
+const testBuildNumber = "308";
 const testReview = 123;
 const testPatchset = 3;
 const testPreviousPatchset = 1;
@@ -131,7 +132,7 @@ const Map<String, dynamic> tryjobFailingChange = {
   "bot_name": "test_bot",
   "commit_hash": testReviewPath,
   "commit_time": 1563576771,
-  "build_number": "308",
+  "build_number": testBuildNumber,
   "builder_name": testBuilder,
   "flaky": false,
   "previous_flaky": false,

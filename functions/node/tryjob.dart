@@ -15,6 +15,7 @@ class Tryjob {
   final http.BaseClient httpClient;
   final FirestoreService firestore;
   String builderName;
+  int buildNumber;
   int review;
   int patchset;
   bool success = true;
@@ -33,13 +34,15 @@ class Tryjob {
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
     builderName = results.first['builder_name'];
+    buildNumber = int.parse(results.first['build_number']);
     await Future.forEach(results.where(isChangedResult), storeTryChange);
 
     if (countChunks != null) {
       await firestore.storeTryBuildChunkCount(
-          builderName, review, patchset, countChunks);
+          builderName, buildNumber, review, patchset, countChunks);
     }
-    await firestore.storeTryChunkStatus(builderName, review, patchset, success);
+    await firestore.storeTryChunkStatus(
+        builderName, buildNumber, review, patchset, success);
   }
 
   Future<void> storeTryChange(change) async {

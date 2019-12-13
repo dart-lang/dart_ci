@@ -72,10 +72,10 @@ void main() {
       // Set up database with approved results on previous patchset.
       await firestore.storePatchset(testReview.toString(), testPreviousPatchset,
           {'number': testPreviousPatchset});
-      final previousFailingChange =
-          Map<String, dynamic>.from(tryjobFailingChange)
-            ..addAll(
-                {"commit_hash": testPreviousPatchsetPath, "build_number": 307});
+      final previousFailingChange = Map<String, dynamic>.from(
+          tryjobFailingChange)
+        ..addAll(
+            {"commit_hash": testPreviousPatchsetPath, "build_number": "307"});
       await Tryjob(testPreviousPatchsetPath, 1, firestore, null)
           .process([previousFailingChange]);
       var snapshot = await fs.firestore
@@ -107,6 +107,7 @@ void main() {
       expect(snapshot.documents.length, 1);
       DocumentSnapshot document = snapshot.documents.first;
       expect(document.documentID, '$testBuilder:$testReview:$testPatchset');
+      expect(document.data.getInt('build_number'), int.parse(testBuildNumber));
       expect(document.data.getBool('success'), isTrue);
       expect(document.data.getBool('completed'), isTrue);
       // Verify that sending a result twice only adds its configuration once
