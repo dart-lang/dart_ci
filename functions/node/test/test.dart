@@ -67,12 +67,12 @@ void main() async {
     when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
         tryjobResults
             .where((result) => result['review'] == 44445)
-            .where((result) => result['approved'] == true)
+            .where((result) => result['approved'])
             .toList()));
     when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
         tryjobResults
             .where((result) => result['review'] == 77779)
-            .where((result) => result['approved'] == true)
+            .where((result) => result['approved'])
             .toList()));
     when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
 

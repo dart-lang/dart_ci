@@ -129,7 +129,7 @@ class FirestoreServiceImpl implements FirestoreService {
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
             'configurations': <String>[change['configuration']],
-            if (approved) 'approved': true,
+            'approved': approved,
             if (failure) 'active': true,
             if (failure)
               'active_configurations': <String>[change['configuration']]
@@ -144,6 +144,7 @@ class FirestoreServiceImpl implements FirestoreService {
     Future<bool> updateGroup(Transaction transaction) =>
         transaction.get(reference).then((resultSnapshot) {
           final data = resultSnapshot.data;
+          // Allow missing 'approved' field during transition period.
           bool approved = data.getBool('approved') ?? false;
           // Add the new configuration and narrow the blamelist.
           final newStart =
@@ -197,6 +198,7 @@ class FirestoreServiceImpl implements FirestoreService {
           .limit(1)
           .get();
       // Create a TryResult for this test on this patchset.
+      // Allow a missing 'approved' field during a transition period
       final approved = previous.isNotEmpty &&
           previous.documents.first.data.getBool('approved') == true;
       await firestore.collection('try_results').add(DocumentData.fromMap({
@@ -207,7 +209,7 @@ class FirestoreServiceImpl implements FirestoreService {
             'review': review,
             'patchset': patchset,
             'configurations': <String>[change['configuration']],
-            if (approved) 'approved': true
+            'approved': approved
           }));
       return approved;
     } else {
@@ -309,11 +311,24 @@ class FirestoreServiceImpl implements FirestoreService {
       final int chunks = data['num_chunks'];
       final int processedChunks = data['processed_chunks'] ?? 0;
       final bool completed = chunks == processedChunks + 1;
+      bool activeFailures = false;
+      if (completed) {
+        // Find out if there are any unapproved unfixed failures,
+        // which we call "active" failures, to give sticky redness.
+        final snapshot = await firestore
+            .collection('results')
+            .where('active_configurations', arrayContains: builder)
+            .where('approved', isEqualTo: false)
+            .limit(1)
+            .get();
+        activeFailures = snapshot.isNotEmpty;
+      }
 
       final update = UpdateData.fromMap({
         'processed_chunks': processedChunks + 1,
         'success': (data['success'] ?? true) && success,
-        if (completed) 'completed': true
+        if (completed) 'completed': true,
+        if (activeFailures) 'active_failures': true
       });
       transaction.update(document, update);
     }

@@ -261,19 +261,3 @@ String testResult(Map<String, dynamic> change) => [
       change['previous_result'] ?? 'new test',
       change['expected']
     ].join(' ');
-
-class Statistics {
-  int results = 0;
-  int changes = 0;
-  int newRecords = 0;
-  int modifiedRecords = 0;
-  int commitsFetched = 0;
-
-  void report() {
-    info("Number of changed results processed: $changes");
-    info("Number of results processed: $results");
-    info("Number of firestore records produced: $newRecords");
-    info("Number of firestore records modified: $modifiedRecords");
-    info("Number of commits fetched: $commitsFetched");
-  }
-}
