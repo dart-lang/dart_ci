@@ -115,6 +115,8 @@ Labeled ${labelName} by ${senderUser}
 <p><strong><a href="${issueUrl}">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber)})</strong></p>
 <p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
 <p>Labeled <strong>${escape(labelName)}</strong> by <a href="${senderUrl}">${escape(senderUser)}</a></p>
+<hr>
+<p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
 ''');
 }
 
