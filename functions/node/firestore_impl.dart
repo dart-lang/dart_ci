@@ -120,7 +120,7 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> storeResult(
           Map<String, dynamic> change, int startIndex, int endIndex,
-          {bool approved = false}) =>
+          {bool approved, bool failure}) =>
       firestore.collection('results').add(DocumentData.fromMap({
             'name': change['name'],
             'result': change['result'],
@@ -129,11 +129,15 @@ class FirestoreServiceImpl implements FirestoreService {
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
             'configurations': <String>[change['configuration']],
-            if (approved) 'approved': true
+            if (approved) 'approved': true,
+            if (failure) 'active': true,
+            if (failure)
+              'active_configurations': <String>[change['configuration']]
           }));
 
   Future<bool> updateResult(
-      String result, String configuration, int startIndex, int endIndex) {
+      String result, String configuration, int startIndex, int endIndex,
+      {bool failure}) {
     DocumentReference reference = firestore.document('results/$result');
 
     // Update the change group in a transaction.
@@ -151,6 +155,11 @@ class FirestoreServiceImpl implements FirestoreService {
           });
           update.setFieldValue('configurations',
               Firestore.fieldValues.arrayUnion([configuration]));
+          if (failure) {
+            update.setBool('active', true);
+            update.setFieldValue('active_configurations',
+                Firestore.fieldValues.arrayUnion([configuration]));
+          }
           reference.updateData(update);
           return approved;
         });
@@ -210,6 +219,40 @@ class FirestoreServiceImpl implements FirestoreService {
       // Return true if this result is approved
       return snapshot.documents.first.data.getBool('approved') == true;
     }
+  }
+
+  Future<void> updateActiveResult(
+      Map<String, dynamic> activeResult, String configuration) async {
+    final updateData = UpdateData();
+    if (activeResult['configurations'].length > 1) {
+      updateData.setFieldValue(
+          'configurations', Firestore.fieldValues.arrayRemove([configuration]));
+    } else {
+      updateData.setFieldValue(
+          'active_configurations', Firestore.fieldValues.delete());
+      updateData.setFieldValue('active', Firestore.fieldValues.delete());
+    }
+    return firestore
+        .document('results/${activeResult['id']}')
+        .updateData(updateData);
+  }
+
+  Future<Map<String, dynamic>> findActiveResult(
+      Map<String, dynamic> change) async {
+    QuerySnapshot snapshot = await firestore
+        .collection('results')
+        .where('active_configurations', arrayContains: change['configuration'])
+        .where('active', isEqualTo: true)
+        .where('name', isEqualTo: change['name'])
+        .get();
+    if (snapshot.isEmpty) return null;
+    if (snapshot.documents.length > 1) {
+      error('Multiple active results for the same configuration and test\n'
+          'result 1: ${snapshot.documents[0].data.toMap()}\n'
+          'result 2: ${snapshot.documents[1].data.toMap()}\n');
+    }
+    final result = snapshot.documents.first;
+    return result.data.toMap()..['id'] = result.documentID;
   }
 
   Future<void> storeReview(String review, Map<String, dynamic> data) =>

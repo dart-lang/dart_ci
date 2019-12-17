@@ -206,12 +206,15 @@ class Build {
 
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;
+    final failure = !change['matches'];
     var approved;
     String result = await firestore.findResult(change, startIndex, endIndex);
+    Map<String, dynamic> activeResult =
+        await firestore.findActiveResult(change);
     if (result == null) {
       approved = tryApprovals.contains(testResult(change));
       await firestore.storeResult(change, startIndex, endIndex,
-          approved: approved);
+          approved: approved, failure: failure);
       if (approved) {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10)
@@ -220,9 +223,25 @@ class Build {
       }
     } else {
       approved = await firestore.updateResult(
-          result, change['configuration'], startIndex, endIndex);
+          result, change['configuration'], startIndex, endIndex,
+          failure: failure);
     }
-    if (!approved && !change['matches']) success = false;
+    if (failure && !approved) success = false;
+
+    if (activeResult != null) {
+      // Log error message if any expected invariants are violated
+      if (activeResult['blamelist_end_index'] >= startIndex ||
+          !activeResult['active_configurations']
+              .contains(change['configuration'])) {
+        error('Unexpected active result when processing new change:\n'
+            'Active result: $activeResult\n\n'
+            'Change: $change\n\n'
+            'approved: $approved');
+      }
+      // Removes the configuration from the list of active configurations.
+      // Mark the active result inactive when we remove the last active config.
+      firestore.updateActiveResult(activeResult, change['configuration']);
+    }
   }
 }
 

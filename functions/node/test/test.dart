@@ -112,6 +112,7 @@ void main() async {
       verify(firestore.getCommitByIndex(53)),
       verify(firestore.tryApprovals(77779))
     ]);
+    verifyNoMoreInteractions(firestore);
   });
 
   test("copy approvals from try results", () async {
@@ -143,7 +144,51 @@ void main() async {
       firestore.updateConfiguration(
           "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8"),
       firestore.findResult(any, 53, 54),
-      firestore.storeResult(any, 53, 54, approved: true)
+      firestore.storeResult(any, 53, 54,
+          approved: argThat(isTrue, named: 'approved'),
+          failure: argThat(isTrue, named: 'failure'))
+    ]);
+  });
+
+  test("update previous active result", () async {
+    final activeResult = {
+      'blamelist_end_index': 52,
+      'configurations': [
+        landedCommitChange['configuration'],
+        'another configuration'
+      ],
+      'active_configurations': [
+        landedCommitChange['configuration'],
+        'another configuration'
+      ],
+      'active': true
+    };
+
+    final firestore = FirestoreServiceMock();
+    final client = HttpClientMock();
+
+    when(firestore.findActiveResult(any))
+        .thenAnswer((_) => Future.value(activeResult));
+
+    final builder =
+        Build(landedCommitHash, landedCommitChange, null, firestore, client);
+    builder.startIndex = 53;
+    builder.endIndex = 54;
+
+    await builder.storeChange(landedCommitChange);
+
+    expect(builder.countApprovalsCopied, 0);
+    expect(builder.countChanges, 1);
+    expect(builder.success, false);
+    verifyZeroInteractions(client);
+    verifyInOrder([
+      firestore.findResult(any, 53, 54),
+      firestore.findActiveResult(landedCommitChange),
+      firestore.storeResult(any, 53, 54,
+          approved: argThat(isFalse, named: 'approved'),
+          failure: argThat(isTrue, named: 'failure')),
+      firestore.updateActiveResult(
+          activeResult, landedCommitChange['configuration'])
     ]);
   });
 }
