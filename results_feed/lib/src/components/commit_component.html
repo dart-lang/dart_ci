@@ -1,3 +1,7 @@
+<span
+    class="anchor"
+    *ngIf="changeGroup.commits.length == 1"
+    [id]="changeGroup.commits.first.hash"></span>
 <div class="commit" *ngIf="changeGroup.show(filter)">
   <div *ngIf="!chooseCommit && !approving">
     <blamelist-panel
