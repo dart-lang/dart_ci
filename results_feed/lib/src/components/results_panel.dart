@@ -55,9 +55,6 @@ class ResultsPanel {
     RelativePosition.OffsetTopLeft
   ];
 
-  String approvalContent(Change change) {
-    if (change.approved) return formatting.checkmark;
-    if (change.disapproved) return formatting.bigRedX;
-    return "";
-  }
+  String approvalContent(Change change) =>
+    change.approved ? formatting.checkmark: '';
 }

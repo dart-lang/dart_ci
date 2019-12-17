@@ -112,11 +112,8 @@ class ResultsSelectorPanel {
   Map<String, List<String>> summaries(List<List<Change>> group) =>
       group.first.first.configurations.summaries;
 
-  String approvalContent(Change change) {
-    if (change.approved) return formatting.checkmark;
-    if (change.disapproved) return formatting.bigRedX;
-    return "";
-  }
+  String approvalContent(Change change) =>
+    change.approved ? formatting.checkmark : '';
 
   void initializeSelected() {
     if (_selected != null && _changes != null) {

@@ -22,6 +22,5 @@ String formattedEmail(String email) {
   return email;
 }
 
-// Both characters are followed by a space.
+// Checkmark followed by a space. Used for approved results.
 String checkmark = "\u2714 ";
-String bigRedX = "\u274C ";

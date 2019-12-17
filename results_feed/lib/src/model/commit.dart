@@ -162,8 +162,7 @@ class Change implements Comparable {
       this.blamelistStartIndex,
       this.blamelistEndIndex,
       this.pinnedIndex,
-      this.approved,
-      this.disapproved)
+      this.approved)
       : changesText = '$previousResult -> $result (expected $expected)',
         configurationsText = configurations.text;
 
@@ -178,9 +177,9 @@ class Change implements Comparable {
             document.get('blamelist_start_index'),
             document.get('blamelist_end_index'),
             document.get('pinned_index'),
-            // approved field is null for unapproved new failures.
-            document.get('approved') == true,
-            document.get('approved') == false);
+            // Old documents may not have this field.
+            document.get('approved') ?? false
+);
 
   final String id;
   final String name;
@@ -192,7 +191,6 @@ class Change implements Comparable {
   final int blamelistEndIndex;
   int pinnedIndex;
   bool approved;
-  bool disapproved; // An approval has been explicitly revoked.
   final String configurationsText;
   final String changesText;
 
@@ -208,8 +206,7 @@ class Change implements Comparable {
       blamelistStartIndex,
       blamelistEndIndex,
       pinnedIndex,
-      approved,
-      disapproved);
+      approved);
 
   int compareTo(Object other) => name.compareTo((other as Change).name);
 

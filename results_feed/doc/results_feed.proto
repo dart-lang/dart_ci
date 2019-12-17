@@ -42,11 +42,7 @@ message Result {
   // Chosen by a user in the results feed UI.
   int32 pinned_index = 10;
 
-  // If the result has been approved, or subsequently unapproved, by a comment,
-  // this field is present and has the appropriate boolean value.
-  // If this field is present, then there is a comment record containing this
-  // result's "id" field in its "results" repeated field.
-  bool approved = 13;
+  bool approved = 13; // May be missing in older records, interpreted as false.
 }
 
 // Similar to a Result message, but representing a result of a try builder on the CQ.
@@ -75,11 +71,7 @@ message TryResult {
   int32 review = 11;
   int32 patchset = 12;
 
-  // If the try result has been approved, or subsequently unapproved, by a
-  // comment, this field is present and has the appropriate boolean value.
-  // If this field is present, then there is a comment record containing this
-  // try result's "id" field in its "try_results" repeated field.
-  bool approved = 13;
+  bool approved = 13;  // May be missing in older records, interpreted as false.
 }
 
 // Represents a single build of a CI builder
@@ -172,7 +164,7 @@ message Comment {
   string link = 5;
 
   // If approved is true, this comment approves the linked tests
-  // If approved is false, it unapproves them, removing earlier approvals
+  // If approved is false, it removes any earlier approvals on these tests
   // If the field is missing, it does not change the current approval status
   bool approved = 6;
 
