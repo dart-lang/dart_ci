@@ -54,7 +54,8 @@ class Comment implements Comparable {
         review = document.get('review'),
         patchset = document.get('patchset');
 
-  String approvedText() => approved ? 'approved' : '';
+  String approvedText() =>
+      (approved == null) ? "" : approved ? "approved" : "disapproved";
 
   int compareTo(Object other) => created.compareTo((other as Comment).created);
 }

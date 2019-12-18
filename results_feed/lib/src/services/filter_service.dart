@@ -67,7 +67,7 @@ class Filter {
     return result;
   }
 
-  static const defaultShowAllCommits = true;
+  static const defaultShowAllCommits = false;
   static const defaultShowLatestFailures = false;
   static const defaultShowUnapprovedOnly = false;
   static const allConfigurationGroups = <String>[
