@@ -62,4 +62,20 @@ message Subscription {
 Subscriptions are intended to be managed by users themselves so they are indexed
 by Firebase UID issued by Firebase authentification.
 
+Additionally this collection contains configuration of keyword subscriptions
+for specific repositories at `github-label-subscriptions/{repositoryName}`,
+where `{repositoryName}` is full repository name with `/` replaced with `$`.
+
+```proto
+// Represents a subscription to keywords inside issue body. If the match is
+// found then this is treated as if the issue is labeled with the given label.
+message KeywordSubscription {
+    string label = 1;
+    repeated string keywords = 2;
+}
+```
+
+Note: security rules prevent editing subscriptions by anybody - so they
+can only be changed via Firebase Console UI.
+
 Mails are sent via SendGrid.

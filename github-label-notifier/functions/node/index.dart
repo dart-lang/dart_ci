@@ -71,7 +71,8 @@ final eventHandlers = <String, GitHubEventHandler>{
 };
 
 final issueActionHandlers = <String, GitHubEventHandler>{
-  'labeled': onLabeled,
+  'labeled': onIssueLabeled,
+  'opened': onIssueOpened,
 };
 
 /// Handler for the 'labeled' issue event which triggers whenever an
@@ -79,11 +80,12 @@ final issueActionHandlers = <String, GitHubEventHandler>{
 ///
 /// The handler will send mails to all users that subscribed to a
 /// particular label.
-Future<void> onLabeled(Map<String, dynamic> event) async {
+Future<void> onIssueLabeled(Map<String, dynamic> event) async {
   final labelName = event['label']['name'];
   final repositoryName = event['repository']['full_name'];
 
-  final emails = await db.lookupSubscriberEmails(repositoryName, labelName);
+  final emails =
+      await db.lookupLabelSubscriberEmails(repositoryName, labelName);
   if (emails.isEmpty) {
     return;
   }
@@ -110,11 +112,66 @@ ${issueUrl}
 Reported by ${issueReporterUsername}
 
 Labeled ${labelName} by ${senderUser}
+
+--
+Sent by dart-github-label-notifier.web.app
 ''',
       html: '''
 <p><strong><a href="${issueUrl}">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber)})</strong></p>
 <p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
 <p>Labeled <strong>${escape(labelName)}</strong> by <a href="${senderUrl}">${escape(senderUser)}</a></p>
+<hr>
+<p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
+''');
+}
+
+/// Handler for the 'opened' issue event which triggers whenever a new issue
+/// is opened at the repository.
+///
+/// The handler will search the body of the open issue for specific keywords
+/// and send emails to all subscribers to a specific label.
+Future<void> onIssueOpened(Map<String, dynamic> event) async {
+  final repositoryName = event['repository']['full_name'];
+  final subscription = await db.lookupKeywordSubscription(repositoryName);
+
+  final match = subscription?.match(event['issue']['body']);
+  if (match == null) {
+    return;
+  }
+
+  final subscribers =
+      await db.lookupLabelSubscriberEmails(repositoryName, subscription.label);
+
+  final issueData = event['issue'];
+
+  final issueTitle = issueData['title'];
+  final issueNumber = issueData['number'];
+  final issueUrl = issueData['html_url'];
+  final issueReporterUsername = issueData['user']['login'];
+  final issueReporterUrl = issueData['user']['html_url'];
+
+  final escape = htmlEscape.convert;
+
+  await sendgrid.sendMultiple(
+      from: 'noreply@dart.dev',
+      to: subscribers,
+      subject: '[$repositoryName] ${issueTitle} (#${issueNumber})',
+      text: '''
+${issueUrl}
+
+Reported by ${issueReporterUsername}
+
+Matches keyword: ${match}
+
+You are getting this mail because you are subscribed to label ${subscription.label}.
+--
+Sent by dart-github-label-notifier.web.app
+''',
+      html: '''
+<p><strong><a href="${issueUrl}">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber)})</strong></p>
+<p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
+<p>Matches keyword: <b>${match}</b></p>
+<p>You are getting this mail because you are subscribed to label ${subscription.label}</p>
 <hr>
 <p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
 ''');

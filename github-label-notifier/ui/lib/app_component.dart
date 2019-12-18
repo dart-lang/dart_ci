@@ -13,7 +13,7 @@ import 'package:angular_components/material_select/material_dropdown_select.dart
 import 'src/services/github_service.dart';
 import 'src/services/subscription_service.dart';
 
-const repositoriesWithInstalledHook = ['dart-lang/sdk', 'dart-lang/language'];
+const repositoriesWithInstalledHook = ['dart-lang/sdk', 'flutter/flutter'];
 
 @Component(
   selector: 'my-app',

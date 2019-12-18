@@ -43,16 +43,28 @@ void main() async {
       'email': 'first@example.com',
       'subscriptions': [
         'dart-lang/webhook-test:some-label',
-        'dart-lang/webhook-test:feature'
-      ]
+        'dart-lang/webhook-test:feature',
+      ],
     }));
     await subscriptions.add(DocumentData.fromMap({
       'email': 'second@example.com',
       'subscriptions': [
         'dart-lang/webhook-test:bug',
-        'dart-lang/webhook-test:feature'
-      ]
+        'dart-lang/webhook-test:feature',
+        'dart-lang/webhook-test:special-label',
+      ],
     }));
+
+    await subscriptions
+        .document('dart-lang\$webhook-test')
+        .setData(DocumentData.fromMap({
+          'keywords': [
+            'jit',
+            'aot',
+            'third_party/dart',
+          ],
+          'label': 'special-label',
+        }));
 
     // Start mock SendGrid server at the address/port specified in
     // SENDGRID_MOCK_SERVER environment variable.
@@ -149,6 +161,26 @@ void main() async {
           'login': 'fisk',
           'html_url': 'https://github.com/fisk',
         }
+      };
+
+  Map<String, dynamic> makeIssueOpenedEvent(
+          {int number = 1, String repositoryName = 'dart-lang/webhook-test'}) =>
+      {
+        'action': 'opened',
+        'issue': {
+          'html_url':
+              'https://github.com/dart-lang/webhook-test/issues/${number}',
+          'number': number,
+          'title': 'TEST ISSUE TITLE',
+          'body': 'This is an amazing aot solution',
+          'user': {
+            'login': 'hest',
+            'html_url': 'https://github.com/hest',
+          },
+        },
+        'repository': {
+          'full_name': 'dart-lang/webhook-test',
+        },
       };
 
   test('signing', () {
@@ -251,6 +283,31 @@ void main() async {
             ]
           }
         ]));
+  });
+
+  test('ok - single keyword subscriber', () async {
+    final rs = await sendEvent(body: makeIssueOpenedEvent());
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(sendgridRequests.length, equals(1));
+
+    final rq = sendgridRequests.first;
+    expect(rq.headers['authorization'],
+        equals('Bearer ' + Platform.environment['SENDGRID_SECRET']));
+    expect(rq.body['subject'], contains('#1'));
+    expect(rq.body['subject'], contains('TEST ISSUE TITLE'));
+    expect(
+        rq.body['personalizations'],
+        unorderedEquals([
+          {
+            'to': [
+              {'email': 'second@example.com'}
+            ]
+          }
+        ]));
+    expect(
+        rq.body['content']
+            .firstWhere((c) => c['type'] == 'text/plain')['value'],
+        contains('Matches keyword: aot'));
   });
 }
 
