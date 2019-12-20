@@ -58,12 +58,22 @@ class AppComponent implements OnInit {
   List<String> repoLabels = [];
   String selectedLabel = '';
 
+  // Configuration of the keyword subscription to flutter/flutter repository.
+  String flutterKeywordLabel = '';
+  List<String> flutterKeywords = [];
+
   AppComponent(this._subscriptionsService, this._githubService);
 
   @override
   Future<Null> ngOnInit() async {
     _subscriptionsService.onAuth.listen((_) async {
       subscriptions = await _subscriptionsService.getSubscriptions();
+
+      final subscription = await _subscriptionsService.getKeywordSubscription('flutter/flutter');
+      if (subscription != null) {
+        flutterKeywordLabel = subscription.label;
+        flutterKeywords = subscription.keywords;
+      }
     });
     fetchLabelsForSelectedRepository();
   }

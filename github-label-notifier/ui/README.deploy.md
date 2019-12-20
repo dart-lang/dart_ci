@@ -17,12 +17,4 @@ in the dart-ci-staging Firebase console.
 
 ## Deployment
 
-To build and deploy, use the following commands:
-
-pub get
-
-webdev build --output web:build/web -r
-
-rm -rf build/web/packages
-
-firebase deploy -P dart-ci --only hosting:dart-github-notifier
+To build and deploy, use `deploy.sh` script.

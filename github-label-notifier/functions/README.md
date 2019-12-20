@@ -2,6 +2,9 @@ This folder contains the source for a Cloud Function implementing a GitHub
 WebHook endpoint which can react to issues being labeled and send notifications
 to subscribers.
 
+It also can inspect newly opened issues for specific keywords and treat matches
+as if a specific label was assigned to an issue.
+
 # Testing
 
 To run local tests use `test.sh` script from this folder.
@@ -35,6 +38,11 @@ service cloud.firestore {
       allow create: if request.auth.uid != null;
     }
 
+    match /github-keyword-subscriptions/{repo} {
+      allow read: if true;
+      allow write, create, update, delete: if false
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -44,7 +52,7 @@ service cloud.firestore {
 
 # Implementation Details
 
-Subscriptions are stored in the Firestore collection called
+Subscriptions to labels are stored in the Firestore collection called
 `github-label-subscriptions` with each document at
 `github-label-subscriptions/{userId}` path has the following format
 
@@ -62,9 +70,9 @@ message Subscription {
 Subscriptions are intended to be managed by users themselves so they are indexed
 by Firebase UID issued by Firebase authentification.
 
-Additionally this collection contains configuration of keyword subscriptions
-for specific repositories at `github-label-subscriptions/{repositoryName}`,
-where `{repositoryName}` is full repository name with `/` replaced with `$`.
+Subscriptions to keywords for specific repositories are stored at
+`github-keyword-subscriptions/{repositoryName}`, where `{repositoryName}`
+is full repository name with `/` replaced with `$`.
 
 ```proto
 // Represents a subscription to keywords inside issue body. If the match is
@@ -75,7 +83,7 @@ message KeywordSubscription {
 }
 ```
 
-Note: security rules prevent editing subscriptions by anybody - so they
+Note: security rules prevent editing keyword subscriptions by anybody - so they
 can only be changed via Firebase Console UI.
 
 Mails are sent via SendGrid.

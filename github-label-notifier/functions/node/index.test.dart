@@ -55,8 +55,8 @@ void main() async {
       ],
     }));
 
-    await subscriptions
-        .document('dart-lang\$webhook-test')
+    await firestore
+        .document('github-keyword-subscriptions/dart-lang\$webhook-test')
         .setData(DocumentData.fromMap({
           'keywords': [
             'jit',
@@ -164,7 +164,10 @@ void main() async {
       };
 
   Map<String, dynamic> makeIssueOpenedEvent(
-          {int number = 1, String repositoryName = 'dart-lang/webhook-test'}) =>
+          {int number = 1,
+          String repositoryName = 'dart-lang/webhook-test',
+          String body =
+              'This is an amazing ../third_party/dart/runtime/vm solution'}) =>
       {
         'action': 'opened',
         'issue': {
@@ -172,7 +175,7 @@ void main() async {
               'https://github.com/dart-lang/webhook-test/issues/${number}',
           'number': number,
           'title': 'TEST ISSUE TITLE',
-          'body': 'This is an amazing aot solution',
+          'body': body,
           'user': {
             'login': 'hest',
             'html_url': 'https://github.com/hest',
@@ -285,7 +288,7 @@ void main() async {
         ]));
   });
 
-  test('ok - single keyword subscriber', () async {
+  test('ok - issue opened', () async {
     final rs = await sendEvent(body: makeIssueOpenedEvent());
     expect(rs.statusCode, equals(HttpStatus.ok));
     expect(sendgridRequests.length, equals(1));
@@ -307,7 +310,40 @@ void main() async {
     expect(
         rq.body['content']
             .firstWhere((c) => c['type'] == 'text/plain')['value'],
-        contains('Matches keyword: aot'));
+        contains('Matches keyword: third_party/dart'));
+  });
+
+  test('ok - issue opened - test underscore as word boundary',
+      () async {
+    final rs = await sendEvent(body: makeIssueOpenedEvent(body: 'xyz, something_jit_something_else, foobar'));
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(sendgridRequests.length, equals(1));
+
+    final rq = sendgridRequests.first;
+    expect(rq.headers['authorization'],
+        equals('Bearer ' + Platform.environment['SENDGRID_SECRET']));
+    expect(rq.body['subject'], contains('#1'));
+    expect(rq.body['subject'], contains('TEST ISSUE TITLE'));
+    expect(
+        rq.body['personalizations'],
+        unorderedEquals([
+          {
+            'to': [
+              {'email': 'second@example.com'}
+            ]
+          }
+        ]));
+    expect(
+        rq.body['content']
+            .firstWhere((c) => c['type'] == 'text/plain')['value'],
+        contains('Matches keyword: jit'));
+  });
+
+  test('ok - issue opened - no matching keyword',
+      () async {
+    final rs = await sendEvent(body: makeIssueOpenedEvent(body: 'xyz, somethingjitsomething_else, foobar'));
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(sendgridRequests.length, equals(0));
   });
 }
 

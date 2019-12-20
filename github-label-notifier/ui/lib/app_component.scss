@@ -17,13 +17,17 @@
     @include button-dense-theme('.subscribe-button');
 }
 
-.subscribe-row {
+.card-row {
     padding: 10px;
 }
 
 .centered {
     margin-left: auto;
     margin-right: auto;
+}
+
+.margin-before {
+    margin-top: 1em;
 }
 
 ul.repo-list {

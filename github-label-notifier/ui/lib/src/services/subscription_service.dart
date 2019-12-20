@@ -72,6 +72,29 @@ class SubscriptionsService {
     return groupedByRepo;
   }
 
+  /// Fetch configuration of keyword subscription for the specific repository.
+  Future<KeywordSubscription> getKeywordSubscription(
+      String repositoryName) async {
+    final app = await _ensureApp();
+    if (!isLoggedIn) {
+      return null;
+    }
+
+    final sanitizedRepositoryName = repositoryName.replaceAll('/', r'$');
+    final snapshot = await app
+        .firestore()
+        .doc('github-keyword-subscriptions/$sanitizedRepositoryName')
+        .get();
+
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    return KeywordSubscription(
+        label: snapshot.get('label'),
+        keywords: snapshot.get('keywords').cast<String>());
+  }
+
   /// Adds a subscription to a label for the current user.
   Future<void> subscribeTo(String repositoryName, String labelName) async {
     final labelId =
@@ -155,4 +178,15 @@ class GithubLabel {
   }
 
   String toId() => '$repositoryName:$labelName';
+}
+
+/// Represents subscription to particular keywords in a repository.
+///
+/// Whenever a new issue is opened that contains one of the keywords
+/// in the body notifier will notify users subscribed to the specified label.
+class KeywordSubscription {
+  final String label;
+  final List<String> keywords;
+
+  KeywordSubscription({this.label, this.keywords});
 }

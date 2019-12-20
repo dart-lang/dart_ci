@@ -49,7 +49,10 @@ class KeywordSubscription {
     return _makeRegExp().firstMatch(body)?.group(0);
   }
 
-  RegExp _makeRegExp() => RegExp(keywords.join('|'), caseSensitive: false);
+  RegExp _makeRegExp() {
+    final keywordsAlt = keywords.map((kw) => '$kw').join('|');
+    return RegExp('(?<=\\b|_)($keywordsAlt)(?=\\b|_)', caseSensitive: false);
+  }
 
   static final _keywordRegExp = RegExp(r'^[\w_/]+$');
   static bool _isOk(String keyword) => _keywordRegExp.hasMatch(keyword);
@@ -60,7 +63,7 @@ Future<KeywordSubscription> lookupKeywordSubscription(
     String repositoryName) async {
   final sanitizedRepositoryName = repositoryName.replaceAll('/', r'$');
   final subscriptions = await _firestore
-      .document('github-label-subscriptions/$sanitizedRepositoryName')
+      .document('github-keyword-subscriptions/$sanitizedRepositoryName')
       .get();
 
   if (!subscriptions.exists) {

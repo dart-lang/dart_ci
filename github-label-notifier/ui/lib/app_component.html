@@ -6,44 +6,50 @@
   LOGIN
 </material-button>
 
-<div class="mdc-card mdc-card--outlined" *ngIf="isLoggedIn">
-  <div class="subscribe-row">
-    <div *ngIf="subscriptions.isEmpty">{{userEmail}} has no subscriptions</div>
-    <div *ngIf="subscriptions.isNotEmpty">{{userEmail}} subscribed to:
-      <ul class="repo-list">
-          <li *ngFor="let repo of subscriptions.entries; trackBy: trackByKey">
-            <div>{{repo.key}}</div>
-            <ul class="label-list">
-              <li *ngFor="let label of repo.value">
-                <div>
-                  {{label}}
-                  <material-button icon (trigger)="unsubscribeFrom(repo.key, label)">
-                    <material-icon icon="delete" size="small" baseline></material-icon>
-                  </material-button>
-                </div>
-              </li>
-            </ul>
-          </li>
-      </ul>
+<div *ngIf="isLoggedIn">
+  <div class="mdc-card mdc-card--outlined" *ngIf="isLoggedIn">
+    <div class="card-row">
+      <div *ngIf="subscriptions.isEmpty">{{userEmail}} has no subscriptions</div>
+      <div *ngIf="subscriptions.isNotEmpty">{{userEmail}} subscribed to:
+        <ul class="repo-list">
+            <li *ngFor="let repo of subscriptions.entries; trackBy: trackByKey">
+              <div>{{repo.key}}</div>
+              <ul class="label-list">
+                <li *ngFor="let label of repo.value">
+                  <div>
+                    {{label}}
+                    <material-button icon (trigger)="unsubscribeFrom(repo.key, label)">
+                      <material-icon icon="delete" size="small" baseline></material-icon>
+                    </material-button>
+                  </div>
+                </li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-row centered">
+      <material-dropdown-select
+        [options]="supportedRepositories"
+        [(selection)]="selectedRepository"
+        buttonText="{{selectedRepository}}"
+        [deselectOnActivate]="false">
+      </material-dropdown-select>
+      <material-auto-suggest-input
+        [selectionOptions]="repoLabels"
+        [(inputText)]="selectedLabel"
+        label="label name">
+      </material-auto-suggest-input>
+      <material-button
+        raised
+        class="subscribe-button blue"
+        (trigger)="subscribe()">
+        subscribe
+      </material-button>
     </div>
   </div>
-  <div class="subscribe-row centered">
-    <material-dropdown-select
-      [options]="supportedRepositories"
-      [(selection)]="selectedRepository"
-      buttonText="{{selectedRepository}}"
-      [deselectOnActivate]="false">
-    </material-dropdown-select>
-    <material-auto-suggest-input
-      [selectionOptions]="repoLabels"
-      [(inputText)]="selectedLabel"
-      label="label name">
-    </material-auto-suggest-input>
-    <material-button
-      raised
-      class="subscribe-button blue"
-      (trigger)="subscribe()">
-      subscribe
-    </material-button>
+
+  <div class="mdc-card mdc-card--outlined margin-before" *ngIf="flutterKeywordLabel.isNotEmpty">
+    <p class="card-row centered">Subscribing to label <b>{{flutterKeywordLabel}}</b> in <b>flutter/flutter</b> repository would also subscribe you to the following keywords: <b><span *ngFor="let keyword of flutterKeywords; let lastKeyword=last">{{keyword}}<span *ngIf="!lastKeyword">,&#32;</span></span></b></p>
   </div>
 </div>
