@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:firebase_admin_interop/firebase_admin_interop.dart';
+import 'package:firebase_functions_interop/firebase_functions_interop.dart';
 import 'package:test/test.dart';
 
 import '../firestore_impl.dart' as fs;
@@ -21,8 +22,15 @@ void main() {
   final firestore = fs.FirestoreServiceImpl();
 
   test('Test chunk storing', () async {
-    final builder = 'test_builder';
+    final builder = testBuilder;
+    final configuration = testConfiguration;
     final index = 123;
+
+    await firestore.updateConfiguration(configuration, builder);
+    final failingResultReference = await fs.firestore
+        .collection('results')
+        .add(DocumentData.fromMap(activeFailureResult));
+
     final document = fs.firestore.document('builds/$builder:$index');
 
     await document.delete();
@@ -47,6 +55,10 @@ void main() {
     expect(data['num_chunks'], 4);
     expect(data['processed_chunks'], 4);
     expect(data['completed'], isTrue);
+    expect(data['active_failures'], isTrue);
+    await document.delete();
+    await failingResultReference.delete();
+    await fs.firestore.document('configurations/$testConfiguration').delete();
   });
 
   group('Try results', () {

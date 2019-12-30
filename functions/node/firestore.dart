@@ -17,6 +17,8 @@ abstract class FirestoreService {
 
   Future<void> addCommit(String id, Map<String, dynamic> data);
 
+  Future<List<String>> getConfigurations(String builder);
+
   Future<void> updateConfiguration(String configuration, String builder);
 
   Future<void> updateBuildInfo(String builder, int buildNumber, int index);

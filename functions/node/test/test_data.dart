@@ -85,6 +85,20 @@ const Map<String, dynamic> landedCommitChange = {
   "changed": true
 };
 
+const Map<String, dynamic> activeFailureResult = {
+  "name": "test_suite/active_failing_test",
+  "configurations": [testConfiguration, 'configuration 2', 'configuration 3'],
+  "active": true,
+  "active_configurations": [testConfiguration, 'configuration 2'],
+  "approved": false,
+  "suite": "test_suite",
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+  "blamelist_start_index": 67195,
+  "blamelist_end_index": 67195
+};
+
 const List<Map<String, dynamic>> tryjobResults = [
   {
     "review": 44445,
@@ -114,6 +128,7 @@ const List<Map<String, dynamic>> tryjobResults = [
 
 const testBuilder = 'test_builder';
 const testBuildNumber = "308";
+const testConfiguration = 'test_configuration';
 const testReview = 123;
 const testPatchset = 3;
 const testPreviousPatchset = 1;
