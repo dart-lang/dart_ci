@@ -14,6 +14,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import '../formatting.dart' as formatting;
 import '../model/commit.dart';
+import '../services/filter_service.dart';
 import 'log_component.dart';
 
 @Component(
@@ -45,8 +46,16 @@ class ResultsPanel {
   @Input()
   IntRange range;
 
-  Map<String, List<String>> summaries(List<List<Change>> group) =>
-      group.first.first.configurations.summaries;
+  @Input()
+  Filter filter = Filter.defaultFilter;
+
+  Map<String, List<String>> summaries(List<List<Change>> group) {
+    final first = group.first.first;
+    final configurations = filter.showLatestFailures
+        ? first.activeConfigurations
+        : first.configurations;
+    return configurations.summaries;
+  }
 
   int resultLimit = 10;
 
@@ -56,5 +65,5 @@ class ResultsPanel {
   ];
 
   String approvalContent(Change change) =>
-    change.approved ? formatting.checkmark: '';
+      change.approved ? formatting.checkmark : '';
 }

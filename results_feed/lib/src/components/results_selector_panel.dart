@@ -16,6 +16,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import '../formatting.dart' as formatting;
 import '../model/commit.dart';
+import '../services/filter_service.dart';
 import 'log_component.dart';
 
 @Component(
@@ -81,6 +82,9 @@ class ResultsSelectorPanel {
   IntRange range;
 
   @Input()
+  Filter filter = Filter.defaultFilter;
+
+  @Input()
   set selected(Set<Change> selected) {
     _selected = selected;
     initializeSelected();
@@ -109,11 +113,16 @@ class ResultsSelectorPanel {
     RelativePosition.OffsetTopLeft
   ];
 
-  Map<String, List<String>> summaries(List<List<Change>> group) =>
-      group.first.first.configurations.summaries;
+  Map<String, List<String>> summaries(List<List<Change>> group) {
+    final first = group.first.first;
+    final configurations = filter.showLatestFailures
+        ? first.activeConfigurations
+        : first.configurations;
+    return configurations.summaries;
+  }
 
   String approvalContent(Change change) =>
-    change.approved ? formatting.checkmark : '';
+      change.approved ? formatting.checkmark : '';
 
   void initializeSelected() {
     if (_selected != null && _changes != null) {

@@ -52,7 +52,7 @@ class FilterComponent {
   FilterService service;
   SelectionModel<String> groupSelector;
 
-  get filter => service.filter;
+  Filter get filter => service.filter;
 
   FilterComponent(this.service) {
     groupSelector = SelectionModel.multi(

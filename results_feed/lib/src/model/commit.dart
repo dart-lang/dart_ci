@@ -81,9 +81,9 @@ class ChangeGroup implements Comparable {
   Filter _filter = Filter.defaultFilter;
 
   ChangeGroup(this.range, Map<int, Commit> allCommits, List<Comment> comments,
-      Iterable<Change> changeList, Iterable<Change> liveChangeList)
+      Iterable<Change> changeList)
       : changes = Changes(changeList),
-        latestChanges = Changes(liveChangeList) {
+        latestChanges = Changes.active(changeList) {
     commits = [
       if (range != null)
         for (int i in range) if (allCommits[i] != null) allCommits[i]
@@ -101,7 +101,8 @@ class ChangeGroup implements Comparable {
       filter.showLatestFailures ? latestChanges : changes;
 
   Changes filteredChanges(Filter filter) =>
-      (filter == _filter) ? _filteredChanges : computeFilteredChanges(filter);
+      (filter == _filter ? _filteredChanges : null) ??
+      computeFilteredChanges(filter);
 
   Changes computeFilteredChanges(filter) {
     _filteredChanges = shownChanges(filter).filtered(filter);
@@ -125,7 +126,7 @@ class Configurations {
         summaries = _summarize(configurations);
 
   factory Configurations(List configs) {
-    if (configs.isEmpty) return null;
+    if (configs == null || configs.isEmpty) return null;
     configs.sort();
     return _instances.putIfAbsent(
         configs.join(' '), () => Configurations._(configs.toList()));
@@ -156,34 +157,40 @@ class Change implements Comparable {
       this.id,
       this.name,
       this.configurations,
+      this.activeConfigurations,
       this.result,
       this.previousResult,
       this.expected,
       this.blamelistStartIndex,
       this.blamelistEndIndex,
       this.pinnedIndex,
-      this.approved)
+      this.approved,
+      this.active)
       : changesText = '$previousResult -> $result (expected $expected)',
         configurationsText = configurations.text;
 
   Change.fromDocument(firestore.DocumentSnapshot document)
       : this._(
-            document.id,
-            document.get('name'),
-            Configurations(document.get('configurations')),
-            document.get('result'),
-            document.get('previous_result'),
-            document.get('expected'),
-            document.get('blamelist_start_index'),
-            document.get('blamelist_end_index'),
-            document.get('pinned_index'),
-            // Old documents may not have this field.
-            document.get('approved') ?? false
-);
+          document.id,
+          document.get('name'),
+          Configurations(document.get('configurations')),
+          Configurations(document.get('active_configurations')),
+          document.get('result'),
+          document.get('previous_result'),
+          document.get('expected'),
+          document.get('blamelist_start_index'),
+          document.get('blamelist_end_index'),
+          document.get('pinned_index'),
+          // Old documents may not have this field.
+          document.get('approved') ?? false,
+          // Field is only present when true.
+          document.get('active') ?? false,
+        );
 
   final String id;
   final String name;
   final Configurations configurations;
+  final Configurations activeConfigurations;
   final String result;
   final String previousResult;
   final String expected;
@@ -191,22 +198,9 @@ class Change implements Comparable {
   final int blamelistEndIndex;
   int pinnedIndex;
   bool approved;
+  bool active;
   final String configurationsText;
   final String changesText;
-
-  Change copy({List<String> newConfigurations}) => Change._(
-      id,
-      name,
-      newConfigurations == null
-          ? configurations
-          : Configurations(newConfigurations),
-      result,
-      previousResult,
-      expected,
-      blamelistStartIndex,
-      blamelistEndIndex,
-      pinnedIndex,
-      approved);
 
   int compareTo(Object other) => name.compareTo((other as Change).name);
 
@@ -216,7 +210,13 @@ class Change implements Comparable {
 class Changes with IterableMixin<List<List<Change>>> {
   final List<List<List<Change>>> changes;
 
-  Changes(Iterable<Change> newChanges) : this.grouped(group(newChanges));
+  Changes(Iterable<Change> newChanges)
+      : this.grouped(
+            group(newChanges, (Change change) => change.configurations));
+
+  Changes.active(Iterable<Change> newChanges)
+      : this.grouped(group(newChanges.where((change) => change.active),
+            (Change change) => change.activeConfigurations));
 
   Changes.grouped(this.changes);
 
@@ -227,11 +227,12 @@ class Changes with IterableMixin<List<List<Change>>> {
   /// The changes, grouped first by Configurations object, then by
   /// changesText (the change in the results). Should not be modified
   /// after it is created by this call.
-  static List<List<List<Change>>> group(Iterable<Change> newChanges) {
+  static List<List<List<Change>>> group(Iterable<Change> newChanges,
+      Configurations configuration(Change change)) {
     final map = SplayTreeMap<String, SplayTreeMap<String, List<Change>>>();
     for (final change in newChanges) {
       map
-          .putIfAbsent(change.configurations.text,
+          .putIfAbsent(configuration(change).text,
               () => SplayTreeMap<String, List<Change>>())
           .putIfAbsent(change.changesText, () => List<Change>())
           .add(change);

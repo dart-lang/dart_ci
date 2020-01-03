@@ -12,7 +12,8 @@
     <results-panel
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
-        [range]="changeGroup.range"></results-panel>
+        [range]="changeGroup.range"
+        [filter]="filter"></results-panel>
   </div>
   <div *ngIf="chooseCommit">
     <blamelist-picker
@@ -25,6 +26,7 @@
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
         [range]="changeGroup.range"
+        [filter]="filter"
         [selected]="selected"></results-selector-panel>
   </div>
   <div *ngIf="approving">
@@ -37,6 +39,7 @@
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
         [range]="changeGroup.range"
+        [filter]="filter"
         [selected]="selected"
         failuresOnly></results-selector-panel>
   </div>
