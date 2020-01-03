@@ -123,6 +123,7 @@ void main() {
     // Take commit with a non-trival buildlist, press button on it.
     final unpinned = app.commits
         .where((commit) =>
+            commit.isNotEmpty &&
             commit.blamelist.commentBodies.isNotEmpty &&
             commit.blamelist.firstCommit != commit.blamelist.lastCommit)
         .single;
@@ -132,7 +133,8 @@ void main() {
     // DOM has changed.
     app = AppPO.create(context);
     final commits = app.commits
-        .where((commit) => commit.blamelist.commentBodies.isNotEmpty)
+        .where((commit) =>
+            commit.isNotEmpty && commit.blamelist.commentBodies.isNotEmpty)
         .toList();
 
     final data = commentsSampleData;

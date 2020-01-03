@@ -13,6 +13,12 @@ abstract class CommitPO {
   CommitPO();
   factory CommitPO.create(PageLoaderElement context) = $CommitPO.create;
 
+  @First(ByCss('div.commit'))
+  PageLoaderElement get _commit;
+
+  bool get isNotEmpty => _commit.exists;
+  bool get isEmpty => !isNotEmpty;
+
   @First(ByTagName('blamelist-panel'))
   PageLoaderElement get _blamelistPanel;
 
