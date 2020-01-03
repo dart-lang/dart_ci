@@ -264,8 +264,12 @@ class Changes with IterableMixin<List<List<Change>>> {
     bool changed = false;
     for (final element in list) {
       final T newElement = elementFilter(element, filter);
-      changed = changed || newElement != element;
-      if (!emptyTest(newElement, filter)) newList.add(newElement);
+      if (emptyTest(newElement, filter)) {
+        changed = true;
+      } else {
+        newList.add(newElement);
+        changed = changed || newElement != element;
+      }
     }
     return changed ? newList : list;
   }
@@ -279,10 +283,11 @@ class Changes with IterableMixin<List<List<Change>>> {
   }
 
   List<Change> resultFilter(List<Change> list, Filter filter) {
-    if (filter.showLatestFailures && list.first.resultStyle != 'failure') {
+    if ((filter.showLatestFailures || filter.showUnapprovedOnly) &&
+        list.first.resultStyle != 'failure') {
       return [];
     }
     return applyFilter<Change>((c, f) => c, list, filter,
-        (change, filter) => filter.showUnapprovedOnly && !change.approved);
+        (change, filter) => filter.showUnapprovedOnly && change.approved);
   }
 }

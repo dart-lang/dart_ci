@@ -32,6 +32,12 @@ const allConfigurationGroups = Filter.allConfigurationGroups;
         label="Show only latest failures">
     </material-toggle>
     <hr>
+    <material-toggle
+        (checkedChange)="onShowUnapprovedOnly(\$event)"
+        [checked]="filter.showUnapprovedOnly"
+        label="Show only unapproved failures">
+    </material-toggle>
+    <hr>
    <b>Show changes on builders:</b>
     <material-select
         class="bordered-list"
@@ -73,6 +79,11 @@ class FilterComponent {
 
   void onShowLatestFailures(bool event) {
     service.filter = filter.copy(showLatestFailures: event);
+    filter.updateUrl();
+  }
+
+  void onShowUnapprovedOnly(bool event) {
+    service.filter = filter.copy(showUnapprovedOnly: event);
     filter.updateUrl();
   }
 

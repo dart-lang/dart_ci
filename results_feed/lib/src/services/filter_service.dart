@@ -41,6 +41,8 @@ class Filter {
           'showAllCommits=$showAllCommits',
         if (showLatestFailures != defaultShowLatestFailures)
           'showLatestFailures=$showLatestFailures',
+        if (showUnapprovedOnly != defaultShowUnapprovedOnly)
+          'showUnapprovedOnly=$showUnapprovedOnly',
         if (!allGroups) 'configurationGroups=${configurationGroups.join(',')}'
       ].join('&');
 
@@ -59,6 +61,8 @@ class Filter {
         result = result.copy(showAllCommits: value == 'true');
       } else if (key == 'showLatestFailures') {
         result = result.copy(showLatestFailures: value == 'true');
+      } else if (key == 'showUnapprovedOnly') {
+        result = result.copy(showUnapprovedOnly: value == 'true');
       } else if (key == 'configurationGroups') {
         final configurationGroups = value.split(',');
         result = result.copy(configurationGroups: configurationGroups);
