@@ -10,7 +10,7 @@ import 'package:dart_results_feed/src/components/routing_wrapper_component.templ
 import 'main.template.dart' as self;
 
 // Local testing use
-// @GenerateInjector([ClassProvider(FirestoreService, useClass: TestingFirestoreService), ...routerProvidersHash])
+/// @GenerateInjector([ClassProvider(FirestoreService, useClass: TestingFirestoreService), ...routerProvidersHash])
 // Use for deploying on staging website:
 // @GenerateInjector([ClassProvider(FirestoreService, useClass: StagingFirestoreService), ...routerProviders])
 

@@ -7,12 +7,6 @@
 material-button {text-align: center; clear: both; }
 material-input { width: 80% }
 
-.anchor {
-  display: block;
-  height: 64px;
-  margin-top: -64px;
-  visibility: hidden;
-}
 .commit { margin: 12px; background-color: white; box-shadow: 8px 8px 5px lightgray; }
 .commit-panel { margin: 8px; }
 @media screen and (min-width: 992px) {
