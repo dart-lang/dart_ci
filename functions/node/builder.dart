@@ -121,6 +121,11 @@ class Build {
       final startCommit =
           await firestore.getCommit(firstResult['previous_commit_hash']);
       startIndex = startCommit['index'] + 1;
+      if (startIndex > endIndex) {
+        throw ArgumentError("Results received with empty blamelist\n"
+            "previous commit: ${firstResult['previous_commit_hash']}\n"
+            "built commit: $commitHash");
+      }
     }
     Future<void> fetchApprovals(Map<String, dynamic> commit) async {
       if (commit.containsKey('review')) {
