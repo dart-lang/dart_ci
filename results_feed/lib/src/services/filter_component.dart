@@ -21,12 +21,6 @@ const allConfigurationGroups = Filter.allConfigurationGroups;
   MaterialSelectItemComponent
 ], template: '''
     <material-toggle
-        (checkedChange)="onShowAllCommits(\$event)"
-        [checked]="filter.showAllCommits"
-        label="Show all commits">
-    </material-toggle>
-    <hr>
-    <material-toggle
         (checkedChange)="onShowLatestFailures(\$event)"
         [checked]="filter.showLatestFailures"
         label="Show only latest failures">
@@ -67,13 +61,15 @@ class FilterComponent {
   }
 
   void onSelectionChange(_) {
+    if (groupSelector.selectedValues.isEmpty) {
+      // Do not allow deselecting the last selected group.
+      // Selecting synchronously or with Future.microtask don't show in UI.
+      final recheck = service.filter.configurationGroups.first;
+      Future(() => groupSelector.select(recheck));
+      return;
+    }
     final values = groupSelector.selectedValues.toList();
     service.filter = filter.copy(configurationGroups: values);
-    filter.updateUrl();
-  }
-
-  void onShowAllCommits(bool event) {
-    service.filter = filter.copy(showAllCommits: event);
     filter.updateUrl();
   }
 

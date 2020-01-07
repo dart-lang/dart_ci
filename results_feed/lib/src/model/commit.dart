@@ -94,8 +94,7 @@ class ChangeGroup implements Comparable {
   /// Sort in reverse chronological order.
   int compareTo(other) => (other as ChangeGroup).range.compareTo(range);
 
-  bool show(Filter filter) =>
-      filter.showAllCommits || filteredChanges(filter).isNotEmpty;
+  bool show(Filter filter) => filteredChanges(filter).isNotEmpty;
 
   Changes shownChanges(Filter filter) =>
       filter.showLatestFailures ? latestChanges : changes;
