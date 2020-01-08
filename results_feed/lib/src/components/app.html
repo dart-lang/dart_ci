@@ -41,6 +41,11 @@
       [changeGroup]="changeGroup"
       [filter]="filterService.filter"></dart-commit>
   <div style="text-align: center">
-    <span #infiniteScroll>fetching commits ...</span>
+    <span *ngIf="fetchDate != null">
+      Fetched results back to {{formattedFetchDate}}<br></span>
+    <span *ngIf="infiniteScrollEnabled" #infiniteScroll>
+      fetching results ...</span>
+    <material-button raised *ngIf="!infiniteScrollEnabled" (trigger)="fetchData()">
+      Fetch more results</material-button>
   </div>
 </material-content>

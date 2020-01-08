@@ -15,6 +15,8 @@ String formattedDate(DateTime date) {
   return _yearFormat.format(date);
 }
 
+String formatFetchDate(DateTime date) => DateFormat('MMM d, y').format(date);
+
 String formattedEmail(String email) {
   if (email.endsWith('@google.com')) {
     return email.split('@').first;

@@ -9,15 +9,13 @@ class Filter {
   final bool showLatestFailures;
   final bool showUnapprovedOnly;
 
-  const Filter._(this.configurationGroups,
-      this.showLatestFailures, this.showUnapprovedOnly);
+  const Filter._(this.configurationGroups, this.showLatestFailures,
+      this.showUnapprovedOnly);
   Filter(this.configurationGroups, this.showLatestFailures,
       this.showUnapprovedOnly);
 
-  static const defaultFilter = Filter._(
-      allConfigurationGroups,
-      defaultShowLatestFailures,
-      defaultShowUnapprovedOnly);
+  static const defaultFilter = Filter._(allConfigurationGroups,
+      defaultShowLatestFailures, defaultShowUnapprovedOnly);
 
   Filter copy(
           {List<String> configurationGroups,

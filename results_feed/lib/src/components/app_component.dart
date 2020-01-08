@@ -18,6 +18,7 @@ import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/services/filter_component.dart';
 
 import 'commit_component.dart';
+import '../formatting.dart';
 import '../model/commit.dart';
 import '../model/comment.dart';
 import '../services/filter_service.dart';
@@ -87,6 +88,8 @@ class AppComponent implements OnInit, CanReuse {
   @override
   Future<bool> canReuse(_, __) async => true;
 
+  bool infiniteScrollEnabled = true;
+
   void infiniteScrollCallback(
       List entries, IntersectionObserver observer) async {
     infiniteScrollVisibleRatio = entries[0].intersectionRatio;
@@ -94,6 +97,17 @@ class AppComponent implements OnInit, CanReuse {
     while (infiniteScrollVisibleRatio > 0) {
       await fetchData();
       await Future.delayed(Duration(seconds: 2));
+    }
+  }
+
+  DateTime fetchDate;
+  String get formattedFetchDate => formatFetchDate(fetchDate);
+
+  void updateFetchDate() {
+    if (commits.isNotEmpty) {
+      fetchDate = commits.values.last.created;
+      infiniteScrollEnabled =
+          fetchDate.isAfter(DateTime.now().subtract(Duration(days: 21)));
     }
   }
 
@@ -108,6 +122,7 @@ class AppComponent implements OnInit, CanReuse {
           await fetchResults(range);
           await fetchComments(range);
           updateRanges();
+          updateFetchDate();
         } finally {
           // Force a reevaluation of changed views
           filterService.filter = filterService.filter.copy();
@@ -117,7 +132,7 @@ class AppComponent implements OnInit, CanReuse {
       }();
 
   Future<IntRange> fetchEarlierCommits(int before) async {
-    final newCommits = (await _firestoreService.fetchCommits(before, 30))
+    final newCommits = (await _firestoreService.fetchCommits(before, 100))
         .map((x) => Commit.fromDocument(x));
     if (newCommits.isEmpty) {
       throw Exception("Failed to fetch more commits");
