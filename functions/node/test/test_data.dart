@@ -128,6 +128,8 @@ const List<Map<String, dynamic>> tryjobResults = [
 
 const testBuilder = 'test_builder';
 const testBuildNumber = "308";
+const tryjob2BuildNumber = "309";
+const tryjob3BuildNumber = "310";
 const testConfiguration = 'test_configuration';
 const testReview = 123;
 const testPatchset = 3;
@@ -158,7 +160,7 @@ const Map<String, dynamic> tryjobFailingChange = {
   "changed": true
 };
 
-final Map<String, dynamic> tryjobOtherFailingChange =
+final Map<String, dynamic> tryjob2OtherFailingChange =
     Map<String, dynamic>.from(tryjobFailingChange)
       ..addAll({
         "name": "test_suite/other_failing_test",
@@ -167,7 +169,8 @@ final Map<String, dynamic> tryjobOtherFailingChange =
         "expected": "Pass",
         "matches": false,
         "previous_result": "Pass",
-        "changed": true
+        "changed": true,
+        "build_number": tryjob2BuildNumber,
       });
 
 final Map<String, dynamic> tryjobExistingFailure =
@@ -182,6 +185,18 @@ final Map<String, dynamic> tryjobExistingFailure =
         "changed": false
       });
 
+final Map<String, dynamic> tryjob2ExistingFailure =
+    Map<String, dynamic>.from(tryjobExistingFailure)
+      ..addAll({
+        "build_number": tryjob2BuildNumber,
+      });
+
+final Map<String, dynamic> tryjob2FailingChange =
+    Map<String, dynamic>.from(tryjobFailingChange)
+      ..addAll({
+        "build_number": tryjob2BuildNumber,
+      });
+
 final Map<String, dynamic> tryjobPassingChange =
     Map<String, dynamic>.from(tryjobFailingChange)
       ..addAll({
@@ -192,6 +207,18 @@ final Map<String, dynamic> tryjobPassingChange =
         "matches": true,
         "previous_result": "RuntimeError",
         "changed": true
+      });
+
+final Map<String, dynamic> tryjob2PassingChange =
+    Map<String, dynamic>.from(tryjobPassingChange)
+      ..addAll({
+        "build_number": tryjob2BuildNumber,
+      });
+
+final Map<String, dynamic> tryjob3PassingChange =
+    Map<String, dynamic>.from(tryjobPassingChange)
+      ..addAll({
+        "build_number": tryjob3BuildNumber,
       });
 
 String gitilesLog = '''

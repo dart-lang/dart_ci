@@ -88,8 +88,13 @@ class FirestoreServiceImpl implements FirestoreService {
     final documentRef = firestore.document('builds/$builder:$index');
     final record = await documentRef.get();
     if (!record.exists) {
-      await documentRef.setData(DocumentData.fromMap(
-          {'builder': builder, 'build_number': buildNumber, 'index': index}));
+      await documentRef.setData(
+          DocumentData.fromMap({
+            'builder': builder,
+            'build_number': buildNumber,
+            'index': index
+          }),
+          SetOptions(merge: true));
       info('Created build record: '
           'builder: $builder, build_number: $buildNumber, index: $index');
     } else if (record.data.getInt('index') != index) {
@@ -331,7 +336,6 @@ class FirestoreServiceImpl implements FirestoreService {
         break;
       }
     }
-
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(document);
       final data = snapshot.data.toMap();
@@ -359,13 +363,10 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> storeTryChunkStatus(String builder, int buildNumber, int review,
       int patchset, bool success) async {
+    await _ensureTryBuildRecord(builder, buildNumber, review, patchset);
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
-    final snapshot = await reference.get();
 
-    if (!snapshot.exists || snapshot.data.getBool('completed') != null) {
-      await _createTryBuildRecord(builder, buildNumber, review, patchset);
-    }
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(reference);
       final data = snapshot.data.toMap();
@@ -386,23 +387,46 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> storeTryBuildChunkCount(String builder, int buildNumber,
       int review, int patchset, int numChunks) async {
+    await _ensureTryBuildRecord(builder, buildNumber, review, patchset);
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
-    final snapshot = await reference.get();
-    if (!snapshot.exists || snapshot.data.getInt('num_chunks') != null) {
-      await _createTryBuildRecord(builder, buildNumber, review, patchset);
-    }
     await reference.updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 
-  Future<void> _createTryBuildRecord(
-          String builder, int buildNumber, int review, int patchset) =>
-      firestore
-          .document('try_builds/$builder:$review:$patchset')
-          .setData(DocumentData.fromMap({
+  Future<void> _ensureTryBuildRecord(
+      String builder, int buildNumber, int review, int patchset) async {
+    final reference =
+        firestore.document('try_builds/$builder:$review:$patchset');
+    var snapshot = await reference.get();
+    if (snapshot.exists && snapshot.data.getInt('build_number') > buildNumber) {
+      throw ArgumentError("Received chunk from previous build $buildNumber"
+          " after chunk from a later build");
+    }
+    if (snapshot.exists && snapshot.data.getInt('build_number') < buildNumber) {
+      Future<void> deleteEarlierBuild(Transaction transaction) async {
+        final snapshot = await transaction.get(reference);
+        if (snapshot.exists &&
+            snapshot.data.getInt('build_number') < buildNumber) {
+          transaction.delete(reference);
+        }
+      }
+
+      try {
+        await firestore.runTransaction(deleteEarlierBuild);
+      } finally {
+        snapshot = await reference.get();
+      }
+    }
+
+    if (!snapshot.exists) {
+      await reference.setData(
+          DocumentData.fromMap({
             'builder': builder,
             'build_number': buildNumber,
             'review': review,
             'patchset': patchset,
-          }));
+          }),
+          SetOptions(merge: true));
+    }
+  }
 }

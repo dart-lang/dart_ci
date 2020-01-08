@@ -138,7 +138,7 @@ void main() {
       // Send first chunk of second run on the same patchset, with an approved
       // failure and an unapproved failure.
       await Tryjob(testReviewPath, null, firestore, null)
-          .process([tryjobOtherFailingChange, tryjobFailingChange]);
+          .process([tryjob2OtherFailingChange, tryjob2FailingChange]);
       final reference = fs.firestore
           .document('try_builds/$testBuilder:$testReview:$testPatchset');
       document = await reference.get();
@@ -149,7 +149,7 @@ void main() {
       expect(document.data.getInt('processed_chunks'), 1);
       // Send second chunk.
       await Tryjob(testReviewPath, 3, firestore, null)
-          .process([tryjobExistingFailure]);
+          .process([tryjob2ExistingFailure]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
       expect(document.data.getBool('completed'), isNull);
@@ -157,7 +157,7 @@ void main() {
       expect(document.data.getInt('processed_chunks'), 2);
       // Send third and final chunk.
       await Tryjob(testReviewPath, null, firestore, null)
-          .process([tryjobPassingChange]);
+          .process([tryjob2PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
       expect(document.data.getBool('completed'), isTrue);
@@ -166,7 +166,7 @@ void main() {
 
       // Send first chunk of a third run, with only one chunk.
       await Tryjob(testReviewPath, 1, firestore, null)
-          .process([tryjobPassingChange]);
+          .process([tryjob3PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isTrue);
       expect(document.data.getBool('completed'), isTrue);
