@@ -169,7 +169,7 @@ class FirestoreServiceImpl implements FirestoreService {
             update.setFieldValue('active_configurations',
                 Firestore.fieldValues.arrayUnion([configuration]));
           }
-          reference.updateData(update);
+          transaction.update(reference, update);
           return approved;
         });
 
