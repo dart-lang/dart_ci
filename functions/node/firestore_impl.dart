@@ -133,7 +133,7 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> storeResult(
           Map<String, dynamic> change, int startIndex, int endIndex,
-          {bool approved, bool failure}) =>
+          {bool approved, int review, bool failure}) =>
       firestore.collection('results').add(DocumentData.fromMap({
             'name': change['name'],
             'result': change['result'],
@@ -141,6 +141,7 @@ class FirestoreServiceImpl implements FirestoreService {
             'expected': change['expected'],
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
+            if (startIndex != endIndex && approved) 'pinned_index': review,
             'configurations': <String>[change['configuration']],
             'approved': approved,
             if (failure) 'active': true,
@@ -307,10 +308,19 @@ class FirestoreServiceImpl implements FirestoreService {
   }
 
   Future<List<Map<String, dynamic>>> tryApprovals(int review) async {
+    final patchsets = await firestore
+        .collection('reviews/$review/patchsets')
+        .orderBy('number', descending: true)
+        .limit(1)
+        .get();
+    final lastPatchsetGroup =
+        patchsets.documents.first.data.getInt('patchset_group');
+    print(lastPatchsetGroup);
     QuerySnapshot approvals = await firestore
         .collection('try_results')
         .where('approved', isEqualTo: true)
         .where('review', isEqualTo: review)
+        .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup)
         .get();
     return [for (final document in approvals.documents) document.data.toMap()];
   }

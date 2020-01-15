@@ -78,6 +78,73 @@ void main() {
       for (final doc in snapshot.documents) {
         await doc.reference.delete();
       }
+      snapshot =
+          await fs.firestore.collection('reviews/$testReview/patchsets').get();
+      for (final doc in snapshot.documents) {
+        await doc.reference.delete();
+      }
+      await fs.firestore.document('reviews/$testReview').delete();
+    });
+
+    test('approved try result fetching', () async {
+      await firestore.storeReview(testReview.toString(), {
+        'subject': 'test review: approved try result fetching',
+      });
+      await firestore.storePatchset(testReview.toString(), 1, {
+        'kind': 'REWORK',
+        'description': 'Initial upload',
+        'patchset_group': 1,
+        'number': 1,
+      });
+      await firestore.storePatchset(testReview.toString(), 2, {
+        'kind': 'REWORK',
+        'description': 'change',
+        'patchset_group': 2,
+        'number': 2,
+      });
+      await firestore.storePatchset(testReview.toString(), 3, {
+        'kind': 'NO_CODE_CHANGE',
+        'description': 'Edit commit message',
+        'patchset_group': 2,
+        'number': 3,
+      });
+      final tryResult = {
+        'review': testReview,
+        'configuration': 'test_configuration',
+        'name': 'test_suite/test_name',
+        'patchset': 1,
+        'result': 'RuntimeError',
+        'expected': 'Pass',
+        'previous_result': 'Pass',
+      };
+      await firestore.storeTryChange(tryResult, testReview, 1);
+      final tryResult2 = Map<String, dynamic>.from(tryResult);
+      tryResult2['patchset'] = 2;
+      tryResult2['name'] = 'test_suite/test_name_2';
+      await firestore.storeTryChange(tryResult2, testReview, 2);
+      tryResult['patchset'] = 3;
+      tryResult['name'] = 'test_suite/test_name';
+      tryResult['expected'] = 'CompileTimeError';
+      await firestore.storeTryChange(tryResult, testReview, 3);
+      // Set the results on patchsets 1 and 2 to approved.
+      final snapshot = await fs.firestore
+          .collection('try_results')
+          .where('approved', isEqualTo: false)
+          .where('review', isEqualTo: testReview)
+          .where('patchset', isLessThanOrEqualTo: 2)
+          .get();
+      for (final document in snapshot.documents) {
+        await document.reference
+            .updateData(UpdateData.fromMap({'approved': true}));
+      }
+
+      // Should return only the approved change on patchset 2,
+      // not the one on patchset 1 or the unapproved change on patchset 3.
+      final approvals = await firestore.tryApprovals(testReview);
+      tryResult2['configurations'] = [tryResult2['configuration']];
+      tryResult2['approved'] = true;
+      tryResult2.remove('configuration');
+      expect(approvals, [tryResult2]);
     });
 
     test('Test tryjob result processing', () async {
@@ -87,7 +154,7 @@ void main() {
       final previousFailingChange = Map<String, dynamic>.from(
           tryjobFailingChange)
         ..addAll(
-            {"commit_hash": testPreviousPatchsetPath, "build_number": "307"});
+            {'commit_hash': testPreviousPatchsetPath, 'build_number': '307'});
       await Tryjob(testPreviousPatchsetPath, 1, firestore, null)
           .process([previousFailingChange]);
       var snapshot = await fs.firestore

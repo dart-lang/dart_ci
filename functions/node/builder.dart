@@ -58,7 +58,7 @@ class Build {
   int buildNumber;
   int startIndex;
   int endIndex;
-  Set<String> tryApprovals = {};
+  Map<String, int> tryApprovals = {};
   bool success = true; // Changed to false if any unapproved failure is seen.
   int countChanges = 0;
   int commitsFetched;
@@ -127,17 +127,17 @@ class Build {
             "built commit: $commitHash");
       }
     }
-    Future<void> fetchApprovals(Map<String, dynamic> commit) async {
-      if (commit.containsKey('review')) {
-        for (final result in await firestore.tryApprovals(commit['review'])) {
-          tryApprovals.add(testResult(result));
+    Future<void> fetchApprovals(int review) async {
+      if (review != null) {
+        for (final result in await firestore.tryApprovals(review)) {
+          tryApprovals[testResult(result)] = review;
         }
       }
     }
 
-    await fetchApprovals(endCommit);
+    await fetchApprovals(endCommit['review']);
     for (var index = startIndex; index < endIndex; ++index) {
-      await fetchApprovals(await firestore.getCommitByIndex(index));
+      await fetchApprovals((await firestore.getCommitByIndex(index))['review']);
     }
   }
 
@@ -217,9 +217,10 @@ class Build {
     Map<String, dynamic> activeResult =
         await firestore.findActiveResult(change);
     if (result == null) {
-      approved = tryApprovals.contains(testResult(change));
+      final approvingReview = tryApprovals[testResult(change)];
+      approved = approvingReview != null;
       await firestore.storeResult(change, startIndex, endIndex,
-          approved: approved, failure: failure);
+          approved: approved, review: approvingReview, failure: failure);
       if (approved) {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10)
