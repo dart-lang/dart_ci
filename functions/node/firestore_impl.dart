@@ -356,7 +356,7 @@ class FirestoreServiceImpl implements FirestoreService {
         'processed_chunks': processedChunks + 1,
         'success': (data['success'] ?? true) && success,
         if (completed) 'completed': true,
-        if (activeFailures) 'active_failures': true
+        if (completed && activeFailures) 'active_failures': true
       });
       transaction.update(document, update);
     }
