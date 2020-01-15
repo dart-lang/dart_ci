@@ -65,6 +65,7 @@ class Filter {
   static const allConfigurationGroups = <String>[
     'analyzer',
     'app_jitk',
+    'cfe',
     'dart2js',
     'dartdevc',
     'dartdevk',

@@ -315,7 +315,6 @@ class FirestoreServiceImpl implements FirestoreService {
         .get();
     final lastPatchsetGroup =
         patchsets.documents.first.data.getInt('patchset_group');
-    print(lastPatchsetGroup);
     QuerySnapshot approvals = await firestore
         .collection('try_results')
         .where('approved', isEqualTo: true)
