@@ -39,15 +39,15 @@ class TryResultsComponent implements OnActivate {
   TryDataService _tryDataService;
   ApplicationRef _applicationRef;
 
-  int change;
-  int patch;
-  ReviewInfo changeInfo;
+  int review;
+  int patchset;
+  ReviewInfo reviewInfo;
   ChangeGroup changeGroup = ChangeGroup(null, {}, [], []);
-  int cachedPatch;
-  int cachedChange;
+  int cachedReview;
+  int cachedPatchset;
   List<Change> changes;
   List<Comment> comments;
-  IntRange range = IntRange(1, 0);
+  final IntRange emptyRange = IntRange(1, 0);
   bool updating = false;
   bool updatePending = false;
   bool _approving = false;
@@ -82,7 +82,7 @@ class TryResultsComponent implements OnActivate {
             : changeGroup.comments.last.baseComment ??
                 changeGroup.comments.last.id,
         [for (Change result in selected) result.id],
-        changeInfo.review);
+        reviewInfo.review);
     comments
       ..add(comment)
       ..sort();
@@ -109,16 +109,16 @@ class TryResultsComponent implements OnActivate {
   }
 
   Future<void> update() async {
-    if (change == null) return;
-    if (changeInfo == null || change != changeInfo.review) {
-      changeInfo = await _tryDataService.reviewInfo(change);
+    if (review == null) return;
+    if (reviewInfo == null || review != reviewInfo.review) {
+      reviewInfo = await _tryDataService.fetchReviewInfo(review);
     }
-    if (change != cachedChange || patch != cachedPatch) {
-      changes = await _tryDataService.changes(changeInfo, patch);
-      comments = await _tryDataService.comments(changeInfo.review);
+    if (review != cachedReview || patchset != cachedPatchset) {
+      changes = await _tryDataService.changes(reviewInfo, patchset);
+      comments = await _tryDataService.comments(reviewInfo.review);
       comments..sort();
-      cachedChange = change;
-      cachedPatch = patch;
+      cachedReview = review;
+      cachedPatchset = patchset;
       changeGroup = ChangeGroup(null, {}, comments, changes);
     }
   }
@@ -126,9 +126,9 @@ class TryResultsComponent implements OnActivate {
   @override
   void onActivate(_, RouterState current) {
     final changeParam = current.parameters['cl'];
-    change = changeParam == null ? null : int.parse(changeParam);
+    review = changeParam == null ? null : int.parse(changeParam);
     final patchParam = current.parameters['patch'];
-    patch = patchParam == null ? null : int.parse(patchParam);
+    patchset = patchParam == null ? null : int.parse(patchParam);
     tryUpdate();
   }
 }

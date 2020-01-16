@@ -13,24 +13,24 @@ class TryDataService {
 
   bool get isLoggedIn => _firestoreService.isLoggedIn;
 
-  Future<List<Change>> changes(ReviewInfo changeInfo, int patch) async {
-    final patchsets = changeInfo.patchsets;
-    if (patchsets.length < patch) return [];
+  Future<List<Change>> changes(ReviewInfo reviewInfo, int patchset) async {
+    final patchsets = reviewInfo.patchsets;
+    if (patchsets.length < patchset) return [];
     // Patchset numbers start at 1, not 0.
-    int patchsetGroup = patchsets[patch - 1].patchsetGroup;
+    int patchsetGroup = patchsets[patchset - 1].patchsetGroup;
     // Workaround while [ ... await foo() ] does not work in dartdevc.
     // Issue https://github.com/dart-lang/sdk/issues/38896
     final docs = [];
-    for (var patchset in patchsets) {
-      if (patchset.patchsetGroup == patchsetGroup) {
+    for (var identicalPatchset in patchsets) {
+      if (identicalPatchset.patchsetGroup == patchsetGroup) {
         docs.addAll(await _firestoreService.fetchTryChanges(
-            changeInfo.review, patchset.number));
+            reviewInfo.review, identicalPatchset.number));
       }
     }
     return [for (final data in docs) Change.fromDocument(data)];
   }
 
-  Future<ReviewInfo> reviewInfo(int review) async {
+  Future<ReviewInfo> fetchReviewInfo(int review) async {
     final doc = await _firestoreService.fetchReviewInfo(review);
     if (doc.exists) {
       return ReviewInfo.fromDocument(doc)

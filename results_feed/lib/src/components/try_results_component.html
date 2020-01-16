@@ -1,17 +1,17 @@
-<div *ngIf="changeInfo != null">
+<div *ngIf="reviewInfo != null">
   <h2>
-    <a href="http://dart-review.googlesource.com/c/sdk/+/{{change}}/{{patch}}"
-       target="_blank">{{changeInfo.title}}</a>
+    <a href="http://dart-review.googlesource.com/c/sdk/+/{{review}}/{{patchset}}"
+       target="_blank">{{reviewInfo.title}}</a>
   </h2>
 
   <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
-      [range]="range">
+      [range]="emptyRange">
   </results-panel>
   <results-selector-panel *ngIf="approving"
       [changes]="changeGroup.changes"
-      [range]="range"
+      [range]="emptyRange"
       [selected]="selected"
       failuresOnly>
   </results-selector-panel>
