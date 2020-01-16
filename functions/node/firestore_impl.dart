@@ -313,6 +313,7 @@ class FirestoreServiceImpl implements FirestoreService {
         .orderBy('number', descending: true)
         .limit(1)
         .get();
+    if (patchsets.isEmpty) return [];
     final lastPatchsetGroup =
         patchsets.documents.first.data.getInt('patchset_group');
     QuerySnapshot approvals = await firestore
