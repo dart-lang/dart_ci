@@ -59,9 +59,9 @@ abstract class FirestoreService {
 
   Future<void> storeBuildChunkCount(String builder, int index, int numChunks);
 
-  Future<void> storeTryChunkStatus(
-      String builder, int buildNumber, int review, int patchset, bool success);
+  Future<void> storeTryChunkStatus(String builder, int buildNumber,
+      String buildbucketID, int review, int patchset, bool success);
 
-  Future<void> storeTryBuildChunkCount(
-      String builder, int buildNumber, int review, int patchset, int numChunks);
+  Future<void> storeTryBuildChunkCount(String builder, int buildNumber,
+      String buildbucketID, int review, int patchset, int numChunks);
 }

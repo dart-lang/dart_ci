@@ -20,8 +20,10 @@ class Tryjob {
   int patchset;
   bool success = true;
   final int countChunks;
+  final String buildbucketID;
 
-  Tryjob(String changeRef, this.countChunks, this.firestore, this.httpClient) {
+  Tryjob(String changeRef, this.countChunks, this.buildbucketID, this.firestore,
+      this.httpClient) {
     final match = changeRefRegExp.matchAsPrefix(changeRef);
     review = int.parse(match[1]);
     patchset = int.parse(match[2]);
@@ -38,11 +40,11 @@ class Tryjob {
     await Future.forEach(results.where(isChangedResult), storeTryChange);
 
     if (countChunks != null) {
-      await firestore.storeTryBuildChunkCount(
-          builderName, buildNumber, review, patchset, countChunks);
+      await firestore.storeTryBuildChunkCount(builderName, buildNumber,
+          buildbucketID, review, patchset, countChunks);
     }
     await firestore.storeTryChunkStatus(
-        builderName, buildNumber, review, patchset, success);
+        builderName, buildNumber, buildbucketID, review, patchset, success);
   }
 
   Future<void> storeTryChange(change) async {

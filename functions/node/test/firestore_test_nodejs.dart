@@ -18,8 +18,13 @@ import 'test_data.dart';
 // Set the database with 'firebase use --add dart-ci-staging'
 // The test must be compiled with nodejs, and run using the 'node' command.
 
-void main() {
+void main() async {
   final firestore = fs.FirestoreServiceImpl();
+  if ((await fs.firestore.collection('staging').get()).isEmpty) {
+    print('Error: firestore_test_nodejs.dart is being run on production');
+    throw (TestFailure(
+        'Error: firestore_test_nodejs.dart is being run on production'));
+  }
 
   test('Test chunk storing', () async {
     final builder = testBuilder;
@@ -155,7 +160,8 @@ void main() {
           tryjobFailingChange)
         ..addAll(
             {'commit_hash': testPreviousPatchsetPath, 'build_number': '307'});
-      await Tryjob(testPreviousPatchsetPath, 1, firestore, null)
+      final buildID0 = 'test buildbucket id 0';
+      await Tryjob(testPreviousPatchsetPath, 1, buildID0, firestore, null)
           .process([previousFailingChange]);
       var snapshot = await fs.firestore
           .collection('try_results')
@@ -171,10 +177,11 @@ void main() {
       await firestore.storePatchset(testReview.toString(), testPatchset,
           {'number': testPreviousPatchset});
       // Send first chunk with a previously approved result and a passing result
-      await Tryjob(testReviewPath, null, firestore, null)
+      final buildID1 = 'test buildbucket id 1';
+      await Tryjob(testReviewPath, null, buildID1, firestore, null)
           .process([tryjobPassingChange, tryjobFailingChange]);
       // Send second & final chunk with an unchanged failure.
-      await Tryjob(testReviewPath, 2, firestore, null)
+      await Tryjob(testReviewPath, 2, buildID1, firestore, null)
           .process([tryjobExistingFailure, tryjobFailingChange]);
       // Verify state
       snapshot = await fs.firestore
@@ -187,6 +194,7 @@ void main() {
       DocumentSnapshot document = snapshot.documents.first;
       expect(document.documentID, '$testBuilder:$testReview:$testPatchset');
       expect(document.data.getInt('build_number'), int.parse(testBuildNumber));
+      expect(document.data.getString('buildbucket_id'), buildID1);
       expect(document.data.getBool('success'), isTrue);
       expect(document.data.getBool('completed'), isTrue);
       // Verify that sending a result twice only adds its configuration once
@@ -204,7 +212,8 @@ void main() {
 
       // Send first chunk of second run on the same patchset, with an approved
       // failure and an unapproved failure.
-      await Tryjob(testReviewPath, null, firestore, null)
+      final buildID2 = 'test buildbucket id 2';
+      await Tryjob(testReviewPath, null, buildID2, firestore, null)
           .process([tryjob2OtherFailingChange, tryjob2FailingChange]);
       final reference = fs.firestore
           .document('try_builds/$testBuilder:$testReview:$testPatchset');
@@ -212,31 +221,36 @@ void main() {
       expect(document.exists, isTrue);
       expect(document.data.getBool('success'), isFalse);
       expect(document.data.getBool('completed'), isNull);
+      expect(document.data.getString('buildbucket_id'), buildID2);
       expect(document.data.getInt('num_chunks'), isNull);
       expect(document.data.getInt('processed_chunks'), 1);
       // Send second chunk.
-      await Tryjob(testReviewPath, 3, firestore, null)
+      await Tryjob(testReviewPath, 3, buildID2, firestore, null)
           .process([tryjob2ExistingFailure]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
       expect(document.data.getBool('completed'), isNull);
+      expect(document.data.getString('buildbucket_id'), buildID2);
       expect(document.data.getInt('num_chunks'), 3);
       expect(document.data.getInt('processed_chunks'), 2);
       // Send third and final chunk.
-      await Tryjob(testReviewPath, null, firestore, null)
+      await Tryjob(testReviewPath, null, buildID2, firestore, null)
           .process([tryjob2PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
       expect(document.data.getBool('completed'), isTrue);
+      expect(document.data.getString('buildbucket_id'), buildID2);
       expect(document.data.getInt('num_chunks'), 3);
       expect(document.data.getInt('processed_chunks'), 3);
 
       // Send first chunk of a third run, with only one chunk.
-      await Tryjob(testReviewPath, 1, firestore, null)
+      final buildID3 = 'test buildbucket id 3';
+      await Tryjob(testReviewPath, 1, buildID3, firestore, null)
           .process([tryjob3PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isTrue);
       expect(document.data.getBool('completed'), isTrue);
+      expect(document.data.getString('buildbucket_id'), buildID3);
       expect(document.data.getInt('num_chunks'), 1);
       expect(document.data.getInt('processed_chunks'), 1);
     });

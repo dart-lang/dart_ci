@@ -372,9 +372,10 @@ class FirestoreServiceImpl implements FirestoreService {
         .updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 
-  Future<void> storeTryChunkStatus(String builder, int buildNumber, int review,
-      int patchset, bool success) async {
-    await _ensureTryBuildRecord(builder, buildNumber, review, patchset);
+  Future<void> storeTryChunkStatus(String builder, int buildNumber,
+      String buildbucketID, int review, int patchset, bool success) async {
+    await _ensureTryBuildRecord(
+        builder, buildNumber, buildbucketID, review, patchset);
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
 
@@ -397,15 +398,16 @@ class FirestoreServiceImpl implements FirestoreService {
   }
 
   Future<void> storeTryBuildChunkCount(String builder, int buildNumber,
-      int review, int patchset, int numChunks) async {
-    await _ensureTryBuildRecord(builder, buildNumber, review, patchset);
+      String buildbucketID, int review, int patchset, int numChunks) async {
+    await _ensureTryBuildRecord(
+        builder, buildNumber, buildbucketID, review, patchset);
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
     await reference.updateData(UpdateData.fromMap({'num_chunks': numChunks}));
   }
 
-  Future<void> _ensureTryBuildRecord(
-      String builder, int buildNumber, int review, int patchset) async {
+  Future<void> _ensureTryBuildRecord(String builder, int buildNumber,
+      String buildbucketID, int review, int patchset) async {
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
     var snapshot = await reference.get();
@@ -434,6 +436,7 @@ class FirestoreServiceImpl implements FirestoreService {
           DocumentData.fromMap({
             'builder': builder,
             'build_number': buildNumber,
+            if (buildbucketID != null) 'buildbucket_id': buildbucketID,
             'review': review,
             'patchset': patchset,
           }),

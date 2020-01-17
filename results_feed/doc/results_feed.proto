@@ -96,6 +96,7 @@ message TryBuild {
   string builder = 3;
   int32 review = 9;
   int32 patchset = 10;
+  string buildbucket_id = 11;
   int32 num_chunks = 5; // The number of chunks of results for this build.
   int32 processed_chunks = 6; // The number of results chunks received.
   // True if no new unapproved failures have been received.
