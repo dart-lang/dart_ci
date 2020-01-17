@@ -28,7 +28,7 @@ abstract class FirestoreService {
 
   Future<void> storeResult(
       Map<String, dynamic> change, int startIndex, int endIndex,
-      {bool approved, int review, bool failure});
+      {bool approved, int landedReviewIndex, bool failure});
 
   Future<bool> updateResult(
       String result, String configuration, int startIndex, int endIndex,

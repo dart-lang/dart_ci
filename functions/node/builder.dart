@@ -127,17 +127,18 @@ class Build {
             "built commit: $commitHash");
       }
     }
-    Future<void> fetchApprovals(int review) async {
+    Future<void> fetchApprovals(int review, int index) async {
       if (review != null) {
         for (final result in await firestore.tryApprovals(review)) {
-          tryApprovals[testResult(result)] = review;
+          tryApprovals[testResult(result)] = index;
         }
       }
     }
 
-    await fetchApprovals(endCommit['review']);
+    await fetchApprovals(endCommit['review'], endIndex);
     for (var index = startIndex; index < endIndex; ++index) {
-      await fetchApprovals((await firestore.getCommitByIndex(index))['review']);
+      await fetchApprovals(
+          (await firestore.getCommitByIndex(index))['review'], index);
     }
   }
 
@@ -217,10 +218,12 @@ class Build {
     Map<String, dynamic> activeResult =
         await firestore.findActiveResult(change);
     if (result == null) {
-      final approvingReview = tryApprovals[testResult(change)];
-      approved = approvingReview != null;
+      final approvingReviewLandedIndex = tryApprovals[testResult(change)];
+      approved = approvingReviewLandedIndex != null;
       await firestore.storeResult(change, startIndex, endIndex,
-          approved: approved, review: approvingReview, failure: failure);
+          approved: approved,
+          landedReviewIndex: approvingReviewLandedIndex,
+          failure: failure);
       if (approved) {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10)

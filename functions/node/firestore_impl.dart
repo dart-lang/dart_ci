@@ -133,7 +133,7 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> storeResult(
           Map<String, dynamic> change, int startIndex, int endIndex,
-          {bool approved, int review, bool failure}) =>
+          {bool approved, int landedReviewIndex, bool failure}) =>
       firestore.collection('results').add(DocumentData.fromMap({
             'name': change['name'],
             'result': change['result'],
@@ -141,7 +141,8 @@ class FirestoreServiceImpl implements FirestoreService {
             'expected': change['expected'],
             'blamelist_start_index': startIndex,
             'blamelist_end_index': endIndex,
-            if (startIndex != endIndex && approved) 'pinned_index': review,
+            if (startIndex != endIndex && approved)
+              'pinned_index': landedReviewIndex,
             'configurations': <String>[change['configuration']],
             'approved': approved,
             if (failure) 'active': true,

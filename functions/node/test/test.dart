@@ -85,8 +85,8 @@ void main() async {
     expect(builder.endIndex, landedCommit['index']);
     expect(builder.startIndex, existingCommit['index'] + 1);
     expect(builder.tryApprovals, {
-      testResult(tryjobResults[0]): 44445,
-      testResult(tryjobResults[1]): 77779
+      testResult(tryjobResults[0]): 54,
+      testResult(tryjobResults[1]): 53
     });
     verifyInOrder([
       verify(firestore.getCommit(landedCommitHash)).called(2),
@@ -148,7 +148,7 @@ void main() async {
       firestore.findResult(any, 53, 54),
       firestore.storeResult(any, 53, 54,
           approved: argThat(isTrue, named: 'approved'),
-          review: argThat(equals(44445), named: 'review'),
+          landedReviewIndex: argThat(equals(54), named: 'landedReviewIndex'),
           failure: argThat(isTrue, named: 'failure'))
     ]);
   });
