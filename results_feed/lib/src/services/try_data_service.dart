@@ -45,7 +45,8 @@ class TryDataService {
         ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review))
         ..setBuilds(await _firestoreService.fetchTryBuilds(review));
     } else {
-      return ReviewInfo(review, "No results received yet for CL $review", []);
+      return ReviewInfo(review, "No results received yet for CL $review", [])
+        ..setBuilds([]);
     }
   }
 

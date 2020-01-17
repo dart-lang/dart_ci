@@ -62,6 +62,7 @@ class TryResultsComponent implements OnActivate {
       .any((change) => change.result != change.expected);
 
   bool get approving => _approving;
+
   set approving(bool approve) {
     if (approve) {
       _tryDataService.logIn().then((_) {
@@ -139,5 +140,34 @@ class TryResultsComponent implements OnActivate {
     final patchParam = current.parameters['patch'];
     patchset = patchParam == null ? null : int.parse(patchParam);
     tryUpdate();
+  }
+
+  String githubNewIssueURL() {
+    String title = "Failures on ${reviewInfo.title}";
+    List<Change> failures =
+        changes.where((change) => change.result != change.expected).toList();
+    String body = [
+      "There are new test failures on CL [${reviewInfo.title}]"
+          "(https://dart-review.googlesource.com/c/sdk/+/$review).\n",
+      "The tests",
+      "```",
+      for (final change in failures)
+        "${change.name} ${change.result} (expected ${change.expected})",
+      "```",
+      "are failing on configurations",
+      "```",
+      ...{
+        for (final change in failures)
+          ...change.configurations.configurations
+      },
+      "```"
+    ].join('\n');
+    if (failures.isEmpty) {
+      body = "There are no new test failures on CL [${reviewInfo.title}]"
+          "(https://dart-review.googlesource.com/c/sdk/+/$review).";
+    }
+    final query = {'title': title, 'body': body};
+    return Uri.https("github.com", "dart-lang/sdk/issues/new", query)
+        .toString();
   }
 }

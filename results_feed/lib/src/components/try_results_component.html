@@ -3,7 +3,6 @@
     <a href="http://dart-review.googlesource.com/c/sdk/+/{{review}}/{{patchset}}"
        target="_blank">{{reviewInfo.title}}</a>
   </h2>
-
   <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
@@ -65,6 +64,13 @@
         (click)="approve(true)">
       Approve
     </material-button>
+    <span
+        *ngIf="approveEnabled && !approving"
+        raised>
+      <a href="{{githubNewIssueURL()}}" target="_blank">
+        Create GitHub issue
+      </a>
+    </span>
   </div>
 
 </div>
