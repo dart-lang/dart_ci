@@ -15,6 +15,7 @@ import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import '../formatting.dart' as formatting;
 import '../model/commit.dart';
 import '../services/filter_service.dart';
+import '../services/try_data_service.dart';
 import 'log_component.dart';
 
 @Component(
@@ -43,8 +44,18 @@ class ResultsPanel {
   @Input()
   Changes changes;
 
+  /// [range] will be null if these are try results
   @Input()
   IntRange range;
+
+  /// [builds] will be null if these are CI results
+  @Input()
+  Map<int, Map<String, TryBuild>> builds;
+
+  /// A map from configurations to try builders. Null for CI results.
+  // TODO(whesse): Make lazy, fetch directly from try data service, not an input.
+  @Input()
+  Map<String, String> builders;
 
   @Input()
   Filter filter = Filter.defaultFilter;
@@ -63,6 +74,9 @@ class ResultsPanel {
     RelativePosition.OffsetBottomLeft,
     RelativePosition.OffsetTopLeft
   ];
+
+  String buildbucketID(int patchset, String configuration) =>
+      builds[patchset][builders[configuration]].buildbucketID;
 
   String approvalContent(Change change) =>
       change.approved ? formatting.checkmark : '';

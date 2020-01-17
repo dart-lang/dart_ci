@@ -4,6 +4,6 @@
  * BSD-style license that can be found in the LICENSE file.
  */
 
-.commit { margin-bottom: 8px; display: flex; }
+.commit { margin-bottom: 8px; }
 .comment-body { padding-left: 32px; }
 span.nowrap { white-space: nowrap; }

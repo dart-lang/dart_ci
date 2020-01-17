@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase/src/firestore.dart';
 
 import '../model/comment.dart';
@@ -12,6 +14,12 @@ class TryDataService {
   Future logIn() => _firestoreService.logIn();
 
   bool get isLoggedIn => _firestoreService.isLoggedIn;
+
+  Map<String, String> _builders;
+
+  Future<Map<String, String>> builders() async {
+    return _builders ??= await _getBuilders();
+  }
 
   Future<List<Change>> changes(ReviewInfo reviewInfo, int patchset) async {
     final patchsets = reviewInfo.patchsets;
@@ -34,7 +42,8 @@ class TryDataService {
     final doc = await _firestoreService.fetchReviewInfo(review);
     if (doc.exists) {
       return ReviewInfo.fromDocument(doc)
-        ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review));
+        ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review))
+        ..setBuilds(await _firestoreService.fetchTryBuilds(review));
     } else {
       return ReviewInfo(review, "No results received yet for CL $review", []);
     }
@@ -53,12 +62,21 @@ class TryDataService {
         approve, comment, baseComment,
         tryResultIds: resultIds, review: review));
   }
+
+  Future<Map<String, String>> _getBuilders() async {
+    await _firestoreService.getFirebaseClient();
+    List<DocumentSnapshot> builderDocs =
+        await _firestoreService.fetchBuilders();
+    return Map<String, String>.fromIterable(builderDocs,
+        key: (doc) => doc.id, value: (doc) => '${doc.get('builder')}-try');
+  }
 }
 
 class ReviewInfo {
   int review;
   String title;
   List<Patchset> patchsets;
+  List<TryBuild> builds;
 
   ReviewInfo(this.review, this.title, this.patchsets);
 
@@ -69,7 +87,11 @@ class ReviewInfo {
   }
 
   void setPatchsets(List<DocumentSnapshot> docs) {
-    patchsets = docs.map((doc) => Patchset.fromDocument(doc)).toList();
+    patchsets = [for (final doc in docs) Patchset.fromDocument(doc)];
+  }
+
+  void setBuilds(List<DocumentSnapshot> docs) {
+    builds = [for (final doc in docs) TryBuild.fromDocument(doc)];
   }
 }
 
@@ -90,4 +112,25 @@ class Patchset implements Comparable<Patchset> {
   int compareTo(Patchset other) => number.compareTo(other.number);
 
   String toString() => "Patchset($number, $patchsetGroup, $description, $kind)";
+}
+
+class TryBuild {
+  String builder;
+  int buildNumber;
+  String buildbucketID;
+  bool completed;
+  bool success;
+  int review;
+  int patchset;
+
+  TryBuild.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data();
+    builder = data['builder'];
+    buildNumber = data['build_number'];
+    buildbucketID = data['buildbucket_id'];
+    completed = data['completed'];
+    success = data['success'];
+    review = data['review'];
+    patchset = data['patchset'];
+  }
 }

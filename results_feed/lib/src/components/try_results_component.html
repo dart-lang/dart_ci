@@ -7,11 +7,13 @@
   <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
-      [range]="emptyRange">
+      [builds]="builds"
+      [builders]="builders">
   </results-panel>
   <results-selector-panel *ngIf="approving"
       [changes]="changeGroup.changes"
-      [range]="emptyRange"
+      [builds]="builds"
+      [builders]="builders"
       [selected]="selected"
       failuresOnly>
   </results-selector-panel>

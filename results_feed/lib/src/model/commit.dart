@@ -163,6 +163,8 @@ class Change implements Comparable {
       this.blamelistStartIndex,
       this.blamelistEndIndex,
       this.pinnedIndex,
+      this.review,
+      this.patchset,
       this.approved,
       this.active)
       : changesText = '$previousResult -> $result (expected $expected)',
@@ -180,6 +182,8 @@ class Change implements Comparable {
           document.get('blamelist_start_index'),
           document.get('blamelist_end_index'),
           document.get('pinned_index'),
+          document.get('review'),
+          document.get('patchset'),
           // Old documents may not have this field.
           document.get('approved') ?? false,
           // Field is only present when true.
@@ -196,6 +200,8 @@ class Change implements Comparable {
   final int blamelistStartIndex;
   final int blamelistEndIndex;
   int pinnedIndex;
+  final int review;
+  final int patchset;
   bool approved;
   bool active;
   final String configurationsText;

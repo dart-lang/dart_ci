@@ -67,12 +67,19 @@ class FirestoreService {
   }
 
   Future<List<firestore.DocumentSnapshot>> fetchTryChanges(
-      int cl, int patch) async {
+      int review, int patchset) async {
     final results = app.firestore().collection('try_results');
     final firestore.QuerySnapshot snapshot = await results
-        .where('review', '==', cl)
-        .where('patchset', '==', patch)
+        .where('review', '==', review)
+        .where('patchset', '==', patchset)
         .get();
+    return snapshot.docs;
+  }
+
+  Future<List<firestore.DocumentSnapshot>> fetchTryBuilds(int review) async {
+    final results = app.firestore().collection('try_builds');
+    final firestore.QuerySnapshot snapshot =
+        await results.where('review', '==', review).get();
     return snapshot.docs;
   }
 

@@ -47,6 +47,8 @@ class TryResultsComponent implements OnActivate {
   int cachedPatchset;
   List<Change> changes;
   List<Comment> comments;
+  Map<int, Map<String, TryBuild>> builds;
+  Map<String, String> builders;
   final IntRange emptyRange = IntRange(1, 0);
   bool updating = false;
   bool updatePending = false;
@@ -116,6 +118,13 @@ class TryResultsComponent implements OnActivate {
     if (review != cachedReview || patchset != cachedPatchset) {
       changes = await _tryDataService.changes(reviewInfo, patchset);
       comments = await _tryDataService.comments(reviewInfo.review);
+      builds = {
+        for (final patchset in reviewInfo.patchsets) patchset.number: {}
+      };
+      for (final build in reviewInfo.builds) {
+        builds[build.patchset][build.builder] = build;
+      }
+      builders = await _tryDataService.builders();
       comments..sort();
       cachedReview = review;
       cachedPatchset = patchset;
