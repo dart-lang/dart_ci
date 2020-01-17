@@ -15,7 +15,8 @@
       [selected]="selected"
       failuresOnly>
   </results-selector-panel>
-  <div *ngFor="let c of changeGroup.comments">
+  <div *ngFor="let c of changeGroup.comments"
+      class="comment">
     <b>{{c.approvedText()}}</b>
     <span class="nowrap">{{formattedDate(c.created)}}</span>
     {{formattedEmail(c.author)}}<br>

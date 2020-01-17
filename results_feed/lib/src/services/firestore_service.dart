@@ -226,7 +226,7 @@ class TestingFirestoreService extends StagingFirestoreService {
   Future logIn() async {
     try {
       await app.auth().signInWithEmailAndPassword(
-          'dartresultsfeedtestuser@example.com', r'');
+          'dartresultsfeedtestaccount2@example.com', r'');
       // Password must be entered locally before testing.
       // Because this is running in a browser, cannot read password from
       // a file or environment variable. Investigate what testing framework
@@ -265,6 +265,17 @@ class TestingFirestoreService extends StagingFirestoreService {
         batch.update(app.firestore().doc(key), data: update);
       }
       await batch.commit();
+    }
+  }
+
+  Future<void> deleteCommentsForReview(int review) async {
+    final snapshot = await app
+        .firestore()
+        .collection('comments')
+        .where('review', '==', review)
+        .get();
+    for (final document in snapshot.docs) {
+      await document.ref.delete();
     }
   }
 }
