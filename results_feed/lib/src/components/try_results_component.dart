@@ -157,8 +157,7 @@ class TryResultsComponent implements OnActivate {
       "are failing on configurations",
       "```",
       ...{
-        for (final change in failures)
-          ...change.configurations.configurations
+        for (final change in failures) ...change.configurations.configurations
       },
       "```"
     ].join('\n');

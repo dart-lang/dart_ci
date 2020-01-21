@@ -216,12 +216,13 @@ class Changes with IterableMixin<List<List<Change>>> {
   final List<List<List<Change>>> changes;
 
   Changes(Iterable<Change> newChanges)
-      : this.grouped(
-            group(newChanges, (Change change) => change.configurations));
+      : this.grouped(failuresFirst(
+            group(newChanges, (Change change) => change.configurations)));
 
   Changes.active(Iterable<Change> newChanges)
-      : this.grouped(group(newChanges.where((change) => change.active),
-            (Change change) => change.activeConfigurations));
+      : this.grouped(failuresFirst(group(
+            newChanges.where((change) => change.active),
+            (Change change) => change.activeConfigurations)));
 
   Changes.grouped(this.changes);
 
@@ -249,6 +250,27 @@ class Changes with IterableMixin<List<List<Change>>> {
             map[configuration][change]..sort()
         ]
     ];
+  }
+
+  static List<List<List<Change>>> failuresFirst(
+      List<List<List<Change>>> unsorted) {
+    bool resultGroupIsFailure(List<Change> group) =>
+        group.first.resultStyle == 'failure';
+    bool resultGroupIsSuccess(List<Change> group) =>
+        group.first.resultStyle == 'success';
+    bool configurationGroupHasFailure(List<List<Change>> group) =>
+        group.any(resultGroupIsFailure);
+    bool configurationGroupHasNoFailures(List<List<Change>> group) =>
+        group.every(resultGroupIsSuccess);
+
+    return [
+      for (final configurationGroup in unsorted)
+        if (configurationGroupHasFailure(configurationGroup))
+          [
+            ...configurationGroup.where(resultGroupIsFailure),
+            ...configurationGroup.where(resultGroupIsSuccess),
+          ]
+    ]..addAll(unsorted.where(configurationGroupHasNoFailures));
   }
 
   static bool empty(x, f) => x.isEmpty;

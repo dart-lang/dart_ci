@@ -1,4 +1,4 @@
-<div *ngFor="let configurationGroup of changes">
+<div *ngFor="let configurationGroup of changes; let last=last">
   <material-chips>
     <template
         ngFor
@@ -67,4 +67,5 @@
       &vellip; {{resultGroup.length - resultLimit}} more changed results
     </div>
   </div>
+  <hr *ngIf="!last">
 </div>
