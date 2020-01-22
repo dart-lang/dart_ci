@@ -64,13 +64,12 @@
         (click)="approve(true)">
       Approve
     </material-button>
-    <span
+    <material-button
         *ngIf="approveEnabled && !approving"
-        raised>
-      <a href="{{githubNewIssueURL()}}" target="_blank">
-        Create GitHub issue
-      </a>
-    </span>
+        raised
+        (click)="openNewGithubIssue()">
+      Create GitHub issue...
+    </material-button>
   </div>
 
 </div>

@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:html';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/material_button/material_button.dart';
@@ -142,23 +144,32 @@ class TryResultsComponent implements OnActivate {
     tryUpdate();
   }
 
+  void openNewGithubIssue() {
+    window.open(githubNewIssueURL(), '_blank');
+  }
+
   String githubNewIssueURL() {
     String title = "Failures on ${reviewInfo.title}";
     List<Change> failures =
         changes.where((change) => change.result != change.expected).toList();
+    failures.sort((a, b) => a.name.compareTo(b.name));
+    int failuresLimit = 30;
     String body = [
       "There are new test failures on CL [${reviewInfo.title}]"
           "(https://dart-review.googlesource.com/c/sdk/+/$review).\n",
       "The tests",
       "```",
-      for (final change in failures)
+      for (final change in failures.take(failuresLimit))
         "${change.name} ${change.result} (expected ${change.expected})",
+      if (failures.length > failuresLimit)
+        "    and ${failures.length - failuresLimit} more tests",
       "```",
       "are failing on configurations",
       "```",
       ...{
         for (final change in failures) ...change.configurations.configurations
-      },
+      }.toList()
+        ..sort(),
       "```"
     ].join('\n');
     if (failures.isEmpty) {
