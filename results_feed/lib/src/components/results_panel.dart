@@ -75,8 +75,15 @@ class ResultsPanel {
     RelativePosition.OffsetTopLeft
   ];
 
-  String buildbucketID(int patchset, String configuration) =>
-      builds[patchset][builders[configuration]].buildbucketID;
+  String buildbucketID(int patchset, String configuration) {
+    final result = builds[patchset][builders[configuration]].buildbucketID;
+    if (result == null) {
+      throw StateError(
+          "Try builder record missing for builder ${builders[configuration]} "
+          "on patchset $patchset of this CL");
+    }
+    return result;
+  }
 
   String approvalContent(Change change) =>
       change.approved ? formatting.checkmark : '';
