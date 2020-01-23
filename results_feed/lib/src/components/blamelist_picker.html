@@ -14,6 +14,6 @@
     <b>{{c.approvedText()}}</b>
     <span class="nowrap">{{formattedDate(c.created)}}</span><br>
     {{formattedEmail(c.author)}}
-    <div class="comment-body">{{c.comment}}</div>
+    <simple-html class="comment-body" [contents]="c.commentHtml"></simple-html>
   </div>
 </material-radio-group>

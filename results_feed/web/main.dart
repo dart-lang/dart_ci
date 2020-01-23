@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:angular/angular.dart';
+import 'package:angular_components/simple_html/simple_html.dart'
+    show simpleHtmlUriWhitelist;
 import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/services/firestore_service.dart';
 import 'package:dart_results_feed/src/components/routing_wrapper_component.template.dart'
@@ -14,7 +16,16 @@ import 'main.template.dart' as self;
 // Use for deploying on staging website:
 // @GenerateInjector([ClassProvider(FirestoreService, useClass: StagingFirestoreService), ...routerProviders])
 
-@GenerateInjector([ClassProvider(FirestoreService), ...routerProviders])
+// Allow links from comments to GitHub issues in the dart-lang organization.
+List<Uri> getUriWhitelist() => List.unmodifiable(<Uri>[
+      Uri.https('github.com', 'dart-lang/'),
+    ]);
+
+@GenerateInjector([
+  ClassProvider(FirestoreService),
+  FactoryProvider.forToken(simpleHtmlUriWhitelist, getUriWhitelist),
+  routerProviders
+])
 final InjectorFactory injector = self.injector$Injector;
 
 void main() {

@@ -6,9 +6,10 @@ import 'dart:async';
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_radio/material_radio_group.dart';
+import 'package:angular_components/simple_html/simple_html.dart';
+import 'package:angular_forms/angular_forms.dart' show formDirectives;
 
 import '../formatting.dart';
 import '../model/comment.dart';
@@ -21,6 +22,7 @@ import '../model/commit.dart';
       formDirectives,
       MaterialRadioComponent,
       MaterialRadioGroupComponent,
+      SimpleHtmlComponent,
     ],
     templateUrl: 'blamelist_picker.html',
     styleUrls: ([

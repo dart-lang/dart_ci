@@ -19,6 +19,7 @@ class Comment implements Comparable {
   final int pinnedIndex;
   final int review;
   final int patchset;
+  String commentHtml;
 
   Comment(
       this.id,
@@ -36,7 +37,9 @@ class Comment implements Comparable {
       this.review,
       this.patchset)
       : results = List<String>.from(_results),
-        tryResults = List<String>.from(_tryResults);
+        tryResults = List<String>.from(_tryResults) {
+    commentHtml = createCommentHtml();
+  }
 
   Comment.fromDocument(DocumentSnapshot document)
       : id = document.id,
@@ -52,10 +55,30 @@ class Comment implements Comparable {
         blamelistEndIndex = document.get('blamelist_end_index'),
         pinnedIndex = document.get('pinned_index'),
         review = document.get('review'),
-        patchset = document.get('patchset');
+        patchset = document.get('patchset') {
+    commentHtml = createCommentHtml();
+  }
 
   String approvedText() =>
       (approved == null) ? "" : approved ? "approved" : "disapproved";
+
+  static const repositories = ['sdk', 'co19'];
+  // Matches a repository or nothing, followed by #[digits][word break].
+  static final issueMatcher =
+      RegExp('(${repositories.join("|")})?\\s*#(\\d+)\\b');
+
+  String createCommentHtml() {
+    final result = comment
+        ?.replaceAll('<', '&lt;')
+        ?.replaceAll('\\n', '<br>')
+        ?.replaceAllMapped(
+            issueMatcher,
+            (match) =>
+                '<a target="_blank" rel="noopener" href="https://github.com/'
+                'dart-lang/${match[1] ?? "sdk"}/issues/${match[2]}">'
+                '${match[0]}</a>');
+    return result;
+  }
 
   int compareTo(Object other) => created.compareTo((other as Comment).created);
 }

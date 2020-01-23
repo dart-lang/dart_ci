@@ -9,6 +9,7 @@ import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_components/material_input/material_input.dart';
 import 'package:angular_components/material_input/material_input_multiline.dart';
+import 'package:angular_components/simple_html/simple_html.dart';
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
 import 'package:angular_router/angular_router.dart';
 
@@ -28,7 +29,8 @@ import 'results_selector_panel.dart';
       MaterialButtonComponent,
       MaterialMultilineInputComponent,
       ResultsPanel,
-      ResultsSelectorPanel
+      ResultsSelectorPanel,
+      SimpleHtmlComponent,
     ],
     providers: [
       ClassProvider(TryDataService),

@@ -21,10 +21,12 @@
     <b>{{c.approvedText()}}</b>
     <span class="nowrap">{{formattedDate(c.created)}}</span>
     {{formattedEmail(c.author)}}<br>
-    <div style="padding-left: 32px">{{c.comment}}</div>
+    <simple-html style="padding-left: 32px" [contents]="c.commentHtml">
+    </simple-html>
   </div>
   <div *ngIf="approving">
-    Comment:<br>
+    Comment: (type #4567 for GitHub SDK issue 4567,
+    or co19 #123 for a co19 issue. Use \n for newline.)<br>
     <material-input
         multiline
         style="width: 80%"
