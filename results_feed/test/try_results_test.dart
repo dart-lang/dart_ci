@@ -43,8 +43,6 @@ void main() {
           injector.provideType<TestingFirestoreService>(FirestoreService);
       await firestore.getFirebaseClient();
       await firestore.writeDocumentsFrom(tryResultsCreateComponentSampleData);
-      await firestore
-          .mergeDocumentsFrom(tryResultsCreateComponentSampleDataMerges);
     });
     await fixture.update((TryResultsComponent tryResultsComponent) {
       tryResultsComponent.review = createComponentReview;

@@ -74,5 +74,3 @@ final tryResultsCreateComponentSampleData = <String, dynamic>{
     "previous_result": "Pass"
   },
 };
-
-final tryResultsCreateComponentSampleDataMerges = <String, dynamic>{};

@@ -59,12 +59,3 @@ Map<String, dynamic> commentsSampleData = {
     "blamelist_end_index": 66151
   },
 };
-
-// These fields are merged into existing documents, and removed after testing.
-Map<String, dynamic> commentsSampleDataMerges = {
-  "results/$result1": {"approved": true, "comment": commentId1},
-  "results/$result2": {"approved": true, "comment": commentThreadId},
-  "results/$result3": {"approved": false, "comment": commentId2},
-  "results/$result4": {"approved": true, "comment": commentId3},
-  "results/$result5": {"approved": true, "comment": commentId3}
-};

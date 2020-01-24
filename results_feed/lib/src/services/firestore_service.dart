@@ -259,22 +259,6 @@ class TestingFirestoreService extends StagingFirestoreService {
     }
   }
 
-  Future<void> mergeDocumentsFrom(Map<String, dynamic> documents,
-      {bool delete = false}) async {
-    for (final keys in iterables.partition(documents.keys, 500)) {
-      final batch = app.firestore().batch();
-      for (final key in keys) {
-        Map<String, dynamic> update = documents[key];
-        if (delete) {
-          update = Map.fromIterable(update.keys,
-              value: (_) => firestore.FieldValue.delete());
-        }
-        batch.update(app.firestore().doc(key), data: update);
-      }
-      await batch.commit();
-    }
-  }
-
   Future<void> deleteCommentsForReview(int review) async {
     final snapshot = await app
         .firestore()

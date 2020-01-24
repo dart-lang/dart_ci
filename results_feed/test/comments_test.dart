@@ -39,7 +39,6 @@ void main() {
         AppComponentTest(fixture.assertOnlyInstance).firestoreService;
     await firestore.logIn();
     await firestore.writeDocumentsFrom(commentsSampleData);
-    await firestore.mergeDocumentsFrom(commentsSampleDataMerges);
   });
 
   tearDownAll(() async {
@@ -47,7 +46,6 @@ void main() {
     final firestore =
         AppComponentTest(fixture.assertOnlyInstance).firestoreService;
     await firestore.writeDocumentsFrom(commentsSampleData, delete: true);
-    await firestore.mergeDocumentsFrom(commentsSampleDataMerges, delete: true);
   });
 
   testEqual(Comment comment, Map<String, dynamic> original, String id) {
