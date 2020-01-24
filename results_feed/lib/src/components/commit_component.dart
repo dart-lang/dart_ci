@@ -95,4 +95,23 @@ class CommitComponent {
       ..add(comment)
       ..sort();
   }
+
+  void openNewGithubIssue() {
+    window.open(newIssueURL(), '_blank');
+  }
+
+  String newIssueURL() {
+    final commits = changeGroup.commits;
+    final subject = [
+      commits.first.title,
+      if (commits.length > 1) commits.last.title
+    ].join('...');
+
+    // TODO(62): Improve these links when the app supports commit range filter.
+    final commitsPath = commits.length > 1
+        ? 'compare/${commits.last.hash}~...${commits.first.hash}'
+        : 'commit/${commits.single.hash}';
+    final link = "https://github.com/dart-lang/sdk/$commitsPath";
+    return githubNewIssueURL(changeGroup.changes, subject, link);
+  }
 }

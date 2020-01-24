@@ -11,21 +11,32 @@ import 'package:dart_results_feed/src/components/routing_wrapper_component.templ
     as ng;
 import 'main.template.dart' as self;
 
-// Local testing use
-// @GenerateInjector([ClassProvider(FirestoreService, useClass: TestingFirestoreService), ...routerProvidersHash])
-// Use for deploying on staging website:
-// @GenerateInjector([ClassProvider(FirestoreService, useClass: StagingFirestoreService), ...routerProviders])
-
 // Allow links from comments to GitHub issues in the dart-lang organization.
 List<Uri> getUriWhitelist() => List.unmodifiable(<Uri>[
       Uri.https('github.com', 'dart-lang/'),
     ]);
 
-@GenerateInjector([
+// Use for local testing
+const localTestingProviders = [
+  ClassProvider(FirestoreService, useClass: TestingFirestoreService),
+  FactoryProvider.forToken(simpleHtmlUriWhitelist, getUriWhitelist),
+  routerProvidersHash,
+];
+
+// Use for deploying on staging website
+const stagingProviders = [
+  ClassProvider(FirestoreService, useClass: StagingFirestoreService),
+  FactoryProvider.forToken(simpleHtmlUriWhitelist, getUriWhitelist),
+  routerProviders,
+];
+
+const productionProviders = [
   ClassProvider(FirestoreService),
   FactoryProvider.forToken(simpleHtmlUriWhitelist, getUriWhitelist),
-  routerProviders
-])
+  routerProviders,
+];
+
+@GenerateInjector(productionProviders)
 final InjectorFactory injector = self.injector$Injector;
 
 void main() {

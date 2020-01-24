@@ -318,3 +318,34 @@ class Changes with IterableMixin<List<List<Change>>> {
         (change, filter) => filter.showUnapprovedOnly && change.approved);
   }
 }
+
+String githubNewIssueURL(Changes changes, String subject, String link) {
+  List<Change> failures =
+      changes.flat.where((change) => change.result != change.expected).toList();
+  failures.sort((a, b) => a.name.compareTo(b.name));
+  final failuresLimit = 30;
+  final title = "Failures on $subject";
+  final body = failures.isEmpty
+      ? "There are no new test failures on [$subject]($link)."
+      : [
+          "There are new test failures on [$subject]($link).",
+          "",
+          "The tests",
+          "```",
+          for (final change in failures.take(failuresLimit))
+            "${change.name} ${change.result} (expected ${change.expected})",
+          if (failures.length > failuresLimit)
+            "    and ${failures.length - failuresLimit} more tests",
+          "```",
+          "are failing on configurations",
+          "```",
+          ...{
+            for (final change in failures)
+              ...change.configurations.configurations
+          }.toList()
+            ..sort(),
+          "```"
+        ].join('\n');
+  final query = {'title': title, 'body': body};
+  return Uri.https("github.com", "dart-lang/sdk/issues/new", query).toString();
+}

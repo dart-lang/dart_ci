@@ -93,5 +93,11 @@
         (click)="approve(true)">
       Approve
     </material-button>
+    <material-button
+        *ngIf="approveEnabled && !approving"
+        raised
+        (click)="openNewGithubIssue()">
+      Create GitHub issue...
+    </material-button>
   </div>
 </div>
