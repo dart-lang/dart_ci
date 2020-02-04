@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pool/pool.dart';
 
 import 'firestore.dart';
 
@@ -74,7 +75,7 @@ class Build {
     final configurations =
         results.map((change) => change['configuration'] as String).toSet();
     await update(configurations);
-    await Future.forEach(results.where(isChangedResult), storeChange);
+    await Pool(30).forEach(results.where(isChangedResult), storeChange).drain();
     if (countChunks != null) {
       await firestore.storeBuildChunkCount(builderName, endIndex, countChunks);
     }

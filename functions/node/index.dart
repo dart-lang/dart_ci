@@ -23,13 +23,14 @@ Future<void> receiveChanges(Message message, EventContext context) async {
       : null;
   final String buildbucketID = message.attributes['buildbucket_id'];
   try {
+    var firestore = FirestoreServiceImpl();
     if (commit.startsWith('refs/changes')) {
-      return Tryjob(commit, countChunks, buildbucketID, FirestoreServiceImpl(),
-              http.NodeClient())
+      return await Tryjob(
+              commit, countChunks, buildbucketID, firestore, http.NodeClient())
           .process(results);
     } else {
-      return Build(commit, first, countChunks, FirestoreServiceImpl(),
-              http.NodeClient())
+      return await Build(
+              commit, first, countChunks, firestore, http.NodeClient())
           .process(results);
     }
   } catch (e) {

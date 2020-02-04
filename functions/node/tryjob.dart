@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:http/http.dart' as http show BaseClient;
+import 'package:pool/pool.dart';
 
 import 'firestore.dart';
 import 'gerrit_change.dart';
@@ -37,7 +38,7 @@ class Tryjob {
     await update();
     builderName = results.first['builder_name'];
     buildNumber = int.parse(results.first['build_number']);
-    await Future.forEach(results.where(isChangedResult), storeTryChange);
+    await Pool(30).forEach(results.where(isChangedResult), storeChange).drain();
 
     if (countChunks != null) {
       await firestore.storeTryBuildChunkCount(builderName, buildNumber,
@@ -47,7 +48,7 @@ class Tryjob {
         builderName, buildNumber, buildbucketID, review, patchset, success);
   }
 
-  Future<void> storeTryChange(change) async {
+  Future<void> storeChange(change) async {
     final approved = await firestore.storeTryChange(change, review, patchset);
     if (!approved && !change['matches']) success = false;
   }
