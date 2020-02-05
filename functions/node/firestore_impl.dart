@@ -241,7 +241,7 @@ class FirestoreServiceImpl implements FirestoreService {
   Future<void> updateActiveResult(
       Map<String, dynamic> activeResult, String configuration) async {
     final updateData = UpdateData();
-    if (activeResult['configurations'].length > 1) {
+    if (activeResult['active_configurations'].length > 1) {
       updateData.setFieldValue('active_configurations',
           Firestore.fieldValues.arrayRemove([configuration]));
     } else {
