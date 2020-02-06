@@ -240,18 +240,19 @@ class FirestoreServiceImpl implements FirestoreService {
 
   Future<void> updateActiveResult(
       Map<String, dynamic> activeResult, String configuration) async {
-    final updateData = UpdateData();
+    final document = firestore.document('results/${activeResult['id']}');
     if (activeResult['active_configurations'].length > 1) {
-      updateData.setFieldValue('active_configurations',
-          Firestore.fieldValues.arrayRemove([configuration]));
-    } else {
-      updateData.setFieldValue(
-          'active_configurations', Firestore.fieldValues.delete());
-      updateData.setFieldValue('active', Firestore.fieldValues.delete());
+      final removeConfiguration = UpdateData()
+        ..setFieldValue('active_configurations',
+            Firestore.fieldValues.arrayRemove([configuration]));
+      await document.updateData(removeConfiguration);
+      activeResult = (await document.get()).data.toMap();
+      if (activeResult['active_configurations'].isNotEmpty) return;
     }
-    return firestore
-        .document('results/${activeResult['id']}')
-        .updateData(updateData);
+    final deleteActiveFields = UpdateData()
+      ..setFieldValue('active_configurations', Firestore.fieldValues.delete())
+      ..setFieldValue('active', Firestore.fieldValues.delete());
+    return document.updateData(deleteActiveFields);
   }
 
   Future<Map<String, dynamic>> findActiveResult(
