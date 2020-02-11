@@ -216,8 +216,8 @@ class Build {
     final failure = !change['matches'];
     var approved;
     String result = await firestore.findResult(change, startIndex, endIndex);
-    Map<String, dynamic> activeResult =
-        await firestore.findActiveResult(change);
+    List<Map<String, dynamic>> activeResults =
+        await firestore.findActiveResults(change);
     if (result == null) {
       final approvingReviewLandedIndex = tryApprovals[testResult(change)];
       approved = approvingReviewLandedIndex != null;
@@ -238,7 +238,7 @@ class Build {
     }
     if (failure && !approved) success = false;
 
-    if (activeResult != null) {
+    for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
       if (activeResult['blamelist_end_index'] >= startIndex ||
           !activeResult['active_configurations']

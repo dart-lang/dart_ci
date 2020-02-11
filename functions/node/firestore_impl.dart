@@ -255,7 +255,7 @@ class FirestoreServiceImpl implements FirestoreService {
     return document.updateData(deleteActiveFields);
   }
 
-  Future<Map<String, dynamic>> findActiveResult(
+  Future<List<Map<String, dynamic>>> findActiveResults(
       Map<String, dynamic> change) async {
     QuerySnapshot snapshot = await firestore
         .collection('results')
@@ -263,14 +263,17 @@ class FirestoreServiceImpl implements FirestoreService {
         .where('active', isEqualTo: true)
         .where('name', isEqualTo: change['name'])
         .get();
-    if (snapshot.isEmpty) return null;
-    if (snapshot.documents.length > 1) {
-      error('Multiple active results for the same configuration and test\n'
-          'result 1: ${snapshot.documents[0].data.toMap()}\n'
-          'result 2: ${snapshot.documents[1].data.toMap()}\n');
+    final results = [
+      for (final document in snapshot.documents)
+        document.data.toMap()..['id'] = document.documentID
+    ];
+    if (results.length > 1) {
+      error([
+        'Multiple active results for the same configuration and test',
+        ...results
+      ].join('\n'));
     }
-    final result = snapshot.documents.first;
-    return result.data.toMap()..['id'] = result.documentID;
+    return results;
   }
 
   Future<void> storeReview(String review, Map<String, dynamic> data) =>

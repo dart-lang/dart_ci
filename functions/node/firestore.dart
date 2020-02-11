@@ -40,7 +40,8 @@ abstract class FirestoreService {
   Future<void> updateActiveResult(
       Map<String, dynamic> activeResult, String configuration);
 
-  Future<Map<String, dynamic>> findActiveResult(Map<String, dynamic> change);
+  Future<List<Map<String, dynamic>>> findActiveResults(
+      Map<String, dynamic> change);
 
   Future<void> storeReview(String review, Map<String, dynamic> data);
 

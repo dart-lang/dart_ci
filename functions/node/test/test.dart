@@ -84,10 +84,8 @@ void main() async {
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, landedCommit['index']);
     expect(builder.startIndex, existingCommit['index'] + 1);
-    expect(builder.tryApprovals, {
-      testResult(tryjobResults[0]): 54,
-      testResult(tryjobResults[1]): 53
-    });
+    expect(builder.tryApprovals,
+        {testResult(tryjobResults[0]): 54, testResult(tryjobResults[1]): 53});
     verifyInOrder([
       verify(firestore.getCommit(landedCommitHash)).called(2),
       verify(firestore.getLastCommit()),
@@ -136,6 +134,7 @@ void main() async {
             .where((result) => result['review'] == 77779)
             .where((result) => result['approved'] == true)
             .toList()));
+    when(firestore.findActiveResults(any)).thenAnswer((_) => Future.value([]));
 
     final builder =
         Build(landedCommitHash, landedCommitChange, null, firestore, client);
@@ -170,8 +169,8 @@ void main() async {
     final firestore = FirestoreServiceMock();
     final client = HttpClientMock();
 
-    when(firestore.findActiveResult(any))
-        .thenAnswer((_) => Future.value(activeResult));
+    when(firestore.findActiveResults(any))
+        .thenAnswer((_) => Future.value([activeResult]));
 
     final builder =
         Build(landedCommitHash, landedCommitChange, null, firestore, client);
@@ -186,7 +185,7 @@ void main() async {
     verifyZeroInteractions(client);
     verifyInOrder([
       firestore.findResult(any, 53, 54),
-      firestore.findActiveResult(landedCommitChange),
+      firestore.findActiveResults(landedCommitChange),
       firestore.storeResult(any, 53, 54,
           approved: argThat(isFalse, named: 'approved'),
           failure: argThat(isTrue, named: 'failure')),
