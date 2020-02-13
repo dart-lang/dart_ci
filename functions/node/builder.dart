@@ -9,14 +9,6 @@ import 'package:pool/pool.dart';
 
 import 'firestore.dart';
 
-void info(Object message) {
-  print("Info: $message");
-}
-
-void error(Object message) {
-  print("Error: $message");
-}
-
 const prefix = ")]}'\n";
 
 bool isChangedResult(Map<String, dynamic> result) =>
@@ -111,7 +103,7 @@ class Build {
       await getMissingCommits();
       endCommit = await firestore.getCommit(commitHash);
       if (endCommit == null) {
-        error('Result received with unknown commit hash $commitHash');
+        throw 'Result received with unknown commit hash $commitHash';
       }
     }
     endIndex = endCommit['index'];
@@ -162,20 +154,17 @@ class Build {
     final commits = jsonDecode(protectedJson.substring(prefix.length))['log']
         as List<dynamic>;
     if (commits.isEmpty) {
-      info('Found no new commits between $lastHash and master');
+      print('Found no new commits between $lastHash and master');
       return;
     }
     commitsFetched = commits.length;
     final first = commits.last as Map<String, dynamic>;
     if (first['parents'].first != lastHash) {
-      error('First new commit ${first['parents'].first} is not'
-          ' a child of last known commit $lastHash when fetching new commits');
-      throw ('First new commit ${first['parents'].first} is not'
-          ' a child of last known commit $lastHash when fetching new commits');
+      throw 'First new commit ${first['parents'].first} is not'
+          ' a child of last known commit $lastHash when fetching new commits';
     }
     if (!commits.any((commit) => commit['commit'] == commitHash)) {
-      info('Did not find commit $commitHash when fetching new commits');
-      return;
+      throw 'Did not find commit $commitHash when fetching new commits';
     }
     var index = lastIndex + 1;
     for (Map<String, dynamic> commit in commits.reversed) {
@@ -243,7 +232,7 @@ class Build {
       if (activeResult['blamelist_end_index'] >= startIndex ||
           !activeResult['active_configurations']
               .contains(change['configuration'])) {
-        error('Unexpected active result when processing new change:\n'
+        print('Unexpected active result when processing new change:\n'
             'Active result: $activeResult\n\n'
             'Change: $change\n\n'
             'approved: $approved');

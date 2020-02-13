@@ -4,6 +4,7 @@
 
 import 'package:firebase_functions_interop/firebase_functions_interop.dart';
 import 'package:node_http/node_http.dart' as http;
+import 'package:node_interop/node.dart';
 
 import 'builder.dart';
 import 'firestore_impl.dart';
@@ -33,8 +34,8 @@ Future<void> receiveChanges(Message message, EventContext context) async {
               commit, first, countChunks, firestore, http.NodeClient())
           .process(results);
     }
-  } catch (e) {
-    print('Exception when processing message. First record is:\n$first');
-    rethrow;
+  } catch (e, trace) {
+    console.error('Uncaught exception in cloud function', e.toString(),
+        trace.toString(), 'first record: $first');
   }
 }

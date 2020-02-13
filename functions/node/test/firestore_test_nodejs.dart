@@ -4,6 +4,7 @@
 
 import 'package:firebase_admin_interop/firebase_admin_interop.dart';
 import 'package:firebase_functions_interop/firebase_functions_interop.dart';
+import 'package:node_interop/node.dart';
 import 'package:test/test.dart';
 
 import '../firestore_impl.dart' as fs;
@@ -21,7 +22,8 @@ import 'test_data.dart';
 void main() async {
   final firestore = fs.FirestoreServiceImpl();
   if ((await fs.firestore.collection('staging').get()).isEmpty) {
-    print('Error: firestore_test_nodejs.dart is being run on production');
+    console
+        .error('Error: firestore_test_nodejs.dart is being run on production');
     throw (TestFailure(
         'Error: firestore_test_nodejs.dart is being run on production'));
   }

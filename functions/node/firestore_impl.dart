@@ -4,17 +4,10 @@
 
 import 'dart:math' show max, min;
 import 'package:firebase_admin_interop/firebase_admin_interop.dart';
+import 'package:node_interop/node.dart';
 import 'package:retry/retry.dart';
 
 import 'firestore.dart';
-
-void info(Object message) {
-  print("Info: $message");
-}
-
-void error(Object message) {
-  print("Error: $message");
-}
 
 // Cloud functions run the cloud function many times in the same isolate.
 // Use static initializer to run global initialization once.
@@ -76,10 +69,12 @@ class FirestoreServiceImpl implements FirestoreService {
           .document('configurations/$configuration')
           .setData(DocumentData.fromMap({'builder': builder}));
       if (!record.exists) {
-        info('Configuration document $configuration -> $builder created');
+        console
+            .log('Configuration document $configuration -> $builder created');
       } else {
-        info('Configuration document changed: $configuration -> $builder '
-            '(was ${record.data.getString("builder")}');
+        console
+            .log('Configuration document changed: $configuration -> $builder '
+                '(was ${record.data.getString("builder")}');
       }
     }
   }
@@ -96,11 +91,10 @@ class FirestoreServiceImpl implements FirestoreService {
             'index': index
           }),
           SetOptions(merge: true));
-      info('Created build record: '
+      console.log('Created build record: '
           'builder: $builder, build_number: $buildNumber, index: $index');
     } else if (record.data.getInt('index') != index) {
-      error(
-          'Build $buildNumber of $builder had commit index ${record.data.getInt('index')},'
+      throw ('Build $buildNumber of $builder had commit index ${record.data.getInt('index')},'
           'should be $index.');
     }
   }
@@ -269,7 +263,7 @@ class FirestoreServiceImpl implements FirestoreService {
         document.data.toMap()..['id'] = document.documentID
     ];
     if (results.length > 1) {
-      error([
+      console.error([
         'Multiple active results for the same configuration and test',
         ...results
       ].join('\n'));
@@ -368,7 +362,7 @@ class FirestoreServiceImpl implements FirestoreService {
     }
 
     await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
-      info("Retrying failed update: $e");
+      console.error("Retrying failed update: $e");
       return e.toString().contains('Please try again.');
     });
   }
@@ -403,7 +397,7 @@ class FirestoreServiceImpl implements FirestoreService {
     }
 
     await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
-      info("Retrying failed update: $e");
+      console.error("Retrying failed update: $e");
       return e.toString().contains('Please try again.');
     });
   }

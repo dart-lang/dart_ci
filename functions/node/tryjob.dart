@@ -22,6 +22,8 @@ class Tryjob {
   bool success = true;
   final int countChunks;
   final String buildbucketID;
+  int countChanges = 0;
+  int countUnapproved = 0;
 
   Tryjob(String changeRef, this.countChunks, this.buildbucketID, this.firestore,
       this.httpClient) {
@@ -46,10 +48,23 @@ class Tryjob {
     }
     await firestore.storeTryChunkStatus(
         builderName, buildNumber, buildbucketID, review, patchset, success);
+
+    final report = [
+      "Processed ${results.length} results from $builderName build $buildNumber",
+      "Tryjob on CL $review patchset $patchset",
+      if (countChanges > 0) "Stored $countChanges changes",
+      if (!success) "Found unapproved new failures",
+      if (countUnapproved > 0) "$countUnapproved tests found",
+    ];
+    print(report.join('\n'));
   }
 
   Future<void> storeChange(change) async {
+    countChanges++;
     final approved = await firestore.storeTryChange(change, review, patchset);
-    if (!approved && !change['matches']) success = false;
+    if (!approved && !change['matches']) {
+      countUnapproved++;
+      success = false;
+    }
   }
 }
