@@ -4,6 +4,7 @@
 
 import 'dart:math' show max, min;
 import 'package:firebase_admin_interop/firebase_admin_interop.dart';
+import 'package:retry/retry.dart';
 
 import 'firestore.dart';
 
@@ -366,7 +367,10 @@ class FirestoreServiceImpl implements FirestoreService {
       transaction.update(document, update);
     }
 
-    return firestore.runTransaction(updateStatus);
+    await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
+      info("Retrying failed update: $e");
+      return e.toString().contains('Please try again.');
+    });
   }
 
   Future<void> storeBuildChunkCount(
@@ -398,7 +402,10 @@ class FirestoreServiceImpl implements FirestoreService {
       transaction.update(reference, update);
     }
 
-    return firestore.runTransaction(updateStatus);
+    await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
+      info("Retrying failed update: $e");
+      return e.toString().contains('Please try again.');
+    });
   }
 
   Future<void> storeTryBuildChunkCount(String builder, int buildNumber,
