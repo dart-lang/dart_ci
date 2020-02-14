@@ -189,6 +189,7 @@ class Change implements Comparable {
           // Field is only present when true.
           document.get('active') ?? false,
         );
+  static const skipped = 'skipped';
 
   final String id;
   final String name;
@@ -209,7 +210,8 @@ class Change implements Comparable {
 
   int compareTo(Object other) => name.compareTo((other as Change).name);
 
-  String get resultStyle => result == expected ? 'success' : 'failure';
+  bool get failed => result != expected && result != skipped;
+  String get resultStyle => failed ? 'failure' : 'success';
 }
 
 class Changes with IterableMixin<List<List<Change>>> {
@@ -254,10 +256,8 @@ class Changes with IterableMixin<List<List<Change>>> {
 
   static List<List<List<Change>>> failuresFirst(
       List<List<List<Change>>> unsorted) {
-    bool resultGroupIsFailure(List<Change> group) =>
-        group.first.resultStyle == 'failure';
-    bool resultGroupIsSuccess(List<Change> group) =>
-        group.first.resultStyle == 'success';
+    bool resultGroupIsFailure(List<Change> group) => group.first.failed;
+    bool resultGroupIsSuccess(List<Change> group) => !group.first.failed;
     bool configurationGroupHasFailure(List<List<Change>> group) =>
         group.any(resultGroupIsFailure);
     bool configurationGroupHasNoFailures(List<List<Change>> group) =>
@@ -311,7 +311,7 @@ class Changes with IterableMixin<List<List<Change>>> {
 
   List<Change> resultFilter(List<Change> list, Filter filter) {
     if ((filter.showLatestFailures || filter.showUnapprovedOnly) &&
-        list.first.resultStyle != 'failure') {
+        list.first.failed) {
       return [];
     }
     return applyFilter<Change>((c, f) => c, list, filter,
@@ -321,7 +321,7 @@ class Changes with IterableMixin<List<List<Change>>> {
 
 String githubNewIssueURL(Changes changes, String subject, String link) {
   List<Change> failures =
-      changes.flat.where((change) => change.result != change.expected).toList();
+      changes.flat.where((change) => change.failed).toList();
   failures.sort((a, b) => a.name.compareTo(b.name));
   final failuresLimit = 30;
   final title = "Failures on $subject";

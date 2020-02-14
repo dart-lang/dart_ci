@@ -61,8 +61,7 @@ class ResultsSelectorPanel {
   void recomputeChanges() {
     if (_changes == null) return;
     if (failuresOnly) {
-      _changes = Changes(
-          changes.flat.where((change) => change.result != change.expected));
+      _changes = Changes(changes.flat.where((change) => change.failed));
     }
     for (final configurationGroup in changes) {
       configurationCheckboxes[configurationGroup] = FixedMixedCheckbox();

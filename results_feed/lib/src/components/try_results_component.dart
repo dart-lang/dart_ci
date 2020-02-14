@@ -62,8 +62,8 @@ class TryResultsComponent implements OnActivate {
 
   TryResultsComponent(this._tryDataService, this._applicationRef);
 
-  bool get approveEnabled => changeGroup.changes.flat
-      .any((change) => change.result != change.expected);
+  bool get approveEnabled =>
+      changeGroup.changes.flat.any((change) => change.failed);
 
   bool get approving => _approving;
 
@@ -150,8 +150,6 @@ class TryResultsComponent implements OnActivate {
     window.open(newIssueURL(), '_blank');
   }
 
-  String newIssueURL() =>
-    githubNewIssueURL(changeGroup.changes, reviewInfo.title,
-    "https://dart-review.googlesource.com/c/sdk/+/$review");
-
+  String newIssueURL() => githubNewIssueURL(changeGroup.changes,
+      reviewInfo.title, "https://dart-review.googlesource.com/c/sdk/+/$review");
 }
