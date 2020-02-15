@@ -311,7 +311,7 @@ class Changes with IterableMixin<List<List<Change>>> {
 
   List<Change> resultFilter(List<Change> list, Filter filter) {
     if ((filter.showLatestFailures || filter.showUnapprovedOnly) &&
-        list.first.failed) {
+        !list.first.failed) {
       return [];
     }
     return applyFilter<Change>((c, f) => c, list, filter,
