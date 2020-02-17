@@ -46,7 +46,8 @@ class TryResultsComponent implements OnActivate {
   int review;
   int patchset;
   ReviewInfo reviewInfo;
-  ChangeGroup changeGroup = ChangeGroup(null, {}, [], []);
+  ChangeGroup changeGroup =
+      ChangeGroup(null, {}, [], [], LoadedResultsStatus());
   int cachedReview;
   int cachedPatchset;
   List<Change> changes;
@@ -133,7 +134,8 @@ class TryResultsComponent implements OnActivate {
       comments..sort();
       cachedReview = review;
       cachedPatchset = patchset;
-      changeGroup = ChangeGroup(null, {}, comments, changes);
+      changeGroup =
+          ChangeGroup(null, {}, comments, changes, LoadedResultsStatus());
     }
   }
 

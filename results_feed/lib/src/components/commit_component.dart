@@ -37,7 +37,7 @@ import 'results_selector_panel.dart';
       'commit_component.css',
       'package:angular_components/css/mdc_web/card/mdc-card.scss.css'
     ]))
-class CommitComponent {
+class CommitComponent implements AfterChanges {
   CommitComponent(this.firestoreService);
 
   @Input()
@@ -48,6 +48,19 @@ class CommitComponent {
 
   @Input()
   ChangeGroup changeGroup;
+
+  void ngAfterChanges() {
+    if (filter != null && changeGroup != null) {
+      if (changeGroup.loadedResultsStatus.unapprovedOnly &&
+          !filter.showUnapprovedOnly) {
+        window.location.reload();
+      }
+      if (changeGroup.loadedResultsStatus.failuresOnly &&
+          !filter.showLatestFailures) {
+        window.location.reload();
+      }
+    }
+  }
 
   bool collapsedBlamelist = true;
   int resultLimit = 10;

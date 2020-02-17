@@ -111,17 +111,16 @@ class AppComponent implements OnInit, CanReuse {
     }
   }
 
-  List<Change> getInMap(Map map, String name, IntRange range) => map
-      .putIfAbsent(name, () => SplayTreeMap<IntRange, List<Change>>(reverse))
-      .putIfAbsent(range, () => <Change>[]);
-
   Future fetchData() => fetching ??= () async {
         try {
+          final loadedResultsStatus = LoadedResultsStatus()
+            ..failuresOnly = filterService.filter.showLatestFailures
+            ..unapprovedOnly = filterService.filter.showUnapprovedOnly;
           final before = commits.isEmpty ? null : commits.keys.last;
           final range = await fetchEarlierCommits(before);
-          await fetchResults(range);
+          await fetchResults(range, loadedResultsStatus);
           await fetchComments(range);
-          updateRanges();
+          updateRanges(loadedResultsStatus);
           updateFetchDate();
         } finally {
           // Force a reevaluation of changed views
@@ -140,8 +139,8 @@ class AppComponent implements OnInit, CanReuse {
     for (Commit commit in newCommits) {
       commits[commit.index] = commit;
       final range = IntRange(commit.index, commit.index);
-      changeGroups.putIfAbsent(
-          range, () => ChangeGroup(range, commits, [], []));
+      changeGroups.putIfAbsent(range,
+          () => ChangeGroup(range, commits, [], [], LoadedResultsStatus()));
     }
     final range = IntRange(
         commits.keys.last, before == null ? commits.keys.first : before - 1);
@@ -157,9 +156,13 @@ class AppComponent implements OnInit, CanReuse {
     return range;
   }
 
-  Future fetchResults(IntRange commitRange) async {
+  Future fetchResults(
+      IntRange commitRange, LoadedResultsStatus loadedResultsStatus) async {
     final resultsData = await _firestoreService.fetchChanges(
-        commitRange.start, commitRange.end);
+        commitRange.start,
+        commitRange.end,
+        loadedResultsStatus.failuresOnly,
+        loadedResultsStatus.unapprovedOnly);
     for (var resultData in resultsData) {
       final change = Change.fromDocument(resultData);
       final range = IntRange(change.pinnedIndex ?? change.blamelistStartIndex,
@@ -191,13 +194,13 @@ class AppComponent implements OnInit, CanReuse {
     }
   }
 
-  void updateRanges() {
+  void updateRanges(LoadedResultsStatus loadedResultsStatus) {
     for (final range in modifiedRanges) {
       if (changes[range] == null || changes[range].isEmpty) {
         changeGroups.remove(range);
       } else {
-        changeGroups[range] =
-            ChangeGroup(range, commits, comments[range] ?? [], changes[range]);
+        changeGroups[range] = ChangeGroup(range, commits, comments[range] ?? [],
+            changes[range], loadedResultsStatus);
       }
     }
     modifiedRanges.clear();

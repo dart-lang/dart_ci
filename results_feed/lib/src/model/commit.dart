@@ -71,6 +71,12 @@ class Commit implements Comparable {
   String toString() => "$index $hash $author $created $title";
 }
 
+class LoadedResultsStatus {
+  bool loaded = true;
+  bool failuresOnly = false;
+  bool unapprovedOnly = false;
+}
+
 class ChangeGroup implements Comparable {
   final IntRange range;
   List<Commit> commits;
@@ -79,9 +85,10 @@ class ChangeGroup implements Comparable {
   final Changes latestChanges;
   Changes _filteredChanges;
   Filter _filter = Filter.defaultFilter;
+  LoadedResultsStatus loadedResultsStatus;
 
   ChangeGroup(this.range, Map<int, Commit> allCommits, List<Comment> comments,
-      Iterable<Change> changeList)
+      Iterable<Change> changeList, this.loadedResultsStatus)
       : changes = Changes(changeList),
         latestChanges = Changes.active(changeList) {
     commits = [
