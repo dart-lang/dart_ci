@@ -115,6 +115,42 @@ void main() async {
     verifyNoMoreInteractions(firestore);
   });
 
+  test('fetch commit that is a revert', () async {
+    final client = HttpClientMock();
+    final firestore = FirestoreServiceMock();
+    when(firestore.getCommit(existingCommitHash))
+        .thenAnswer((_) => Future.value(existingCommit));
+    final revertResponses = [null, revertCommit];
+    when(firestore.getCommit(revertCommitHash))
+        .thenAnswer((_) => Future(() => revertResponses.removeAt(0)));
+    when(firestore.getLastCommit()).thenAnswer(
+        (_) => Future(() => {...existingCommit, 'id': existingCommitHash}));
+
+    when(firestore.tryApprovals(any)).thenAnswer((_) => Future(() => []));
+    when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
+
+    when(client.get(any))
+        .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
+
+    final builder =
+        Build(revertCommitHash, revertCommitChange, null, firestore, client);
+    await builder.storeBuildCommitsInfo();
+    expect(builder.endIndex, revertCommit['index']);
+    expect(builder.startIndex, existingCommit['index'] + 1);
+    expect(builder.tryApprovals, {});
+    verifyInOrder([
+      verify(firestore.getCommit(revertCommitHash)).called(2),
+      verify(firestore.getLastCommit()),
+      verify(firestore.addCommit(revertCommitHash, revertCommit)),
+      verify(firestore.reviewIsLanded(revertReview)),
+      // We want to verify firestore.getCommit(revertCommitHash) here,
+      // but it is already matched by the earlier check for the same call.
+      verify(firestore.getCommit(existingCommitHash)),
+      verify(firestore.tryApprovals(revertReview))
+    ]);
+    verifyNoMoreInteractions(firestore);
+  });
+
   test("copy approvals from try results", () async {
     final firestore = FirestoreServiceMock();
     final client = HttpClientMock();

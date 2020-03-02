@@ -169,12 +169,14 @@ class Build {
     var index = lastIndex + 1;
     for (Map<String, dynamic> commit in commits.reversed) {
       final review = _review(commit);
+      final reverted = _revert(commit);
       await firestore.addCommit(commit['commit'], {
         'author': commit['author']['email'],
         'created': parseGitilesDateTime(commit['committer']['time']),
         'index': index,
         'title': commit['message'].split('\n').first,
-        if (review != null) 'review': review
+        if (review != null) 'review': review,
+        if (reverted != null) 'revert_of': reverted
       });
       if (review != null) {
         await landReview(commit, index);
@@ -253,6 +255,12 @@ int _review(Map<String, dynamic> commit) {
   if (match != null) return int.parse(match.group(1));
   return null;
 }
+
+final revertRegExp =
+    RegExp('^This reverts commit ([\\da-f]+)\\.\$', multiLine: true);
+
+String _revert(Map<String, dynamic> commit) =>
+    revertRegExp.firstMatch(commit['message'])?.group(1);
 
 String testResult(Map<String, dynamic> change) => [
       change['name'],

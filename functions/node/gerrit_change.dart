@@ -10,6 +10,8 @@ import 'firestore.dart';
 
 class GerritInfo {
   static const gerritUrl = 'https://dart-review.googlesource.com/changes';
+  static const gerritQuery =
+      'o=ALL_REVISIONS&o=DETAILED_ACCOUNTS&o=CURRENT_COMMIT';
   static const trivialKinds = const {
     'TRIVIAL_REBASE',
     'NO_CHANGE',
@@ -31,14 +33,18 @@ class GerritInfo {
   Future<void> update() async {
     if (await firestore.hasPatchset(review, patchset)) return;
     // Get the Gerrit change's commit from the Gerrit API.
-    final url = '$gerritUrl/$review?o=ALL_REVISIONS&o=DETAILED_ACCOUNTS';
+    final url = '$gerritUrl/$review?$gerritQuery';
     final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix))
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
     final reviewInfo = jsonDecode(protectedJson.substring(prefix.length))
         as Map<String, dynamic>;
-    await firestore.storeReview(review, {'subject': reviewInfo['subject']});
+    final reverted = revert(reviewInfo);
+    await firestore.storeReview(review, {
+      'subject': reviewInfo['subject'],
+      if (reverted != null) 'revert_of': reverted
+    });
 
     // Add the patchset information to the patchsets subcollection.
     final revisions = reviewInfo['revisions'].values.toList()
@@ -56,5 +62,13 @@ class GerritInfo {
         'kind': revision['kind']
       });
     }
+  }
+
+  static String revert(Map<String, dynamic> reviewInfo) {
+    final current = reviewInfo['current_revision'];
+    final commit = reviewInfo['revisions'][current]['commit'];
+    final regExp =
+        RegExp('^This reverts commit ([\\da-f]+)\\.\$', multiLine: true);
+    return regExp.firstMatch(commit['message'])?.group(1);
   }
 }

@@ -28,11 +28,11 @@ const Map<String, dynamic> existingCommitChange = {
 };
 
 const String existingCommitHash = 'an already existing commit hash';
-
+const int existingCommitIndex = 52;
 Map<String, dynamic> existingCommit = {
   'author': 'test_user@example.com',
   'created': DateTime.parse('2019-11-22 22:19:00Z'),
-  'index': 52,
+  'index': existingCommitIndex,
   'title': 'A commit used for testing, with index 52'
 };
 
@@ -45,19 +45,22 @@ Map<String, dynamic> previousCommit = {
 };
 
 const String commit53Hash = 'commit 53 landing CL 77779 hash';
+const int commit53Index = existingCommitIndex + 1;
 Map<String, dynamic> commit53 = {
   'author': 'user@example.com',
   'created': DateTime.parse('2019-11-28 12:07:55 +0000'),
-  'index': 53,
+  'index': commit53Index,
   'title': 'A commit on the git log',
   'review': 77779
 };
 
 const String landedCommitHash = 'a commit landing a CL hash';
+const int landedCommitIndex = commit53Index + 1;
+
 Map<String, dynamic> landedCommit = {
   'author': 'gerrit_user@example.com',
   'created': DateTime.parse('2019-11-29 15:15:00Z'),
-  'index': 54,
+  'index': landedCommitIndex,
   'title': 'A commit used for testing tryjob approvals, with index 54',
   'review': 44445
 };
@@ -83,6 +86,44 @@ const Map<String, dynamic> landedCommitChange = {
   "previous_commit_time": 1563576211,
   "previous_build_number": "306",
   "changed": true
+};
+
+const String revertCommitHash = '23456ababa23456ababa';
+const String revertedHash = '012345abcde012345abcde';
+const int revertReview = 85937;
+const int revertCommitIndex = existingCommitIndex + 1;
+Map<String, dynamic> revertCommit = {
+  'author': 'gerrit_user@example.com',
+  'created': DateTime.parse('2019-11-29 15:15:00 +0000'),
+  'index': revertCommitIndex,
+  'title': 'A commit that reverts another commit',
+  'review': revertReview,
+  'revert_of': revertedHash,
+};
+
+// This change is an unchanged passing result, used as the first result in
+// a chunk with no changed results.
+const Map<String, dynamic> revertCommitChange = {
+  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "configuration": "dart2js-new-rti-linux-x64-d8",
+  "suite": "dart2js_extra",
+  "test_name": "local_function_signatures_strong_test/none",
+  "time_ms": 2384,
+  "result": "Pass",
+  "expected": "Pass",
+  "matches": false,
+  "bot_name": "luci-dart-try-xenial-70-8fkh",
+  "commit_hash": revertCommitHash,
+  "commit_time": 1563576771,
+  "build_number": "401",
+  "builder_name": "dart2js-rti-linux-x64-d8",
+  "flaky": false,
+  "previous_flaky": false,
+  "previous_result": "Pass",
+  "previous_commit_hash": existingCommitHash,
+  "previous_commit_time": 1563576211,
+  "previous_build_number": "400",
+  "changed": false
 };
 
 const Map<String, dynamic> activeFailureResult = {
@@ -246,6 +287,25 @@ String gitilesLog = '''
         "time": "Thu Nov 28 12:07:55 2019 +0000"
       },
       "message": "A commit on the git log\\n\\nThis commit does not have results from the CQ\\n\\nChange-Id: I481b2cb8b666885b5c2b9c53fff1177accd01830\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/77779\\nCommit-Queue: A user \\u003cuser9@example.com\\u003e\\nReviewed-by: Another user \\u003cuser10@example.com\\u003e\\n"
+    }
+  ]
+}
+''';
+
+String revertGitilesLog = '''
+)]}'
+{
+  "log": [
+    {
+      "commit": "$revertCommitHash",
+      "parents": ["$existingCommitHash"],
+      "author": {
+        "email": "gerrit_user@example.com"
+      },
+      "committer": {
+        "time": "Fri Nov 29 15:15:00 2019 +0000"
+      },
+      "message": "A commit that reverts another commit\\n\\nThis reverts commit $revertedHash.\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/$revertReview\\n\\n"
     }
   ]
 }

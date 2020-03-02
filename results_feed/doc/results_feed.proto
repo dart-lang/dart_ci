@@ -45,8 +45,8 @@ message Result {
   bool approved = 13; // May be missing in older records, interpreted as false.
 }
 
-// Similar to a Result message, but representing a result of a try builder on the CQ.
-// There is no blamelist, instead, a patchset on a Gerrit CL describes the build.
+// Similar to a Result message, but representing results from a try builder.
+// There is no blamelist. Gerrit CL and patchset numbers identify the build.
 message TryResult {
   // Unique document ID created by Firestore for this document.
   string id = 1;
@@ -115,7 +115,8 @@ message Commit {
   string author = 3; // The author of the commit, as an email address.
   google.protobuf.Timestamp created = 4;
   string title = 5; // The first line of the commit message.
-  int32 review = 6; // If the commit is a landed Gerrit review, its number.
+  int32 review = 6; // Optional: the id of the review this commit lands.
+  string revert_of = 7; // Optional: the hash of the commit this commit reverts.
 }
 
 // A map from configuration names to builder names.
@@ -129,6 +130,7 @@ message Configuration {
 message Review {
   string id = 1; // The Gerrit review number (CL number)
   string subject = 2; // The first line of the commit message.
+  string revert_of = 3; // Optional: the hash of the commit this review reverts.
 
   message Patchset {
     string id = 1; // The patchset number.
@@ -145,7 +147,7 @@ message Review {
   }
 
   repeated Patchset patchsets = 3;
-  int32 landed_index = 4; // When a review lands, this is the index of the landed commit.
+  int32 landed_index = 4; // Optional: The index of the commit landing the CL.
 }
 
 message Comment {
