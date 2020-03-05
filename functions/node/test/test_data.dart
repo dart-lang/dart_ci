@@ -4,27 +4,11 @@
 
 import 'dart:core';
 
-const Map<String, dynamic> existingCommitChange = {
-  "name": "dart2js_extra/local_function_signatures_strong_test/none",
-  "configuration": "dart2js-new-rti-linux-x64-d8",
-  "suite": "dart2js_extra",
-  "test_name": "local_function_signatures_strong_test/none",
-  "time_ms": 2384,
-  "result": "Pass",
-  "expected": "Pass",
-  "matches": true,
-  "bot_name": "luci-dart-try-xenial-70-8fkh",
-  "commit_hash": existingCommitHash,
-  "commit_time": 1563576771,
-  "build_number": "307",
-  "builder_name": "dart2js-rti-linux-x64-d8",
-  "flaky": false,
-  "previous_flaky": false,
-  "previous_result": "RuntimeError",
-  "previous_commit_hash": previousCommitHash,
-  "previous_commit_time": 1563576211,
-  "previous_build_number": "306",
-  "changed": true
+Map<String, dynamic> fakeFirestoreCommits = {
+  existingCommitHash: existingCommit,
+  previousCommitHash: previousCommit,
+  commit53Hash: commit53,
+  landedCommitHash: landedCommit
 };
 
 const String existingCommitHash = 'an already existing commit hash';
@@ -54,6 +38,9 @@ Map<String, dynamic> commit53 = {
   'review': 77779
 };
 
+const String newCommitHash = landedCommitHash;
+Map<String, dynamic> newCommitChange = landedCommitChange;
+
 const String landedCommitHash = 'a commit landing a CL hash';
 const int landedCommitIndex = commit53Index + 1;
 
@@ -63,6 +50,52 @@ Map<String, dynamic> landedCommit = {
   'index': landedCommitIndex,
   'title': 'A commit used for testing tryjob approvals, with index 54',
   'review': 44445
+};
+
+const String revertCommitHash = 'commit reverting commit 48 hash';
+const int revertReview = 3426;
+const int revertIndex = landedCommitIndex + 1;
+Map<String, dynamic> revertCommit = {
+  'author': 'gerrit_revert_user@example.com',
+  'created': DateTime.parse('2019-11-29 16:15:00Z'),
+  'index': revertIndex,
+  'title': 'A commit reverting commit 48, with index 55',
+  'review': revertReview,
+  'revert_of': revertedCommitHash,
+};
+
+const String revertedCommitHash = '48abcd55abcd';
+const int revertedReview = 3926;
+const int revertedIndex = 48;
+Map<String, dynamic> revertedCommit = {
+  'author': 'gerrit_reverted_user@example.com',
+  'created': DateTime.parse('2019-11-22 02:01:00Z'),
+  'index': revertedIndex,
+  'title': 'A commit reverted by commit 55, with index 48',
+  'review': revertedReview,
+};
+
+const Map<String, dynamic> existingCommitChange = {
+  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "configuration": "dart2js-new-rti-linux-x64-d8",
+  "suite": "dart2js_extra",
+  "test_name": "local_function_signatures_strong_test/none",
+  "time_ms": 2384,
+  "result": "Pass",
+  "expected": "Pass",
+  "matches": true,
+  "bot_name": "luci-dart-try-xenial-70-8fkh",
+  "commit_hash": existingCommitHash,
+  "commit_time": 1563576771,
+  "build_number": "307",
+  "builder_name": "dart2js-rti-linux-x64-d8",
+  "flaky": false,
+  "previous_flaky": false,
+  "previous_result": "RuntimeError",
+  "previous_commit_hash": previousCommitHash,
+  "previous_commit_time": 1563576211,
+  "previous_build_number": "306",
+  "changed": true
 };
 
 const Map<String, dynamic> landedCommitChange = {
@@ -88,22 +121,9 @@ const Map<String, dynamic> landedCommitChange = {
   "changed": true
 };
 
-const String revertCommitHash = '23456ababa23456ababa';
-const String revertedHash = '012345abcde012345abcde';
-const int revertReview = 85937;
-const int revertCommitIndex = existingCommitIndex + 1;
-Map<String, dynamic> revertCommit = {
-  'author': 'gerrit_user@example.com',
-  'created': DateTime.parse('2019-11-29 15:15:00 +0000'),
-  'index': revertCommitIndex,
-  'title': 'A commit that reverts another commit',
-  'review': revertReview,
-  'revert_of': revertedHash,
-};
-
 // This change is an unchanged passing result, used as the first result in
 // a chunk with no changed results.
-const Map<String, dynamic> revertCommitChange = {
+const Map<String, dynamic> revertUnchangedChange = {
   "name": "dart2js_extra/local_function_signatures_strong_test/none",
   "configuration": "dart2js-new-rti-linux-x64-d8",
   "suite": "dart2js_extra",
@@ -116,14 +136,82 @@ const Map<String, dynamic> revertCommitChange = {
   "commit_hash": revertCommitHash,
   "commit_time": 1563576771,
   "build_number": "401",
+  "previous_build_number": "400",
+  "changed": false,
+};
+
+const Map<String, dynamic> revertChange = {
+  "name": "test_suite/fixed_broken_test",
+  "configuration": "a_different_configuration",
+  "suite": "test_suite",
+  "test_name": "fixed_broken_test",
+  "time_ms": 2384,
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "matches": false,
+  "bot_name": "a_ci_bot",
+  "commit_hash": revertCommitHash,
+  "commit_time": 1563576771,
+  "build_number": "314",
   "builder_name": "dart2js-rti-linux-x64-d8",
   "flaky": false,
   "previous_flaky": false,
   "previous_result": "Pass",
   "previous_commit_hash": existingCommitHash,
   "previous_commit_time": 1563576211,
-  "previous_build_number": "400",
-  "changed": false
+  "previous_build_number": "313",
+  "changed": true,
+};
+
+const Map<String, dynamic> revertResult = {
+  "configurations": ["a_different_configuration"],
+  "active": true,
+  "active_configurations": ["a_different_configuration"],
+  "name": "test_suite/fixed_broken_test",
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+  "blamelist_start_index": 53,
+  "blamelist_end_index": 55,
+  "pinned_index": 55,
+  "approved": true,
+};
+
+const Map<String, dynamic> revertedChange = {
+  "name": "test_suite/fixed_broken_test",
+  "configuration": "a_configuration",
+  "suite": "test_suite",
+  "test_name": "fixed_broken_test",
+  "time_ms": 2384,
+  "result": "Pass",
+  "expected": "Pass",
+  "matches": true,
+  "bot_name": "a_ci_bot",
+  "commit_hash": revertCommitHash,
+  "commit_time": 1563576771,
+  "build_number": "308",
+  "builder_name": "dart2js-rti-linux-x64-d8",
+  "flaky": false,
+  "previous_flaky": false,
+  "previous_result": "RuntimeError",
+  "previous_commit_hash": "a nonexistent hash",
+  "previous_commit_time": 1563576211,
+  "previous_build_number": "306",
+  "changed": true
+};
+
+const Map<String, dynamic> revertedResult = {
+  "configurations": ["a_configuration"],
+  "name": "test_suite/fixed_broken_test",
+  "result": "Pass",
+  "expected": "Pass",
+  "previous_result": "RuntimeError",
+  "blamelist_start_index": 48,
+  "blamelist_end_index": 48,
+};
+
+Map<String, Map<String, dynamic>> fakeFirestoreResults = {
+  'activeFailureResultID': activeFailureResult
 };
 
 const Map<String, dynamic> activeFailureResult = {
@@ -132,7 +220,6 @@ const Map<String, dynamic> activeFailureResult = {
   "active": true,
   "active_configurations": [testConfiguration, 'configuration 2'],
   "approved": false,
-  "suite": "test_suite",
   "result": "RuntimeError",
   "expected": "Pass",
   "previous_result": "Pass",
@@ -141,31 +228,33 @@ const Map<String, dynamic> activeFailureResult = {
 };
 
 const List<Map<String, dynamic>> tryjobResults = [
-  {
-    "review": 44445,
-    "configurations": [
-      "dart2js-new-rti-linux-x64-d8",
-      "dartk-reload-rollback-linux-debug-x64",
-      "dartk-reload-linux-debug-x64"
-    ],
-    "name": "dart2js_extra/local_function_signatures_strong_test/none",
-    "patchset": 1,
-    "result": "RuntimeError",
-    "expected": "Pass",
-    "previous_result": "Pass",
-    "approved": true
-  },
-  {
-    "review": 77779,
-    "configurations": ["test_configuration"],
-    "name": "test_suite/test_name",
-    "patchset": 5,
-    "result": "RuntimeError",
-    "expected": "CompileTimeError",
-    "previous_result": "CompileTimeError",
-    "approved": true
-  },
+  review44445Result,
+  review77779Result
 ];
+const Map<String, dynamic> review44445Result = {
+  "review": 44445,
+  "configurations": [
+    "dart2js-new-rti-linux-x64-d8",
+    "dartk-reload-rollback-linux-debug-x64",
+    "dartk-reload-linux-debug-x64"
+  ],
+  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "patchset": 1,
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+  "approved": true
+};
+const Map<String, dynamic> review77779Result = {
+  "review": 77779,
+  "configurations": ["test_configuration"],
+  "name": "test_suite/test_name",
+  "patchset": 5,
+  "result": "RuntimeError",
+  "expected": "CompileTimeError",
+  "previous_result": "CompileTimeError",
+  "approved": true
+};
 
 const testBuilder = 'test_builder';
 const testBuildNumber = "308";
@@ -298,14 +387,14 @@ String revertGitilesLog = '''
   "log": [
     {
       "commit": "$revertCommitHash",
-      "parents": ["$existingCommitHash"],
+      "parents": ["$landedCommitHash"],
       "author": {
         "email": "gerrit_user@example.com"
       },
       "committer": {
         "time": "Fri Nov 29 15:15:00 2019 +0000"
       },
-      "message": "A commit that reverts another commit\\n\\nThis reverts commit $revertedHash.\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/$revertReview\\n\\n"
+      "message": "A commit that reverts another commit\\n\\nThis reverts commit $revertedCommitHash.\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/$revertReview\\n\\n"
     }
   ]
 }

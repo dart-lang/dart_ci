@@ -126,24 +126,8 @@ class FirestoreServiceImpl implements FirestoreService {
         ?.documentID;
   }
 
-  Future<void> storeResult(
-          Map<String, dynamic> change, int startIndex, int endIndex,
-          {bool approved, int landedReviewIndex, bool failure}) =>
-      firestore.collection('results').add(DocumentData.fromMap({
-            'name': change['name'],
-            'result': change['result'],
-            'previous_result': change['previous_result'] ?? 'new test',
-            'expected': change['expected'],
-            'blamelist_start_index': startIndex,
-            'blamelist_end_index': endIndex,
-            if (startIndex != endIndex && approved)
-              'pinned_index': landedReviewIndex,
-            'configurations': <String>[change['configuration']],
-            'approved': approved,
-            if (failure) 'active': true,
-            if (failure)
-              'active_configurations': <String>[change['configuration']]
-          }));
+  Future<void> storeResult(Map<String, dynamic> result) =>
+      firestore.collection('results').add(DocumentData.fromMap(result));
 
   Future<bool> updateResult(
       String result, String configuration, int startIndex, int endIndex,
@@ -176,6 +160,24 @@ class FirestoreServiceImpl implements FirestoreService {
         });
 
     return firestore.runTransaction(updateGroup);
+  }
+
+  Future<List<Map<String, dynamic>>> findRevertedChanges(int index) async {
+    QuerySnapshot pinned = await firestore
+        .collection('results')
+        .where('pinned_index', isEqualTo: index)
+        .get();
+    QuerySnapshot unpinned = await firestore
+        .collection('results')
+        .where('blamelist_end_index', isEqualTo: index)
+        .get();
+    return [
+      for (final document in pinned.documents) document.data.toMap(),
+      for (final document in unpinned.documents)
+        if (document.data.getInt('blamelist_start_index') == index &&
+            document.data.getInt('pinned_index') == null)
+          document.data.toMap(),
+    ];
   }
 
   Future<bool> storeTryChange(

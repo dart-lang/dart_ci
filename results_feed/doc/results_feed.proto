@@ -117,6 +117,7 @@ message Commit {
   string title = 5; // The first line of the commit message.
   int32 review = 6; // Optional: the id of the review this commit lands.
   string revert_of = 7; // Optional: the hash of the commit this commit reverts.
+  string reland_of = 8; // Optional: the hash of the relanded commit.
 }
 
 // A map from configuration names to builder names.

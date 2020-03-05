@@ -8,11 +8,14 @@ import 'package:http/http.dart' as http;
 import 'package:pool/pool.dart';
 
 import 'firestore.dart';
+import 'result.dart';
+import 'reverted_changes.dart';
 
 const prefix = ")]}'\n";
 
-bool isChangedResult(Map<String, dynamic> result) =>
-    result['changed'] && !result['flaky'] && !result['previous_flaky'];
+Iterable<int> range(int start, int end) sync* {
+  for (int i = start; i < end; ++i) yield i;
+}
 
 const months = const {
   'Jan': '01',
@@ -51,7 +54,12 @@ class Build {
   int buildNumber;
   int startIndex;
   int endIndex;
+  Map<String, dynamic> endCommit;
+  Future<void> _awaitCommits;
+  List<Map<String, dynamic>> commits;
   Map<String, int> tryApprovals = {};
+  List<RevertedChanges> allRevertedChanges = [];
+
   bool success = true; // Changed to false if any unapproved failure is seen.
   int countChanges = 0;
   int commitsFetched;
@@ -98,7 +106,7 @@ class Build {
   /// Saves the commit indices of the start and end of the blamelist.
   Future<void> storeBuildCommitsInfo() async {
     // Get indices of change.  Range includes startIndex and endIndex.
-    var endCommit = await firestore.getCommit(commitHash);
+    endCommit = await firestore.getCommit(commitHash);
     if (endCommit == null) {
       await getMissingCommits();
       endCommit = await firestore.getCommit(commitHash);
@@ -106,34 +114,46 @@ class Build {
         throw 'Result received with unknown commit hash $commitHash';
       }
     }
-    endIndex = endCommit['index'];
+    endIndex = endCommit[fIndex];
     // If this is a new builder, use the current commit as a trivial blamelist.
     if (firstResult['previous_commit_hash'] == null) {
       startIndex = endIndex;
     } else {
       final startCommit =
           await firestore.getCommit(firstResult['previous_commit_hash']);
-      startIndex = startCommit['index'] + 1;
+      startIndex = startCommit[fIndex] + 1;
       if (startIndex > endIndex) {
         throw ArgumentError("Results received with empty blamelist\n"
             "previous commit: ${firstResult['previous_commit_hash']}\n"
             "built commit: $commitHash");
       }
     }
-    Future<void> fetchApprovals(int review, int index) async {
-      if (review != null) {
-        for (final result in await firestore.tryApprovals(review)) {
-          tryApprovals[testResult(result)] = index;
-        }
-      }
-    }
-
-    await fetchApprovals(endCommit['review'], endIndex);
-    for (var index = startIndex; index < endIndex; ++index) {
-      await fetchApprovals(
-          (await firestore.getCommitByIndex(index))['review'], index);
-    }
   }
+
+  /// This async function's implementation runs exactly once.
+  /// Later invocations return the same future returned by the first invocation.
+  Future<void> fetchReviewsAndReverts() => _awaitCommits ??= () async {
+        commits = [
+          for (var index = startIndex; index < endIndex; ++index)
+            await firestore.getCommitByIndex(index),
+          endCommit
+        ];
+        for (final commit in commits) {
+          final index = commit[fIndex];
+          final review = commit[fReview];
+          final reverted = commit[fRevertOf];
+          if (review != null) {
+            tryApprovals.addAll({
+              for (final result in await firestore.tryApprovals(review))
+                testResult(result): index
+            });
+          }
+          if (reverted != null) {
+            allRevertedChanges
+                .add(await getRevertedChanges(reverted, index, firestore));
+          }
+        }
+      }();
 
   /// This function is idempotent, so every call of it should write the
   /// same info to new Firestore documents.  It is save to call multiple
@@ -141,7 +161,7 @@ class Build {
   Future<void> getMissingCommits() async {
     final lastCommit = await firestore.getLastCommit();
     final lastHash = lastCommit['id'];
-    final lastIndex = lastCommit['index'];
+    final lastIndex = lastCommit[fIndex];
 
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
     final range = '$lastHash..master';
@@ -169,14 +189,26 @@ class Build {
     var index = lastIndex + 1;
     for (Map<String, dynamic> commit in commits.reversed) {
       final review = _review(commit);
-      final reverted = _revert(commit);
+      var reverted = _revert(commit);
+      var relanded = _reland(commit);
+      if (relanded != null) {
+        reverted = null;
+      }
+      if (reverted != null) {
+        final revertedCommit = await firestore.getCommit(reverted);
+        if (revertedCommit != null && revertedCommit[fRevertOf] != null) {
+          reverted = null;
+          relanded = revertedCommit[fRevertOf];
+        }
+      }
       await firestore.addCommit(commit['commit'], {
-        'author': commit['author']['email'],
-        'created': parseGitilesDateTime(commit['committer']['time']),
-        'index': index,
-        'title': commit['message'].split('\n').first,
-        if (review != null) 'review': review,
-        if (reverted != null) 'revert_of': reverted
+        fAuthor: commit['author']['email'],
+        fCreated: parseGitilesDateTime(commit['committer']['time']),
+        fIndex: index,
+        fTitle: commit['message'].split('\n').first,
+        if (review != null) fReview: review,
+        if (reverted != null) fRevertOf: reverted,
+        if (relanded != null) fRelandOf: relanded,
       });
       if (review != null) {
         await landReview(commit, index);
@@ -204,18 +236,25 @@ class Build {
 
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;
-    final failure = !change['matches'];
+    await fetchReviewsAndReverts();
+    final failure = isFailure(change);
     var approved;
     String result = await firestore.findResult(change, startIndex, endIndex);
     List<Map<String, dynamic>> activeResults =
         await firestore.findActiveResults(change);
     if (result == null) {
-      final approvingReviewLandedIndex = tryApprovals[testResult(change)];
-      approved = approvingReviewLandedIndex != null;
-      await firestore.storeResult(change, startIndex, endIndex,
+      final approvingIndex = tryApprovals[testResult(change)] ??
+          allRevertedChanges
+              .firstWhere(
+                  (revertedChange) => revertedChange.approveRevert(change),
+                  orElse: () => null)
+              ?.revertIndex;
+      approved = approvingIndex != null;
+      final newResult = constructResult(change, startIndex, endIndex,
           approved: approved,
-          landedReviewIndex: approvingReviewLandedIndex,
+          landedReviewIndex: approvingIndex,
           failure: failure);
+      await firestore.storeResult(newResult);
       if (approved) {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10)
@@ -231,8 +270,8 @@ class Build {
 
     for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
-      if (activeResult['blamelist_end_index'] >= startIndex ||
-          !activeResult['active_configurations']
+      if (activeResult[fBlamelistEndIndex] >= startIndex ||
+          !activeResult[fActiveConfigurations]
               .contains(change['configuration'])) {
         print('Unexpected active result when processing new change:\n'
             'Active result: $activeResult\n\n'
@@ -262,9 +301,25 @@ final revertRegExp =
 String _revert(Map<String, dynamic> commit) =>
     revertRegExp.firstMatch(commit['message'])?.group(1);
 
-String testResult(Map<String, dynamic> change) => [
-      change['name'],
-      change['result'],
-      change['previous_result'] ?? 'new test',
-      change['expected']
-    ].join(' ');
+final relandRegExp =
+    RegExp('^This is a reland of ([\\da-f]+)\\.?\$', multiLine: true);
+
+String _reland(Map<String, dynamic> commit) =>
+    relandRegExp.firstMatch(commit['message'])?.group(1);
+
+Map<String, dynamic> constructResult(
+        Map<String, dynamic> change, int startIndex, int endIndex,
+        {bool approved, int landedReviewIndex, bool failure}) =>
+    {
+      fName: change[fName],
+      fResult: change[fResult],
+      fPreviousResult: change[fPreviousResult] ?? 'new test',
+      fExpected: change[fExpected],
+      fBlamelistStartIndex: startIndex,
+      fBlamelistEndIndex: endIndex,
+      if (startIndex != endIndex && approved) fPinnedIndex: landedReviewIndex,
+      fConfigurations: <String>[change['configuration']],
+      fApproved: approved,
+      if (failure) fActive: true,
+      if (failure) fActiveConfigurations: <String>[change['configuration']]
+    };

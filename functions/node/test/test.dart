@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 
 import '../builder.dart';
 import '../firestore.dart';
+import '../result.dart';
 import 'test_data.dart';
 
 class FirestoreServiceMock extends Mock implements FirestoreService {}
@@ -118,13 +119,13 @@ void main() async {
   test('fetch commit that is a revert', () async {
     final client = HttpClientMock();
     final firestore = FirestoreServiceMock();
-    when(firestore.getCommit(existingCommitHash))
-        .thenAnswer((_) => Future.value(existingCommit));
+    when(firestore.getCommit(landedCommitHash))
+        .thenAnswer((_) => Future.value(landedCommit));
     final revertResponses = [null, revertCommit];
     when(firestore.getCommit(revertCommitHash))
         .thenAnswer((_) => Future(() => revertResponses.removeAt(0)));
     when(firestore.getLastCommit()).thenAnswer(
-        (_) => Future(() => {...existingCommit, 'id': existingCommitHash}));
+        (_) => Future(() => {...landedCommit, 'id': landedCommitHash}));
 
     when(firestore.tryApprovals(any)).thenAnswer((_) => Future(() => []));
     when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
@@ -133,10 +134,10 @@ void main() async {
         .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
 
     final builder =
-        Build(revertCommitHash, revertCommitChange, null, firestore, client);
+        Build(revertCommitHash, revertUnchangedChange, null, firestore, client);
     await builder.storeBuildCommitsInfo();
     expect(builder.endIndex, revertCommit['index']);
-    expect(builder.startIndex, existingCommit['index'] + 1);
+    expect(builder.startIndex, landedCommit['index'] + 1);
     expect(builder.tryApprovals, {});
     verifyInOrder([
       verify(firestore.getCommit(revertCommitHash)).called(2),
@@ -145,7 +146,7 @@ void main() async {
       verify(firestore.reviewIsLanded(revertReview)),
       // We want to verify firestore.getCommit(revertCommitHash) here,
       // but it is already matched by the earlier check for the same call.
-      verify(firestore.getCommit(existingCommitHash)),
+      verify(firestore.getCommit(landedCommitHash)),
       verify(firestore.tryApprovals(revertReview))
     ]);
     verifyNoMoreInteractions(firestore);
@@ -181,10 +182,7 @@ void main() async {
       firestore.updateConfiguration(
           "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8"),
       firestore.findResult(any, 53, 54),
-      firestore.storeResult(any, 53, 54,
-          approved: argThat(isTrue, named: 'approved'),
-          landedReviewIndex: argThat(equals(54), named: 'landedReviewIndex'),
-          failure: argThat(isTrue, named: 'failure'))
+      firestore.storeResult(any),
     ]);
   });
 
@@ -222,9 +220,7 @@ void main() async {
     verifyInOrder([
       firestore.findResult(any, 53, 54),
       firestore.findActiveResults(landedCommitChange),
-      firestore.storeResult(any, 53, 54,
-          approved: argThat(isFalse, named: 'approved'),
-          failure: argThat(isTrue, named: 'failure')),
+      firestore.storeResult(any),
       firestore.updateActiveResult(
           activeResult, landedCommitChange['configuration'])
     ]);
