@@ -5,6 +5,7 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
+// Field names of Result document fields
 const fName = 'name';
 const fResult = 'result';
 const fPreviousResult = 'previous_result';
@@ -33,7 +34,8 @@ String testResult(Map<String, dynamic> change) => [
       change[fExpected]
     ].join(' ');
 
-// Fields for commit document
+// Field names of commit document fields
+const fHash = 'hash';
 const fIndex = 'index';
 const fAuthor = 'author';
 const fCreated = 'created';

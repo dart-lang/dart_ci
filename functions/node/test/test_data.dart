@@ -4,77 +4,100 @@
 
 import 'dart:core';
 
-Map<String, dynamic> fakeFirestoreCommits = {
-  existingCommitHash: existingCommit,
-  previousCommitHash: previousCommit,
-  commit53Hash: commit53,
-  landedCommitHash: landedCommit
-};
+Map<String, dynamic> fakeFirestoreCommits = Map.unmodifiable({
+  revertedCommitHash: revertedCommit, // 50
+  previousCommitHash: previousCommit, // 51
+  existingCommitHash: existingCommit, // 52
+  commit53Hash: commit53, // 53
+  landedCommitHash: landedCommit, // 54
+  revertCommitHash: revertCommit, // 55
+});
+
+Map<String, Map<String, dynamic>> fakeFirestoreResults = Map.unmodifiable({
+  'activeFailureResultID': activeFailureResult,
+  'activeResultID': activeResult,
+  'revertResultID': revertResult,
+  'revertedResultID': revertedResult,
+});
+
+const List<Map<String, dynamic>> fakeFirestoreTryResults = [
+  review44445Result,
+  review77779Result,
+];
+
+// Test commits. These are test commit documents from Firestore.
+// When they are returned from the FirestoreService API, their hash
+// is added to the map with key 'hash'.
+const String revertedCommitHash = '50abcd55abcd';
+const int revertedReview = 3926;
+const int revertedIndex = 50;
+Map<String, dynamic> revertedCommit = Map.unmodifiable({
+  'author': 'gerrit_reverted_user@example.com',
+  'created': DateTime.parse('2019-11-22 02:01:00Z'),
+  'index': revertedIndex,
+  'title': 'A commit reverted by commit 55, with index 50',
+  'review': revertedReview,
+  'hash': revertedCommitHash,
+});
+
+const String previousCommitHash = 'a previous existing commit hash';
+const int previousCommitIndex = 51;
+Map<String, dynamic> previousCommit = Map.unmodifiable({
+  'author': 'previous_user@example.com',
+  'created': DateTime.parse('2019-11-24 11:18:00Z'),
+  'index': previousCommitIndex,
+  'title': 'A commit used for testing, with index 51',
+  'hash': previousCommitHash,
+});
 
 const String existingCommitHash = 'an already existing commit hash';
 const int existingCommitIndex = 52;
-Map<String, dynamic> existingCommit = {
+Map<String, dynamic> existingCommit = Map.unmodifiable({
   'author': 'test_user@example.com',
   'created': DateTime.parse('2019-11-22 22:19:00Z'),
   'index': existingCommitIndex,
-  'title': 'A commit used for testing, with index 52'
-};
-
-const String previousCommitHash = 'a previous existing commit hash';
-Map<String, dynamic> previousCommit = {
-  'author': 'previous_user@example.com',
-  'created': DateTime.parse('2019-11-24 11:18:00Z'),
-  'index': 49,
-  'title': 'A commit used for testing, with index 49'
-};
+  'title': 'A commit used for testing, with index 52',
+  'hash': existingCommitHash,
+});
 
 const String commit53Hash = 'commit 53 landing CL 77779 hash';
-const int commit53Index = existingCommitIndex + 1;
-Map<String, dynamic> commit53 = {
+const int commit53Index = 53;
+Map<String, dynamic> commit53 = Map.unmodifiable({
   'author': 'user@example.com',
   'created': DateTime.parse('2019-11-28 12:07:55 +0000'),
   'index': commit53Index,
   'title': 'A commit on the git log',
-  'review': 77779
-};
-
-const String newCommitHash = landedCommitHash;
-Map<String, dynamic> newCommitChange = landedCommitChange;
+  'hash': commit53Hash,
+  'review': 77779,
+});
 
 const String landedCommitHash = 'a commit landing a CL hash';
-const int landedCommitIndex = commit53Index + 1;
-
-Map<String, dynamic> landedCommit = {
+const int landedCommitIndex = 54;
+Map<String, dynamic> landedCommit = Map.unmodifiable({
   'author': 'gerrit_user@example.com',
   'created': DateTime.parse('2019-11-29 15:15:00Z'),
   'index': landedCommitIndex,
   'title': 'A commit used for testing tryjob approvals, with index 54',
+  'hash': landedCommitHash,
   'review': 44445
-};
+});
 
-const String revertCommitHash = 'commit reverting commit 48 hash';
+const String revertCommitHash = 'commit reverting commit 50 hash';
 const int revertReview = 3426;
-const int revertIndex = landedCommitIndex + 1;
-Map<String, dynamic> revertCommit = {
+const int revertIndex = 55;
+Map<String, dynamic> revertCommit = Map.unmodifiable({
   'author': 'gerrit_revert_user@example.com',
   'created': DateTime.parse('2019-11-29 16:15:00Z'),
   'index': revertIndex,
-  'title': 'A commit reverting commit 48, with index 55',
+  'title': 'A commit reverting commit 50, with index 55',
+  'hash': revertCommitHash,
   'review': revertReview,
   'revert_of': revertedCommitHash,
-};
+});
 
-const String revertedCommitHash = '48abcd55abcd';
-const int revertedReview = 3926;
-const int revertedIndex = 48;
-Map<String, dynamic> revertedCommit = {
-  'author': 'gerrit_reverted_user@example.com',
-  'created': DateTime.parse('2019-11-22 02:01:00Z'),
-  'index': revertedIndex,
-  'title': 'A commit reverted by commit 55, with index 48',
-  'review': revertedReview,
-};
-
+/// Changes
+/// These are single lines from a result.json, representing the output
+/// of a single test on a single configuration on a single build.
 const Map<String, dynamic> existingCommitChange = {
   "name": "dart2js_extra/local_function_signatures_strong_test/none",
   "configuration": "dart2js-new-rti-linux-x64-d8",
@@ -163,20 +186,6 @@ const Map<String, dynamic> revertChange = {
   "changed": true,
 };
 
-const Map<String, dynamic> revertResult = {
-  "configurations": ["a_different_configuration"],
-  "active": true,
-  "active_configurations": ["a_different_configuration"],
-  "name": "test_suite/fixed_broken_test",
-  "result": "RuntimeError",
-  "expected": "Pass",
-  "previous_result": "Pass",
-  "blamelist_start_index": 53,
-  "blamelist_end_index": 55,
-  "pinned_index": 55,
-  "approved": true,
-};
-
 const Map<String, dynamic> revertedChange = {
   "name": "test_suite/fixed_broken_test",
   "configuration": "a_configuration",
@@ -200,18 +209,30 @@ const Map<String, dynamic> revertedChange = {
   "changed": true
 };
 
+/// Results
+/// These are test Result documents, as stored in Firestore.
+const Map<String, dynamic> revertResult = {
+  "configurations": ["a_different_configuration"],
+  "active": true,
+  "active_configurations": ["a_different_configuration"],
+  "name": "test_suite/fixed_broken_test",
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+  "blamelist_start_index": commit53Index,
+  "blamelist_end_index": revertIndex,
+  "pinned_index": revertIndex,
+  "approved": true,
+};
+
 const Map<String, dynamic> revertedResult = {
   "configurations": ["a_configuration"],
   "name": "test_suite/fixed_broken_test",
   "result": "Pass",
   "expected": "Pass",
   "previous_result": "RuntimeError",
-  "blamelist_start_index": 48,
-  "blamelist_end_index": 48,
-};
-
-Map<String, Map<String, dynamic>> fakeFirestoreResults = {
-  'activeFailureResultID': activeFailureResult
+  "blamelist_start_index": revertedIndex,
+  "blamelist_end_index": revertedIndex,
 };
 
 const Map<String, dynamic> activeFailureResult = {
@@ -227,10 +248,29 @@ const Map<String, dynamic> activeFailureResult = {
   "blamelist_end_index": 67195
 };
 
-const List<Map<String, dynamic>> tryjobResults = [
-  review44445Result,
-  review77779Result
-];
+// A result on existingCommit that is overridden by the new result in
+// landedCommitChange.
+Map<String, dynamic> activeResult = {
+  "name": landedCommitChange["name"],
+  "blamelist_start_index": existingCommitIndex,
+  "blamelist_end_index": existingCommitIndex,
+  "configurations": [
+    landedCommitChange["configuration"],
+    'another configuration'
+  ],
+  "active_configurations": [
+    landedCommitChange["configuration"],
+    'another configuration'
+  ],
+  "active": true,
+  "approved": false,
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+};
+
+/// Try results
+/// These are documents from the try_results table in Firestore.
 const Map<String, dynamic> review44445Result = {
   "review": 44445,
   "configurations": [
@@ -389,12 +429,12 @@ String revertGitilesLog = '''
       "commit": "$revertCommitHash",
       "parents": ["$landedCommitHash"],
       "author": {
-        "email": "gerrit_user@example.com"
+        "email": "gerrit_revert_user@example.com"
       },
       "committer": {
-        "time": "Fri Nov 29 15:15:00 2019 +0000"
+        "time": "Fri Nov 29 16:15:00 2019 +0000"
       },
-      "message": "A commit that reverts another commit\\n\\nThis reverts commit $revertedCommitHash.\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/$revertReview\\n\\n"
+      "message": "A commit reverting commit 50, with index 55\\n\\nThis reverts commit $revertedCommitHash.\\nChange-Id: I89b88c3d9f7c743fc340ee73a45c3f57059bcf30\\nReviewed-on: https://dart-review.googlesource.com/c/sdk/+/$revertReview\\n\\n"
     }
   ]
 }

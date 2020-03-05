@@ -4,225 +4,54 @@
 
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
-import 'package:http/http.dart';
 
-import '../builder.dart';
-import '../firestore.dart';
 import '../result.dart';
+import 'fakes.dart';
 import 'test_data.dart';
 
-class FirestoreServiceMock extends Mock implements FirestoreService {}
-
-class HttpClientMock extends Mock implements BaseClient {}
-
-class ResponseFake extends Fake implements Response {
-  String body;
-  ResponseFake(this.body);
-}
-
 void main() async {
-  test("Store already existing commit", () async {
-    final client = HttpClientMock();
-    final firestore = FirestoreServiceMock();
-    when(firestore.getCommit(existingCommitHash))
-        .thenAnswer((_) => Future.value(existingCommit));
-    when(firestore.getCommit(previousCommitHash))
-        .thenAnswer((_) => Future.value(previousCommit));
-    when(firestore.getCommitByIndex(any))
-        .thenAnswer((_) => Future.value(commit53));
-    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
-        tryjobResults
-            .where((result) => result['review'] == 77779)
-            .where((result) => result['approved'] == true)
-            .toList()));
-
-    final builder = Build(
-        existingCommitHash, existingCommitChange, null, firestore, client);
-    await builder.storeBuildCommitsInfo();
-    expect(builder.endIndex, existingCommit['index']);
-    expect(builder.startIndex, previousCommit['index'] + 1);
-    verifyInOrder([
-      firestore.getCommit(existingCommitHash),
-      firestore.getCommit(previousCommitHash),
-      firestore.getCommitByIndex(50),
-      firestore.tryApprovals(77779),
-      firestore.getCommitByIndex(51),
-      firestore.tryApprovals(77779),
-    ]);
-    verifyNoMoreInteractions(firestore);
-    verifyZeroInteractions(client);
+  test("Get info for already saved commit", () async {
+    final builderTest = BuilderTest(existingCommitHash, existingCommitChange);
+    await builderTest.storeBuildCommitsInfo();
+    expect(builderTest.builder.endIndex, existingCommitIndex);
+    expect(builderTest.builder.startIndex, previousCommitIndex + 1);
   });
 
   test("Link landed commit to review", () async {
-    final client = HttpClientMock();
-    final firestore = FirestoreServiceMock();
-    when(firestore.getCommit(existingCommitHash))
-        .thenAnswer((_) => Future.value(existingCommit));
-    final landedResponses = [null, landedCommit];
-    when(firestore.getCommit(landedCommitHash))
-        .thenAnswer((_) => Future(() => landedResponses.removeAt(0)));
-    when(firestore.getCommitByIndex(53))
-        .thenAnswer((_) => Future.value(commit53));
-    when(firestore.getLastCommit()).thenAnswer(
-        (_) => Future(() => {...existingCommit, 'id': existingCommitHash}));
-    when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
-        tryjobResults
-            .where((result) => result['review'] == 44445)
-            .where((result) => result['approved'])
-            .toList()));
-    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
-        tryjobResults
-            .where((result) => result['review'] == 77779)
-            .where((result) => result['approved'])
-            .toList()));
-    when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
-
-    when(client.get(any))
+    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    builderTest.firestore.commits
+        .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
+    when(builderTest.client.get(any))
         .thenAnswer((_) => Future(() => ResponseFake(gitilesLog)));
-
-    final builder =
-        Build(landedCommitHash, landedCommitChange, null, firestore, client);
-    await builder.storeBuildCommitsInfo();
-    expect(builder.endIndex, landedCommit['index']);
-    expect(builder.startIndex, existingCommit['index'] + 1);
-    expect(builder.tryApprovals,
-        {testResult(tryjobResults[0]): 54, testResult(tryjobResults[1]): 53});
-    verifyInOrder([
-      verify(firestore.getCommit(landedCommitHash)).called(2),
-      verify(firestore.getLastCommit()),
-      verify(firestore.addCommit(commit53Hash, {
-        'author': 'user@example.com',
-        'created': DateTime.parse('2019-11-28 12:07:55 +0000'),
-        'index': 53,
-        'title': 'A commit on the git log',
-        'review': 77779
-      })),
-      verify(firestore.reviewIsLanded(77779)),
-      verify(firestore.addCommit(landedCommitHash, {
-        'author': 'gerrit_user@example.com',
-        'created': DateTime.parse('2019-11-29 15:15:00 +0000'),
-        'index': 54,
-        'title': 'A commit used for testing tryjob approvals, with index 54',
-        'review': 44445
-      })),
-      verify(firestore.reviewIsLanded(44445)),
-      // We want to verify firestore.getCommit(landedCommitHash) here,
-      // but it is already matched by the earlier check for the same call.
-      verify(firestore.getCommit(existingCommitHash)),
-      verify(firestore.tryApprovals(44445)),
-      verify(firestore.getCommitByIndex(53)),
-      verify(firestore.tryApprovals(77779))
-    ]);
-    verifyNoMoreInteractions(firestore);
-  });
-
-  test('fetch commit that is a revert', () async {
-    final client = HttpClientMock();
-    final firestore = FirestoreServiceMock();
-    when(firestore.getCommit(landedCommitHash))
-        .thenAnswer((_) => Future.value(landedCommit));
-    final revertResponses = [null, revertCommit];
-    when(firestore.getCommit(revertCommitHash))
-        .thenAnswer((_) => Future(() => revertResponses.removeAt(0)));
-    when(firestore.getLastCommit()).thenAnswer(
-        (_) => Future(() => {...landedCommit, 'id': landedCommitHash}));
-
-    when(firestore.tryApprovals(any)).thenAnswer((_) => Future(() => []));
-    when(firestore.reviewIsLanded(any)).thenAnswer((_) => Future.value(true));
-
-    when(client.get(any))
-        .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
-
-    final builder =
-        Build(revertCommitHash, revertUnchangedChange, null, firestore, client);
-    await builder.storeBuildCommitsInfo();
-    expect(builder.endIndex, revertCommit['index']);
-    expect(builder.startIndex, landedCommit['index'] + 1);
-    expect(builder.tryApprovals, {});
-    verifyInOrder([
-      verify(firestore.getCommit(revertCommitHash)).called(2),
-      verify(firestore.getLastCommit()),
-      verify(firestore.addCommit(revertCommitHash, revertCommit)),
-      verify(firestore.reviewIsLanded(revertReview)),
-      // We want to verify firestore.getCommit(revertCommitHash) here,
-      // but it is already matched by the earlier check for the same call.
-      verify(firestore.getCommit(landedCommitHash)),
-      verify(firestore.tryApprovals(revertReview))
-    ]);
-    verifyNoMoreInteractions(firestore);
-  });
-
-  test("copy approvals from try results", () async {
-    final firestore = FirestoreServiceMock();
-    final client = HttpClientMock();
-    when(firestore.getCommit(existingCommitHash))
-        .thenAnswer((_) => Future.value(existingCommit));
-    when(firestore.getCommit(landedCommitHash))
-        .thenAnswer((_) => Future.value(landedCommit));
-    when(firestore.getCommitByIndex(53))
-        .thenAnswer((_) => Future.value(commit53));
-    when(firestore.tryApprovals(44445)).thenAnswer((_) => Future(() =>
-        tryjobResults
-            .where((result) => result['review'] == 44445)
-            .where((result) => result['approved'] == true)
-            .toList()));
-    when(firestore.tryApprovals(77779)).thenAnswer((_) => Future(() =>
-        tryjobResults
-            .where((result) => result['review'] == 77779)
-            .where((result) => result['approved'] == true)
-            .toList()));
-    when(firestore.findActiveResults(any)).thenAnswer((_) => Future.value([]));
-
-    final builder =
-        Build(landedCommitHash, landedCommitChange, null, firestore, client);
-    await builder.process([landedCommitChange]);
-
-    verifyZeroInteractions(client);
-    verifyInOrder([
-      firestore.updateConfiguration(
-          "dart2js-new-rti-linux-x64-d8", "dart2js-rti-linux-x64-d8"),
-      firestore.findResult(any, 53, 54),
-      firestore.storeResult(any),
-    ]);
+    await builderTest.storeBuildCommitsInfo();
+    await builderTest.builder.fetchReviewsAndReverts();
+    expect(builderTest.builder.endIndex, landedCommitIndex);
+    expect(builderTest.builder.startIndex, existingCommitIndex + 1);
+    expect(builderTest.builder.tryApprovals,
+        {testResult(review44445Result): 54, testResult(review77779Result): 53});
+    expect(await builderTest.firestore.getCommit(commit53Hash), commit53);
+    expect(
+        await builderTest.firestore.getCommit(landedCommitHash), landedCommit);
   });
 
   test("update previous active result", () async {
-    final activeResult = {
-      'blamelist_end_index': 52,
-      'configurations': [
-        landedCommitChange['configuration'],
-        'another configuration'
-      ],
-      'active_configurations': [
-        landedCommitChange['configuration'],
-        'another configuration'
-      ],
-      'active': true
-    };
+    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    await builderTest.storeBuildCommitsInfo();
+    await builderTest.storeChange(landedCommitChange);
+    expect(builderTest.builder.success, true);
+    expect(
+        builderTest.firestore.results['activeResultID'],
+        Map.from(activeResult)
+          ..[fActiveConfigurations] = ['another configuration']);
 
-    final firestore = FirestoreServiceMock();
-    final client = HttpClientMock();
-
-    when(firestore.findActiveResults(any))
-        .thenAnswer((_) => Future.value([activeResult]));
-
-    final builder =
-        Build(landedCommitHash, landedCommitChange, null, firestore, client);
-    builder.startIndex = 53;
-    builder.endIndex = 54;
-
-    await builder.storeChange(landedCommitChange);
-
-    expect(builder.countApprovalsCopied, 0);
-    expect(builder.countChanges, 1);
-    expect(builder.success, false);
-    verifyZeroInteractions(client);
-    verifyInOrder([
-      firestore.findResult(any, 53, 54),
-      firestore.findActiveResults(landedCommitChange),
-      firestore.storeResult(any),
-      firestore.updateActiveResult(
-          activeResult, landedCommitChange['configuration'])
-    ]);
+    final changeAnotherConfiguration =
+        Map<String, dynamic>.from(landedCommitChange)
+          ..['configuration'] = 'another configuration';
+    await builderTest.storeChange(changeAnotherConfiguration);
+    expect(builderTest.builder.success, true);
+    expect(builderTest.firestore.results['activeResultID'],
+        Map.from(activeResult)..remove(fActiveConfigurations)..remove(fActive));
+    expect(builderTest.builder.countApprovalsCopied, 1);
+    expect(builderTest.builder.countChanges, 2);
   });
 }
