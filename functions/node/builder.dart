@@ -160,7 +160,7 @@ class Build {
   /// times simultaneously.
   Future<void> getMissingCommits() async {
     final lastCommit = await firestore.getLastCommit();
-    final lastHash = lastCommit[fHash];
+    final lastHash = lastCommit['id'];
     final lastIndex = lastCommit[fIndex];
 
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
