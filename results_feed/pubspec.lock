@@ -450,7 +450,7 @@ packages:
     source: hosted
     version: "1.4.0"
   protobuf:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: protobuf
       url: "https://pub.dartlang.org"
@@ -688,4 +688,4 @@ packages:
     source: hosted
     version: "2.2.0"
 sdks:
-  dart: ">=2.7.0-dev <=2.8.0-dev.9.0"
+  dart: ">=2.7.0-dev <=2.8.0-dev.11.0"
