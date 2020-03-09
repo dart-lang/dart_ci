@@ -160,7 +160,9 @@ class Build {
   /// times simultaneously.
   Future<void> getMissingCommits() async {
     final lastCommit = await firestore.getLastCommit();
-    final lastHash = lastCommit['id'];
+    // Unit tests api uses 'hash', FirestoreService uses 'id'.
+    // FirestoreService is changed to 'hash' in follow-up CL.
+    final lastHash = lastCommit['id'] ?? lastCommit['hash'];
     final lastIndex = lastCommit[fIndex];
 
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
@@ -180,7 +182,7 @@ class Build {
     commitsFetched = commits.length;
     final first = commits.last as Map<String, dynamic>;
     if (first['parents'].first != lastHash) {
-      throw 'First new commit ${first['parents'].first} is not'
+      throw 'First new commit $first is not'
           ' a child of last known commit $lastHash when fetching new commits';
     }
     if (!commits.any((commit) => commit['commit'] == commitHash)) {

@@ -10,6 +10,11 @@ import 'fakes.dart';
 import 'test_data.dart';
 
 void main() async {
+  test('Base builder test', () async {
+    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    await builderTest.update();
+  });
+
   test("Get info for already saved commit", () async {
     final builderTest = BuilderTest(existingCommitHash, existingCommitChange);
     await builderTest.storeBuildCommitsInfo();

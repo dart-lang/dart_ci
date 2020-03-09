@@ -87,14 +87,13 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   Future<List<Map<String, dynamic>>> findActiveResults(
-          Map<String, dynamic> change) async {
+      Map<String, dynamic> change) async {
     return [
       for (final id in results.keys)
         if (results[id][fName] == change[fName] &&
             results[id][fActiveConfigurations] != null &&
-            results[id][fActiveConfigurations].contains(
-              change['configuration']
-            ))
+            results[id][fActiveConfigurations]
+                .contains(change['configuration']))
           results[id]..['id'] = id
     ];
   }
