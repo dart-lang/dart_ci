@@ -71,11 +71,15 @@ Map<String, dynamic> landedCommit = Map.unmodifiable({
 /// Changes
 /// These are single lines from a result.json, representing the output
 /// of a single test on a single configuration on a single build.
+const String sampleTestName = "local_function_signatures_strong_test/none";
+const String sampleTestSuite = "dart2js_extra";
+const String sampleTest = "$sampleTestSuite/$sampleTestName";
+
 const Map<String, dynamic> existingCommitChange = {
-  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "name": sampleTest,
   "configuration": "dart2js-new-rti-linux-x64-d8",
-  "suite": "dart2js_extra",
-  "test_name": "local_function_signatures_strong_test/none",
+  "suite": sampleTestSuite,
+  "test_name": sampleTestName,
   "time_ms": 2384,
   "result": "Pass",
   "expected": "Pass",
@@ -95,10 +99,10 @@ const Map<String, dynamic> existingCommitChange = {
 };
 
 const Map<String, dynamic> landedCommitChange = {
-  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "name": sampleTest,
   "configuration": "dart2js-new-rti-linux-x64-d8",
-  "suite": "dart2js_extra",
-  "test_name": "local_function_signatures_strong_test/none",
+  "suite": sampleTestSuite,
+  "test_name": sampleTestName,
   "time_ms": 2384,
   "result": "RuntimeError",
   "expected": "Pass",
@@ -135,19 +139,39 @@ const Map<String, dynamic> activeFailureResult = {
 // A result on existingCommit that is overridden by the new result in
 // landedCommitChange.
 Map<String, dynamic> activeResult = {
-  "name": landedCommitChange["name"],
+  "name": sampleTest,
   "blamelist_start_index": existingCommitIndex,
   "blamelist_end_index": existingCommitIndex,
   "configurations": [
     landedCommitChange["configuration"],
     'another configuration'
-  ],
+  ]..sort(),
   "active_configurations": [
     landedCommitChange["configuration"],
     'another configuration'
-  ],
+  ]..sort(),
   "active": true,
   "approved": false,
+  "result": "RuntimeError",
+  "expected": "Pass",
+  "previous_result": "Pass",
+};
+
+Map<String, dynamic> landedResult = {
+  "name": sampleTest,
+  "blamelist_start_index": existingCommitIndex + 1,
+  "blamelist_end_index": landedCommitIndex,
+  "pinned_index": landedCommitIndex,
+  "configurations": [
+    'another configuration',
+    landedCommitChange["configuration"],
+  ]..sort(),
+  "active_configurations": [
+    landedCommitChange["configuration"],
+    'another configuration'
+  ]..sort(),
+  "active": true,
+  "approved": true,
   "result": "RuntimeError",
   "expected": "Pass",
   "previous_result": "Pass",
@@ -162,7 +186,7 @@ const Map<String, dynamic> review44445Result = {
     "dartk-reload-rollback-linux-debug-x64",
     "dartk-reload-linux-debug-x64"
   ],
-  "name": "dart2js_extra/local_function_signatures_strong_test/none",
+  "name": sampleTest,
   "patchset": 1,
   "result": "RuntimeError",
   "expected": "Pass",

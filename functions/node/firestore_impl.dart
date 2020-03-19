@@ -20,21 +20,31 @@ Firestore createFirestore() {
 }
 
 class FirestoreServiceImpl implements FirestoreService {
+  Future<bool> isStaging() =>
+      firestore.collection('staging').get().then((s) => s.isNotEmpty);
+
   Future<bool> hasPatchset(String review, String patchset) => firestore
       .document('reviews/$review/patchsets/$patchset')
       .get()
       .then((s) => s.exists);
 
+  Map<String, dynamic> _commit(DocumentSnapshot document) {
+    if (document.exists) {
+      return document.data.toMap()..['hash'] = document.documentID;
+    }
+    return null;
+  }
+
   Future<Map<String, dynamic>> getCommit(String hash) => firestore
       .document('commits/$hash')
       .get()
-      .then((s) => s.exists ? s.data.toMap() : null);
+      .then((document) => _commit(document));
 
   Future<Map<String, dynamic>> getCommitByIndex(int index) => firestore
       .collection('commits')
       .where('index', isEqualTo: index)
       .get()
-      .then((s) => s.documents.first.data.toMap());
+      .then((s) => _commit(s.documents.first));
 
   Future<Map<String, dynamic>> getLastCommit() async {
     QuerySnapshot lastCommit = await firestore
@@ -42,9 +52,7 @@ class FirestoreServiceImpl implements FirestoreService {
         .orderBy('index', descending: true)
         .limit(1)
         .get();
-    final result = lastCommit.documents.first.data.toMap();
-    result['id'] = lastCommit.documents.first.documentID;
-    return result;
+    return _commit(lastCommit.documents.first);
   }
 
   Future<void> addCommit(String id, Map<String, dynamic> data) async {

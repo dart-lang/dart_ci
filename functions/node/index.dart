@@ -7,8 +7,11 @@ import 'package:node_http/node_http.dart' as http;
 import 'package:node_interop/node.dart';
 
 import 'builder.dart';
+import 'commits_cache.dart';
 import 'firestore_impl.dart';
 import 'tryjob.dart';
+
+final commits = CommitsCache(FirestoreServiceImpl(), http.NodeClient());
 
 void main() {
   functions['receiveChanges'] =
@@ -23,15 +26,15 @@ Future<void> receiveChanges(Message message, EventContext context) async {
       ? int.parse(message.attributes['num_chunks'])
       : null;
   final String buildbucketID = message.attributes['buildbucket_id'];
+  final String baseRevision = message.attributes['base_revision'];
   try {
     var firestore = FirestoreServiceImpl();
     if (commit.startsWith('refs/changes')) {
-      return await Tryjob(
-              commit, countChunks, buildbucketID, firestore, http.NodeClient())
+      return await Tryjob(commit, countChunks, buildbucketID, baseRevision,
+              commits, firestore, http.NodeClient())
           .process(results);
     } else {
-      return await Build(
-              commit, first, countChunks, firestore, http.NodeClient())
+      return await Build(commit, first, countChunks, commits, firestore)
           .process(results);
     }
   } catch (e, trace) {

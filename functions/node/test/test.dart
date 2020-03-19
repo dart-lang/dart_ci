@@ -58,5 +58,13 @@ void main() async {
         Map.from(activeResult)..remove(fActiveConfigurations)..remove(fActive));
     expect(builderTest.builder.countApprovalsCopied, 1);
     expect(builderTest.builder.countChanges, 2);
+    expect(
+        builderTest.firestore.results[await builderTest.firestore.findResult(
+            landedCommitChange, landedCommitIndex, landedCommitIndex)],
+        landedResult);
+    expect(
+        (await builderTest.firestore.findActiveResults(landedCommitChange))
+          ..single.remove('id'),
+        [landedResult]);
   });
 }

@@ -5,6 +5,7 @@
 import 'package:http/http.dart' as http show BaseClient;
 import 'package:pool/pool.dart';
 
+import 'commits_cache.dart';
 import 'firestore.dart';
 import 'gerrit_change.dart';
 
@@ -15,7 +16,9 @@ class Tryjob {
   static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   final http.BaseClient httpClient;
   final FirestoreService firestore;
+  final CommitsCache commits;
   String builderName;
+  String baseRevision;
   int buildNumber;
   int review;
   int patchset;
@@ -25,8 +28,8 @@ class Tryjob {
   int countChanges = 0;
   int countUnapproved = 0;
 
-  Tryjob(String changeRef, this.countChunks, this.buildbucketID, this.firestore,
-      this.httpClient) {
+  Tryjob(String changeRef, this.countChunks, this.buildbucketID,
+      this.baseRevision, this.commits, this.firestore, this.httpClient) {
     final match = changeRefRegExp.matchAsPrefix(changeRef);
     review = int.parse(match[1]);
     patchset = int.parse(match[2]);

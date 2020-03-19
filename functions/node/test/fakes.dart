@@ -10,6 +10,7 @@ import 'package:mockito/mockito.dart';
 import 'package:http/http.dart';
 
 import '../builder.dart';
+import '../commits_cache.dart';
 import '../firestore.dart';
 import '../result.dart';
 import 'test_data.dart';
@@ -17,12 +18,14 @@ import 'test_data.dart';
 class BuilderTest {
   final client = HttpClientMock();
   final firestore = FirestoreServiceFake();
+  CommitsCache commitsCache;
   Build builder;
   String commitHash;
   Map<String, dynamic> firstChange;
 
   BuilderTest(this.commitHash, this.firstChange) {
-    builder = Build(commitHash, firstChange, null, firestore, client);
+    commitsCache = CommitsCache(firestore, client);
+    builder = Build(commitHash, firstChange, null, commitsCache, firestore);
   }
 
   Future<void> update() async {
@@ -94,7 +97,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
             results[id][fActiveConfigurations] != null &&
             results[id][fActiveConfigurations]
                 .contains(change['configuration']))
-          results[id]..['id'] = id
+          Map.from(results[id])..['id'] = id
     ];
   }
 

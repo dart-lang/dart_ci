@@ -21,7 +21,7 @@ import 'test_data.dart';
 
 void main() async {
   final firestore = fs.FirestoreServiceImpl();
-  if ((await fs.firestore.collection('staging').get()).isEmpty) {
+  if (!await firestore.isStaging()) {
     console
         .error('Error: firestore_test_nodejs.dart is being run on production');
     throw (TestFailure(
@@ -163,7 +163,8 @@ void main() async {
         ..addAll(
             {'commit_hash': testPreviousPatchsetPath, 'build_number': '307'});
       final buildID0 = 'test buildbucket id 0';
-      await Tryjob(testPreviousPatchsetPath, 1, buildID0, firestore, null)
+      await Tryjob(testPreviousPatchsetPath, 1, buildID0, null, null, firestore,
+              null)
           .process([previousFailingChange]);
       var snapshot = await fs.firestore
           .collection('try_results')
@@ -180,10 +181,10 @@ void main() async {
           {'number': testPreviousPatchset});
       // Send first chunk with a previously approved result and a passing result
       final buildID1 = 'test buildbucket id 1';
-      await Tryjob(testReviewPath, null, buildID1, firestore, null)
+      await Tryjob(testReviewPath, null, buildID1, null, null, firestore, null)
           .process([tryjobPassingChange, tryjobFailingChange]);
       // Send second & final chunk with an unchanged failure.
-      await Tryjob(testReviewPath, 2, buildID1, firestore, null)
+      await Tryjob(testReviewPath, 2, buildID1, null, null, firestore, null)
           .process([tryjobExistingFailure, tryjobFailingChange]);
       // Verify state
       snapshot = await fs.firestore
@@ -215,7 +216,7 @@ void main() async {
       // Send first chunk of second run on the same patchset, with an approved
       // failure and an unapproved failure.
       final buildID2 = 'test buildbucket id 2';
-      await Tryjob(testReviewPath, null, buildID2, firestore, null)
+      await Tryjob(testReviewPath, null, buildID2, null, null, firestore, null)
           .process([tryjob2OtherFailingChange, tryjob2FailingChange]);
       final reference = fs.firestore
           .document('try_builds/$testBuilder:$testReview:$testPatchset');
@@ -227,7 +228,7 @@ void main() async {
       expect(document.data.getInt('num_chunks'), isNull);
       expect(document.data.getInt('processed_chunks'), 1);
       // Send second chunk.
-      await Tryjob(testReviewPath, 3, buildID2, firestore, null)
+      await Tryjob(testReviewPath, 3, buildID2, null, null, firestore, null)
           .process([tryjob2ExistingFailure]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
@@ -236,7 +237,7 @@ void main() async {
       expect(document.data.getInt('num_chunks'), 3);
       expect(document.data.getInt('processed_chunks'), 2);
       // Send third and final chunk.
-      await Tryjob(testReviewPath, null, buildID2, firestore, null)
+      await Tryjob(testReviewPath, null, buildID2, null, null, firestore, null)
           .process([tryjob2PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isFalse);
@@ -247,7 +248,7 @@ void main() async {
 
       // Send first chunk of a third run, with only one chunk.
       final buildID3 = 'test buildbucket id 3';
-      await Tryjob(testReviewPath, 1, buildID3, firestore, null)
+      await Tryjob(testReviewPath, 1, buildID3, null, null, firestore, null)
           .process([tryjob3PassingChange]);
       document = await reference.get();
       expect(document.data.getBool('success'), isTrue);
