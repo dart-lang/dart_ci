@@ -2,12 +2,14 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http show BaseClient;
 import 'package:pool/pool.dart';
 
 import 'commits_cache.dart';
 import 'firestore.dart';
 import 'gerrit_change.dart';
+import 'result.dart';
 
 bool isChangedResult(Map<String, dynamic> result) =>
     result['changed'] && !result['flaky'] && !result['previous_flaky'];
@@ -19,10 +21,13 @@ class Tryjob {
   final CommitsCache commits;
   String builderName;
   String baseRevision;
+  String baseResultsHash;
   int buildNumber;
   int review;
   int patchset;
   bool success = true;
+  List<Map<String, dynamic>> landedResults;
+  Map<String, Map<String, dynamic>> lastLandedResultByName = {};
   final int countChunks;
   final String buildbucketID;
   int countChanges = 0;
@@ -39,12 +44,32 @@ class Tryjob {
     return GerritInfo(review, patchset, firestore, httpClient).update();
   }
 
+  bool isNotLandedResult(Map<String, dynamic> change) =>
+      !lastLandedResultByName.containsKey(change[fName]) ||
+      change[fResult] != lastLandedResultByName[change[fName]][fResult];
+
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
     builderName = results.first['builder_name'];
     buildNumber = int.parse(results.first['build_number']);
-    await Pool(30).forEach(results.where(isChangedResult), storeChange).drain();
+    baseResultsHash = results.first['previous_commit_hash'];
+    final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
+        results.where(isChangedResult), (result) => result['configuration']);
 
+    for (final configuration in resultsByConfiguration.keys) {
+      if (baseRevision != null && baseResultsHash != null) {
+        landedResults = await fetchLandedResults(configuration);
+        // Map will contain the last result with each name.
+        lastLandedResultByName = {
+          for (final result in landedResults) result[fName]: result
+        };
+      }
+      await Pool(30)
+          .forEach(
+              resultsByConfiguration[configuration].where(isNotLandedResult),
+              storeChange)
+          .drain();
+    }
     if (countChunks != null) {
       await firestore.storeTryBuildChunkCount(builderName, buildNumber,
           buildbucketID, review, patchset, countChunks);
@@ -69,5 +94,30 @@ class Tryjob {
       countUnapproved++;
       success = false;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchLandedResults(
+      String configuration) async {
+    final resultsBase = await commits.fetchByHash(baseResultsHash);
+    final rebaseBase = await commits.fetchByHash(baseRevision);
+    final results = <Map<String, dynamic>>[];
+    if (resultsBase[fIndex] > rebaseBase[fIndex]) {
+      print("Try build is rebased on $baseRevision, which is before "
+          "the commit $baseResultsHash with CI comparison results");
+      return results;
+    }
+    final reviews = <int>[];
+    for (var index = resultsBase[fIndex] + 1;
+        index <= rebaseBase[fIndex];
+        ++index) {
+      final commit = await commits.fetchByIndex(index);
+      if (commit[fReview] != null) {
+        reviews.add(commit[fReview]);
+      }
+    }
+    for (final landedReview in reviews) {
+      results.addAll(await firestore.tryResults(landedReview, configuration));
+    }
+    return results;
   }
 }

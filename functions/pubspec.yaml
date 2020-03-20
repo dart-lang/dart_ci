@@ -8,6 +8,7 @@ environment:
   sdk: '>=2.5.0 <3.0.0'
 
 dependencies:
+  collection: ^1.14.12
   firebase_functions_interop: ^1.0.2
   pool: ^1.4.0
   retry: ^3.0.0

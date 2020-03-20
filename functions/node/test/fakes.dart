@@ -45,7 +45,8 @@ class BuilderTest {
 class FirestoreServiceFake extends Fake implements FirestoreService {
   Map<String, Map<String, dynamic>> commits = Map.from(fakeFirestoreCommits);
   Map<String, Map<String, dynamic>> results = Map.from(fakeFirestoreResults);
-  List<Map<String, dynamic>> tryResults = List.from(fakeFirestoreTryResults);
+  List<Map<String, dynamic>> fakeTryResults =
+      List.from(fakeFirestoreTryResults);
   int addedResultIdCounter = 1;
 
   Future<Map<String, dynamic>> getCommit(String hash) =>
@@ -155,9 +156,17 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
           .toList());
 
   Future<List<Map<String, dynamic>>> tryApprovals(int review) =>
-      Future.value(tryResults
+      Future.value(fakeTryResults
           .where((result) =>
               result[fReview] == review && result[fApproved] == true)
+          .toList());
+
+  Future<List<Map<String, dynamic>>> tryResults(
+          int review, String configuration) =>
+      Future.value(fakeTryResults
+          .where((result) =>
+              result[fReview] == review &&
+              result[fConfigurations].contains(configuration))
           .toList());
 
   Future<bool> reviewIsLanded(int review) =>

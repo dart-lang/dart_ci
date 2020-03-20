@@ -30,11 +30,13 @@ void main() async {
       final copied = Map.from(fetched)..remove('author');
       expect(copied, commit);
     }
+
     Future<void> fetchAndTestCommitByIndex(Map<String, dynamic> commit) async {
       final fetched = await commits.getCommitByIndex(commit['index']);
       final copied = Map.from(fetched)..remove('author');
       expect(copied, commit);
     }
+
     expect(commits.startIndex, isNull);
     await fetchAndTestCommit(commit68900);
     expect(commits.startIndex, 68900);

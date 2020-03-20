@@ -335,6 +335,25 @@ class FirestoreServiceImpl implements FirestoreService {
     return [for (final document in approvals.documents) document.data.toMap()];
   }
 
+  Future<List<Map<String, dynamic>>> tryResults(
+      int review, String configuration) async {
+    final patchsets = await firestore
+        .collection('reviews/$review/patchsets')
+        .orderBy('number', descending: true)
+        .limit(1)
+        .get();
+    if (patchsets.isEmpty) return [];
+    final lastPatchsetGroup =
+        patchsets.documents.first.data.getInt('patchset_group');
+    QuerySnapshot approvals = await firestore
+        .collection('try_results')
+        .where('review', isEqualTo: review)
+        .where('configurations', arrayContains: configuration)
+        .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup)
+        .get();
+    return [for (final document in approvals.documents) document.data.toMap()];
+  }
+
   Future<void> storeChunkStatus(String builder, int index, bool success) async {
     final document = firestore.document('builds/$builder:$index');
     // Compute activeFailures outside transaction, because it runs queries.

@@ -58,6 +58,9 @@ abstract class FirestoreService {
 
   Future<List<Map<String, dynamic>>> tryApprovals(int review);
 
+  Future<List<Map<String, dynamic>>> tryResults(
+      int review, String configuration);
+
   Future<void> storeChunkStatus(String builder, int index, bool success);
 
   Future<void> storeBuildChunkCount(String builder, int index, int numChunks);
