@@ -252,7 +252,8 @@ class FirestoreServiceImpl implements FirestoreService {
             Firestore.fieldValues.arrayRemove([configuration]));
       await document.updateData(removeConfiguration);
       activeResult = (await document.get()).data.toMap();
-      if (activeResult['active_configurations'].isNotEmpty) return;
+      if (!activeResult.containsKey('active_configurations') ||
+          activeResult['active_configurations'].isNotEmpty) return;
     }
     final deleteActiveFields = UpdateData()
       ..setFieldValue('active_configurations', Firestore.fieldValues.delete())
