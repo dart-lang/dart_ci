@@ -46,8 +46,7 @@ class TryResultsComponent implements OnActivate {
   int review;
   int patchset;
   ReviewInfo reviewInfo;
-  ChangeGroup changeGroup =
-      ChangeGroup(null, {}, [], [], LoadedResultsStatus());
+  ChangeGroup changeGroup = waitingForDataChangeGroup;
   int cachedReview;
   int cachedPatchset;
   List<Change> changes;
@@ -62,6 +61,10 @@ class TryResultsComponent implements OnActivate {
   String commentText;
 
   TryResultsComponent(this._tryDataService, this._applicationRef);
+
+  bool get waitingForData => !changeGroup.loadedResultsStatus.loaded;
+
+  bool get noChanges => !waitingForData && changeGroup.changes.isEmpty;
 
   bool get approveEnabled =>
       changeGroup.changes.flat.any((change) => change.failed);
@@ -122,6 +125,8 @@ class TryResultsComponent implements OnActivate {
       reviewInfo = await _tryDataService.fetchReviewInfo(review);
     }
     if (review != cachedReview || patchset != cachedPatchset) {
+      changeGroup = waitingForDataChangeGroup;
+      comments = [];
       changes = await _tryDataService.changes(reviewInfo, patchset);
       comments = await _tryDataService.comments(reviewInfo.review);
       builds = {
@@ -155,3 +160,6 @@ class TryResultsComponent implements OnActivate {
   String newIssueURL() => githubNewIssueURL(changeGroup.changes,
       reviewInfo.title, "https://dart-review.googlesource.com/c/sdk/+/$review");
 }
+
+final waitingForDataChangeGroup =
+ChangeGroup(null, {}, [], [], LoadedResultsStatus()..loaded=false);

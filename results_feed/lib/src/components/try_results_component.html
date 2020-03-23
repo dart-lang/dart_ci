@@ -3,7 +3,8 @@
     <a href="http://dart-review.googlesource.com/c/sdk/+/{{review}}/{{patchset}}"
        target="_blank">{{reviewInfo.title}}</a>
   </h2>
-  <h2 *ngIf="changeGroup.changes.isEmpty">No changed test results</h2>
+  <h2 *ngIf="waitingForData">Fetching results&hellip;</h2>
+  <h2 *ngIf="noChanges">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
       [builds]="builds"
