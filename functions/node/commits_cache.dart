@@ -29,14 +29,26 @@ class CommitsCache {
     return byHash[hash] ??
         await fetchByHash(hash) ??
         await getNewCommits() ??
-        await fetchByHash(hash);
+        await fetchByHash(hash) ??
+        reportError('getCommit($hash)');
   }
 
   Future<Map<String, dynamic>> getCommitByIndex(int index) async {
     return byIndex[index] ??
         await fetchByIndex(index) ??
         await getNewCommits() ??
-        await fetchByIndex(index);
+        await fetchByIndex(index) ??
+        reportError('getCommitByIndex($index)');
+  }
+
+  Map<String, dynamic> reportError(String message) {
+    final error = "Failed to fetch commit: $message\n"
+        "Commit cache holds:\n"
+        "  $startIndex: ${byIndex[startIndex]}\n"
+        "  ...\n"
+        "  $endIndex: ${byIndex[endIndex]}";
+    print(error);
+    throw error;
   }
 
   /// Add a commit to the cache. The cache must be empty, or the commit
@@ -90,7 +102,7 @@ class CommitsCache {
       .then((commit) => fetchByHash(commit['hash']));
 
   /// This function is idempotent, so every call of it should write the
-  /// same info to new Firestore documents.  It is save to call multiple
+  /// same info to new Firestore documents.  It is safe to call multiple
   /// times simultaneously.
   Future<Null> getNewCommits() async {
     const prefix = ")]}'\n";
@@ -112,6 +124,7 @@ class CommitsCache {
       print('Found no new commits between $lastHash and master');
       return;
     }
+    print('Fetched new commits from Gerrit (gitiles): $commits');
     final first = commits.last as Map<String, dynamic>;
     if (first['parents'].first != lastHash) {
       throw 'First new commit ${first['parents'].first} is not'
