@@ -98,8 +98,8 @@ class Tryjob {
 
   Future<List<Map<String, dynamic>>> fetchLandedResults(
       String configuration) async {
-    final resultsBase = await commits.fetchByHash(baseResultsHash);
-    final rebaseBase = await commits.fetchByHash(baseRevision);
+    final resultsBase = await commits.getCommit(baseResultsHash);
+    final rebaseBase = await commits.getCommit(baseRevision);
     final results = <Map<String, dynamic>>[];
     if (resultsBase[fIndex] > rebaseBase[fIndex]) {
       print("Try build is rebased on $baseRevision, which is before "
@@ -110,7 +110,7 @@ class Tryjob {
     for (var index = resultsBase[fIndex] + 1;
         index <= rebaseBase[fIndex];
         ++index) {
-      final commit = await commits.fetchByIndex(index);
+      final commit = await commits.getCommitByIndex(index);
       if (commit[fReview] != null) {
         reviews.add(commit[fReview]);
       }

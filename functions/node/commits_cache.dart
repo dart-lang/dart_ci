@@ -27,21 +27,21 @@ class CommitsCache {
 
   Future<Map<String, dynamic>> getCommit(String hash) async {
     return byHash[hash] ??
-        await fetchByHash(hash) ??
-        await getNewCommits() ??
-        await fetchByHash(hash) ??
-        reportError('getCommit($hash)');
+        await _fetchByHash(hash) ??
+        await _getNewCommits() ??
+        await _fetchByHash(hash) ??
+        _reportError('getCommit($hash)');
   }
 
   Future<Map<String, dynamic>> getCommitByIndex(int index) async {
     return byIndex[index] ??
-        await fetchByIndex(index) ??
-        await getNewCommits() ??
-        await fetchByIndex(index) ??
-        reportError('getCommitByIndex($index)');
+        await _fetchByIndex(index) ??
+        await _getNewCommits() ??
+        await _fetchByIndex(index) ??
+        _reportError('getCommitByIndex($index)');
   }
 
-  Map<String, dynamic> reportError(String message) {
+  Map<String, dynamic> _reportError(String message) {
     final error = "Failed to fetch commit: $message\n"
         "Commit cache holds:\n"
         "  $startIndex: ${byIndex[startIndex]}\n"
@@ -54,7 +54,7 @@ class CommitsCache {
   /// Add a commit to the cache. The cache must be empty, or the commit
   /// must be immediately before or after the current cached commits.
   /// Otherwise, do nothing.
-  void cacheCommit(Map<String, dynamic> commit) {
+  void _cacheCommit(Map<String, dynamic> commit) {
     final index = commit['index'];
     if (startIndex == null || startIndex == index + 1) {
       startIndex = index;
@@ -69,42 +69,42 @@ class CommitsCache {
     byIndex[index] = commit;
   }
 
-  Future<Map<String, dynamic>> fetchByHash(String hash) async {
+  Future<Map<String, dynamic>> _fetchByHash(String hash) async {
     final commit = await firestore.getCommit(hash);
     if (commit == null) return null;
     final index = commit['index'];
     if (startIndex == null) {
-      cacheCommit(commit);
+      _cacheCommit(commit);
     } else if (index < startIndex) {
       for (int fetchIndex = startIndex - 1; fetchIndex > index; --fetchIndex) {
         // Other invocations may be fetching simultaneously.
         if (fetchIndex < startIndex) {
           final infillCommit = await firestore.getCommitByIndex(fetchIndex);
-          cacheCommit(infillCommit);
+          _cacheCommit(infillCommit);
         }
       }
-      cacheCommit(commit);
+      _cacheCommit(commit);
     } else if (index > endIndex) {
       for (int fetchIndex = endIndex + 1; fetchIndex < index; ++fetchIndex) {
         // Other invocations may be fetching simultaneously.
         if (fetchIndex > endIndex) {
           final infillCommit = await firestore.getCommitByIndex(fetchIndex);
-          cacheCommit(infillCommit);
+          _cacheCommit(infillCommit);
         }
       }
-      cacheCommit(commit);
+      _cacheCommit(commit);
     }
     return commit;
   }
 
-  Future<Map<String, dynamic>> fetchByIndex(int index) => firestore
+  Future<Map<String, dynamic>> _fetchByIndex(int index) => firestore
       .getCommitByIndex(index)
-      .then((commit) => fetchByHash(commit['hash']));
+      .then((commit) => _fetchByHash(commit['hash']));
 
   /// This function is idempotent, so every call of it should write the
   /// same info to new Firestore documents.  It is safe to call multiple
   /// times simultaneously.
-  Future<Null> getNewCommits() async {
+  Future<Null> _getNewCommits() async {
     const prefix = ")]}'\n";
     final lastCommit = await firestore.getLastCommit();
     final lastHash = lastCommit['hash'];
@@ -176,9 +176,9 @@ class CommitsCache {
 class TestingCommitsCache extends CommitsCache {
   TestingCommitsCache(firestore, httpClient) : super(firestore, httpClient);
 
-  Future<Null> getNewCommits() async {
+  Future<Null> _getNewCommits() async {
     if ((await firestore.isStaging())) {
-      return super.getNewCommits();
+      return super._getNewCommits();
     }
   }
 }
