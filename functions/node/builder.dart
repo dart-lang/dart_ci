@@ -51,14 +51,16 @@ class Build {
     await firestore.storeChunkStatus(builderName, endIndex, success);
 
     final report = [
-      "Processed ${results.length} results from $builderName build $buildNumber",
-      if (countChanges > 0) "Stored $countChanges changes",
-      if (commitsFetched != null) "Fetched $commitsFetched new commits",
-      if (!success) "Found unapproved new failures",
+      'Processed ${results.length} results from $builderName build $buildNumber',
+      if (countChanges > 0) 'Stored $countChanges changes',
+      if (commitsFetched != null) 'Fetched $commitsFetched new commits',
+      '${firestore.documentsFetched} documents fetched',
+      '${firestore.documentsWritten} documents written',
+      if (!success) 'Found unapproved new failures',
       if (countApprovalsCopied > 0) ...[
-        "$countApprovalsCopied approvals copied",
+        '$countApprovalsCopied approvals copied',
         ...approvalMessages,
-        if (countApprovalsCopied > 10) "..."
+        if (countApprovalsCopied > 10) '...'
       ]
     ];
     print(report.join('\n'));
@@ -88,9 +90,9 @@ class Build {
           await commitsCache.getCommit(firstResult['previous_commit_hash']);
       startIndex = startCommit[fIndex] + 1;
       if (startIndex > endIndex) {
-        throw ArgumentError("Results received with empty blamelist\n"
-            "previous commit: ${firstResult['previous_commit_hash']}\n"
-            "built commit: $commitHash");
+        throw ArgumentError('Results received with empty blamelist\n'
+            'previous commit: ${firstResult['previous_commit_hash']}\n'
+            'built commit: $commitHash');
       }
     }
   }
@@ -151,7 +153,7 @@ class Build {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10)
           approvalMessages
-              .add("Copied approval of result ${testResult(change)}");
+              .add('Copied approval of result ${testResult(change)}');
       }
     } else {
       approved = await firestore.updateResult(

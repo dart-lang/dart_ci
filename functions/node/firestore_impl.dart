@@ -19,14 +19,106 @@ Firestore createFirestore() {
     ..settings(FirestoreSettings(timestampsInSnapshots: true));
 }
 
-class FirestoreServiceImpl implements FirestoreService {
-  Future<bool> isStaging() =>
-      firestore.collection('staging').get().then((s) => s.isNotEmpty);
+class ActiveRequest {
+  final String type;
+  final String info;
+  final DateTime start;
 
-  Future<bool> hasPatchset(String review, String patchset) => firestore
-      .document('reviews/$review/patchsets/$patchset')
-      .get()
-      .then((s) => s.exists);
+  ActiveRequest(this.type, this.info) : start = DateTime.now();
+
+  String toString() => 'Request $type of $info started at $start';
+}
+
+class FirestoreServiceError {
+  final ActiveRequest request;
+  final DateTime errorTime;
+  final Set<ActiveRequest> activeRequests;
+  final firestoreError;
+
+  FirestoreServiceError(this.request, this.firestoreError, this.activeRequests)
+      : errorTime = DateTime.now();
+
+  String toString() => '''
+Error in ${request.type} of ${request.info}:
+$firestoreError
+Request failed at $errorTime, after running for ${errorTime.difference(request.start)}
+
+Concurrent Firestore requests pending:
+${activeRequests.join('\n')}''';
+}
+
+class FirestoreServiceImpl implements FirestoreService {
+  int documentsFetched = 0;
+  int documentsWritten = 0;
+  Set<ActiveRequest> activeRequests = {};
+
+  Future<T> traceRequest<T>(
+      String type, String info, Future<T> firestoreCall()) async {
+    final request = ActiveRequest(type, info);
+    activeRequests.add(request);
+    T result;
+    try {
+      result = await firestoreCall();
+      if (result is QuerySnapshot && result.isNotEmpty) {
+        documentsFetched += result.documents.length;
+      } else if (result is DocumentSnapshot && result.exists) {
+        documentsFetched++;
+      }
+    } catch (e) {
+      throw FirestoreServiceError(request, e, activeRequests);
+    }
+    activeRequests.remove(request);
+    return result;
+  }
+
+  Future<DocumentSnapshot> getDocument(DocumentReference reference) =>
+      traceRequest('get document', reference.path, reference.get);
+
+  Future<QuerySnapshot> runQuery(DocumentQuery query, String debugInfo) =>
+      traceRequest('run query', debugInfo, query.get);
+
+  Future<void> setDocument(
+          DocumentReference reference, Map<String, dynamic> data) =>
+      traceRequest('set document', reference.path, () {
+        documentsWritten++;
+        return reference.setData(
+            DocumentData.fromMap(data), SetOptions(merge: true));
+      });
+
+  Future<void> updateDocument(
+          DocumentReference reference, Map<String, dynamic> data) =>
+      traceRequest('update document', reference.path, () {
+        documentsWritten++;
+        return reference.updateData(UpdateData.fromMap(data));
+      });
+
+  // Because we can't read the number of documents written from a
+  // WriteBatch object, increment documentsWritten where we add writes
+  // to the write batch at use sites.
+  Future<void> commitBatch(WriteBatch batch, String info) =>
+      traceRequest('commit batch', info, batch.commit);
+
+  // The update function may be run multiple times, if the transaction retries.
+  // Increment documentsWritten and documentsRead in the update function body.
+  // The counts will include reads and attempted writes during retries.
+  Future<T> runTransaction<T>(
+          String info, Future<T> update(Transaction t)) =>
+      traceRequest<T>(
+          'run transaction', info, () => firestore.runTransaction(update));
+
+  Future<void> add(CollectionReference reference, Map<String, dynamic> data) =>
+      traceRequest('add document', reference.path, () {
+        documentsWritten++;
+        return reference.add(DocumentData.fromMap(data));
+      });
+
+  Future<bool> isStaging() =>
+      runQuery(firestore.collection('staging'), 'staging')
+          .then((s) => s.isNotEmpty);
+
+  Future<bool> hasPatchset(String review, String patchset) =>
+      getDocument(firestore.document('reviews/$review/patchsets/$patchset'))
+          .then((s) => s.exists);
 
   Map<String, dynamic> _commit(DocumentSnapshot document) {
     if (document.exists) {
@@ -35,47 +127,45 @@ class FirestoreServiceImpl implements FirestoreService {
     return null;
   }
 
-  Future<Map<String, dynamic>> getCommit(String hash) => firestore
-      .document('commits/$hash')
-      .get()
-      .then((document) => _commit(document));
+  Future<Map<String, dynamic>> getCommit(String hash) =>
+      getDocument(firestore.document('commits/$hash'))
+          .then((document) => _commit(document));
 
-  Future<Map<String, dynamic>> getCommitByIndex(int index) => firestore
-      .collection('commits')
-      .where('index', isEqualTo: index)
-      .get()
+  Future<Map<String, dynamic>> getCommitByIndex(int index) => runQuery(
+          firestore.collection('commits').where('index', isEqualTo: index),
+          'commits where index == $index')
       .then((s) => _commit(s.documents.first));
 
   Future<Map<String, dynamic>> getLastCommit() async {
-    QuerySnapshot lastCommit = await firestore
-        .collection('commits')
-        .orderBy('index', descending: true)
-        .limit(1)
-        .get();
+    QuerySnapshot lastCommit = await runQuery(
+        firestore
+            .collection('commits')
+            .orderBy('index', descending: true)
+            .limit(1),
+        'commits by descending index, limit 1');
     return _commit(lastCommit.documents.first);
   }
 
   Future<void> addCommit(String id, Map<String, dynamic> data) async {
     data['created'] = Timestamp.fromDateTime(data['created']);
-    final docRef = firestore.document('commits/$id');
-    await docRef.setData(DocumentData.fromMap(data));
+    await setDocument(firestore.document('commits/$id'), data);
   }
 
   Future<List<String>> getConfigurations(String builder) async {
-    QuerySnapshot snapshot = await firestore
-        .collection('configurations')
-        .where('builder', isEqualTo: builder)
-        .get();
+    QuerySnapshot snapshot = await runQuery(
+        firestore
+            .collection('configurations')
+            .where('builder', isEqualTo: builder),
+        'configurations where builder == $builder');
     return [for (final document in snapshot.documents) document.documentID];
   }
 
   Future<void> updateConfiguration(String configuration, String builder) async {
     final record =
-        await firestore.document('configurations/$configuration').get();
+        await getDocument(firestore.document('configurations/$configuration'));
     if (!record.exists || record.data.getString('builder') != builder) {
-      await firestore
-          .document('configurations/$configuration')
-          .setData(DocumentData.fromMap({'builder': builder}));
+      await setDocument(firestore.document('configurations/$configuration'),
+          {'builder': builder});
       if (!record.exists) {
         console
             .log('Configuration document $configuration -> $builder created');
@@ -90,15 +180,10 @@ class FirestoreServiceImpl implements FirestoreService {
   Future<void> updateBuildInfo(
       String builder, int buildNumber, int index) async {
     final documentRef = firestore.document('builds/$builder:$index');
-    final record = await documentRef.get();
+    final record = await getDocument(documentRef);
     if (!record.exists) {
-      await documentRef.setData(
-          DocumentData.fromMap({
-            'builder': builder,
-            'build_number': buildNumber,
-            'index': index
-          }),
-          SetOptions(merge: true));
+      await setDocument(documentRef,
+          {'builder': builder, 'build_number': buildNumber, 'index': index});
       console.log('Created build record: '
           'builder: $builder, build_number: $buildNumber, index: $index');
     } else if (record.data.getInt('index') != index) {
@@ -112,15 +197,19 @@ class FirestoreServiceImpl implements FirestoreService {
     String name = change['name'];
     String result = change['result'];
     String previousResult = change['previous_result'] ?? 'new test';
-    QuerySnapshot snapshot = await firestore
-        .collection('results')
-        .orderBy('blamelist_end_index', descending: true)
-        .where('name', isEqualTo: name)
-        .where('result', isEqualTo: result)
-        .where('previous_result', isEqualTo: previousResult)
-        .where('expected', isEqualTo: change['expected'])
-        .limit(5) // We will pick the right one, probably the latest.
-        .get();
+    QuerySnapshot snapshot = await runQuery(
+        firestore
+            .collection('results')
+            .orderBy('blamelist_end_index', descending: true)
+            .where('name', isEqualTo: name)
+            .where('result', isEqualTo: result)
+            .where('previous_result', isEqualTo: previousResult)
+            .where('expected', isEqualTo: change['expected'])
+            .limit(5) // We will pick the right one, probably the latest.
+        ,
+        'results by descending blamelist_end_index where name == $name,'
+        'result == $result, previous_result == $previousResult, '
+        'expected == ${change['expected']}, limit 5');
 
     bool blamelistIncludesChange(DocumentSnapshot groupDocument) {
       var group = groupDocument.data;
@@ -142,9 +231,10 @@ class FirestoreServiceImpl implements FirestoreService {
       {bool failure}) {
     DocumentReference reference = firestore.document('results/$result');
 
-    // Update the change group in a transaction.
-    Future<bool> updateGroup(Transaction transaction) =>
+    // Update the result in a transaction.
+    Future<bool> updateResultTransaction(Transaction transaction) =>
         transaction.get(reference).then((resultSnapshot) {
+          documentsFetched++;
           final data = resultSnapshot.data;
           // Allow missing 'approved' field during transition period.
           bool approved = data.getBool('approved') ?? false;
@@ -164,21 +254,23 @@ class FirestoreServiceImpl implements FirestoreService {
                 Firestore.fieldValues.arrayUnion([configuration]));
           }
           transaction.update(reference, update);
+          documentsWritten++;
           return approved;
         });
 
-    return firestore.runTransaction(updateGroup);
+    return runTransaction(
+        'update result ${reference.path}', updateResultTransaction);
   }
 
   Future<List<Map<String, dynamic>>> findRevertedChanges(int index) async {
-    QuerySnapshot pinned = await firestore
-        .collection('results')
-        .where('pinned_index', isEqualTo: index)
-        .get();
-    QuerySnapshot unpinned = await firestore
-        .collection('results')
-        .where('blamelist_end_index', isEqualTo: index)
-        .get();
+    QuerySnapshot pinned = await runQuery(
+        firestore.collection('results').where('pinned_index', isEqualTo: index),
+        "results where pinned_index == $index");
+    QuerySnapshot unpinned = await runQuery(
+        firestore
+            .collection('results')
+            .where('blamelist_end_index', isEqualTo: index),
+        'results where blamelist_end_index == $index');
     return [
       for (final document in pinned.documents) document.data.toMap(),
       for (final document in unpinned.documents)
@@ -195,28 +287,36 @@ class FirestoreServiceImpl implements FirestoreService {
     String expected = change['expected'];
     String previousResult = change['previous_result'] ?? 'new test';
     // Find an existing TryResult for this test on this patchset.
-    QuerySnapshot snapshot = await firestore
-        .collection('try_results')
-        .where('review', isEqualTo: review)
-        .where('patchset', isEqualTo: patchset)
-        .where('name', isEqualTo: name)
-        .where('result', isEqualTo: result)
-        .where('previous_result', isEqualTo: previousResult)
-        .where('expected', isEqualTo: expected)
-        .limit(1)
-        .get();
+    QuerySnapshot snapshot = await runQuery(
+        firestore
+            .collection('try_results')
+            .where('review', isEqualTo: review)
+            .where('patchset', isEqualTo: patchset)
+            .where('name', isEqualTo: name)
+            .where('result', isEqualTo: result)
+            .where('previous_result', isEqualTo: previousResult)
+            .where('expected', isEqualTo: expected)
+            .limit(1),
+        'try_results where review == $review, patchset == $patchset, '
+        'name == $name, result == $result, '
+        'previous_result == ${previousResult}, expected == $expected, '
+        'limit 1');
     if (snapshot.isEmpty) {
       // Is the previous result for this test on this review approved?
-      QuerySnapshot previous = await firestore
-          .collection('try_results')
-          .where('review', isEqualTo: review)
-          .where('name', isEqualTo: name)
-          .where('result', isEqualTo: result)
-          .where('previous_result', isEqualTo: previousResult)
-          .where('expected', isEqualTo: expected)
-          .orderBy('patchset', descending: true)
-          .limit(1)
-          .get();
+      QuerySnapshot previous = await runQuery(
+          firestore
+              .collection('try_results')
+              .where('review', isEqualTo: review)
+              .where('name', isEqualTo: name)
+              .where('result', isEqualTo: result)
+              .where('previous_result', isEqualTo: previousResult)
+              .where('expected', isEqualTo: expected)
+              .orderBy('patchset', descending: true)
+              .limit(1),
+          'try_results where review == $review, '
+          'name == $name, result == $result, '
+          'previous_result == ${previousResult}, expected == $expected, '
+          'order by descending patchset, limit 1');
       // Create a TryResult for this test on this patchset.
       // Allow a missing 'approved' field during a transition period
       final approved = previous.isNotEmpty &&
@@ -234,10 +334,10 @@ class FirestoreServiceImpl implements FirestoreService {
       return approved;
     } else {
       // Update the TryResult for this test, adding this configuration.
-      final update = UpdateData()
-        ..setFieldValue('configurations',
-            Firestore.fieldValues.arrayUnion([change['configuration']]));
-      await snapshot.documents.first.reference.updateData(update);
+      await updateDocument(snapshot.documents.first.reference, {
+        'configurations':
+            Firestore.fieldValues.arrayUnion([change['configuration']])
+      });
       // Return true if this result is approved
       return snapshot.documents.first.data.getBool('approved') == true;
     }
@@ -247,28 +347,32 @@ class FirestoreServiceImpl implements FirestoreService {
       Map<String, dynamic> activeResult, String configuration) async {
     final document = firestore.document('results/${activeResult['id']}');
     if (activeResult['active_configurations'].length > 1) {
-      final removeConfiguration = UpdateData()
-        ..setFieldValue('active_configurations',
-            Firestore.fieldValues.arrayRemove([configuration]));
-      await document.updateData(removeConfiguration);
-      activeResult = (await document.get()).data.toMap();
+      await updateDocument(document, {
+        'active_configurations':
+            Firestore.fieldValues.arrayRemove([configuration])
+      });
+      activeResult = (await getDocument(document)).data.toMap();
       if (!activeResult.containsKey('active_configurations') ||
           activeResult['active_configurations'].isNotEmpty) return;
     }
-    final deleteActiveFields = UpdateData()
-      ..setFieldValue('active_configurations', Firestore.fieldValues.delete())
-      ..setFieldValue('active', Firestore.fieldValues.delete());
-    return document.updateData(deleteActiveFields);
+    return updateDocument(document, {
+      'active_configurations': Firestore.fieldValues.delete(),
+      'active': Firestore.fieldValues.delete()
+    });
   }
 
   Future<List<Map<String, dynamic>>> findActiveResults(
       Map<String, dynamic> change) async {
-    QuerySnapshot snapshot = await firestore
-        .collection('results')
-        .where('active_configurations', arrayContains: change['configuration'])
-        .where('active', isEqualTo: true)
-        .where('name', isEqualTo: change['name'])
-        .get();
+    QuerySnapshot snapshot = await runQuery(
+        firestore
+            .collection('results')
+            .where('active_configurations',
+                arrayContains: change['configuration'])
+            .where('active', isEqualTo: true)
+            .where('name', isEqualTo: change['name']),
+        'results where active_configurations contains '
+        '${change['configuration']}, active == true, '
+        'name == ${change['name']}');
     final results = [
       for (final document in snapshot.documents)
         document.data.toMap()..['id'] = document.documentID
@@ -283,24 +387,22 @@ class FirestoreServiceImpl implements FirestoreService {
   }
 
   Future<void> storeReview(String review, Map<String, dynamic> data) =>
-      firestore.document('reviews/$review').setData(DocumentData.fromMap(data));
+      setDocument(firestore.document('reviews/$review'), data);
 
   Future<void> storePatchset(
           String review, int patchset, Map<String, dynamic> data) =>
-      firestore
-          .document('reviews/$review/patchsets/$patchset')
-          .setData(DocumentData.fromMap(data));
+      setDocument(
+          firestore.document('reviews/$review/patchsets/$patchset'), data);
 
   /// Returns true if a review record in the database has a landed_index field,
   /// or if there is no record for the review in the database.  Reviews with no
   /// test failures have no record, and don't need to be linked when landing.
   Future<bool> reviewIsLanded(int review) =>
-      firestore.document('reviews/$review').get().then((document) =>
+      getDocument(firestore.document('reviews/$review')).then((document) =>
           !document.exists || document.data.getInt('landed_index') != null);
 
-  Future<void> linkReviewToCommit(int review, int index) => firestore
-      .document('reviews/$review')
-      .updateData(UpdateData.fromMap({'landed_index': index}));
+  Future<void> linkReviewToCommit(int review, int index) => updateDocument(
+      firestore.document('reviews/$review'), {'landed_index': index});
 
   Future<void> linkCommentsToCommit(int review, int index) async {
     QuerySnapshot comments = await firestore
@@ -310,48 +412,56 @@ class FirestoreServiceImpl implements FirestoreService {
     if (comments.isEmpty) return;
     final batch = firestore.batch();
     for (final comment in comments.documents) {
+      documentsWritten++;
       batch.updateData(
           comment.reference,
           UpdateData.fromMap(
               {'blamelist_start_index': index, 'blamelist_end_index': index}));
     }
-    await batch.commit();
+    await commitBatch(batch, 'linkCommentsToCommit');
   }
 
   Future<List<Map<String, dynamic>>> tryApprovals(int review) async {
-    final patchsets = await firestore
-        .collection('reviews/$review/patchsets')
-        .orderBy('number', descending: true)
-        .limit(1)
-        .get();
+    final patchsets = await runQuery(
+        firestore
+            .collection('reviews/$review/patchsets')
+            .orderBy('number', descending: true)
+            .limit(1),
+        'reviews/$review/patchsets by descending number limit 1');
     if (patchsets.isEmpty) return [];
     final lastPatchsetGroup =
         patchsets.documents.first.data.getInt('patchset_group');
-    QuerySnapshot approvals = await firestore
-        .collection('try_results')
-        .where('approved', isEqualTo: true)
-        .where('review', isEqualTo: review)
-        .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup)
-        .get();
+    QuerySnapshot approvals = await runQuery(
+        firestore
+            .collection('try_results')
+            .where('approved', isEqualTo: true)
+            .where('review', isEqualTo: review)
+            .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup),
+        'try_results where approved == true, review == $review, '
+        'patchset >= $lastPatchsetGroup');
     return [for (final document in approvals.documents) document.data.toMap()];
   }
 
   Future<List<Map<String, dynamic>>> tryResults(
       int review, String configuration) async {
-    final patchsets = await firestore
-        .collection('reviews/$review/patchsets')
-        .orderBy('number', descending: true)
-        .limit(1)
-        .get();
+    final patchsets = await runQuery(
+        firestore
+            .collection('reviews/$review/patchsets')
+            .orderBy('number', descending: true)
+            .limit(1),
+        'reviews/$review/patchsets by descending number limit 1');
     if (patchsets.isEmpty) return [];
     final lastPatchsetGroup =
         patchsets.documents.first.data.getInt('patchset_group');
-    QuerySnapshot approvals = await firestore
-        .collection('try_results')
-        .where('review', isEqualTo: review)
-        .where('configurations', arrayContains: configuration)
-        .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup)
-        .get();
+    QuerySnapshot approvals = await runQuery(
+        firestore
+            .collection('try_results')
+            .where('review', isEqualTo: review)
+            .where('configurations', arrayContains: configuration)
+            .where('patchset', isGreaterThanOrEqualTo: lastPatchsetGroup),
+        'try_results where review == $review, '
+        'configurations contains $configuration, '
+        'patchset >= $lastPatchsetGroup');
     return [for (final document in approvals.documents) document.data.toMap()];
   }
 
@@ -365,12 +475,14 @@ class FirestoreServiceImpl implements FirestoreService {
     for (final configuration in configurations) {
       // Find out if there are any unapproved unfixed failures,
       // which we call "active" failures, to give sticky redness.
-      final snapshot = await firestore
-          .collection('results')
-          .where('active_configurations', arrayContains: configuration)
-          .where('approved', isEqualTo: false)
-          .limit(1)
-          .get();
+      final snapshot = await runQuery(
+          firestore
+              .collection('results')
+              .where('active_configurations', arrayContains: configuration)
+              .where('approved', isEqualTo: false)
+              .limit(1),
+          'results where active_configurations contains $configuration, '
+          'approved == false, limit 1');
       if (snapshot.isNotEmpty) {
         activeFailures = true;
         break;
@@ -378,6 +490,7 @@ class FirestoreServiceImpl implements FirestoreService {
     }
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(document);
+      documentsFetched++;
       final data = snapshot.data.toMap();
       final int chunks = data['num_chunks'];
       final int processedChunks = data['processed_chunks'] ?? 0;
@@ -389,19 +502,22 @@ class FirestoreServiceImpl implements FirestoreService {
         if (completed && activeFailures) 'active_failures': true
       });
       transaction.update(document, update);
+      documentsWritten++;
     }
 
-    await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
-      console.error("Retrying failed update: $e");
+    await retry(
+        () => runTransaction(
+            'update build status ${document.path}', updateStatus),
+        retryIf: (e) {
+      console.error("Retrying storeChunkStatus failed transaction: $e");
       return e.toString().contains('Please try again.');
     });
   }
 
   Future<void> storeBuildChunkCount(
       String builder, int index, int numChunks) async {
-    return firestore
-        .document('builds/$builder:$index')
-        .updateData(UpdateData.fromMap({'num_chunks': numChunks}));
+    return updateDocument(firestore.document('builds/$builder:$index'),
+        {'num_chunks': numChunks});
   }
 
   Future<void> storeTryChunkStatus(String builder, int buildNumber,
@@ -413,6 +529,7 @@ class FirestoreServiceImpl implements FirestoreService {
 
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(reference);
+      documentsFetched++;
       final data = snapshot.data.toMap();
       final int chunks = data['num_chunks'];
       final int processedChunks = data['processed_chunks'] ?? 0;
@@ -424,10 +541,14 @@ class FirestoreServiceImpl implements FirestoreService {
         if (completed) 'completed': true
       });
       transaction.update(reference, update);
+      documentsWritten++;
     }
 
-    await retry(() => firestore.runTransaction(updateStatus), retryIf: (e) {
-      console.error("Retrying failed update: $e");
+    await retry(
+        () => runTransaction(
+            'update try build status ${reference.path}', updateStatus),
+        retryIf: (e) {
+      console.error("Retrying storeTryChunkStatus failed transaction: $e");
       return e.toString().contains('Please try again.');
     });
   }
@@ -436,16 +557,17 @@ class FirestoreServiceImpl implements FirestoreService {
       String buildbucketID, int review, int patchset, int numChunks) async {
     await _ensureTryBuildRecord(
         builder, buildNumber, buildbucketID, review, patchset);
-    final reference =
-        firestore.document('try_builds/$builder:$review:$patchset');
-    await reference.updateData(UpdateData.fromMap({'num_chunks': numChunks}));
+
+    await updateDocument(
+        firestore.document('try_builds/$builder:$review:$patchset'),
+        {'num_chunks': numChunks});
   }
 
   Future<void> _ensureTryBuildRecord(String builder, int buildNumber,
       String buildbucketID, int review, int patchset) async {
     final reference =
         firestore.document('try_builds/$builder:$review:$patchset');
-    var snapshot = await reference.get();
+    var snapshot = await getDocument(reference);
     if (snapshot.exists && snapshot.data.getInt('build_number') > buildNumber) {
       throw ArgumentError("Received chunk from previous build $buildNumber"
           " after chunk from a later build");
@@ -453,29 +575,31 @@ class FirestoreServiceImpl implements FirestoreService {
     if (snapshot.exists && snapshot.data.getInt('build_number') < buildNumber) {
       Future<void> deleteEarlierBuild(Transaction transaction) async {
         final snapshot = await transaction.get(reference);
+        documentsFetched++;
         if (snapshot.exists &&
             snapshot.data.getInt('build_number') < buildNumber) {
           transaction.delete(reference);
+          documentsWritten++;
         }
       }
 
       try {
-        await firestore.runTransaction(deleteEarlierBuild);
+        await runTransaction(
+            'delete earlier build on patchset: ${reference.path}',
+            deleteEarlierBuild);
       } finally {
-        snapshot = await reference.get();
+        snapshot = await getDocument(reference);
       }
     }
 
     if (!snapshot.exists) {
-      await reference.setData(
-          DocumentData.fromMap({
-            'builder': builder,
-            'build_number': buildNumber,
-            if (buildbucketID != null) 'buildbucket_id': buildbucketID,
-            'review': review,
-            'patchset': patchset,
-          }),
-          SetOptions(merge: true));
+      await setDocument(reference, {
+        'builder': builder,
+        'build_number': buildNumber,
+        if (buildbucketID != null) 'buildbucket_id': buildbucketID,
+        'review': review,
+        'patchset': patchset,
+      });
     }
   }
 }

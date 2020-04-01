@@ -78,11 +78,13 @@ class Tryjob {
         builderName, buildNumber, buildbucketID, review, patchset, success);
 
     final report = [
-      "Processed ${results.length} results from $builderName build $buildNumber",
-      "Tryjob on CL $review patchset $patchset",
-      if (countChanges > 0) "Stored $countChanges changes",
-      if (!success) "Found unapproved new failures",
-      if (countUnapproved > 0) "$countUnapproved tests found",
+      'Processed ${results.length} results from $builderName build $buildNumber',
+      'Tryjob on CL $review patchset $patchset',
+      if (countChanges > 0) 'Stored $countChanges changes',
+      if (!success) 'Found unapproved new failures',
+      if (countUnapproved > 0) '$countUnapproved tests found',
+      '${firestore.documentsFetched} documents fetched',
+      '${firestore.documentsWritten} documents written',
     ];
     print(report.join('\n'));
   }

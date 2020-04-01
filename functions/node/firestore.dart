@@ -7,6 +7,9 @@
 /// The implementation must be in a separate file, so that testing can
 /// run on Dart native, not just on the nodeJS platform.
 abstract class FirestoreService {
+  int get documentsFetched;
+  int get documentsWritten;
+
   Future<bool> isStaging();
 
   Future<bool> hasPatchset(String review, String patchset);
