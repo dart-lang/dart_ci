@@ -67,13 +67,6 @@ class FilterComponent {
   }
 
   void onSelectionChange(_) {
-    if (groupSelector.selectedValues.isEmpty) {
-      // Do not allow deselecting the last selected group.
-      // Selecting synchronously or with Future.microtask don't show in UI.
-      final recheck = service.filter.configurationGroups.first;
-      Future(() => groupSelector.select(recheck));
-      return;
-    }
     final values = groupSelector.selectedValues.toList();
     service.filter = filter.copy(configurationGroups: values);
     filter.updateUrl();

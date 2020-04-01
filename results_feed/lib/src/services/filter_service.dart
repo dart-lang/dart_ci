@@ -5,36 +5,39 @@
 import 'dart:html';
 
 class Filter {
+  final List<String> configurations;
   final List<String> configurationGroups;
   final bool showLatestFailures;
   final bool showUnapprovedOnly;
 
-  const Filter._(this.configurationGroups, this.showLatestFailures,
-      this.showUnapprovedOnly);
-  Filter(this.configurationGroups, this.showLatestFailures,
+  const Filter._(this.configurations, this.configurationGroups,
+      this.showLatestFailures, this.showUnapprovedOnly);
+  Filter(this.configurations, this.configurationGroups, this.showLatestFailures,
       this.showUnapprovedOnly);
 
-  static const defaultFilter = Filter._(allConfigurationGroups,
-      defaultShowLatestFailures, defaultShowUnapprovedOnly);
+  static const defaultFilter =
+      Filter._([], [], defaultShowLatestFailures, defaultShowUnapprovedOnly);
 
   Filter copy(
-          {List<String> configurationGroups,
+          {List<String> configurations,
+          List<String> configurationGroups,
           bool showLatestFailures,
           bool showUnapprovedOnly}) =>
       Filter(
+          configurations ?? this.configurations,
           configurationGroups ?? this.configurationGroups,
           showLatestFailures ?? this.showLatestFailures,
           showUnapprovedOnly ?? this.showUnapprovedOnly);
-
-  bool get allGroups =>
-      configurationGroups.length == allConfigurationGroups.length;
 
   String fragment() => [
         if (showLatestFailures != defaultShowLatestFailures)
           'showLatestFailures=$showLatestFailures',
         if (showUnapprovedOnly != defaultShowUnapprovedOnly)
           'showUnapprovedOnly=$showUnapprovedOnly',
-        if (!allGroups) 'configurationGroups=${configurationGroups.join(',')}'
+        if (configurations.isNotEmpty)
+          'configurations=${configurations.join(',')}',
+        if (configurationGroups.isNotEmpty)
+          'configurationGroups=${configurationGroups.join(',')}'
       ].join('&');
 
   void updateUrl() {
@@ -43,7 +46,7 @@ class Filter {
 
   factory Filter.fromUrl() {
     final fragment = Uri.parse(window.location.href).fragment;
-    Filter result = defaultFilter;
+    var result = defaultFilter;
     if (fragment.isEmpty) return result;
     for (final setting in fragment.split('&')) {
       final key = setting.split('=').first;
@@ -52,6 +55,9 @@ class Filter {
         result = result.copy(showLatestFailures: value == 'true');
       } else if (key == 'showUnapprovedOnly') {
         result = result.copy(showUnapprovedOnly: value == 'true');
+      } else if (key == 'configurations') {
+        final configurations = value.split(',');
+        result = result.copy(configurations: configurations);
       } else if (key == 'configurationGroups') {
         final configurationGroups = value.split(',');
         result = result.copy(configurationGroups: configurationGroups);

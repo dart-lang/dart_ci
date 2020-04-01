@@ -153,8 +153,9 @@ class Configurations {
   }
 
   bool show(Filter filter) =>
-      filter.allGroups ||
+      filter.configurationGroups.isEmpty && filter.configurations.isEmpty ||
       configurations.any((configuration) =>
+          filter.configurations.contains(configuration) ||
           filter.configurationGroups.any(configuration.startsWith));
 }
 
