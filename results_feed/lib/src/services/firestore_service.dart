@@ -18,8 +18,7 @@ class FirestoreService {
       final provider = firebase.GoogleAuthProvider();
       provider.addScope('openid https://www.googleapis.com/auth/datastore');
       try {
-        firebase.UserCredential user =
-            await app.auth().signInWithPopup(provider);
+        final user = await app.auth().signInWithPopup(provider);
         // Our application settings already disallow non-org users,
         // so we don't even get to this additional check.
         if (!user.user.email.endsWith('@google.com')) await logOut();
@@ -35,7 +34,7 @@ class FirestoreService {
   Future<List<firestore.DocumentSnapshot>> fetchCommits(
       int beforeIndex, int limit) async {
     final commits = app.firestore().collection('commits');
-    firestore.Query query = commits.orderBy('index', 'desc');
+    var query = commits.orderBy('index', 'desc');
     if (beforeIndex != null) {
       query = query.where('index', '<', beforeIndex);
     }
@@ -76,7 +75,7 @@ class FirestoreService {
   Future<List<firestore.DocumentSnapshot>> fetchTryChanges(
       int review, int patchset) async {
     final results = app.firestore().collection('try_results');
-    final firestore.QuerySnapshot snapshot = await results
+    final snapshot = await results
         .where('review', '==', review)
         .where('patchset', '==', patchset)
         .get();
@@ -85,8 +84,7 @@ class FirestoreService {
 
   Future<List<firestore.DocumentSnapshot>> fetchTryBuilds(int review) async {
     final results = app.firestore().collection('try_builds');
-    final firestore.QuerySnapshot snapshot =
-        await results.where('review', '==', review).get();
+    final snapshot = await results.where('review', '==', review).get();
     return snapshot.docs;
   }
 
@@ -96,16 +94,15 @@ class FirestoreService {
   Future<List<firestore.DocumentSnapshot>> fetchCommentThread(
       String baseId) async {
     final results = app.firestore().collection('comments');
-    final firestore.DocumentSnapshot doc = await results.doc(baseId).get();
-    final firestore.QuerySnapshot snapshot =
-        await results.where('base_comment', '==', baseId).get();
+    final doc = await results.doc(baseId).get();
+    final snapshot = await results.where('base_comment', '==', baseId).get();
     return [doc, ...snapshot.docs];
   }
 
   Future<List<firestore.DocumentSnapshot>> fetchCommentsForRange(
       int start, int end) async {
     final results = app.firestore().collection('comments');
-    final firestore.QuerySnapshot snapshot = await results
+    final snapshot = await results
         .where('blamelist_end_index', '>=', start)
         .where('blamelist_end_index', '<=', end)
         .get();
@@ -115,15 +112,14 @@ class FirestoreService {
   Future<List<firestore.DocumentSnapshot>> fetchCommentsForReview(
       int review) async {
     final results = app.firestore().collection('comments');
-    final firestore.QuerySnapshot snapshot =
-        await results.where('review', '==', review).get();
+    final snapshot = await results.where('review', '==', review).get();
     return snapshot.docs;
   }
 
   Future<firestore.DocumentSnapshot> fetchBuild(
       String builder, int index) async {
     final builds = app.firestore().collection('builds');
-    final firestore.QuerySnapshot snapshot = await builds
+    final snapshot = await builds
         .where('index', '>=', index)
         .where('builder', '==', builder)
         .orderBy('index', 'asc')
@@ -199,29 +195,30 @@ class FirestoreService {
     // It is invalid over any connection except https to the app URL.
     // It is not used for security, only usage accounting.
     app = firebase.initializeApp(
-        apiKey: "AIzaSyBFKKpPdV3xPQU4jPYiMvUnUfhB5pDDMRI",
-        authDomain: "dart-ci.firebaseapp.com",
-        databaseURL: "https://dart-ci.firebaseio.com",
-        projectId: "dart-ci",
-        storageBucket: "dart-ci.appspot.com",
-        messagingSenderId: "410721018617");
+        apiKey: 'AIzaSyBFKKpPdV3xPQU4jPYiMvUnUfhB5pDDMRI',
+        authDomain: 'dart-ci.firebaseapp.com',
+        databaseURL: 'https://dart-ci.firebaseio.com',
+        projectId: 'dart-ci',
+        storageBucket: 'dart-ci.appspot.com',
+        messagingSenderId: '410721018617');
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
   }
 }
 
 class StagingFirestoreService extends FirestoreService {
+  @override
   Future<void> getFirebaseClient() async {
     if (app != null) return;
     // Firebase api key is public, and must be sent to client for use.
     // It is invalid over any connection except https to the app URL.
     // It is not used for security, only usage accounting.
     app = firebase.initializeApp(
-        apiKey: "AIzaSyBky7KGq1dbVn_J48iAI6oVyKRcMrRanns",
-        authDomain: "dart-ci-staging.firebaseapp.com",
-        databaseURL: "https://dart-ci-staging.firebaseio.com",
-        messagingSenderId: "287461583823",
-        projectId: "dart-ci-staging",
-        storageBucket: "dart-ci-staging.appspot.com");
+        apiKey: 'AIzaSyBky7KGq1dbVn_J48iAI6oVyKRcMrRanns',
+        authDomain: 'dart-ci-staging.firebaseapp.com',
+        databaseURL: 'https://dart-ci-staging.firebaseio.com',
+        messagingSenderId: '287461583823',
+        projectId: 'dart-ci-staging',
+        storageBucket: 'dart-ci-staging.appspot.com');
     await app.auth().setPersistence(firebase.Persistence.LOCAL);
   }
 }
@@ -232,11 +229,13 @@ class TestingFirestoreService extends StagingFirestoreService {
   // It adds additional methods used by integration tests.
   // It includes local password-based authentication for
   // tests that write to staging.
+  @override
   Future<void> getFirebaseClient() async {
     await super.getFirebaseClient();
     await logIn();
   }
 
+  @override
   Future logIn() async {
     try {
       await app.auth().signInWithEmailAndPassword(

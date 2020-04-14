@@ -57,7 +57,7 @@ class AppComponent implements OnInit, CanReuse {
   Map<int, Commit> commits = SplayTreeMap(reverse);
   Map<IntRange, List<Comment>> comments = SplayTreeMap(reverse);
   Map<IntRange, List<Change>> changes = SplayTreeMap(reverse);
-  Set<IntRange> modifiedRanges = Set();
+  Set<IntRange> modifiedRanges = {};
 
   int firstIndex;
   int lastIndex;
@@ -65,14 +65,14 @@ class AppComponent implements OnInit, CanReuse {
   num infiniteScrollVisibleRatio = 0;
   bool showFilter = false;
 
-  ApplicationRef _applicationRef;
-  FirestoreService _firestoreService;
-  FilterService filterService;
+  final ApplicationRef _applicationRef;
+  final FirestoreService _firestoreService;
+  final FilterService filterService;
 
   AppComponent(
       this._firestoreService, this.filterService, this._applicationRef);
 
-  @ViewChild("infiniteScroll")
+  @ViewChild('infiniteScroll')
   Element infiniteScroll;
 
   @override
@@ -134,9 +134,9 @@ class AppComponent implements OnInit, CanReuse {
     final newCommits = (await _firestoreService.fetchCommits(before, 100))
         .map((x) => Commit.fromDocument(x));
     if (newCommits.isEmpty) {
-      throw Exception("Failed to fetch more commits");
+      throw Exception('Failed to fetch more commits');
     }
-    for (Commit commit in newCommits) {
+    for (final commit in newCommits) {
       commits[commit.index] = commit;
       final range = IntRange(commit.index, commit.index);
       changeGroups.putIfAbsent(range,
@@ -145,7 +145,7 @@ class AppComponent implements OnInit, CanReuse {
     final range = IntRange(
         commits.keys.last, before == null ? commits.keys.first : before - 1);
     // Add new commits to previously loaded blamelists that included them.
-    for (ChangeGroup changeGroup in changeGroups.values) {
+    for (final changeGroup in changeGroups.values) {
       if (changeGroup.range.contains(range.end) &&
           changeGroup.range.length > changeGroup.commits.length) {
         changeGroup.commits = commits.values

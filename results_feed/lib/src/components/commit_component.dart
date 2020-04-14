@@ -49,6 +49,7 @@ class CommitComponent implements AfterChanges {
   @Input()
   ChangeGroup changeGroup;
 
+  @override
   void ngAfterChanges() {
     if (filter != null && changeGroup != null) {
       if (changeGroup.loadedResultsStatus.unapprovedOnly &&
@@ -72,7 +73,7 @@ class CommitComponent implements AfterChanges {
       firestoreService.isLoggedIn &&
       changeGroup.latestChanges.flat
           .any((change) => change.result != change.expected);
-  final selected = Set<Change>();
+  final Set<Change> selected = {};
   Commit selectedCommit;
   String commentText;
 
@@ -84,8 +85,10 @@ class CommitComponent implements AfterChanges {
 
   Future<void> approve(bool approval) async {
     approving = false;
-    for (Change result in selected) {
-      result.approved = approval ?? result.approved;
+    if (approval != null) {
+      for (final result in selected) {
+        result.approved = approval;
+      }
     }
 
     await firestoreService.saveApprovals(
@@ -124,7 +127,7 @@ class CommitComponent implements AfterChanges {
     final commitsPath = commits.length > 1
         ? 'compare/${commits.last.hash}~...${commits.first.hash}'
         : 'commit/${commits.single.hash}';
-    final link = "https://github.com/dart-lang/sdk/$commitsPath";
+    final link = 'https://github.com/dart-lang/sdk/$commitsPath';
     return githubNewIssueURL(changeGroup.changes, subject, link);
   }
 }

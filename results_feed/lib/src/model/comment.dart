@@ -60,7 +60,7 @@ class Comment implements Comparable {
   }
 
   String approvedText() =>
-      (approved == null) ? "" : approved ? "approved" : "disapproved";
+      (approved == null) ? '' : approved ? 'approved' : 'disapproved';
 
   static const repositories = ['sdk', 'co19'];
   // Matches a repository or nothing, followed by #[digits][word break].
@@ -80,5 +80,6 @@ class Comment implements Comparable {
     return result;
   }
 
+  @override
   int compareTo(Object other) => created.compareTo((other as Comment).created);
 }

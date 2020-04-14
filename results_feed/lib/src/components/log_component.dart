@@ -33,6 +33,7 @@ class LogComponent implements OnInit {
 
   Build build;
 
+  @override
   void ngOnInit() async {
     build = await buildService.buildForResult(configuration, index);
   }

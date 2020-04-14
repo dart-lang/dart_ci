@@ -19,8 +19,9 @@ class Build {
   int buildNumber;
   int index;
 
-  toString() =>
-      "Build(builder: $builder, buildNumber: $buildNumber, index: $index)";
+  @override
+  String toString() =>
+      'Build(builder: $builder, buildNumber: $buildNumber, index: $index)';
 }
 
 class BuildService {
@@ -32,9 +33,7 @@ class BuildService {
   Future fetchingBuilders;
 
   FutureOr<Build> buildForResult(String configuration, int index) async {
-    if (_builders == null) {
-      _builders = _fetchBuilders();
-    }
+    _builders ??= _fetchBuilders();
     final builder = (await _builders)[configuration];
     final builds = _lookupBuild.putIfAbsent(builder, () => {});
 
@@ -49,9 +48,7 @@ class BuildService {
 
   Future<Map<String, String>> _fetchBuilders() async {
     await _firestoreService.getFirebaseClient();
-    List<firestore.DocumentSnapshot> builderDocs =
-        await _firestoreService.fetchBuilders();
-    return Map<String, String>.fromIterable(builderDocs,
-        key: (doc) => doc.id, value: (doc) => doc.get('builder'));
+    final builderDocs = await _firestoreService.fetchBuilders();
+    return {for (var doc in builderDocs) doc.id: doc.get('builder')};
   }
 }

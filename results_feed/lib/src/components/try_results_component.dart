@@ -40,8 +40,8 @@ import 'results_selector_panel.dart';
     exports: [formattedDate, formattedEmail],
     styles: ['div {padding: 8px;}'])
 class TryResultsComponent implements OnActivate {
-  TryDataService _tryDataService;
-  ApplicationRef _applicationRef;
+  final TryDataService _tryDataService;
+  final ApplicationRef _applicationRef;
 
   int review;
   int patchset;
@@ -57,7 +57,7 @@ class TryResultsComponent implements OnActivate {
   bool updating = false;
   bool updatePending = false;
   bool _approving = false;
-  final selected = Set<Change>();
+  final Set<Change> selected = {};
   String commentText;
 
   TryResultsComponent(this._tryDataService, this._applicationRef);
@@ -82,8 +82,10 @@ class TryResultsComponent implements OnActivate {
   }
 
   Future<void> approve(bool approval) async {
-    for (Change result in selected) {
-      result.approved = approval ?? result.approved;
+    if (approval != null) {
+      for (final result in selected) {
+        result.approved = approval;
+      }
     }
     final comment = await _tryDataService.saveApproval(
         approval,
@@ -158,8 +160,8 @@ class TryResultsComponent implements OnActivate {
   }
 
   String newIssueURL() => githubNewIssueURL(changeGroup.changes,
-      reviewInfo.title, "https://dart-review.googlesource.com/c/sdk/+/$review");
+      reviewInfo.title, 'https://dart-review.googlesource.com/c/sdk/+/$review');
 }
 
 final waitingForDataChangeGroup =
-ChangeGroup(null, {}, [], [], LoadedResultsStatus()..loaded=false);
+    ChangeGroup(null, {}, [], [], LoadedResultsStatus()..loaded = false);

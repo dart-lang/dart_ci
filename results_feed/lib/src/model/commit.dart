@@ -10,6 +10,7 @@ import '../services/filter_service.dart';
 import 'comment.dart';
 
 class IntRangeIterator implements Iterator<int> {
+  @override
   int current;
   int end;
 
@@ -17,6 +18,7 @@ class IntRangeIterator implements Iterator<int> {
     current = start - 1;
   }
 
+  @override
   bool moveNext() {
     current++;
     if (current > end) current = null;
@@ -30,23 +32,30 @@ class IntRange with IterableMixin<int> implements Comparable {
   final int start;
   final int end;
 
+  @override
   bool operator ==(other) =>
       other is IntRange && other.start == start && other.end == end;
 
+  @override
   int get hashCode => start + end * 40927 % 63703;
 
+  @override
   Iterator<int> get iterator => IntRangeIterator(start, end);
 
+  @override
   bool contains(Object i) => i as int >= start && i as int <= end;
 
+  @override
   int get length => end - start + 1;
 
+  @override
   int compareTo(dynamic other) {
     IntRange o = other; // Throw TypeError if not an IntRange
     return end == o.end ? start.compareTo(o.start) : end.compareTo(o.end);
   }
 
-  String toString() => "IntRange($start, $end)";
+  @override
+  String toString() => 'IntRange($start, $end)';
 }
 
 class Commit implements Comparable {
@@ -66,9 +75,11 @@ class Commit implements Comparable {
         index = document.get('index');
 
   /// Sort in reverse index order.
+  @override
   int compareTo(other) => (other as Commit).index.compareTo(index);
 
-  String toString() => "$index $hash $author $created $title";
+  @override
+  String toString() => '$index $hash $author $created $title';
 }
 
 class LoadedResultsStatus {
@@ -99,6 +110,7 @@ class ChangeGroup implements Comparable {
   }
 
   /// Sort in reverse chronological order.
+  @override
   int compareTo(other) => (other as ChangeGroup).range.compareTo(range);
 
   bool show(Filter filter) => filteredChanges(filter).isNotEmpty;
@@ -216,6 +228,7 @@ class Change implements Comparable {
   final String configurationsText;
   final String changesText;
 
+  @override
   int compareTo(Object other) => name.compareTo((other as Change).name);
 
   bool get failed => result != expected && result != skipped;
@@ -236,7 +249,8 @@ class Changes with IterableMixin<List<List<Change>>> {
 
   Changes.grouped(this.changes);
 
-  get iterator => changes.iterator;
+  @override
+  Iterator<List<List<Change>>> get iterator => changes.iterator;
 
   Iterable<Change> get flat => changes.expand((l) => l.expand((l) => l));
 
@@ -244,13 +258,13 @@ class Changes with IterableMixin<List<List<Change>>> {
   /// changesText (the change in the results). Should not be modified
   /// after it is created by this call.
   static List<List<List<Change>>> group(Iterable<Change> newChanges,
-      Configurations configuration(Change change)) {
+      Configurations Function(Change change) configuration) {
     final map = SplayTreeMap<String, SplayTreeMap<String, List<Change>>>();
     for (final change in newChanges) {
       map
           .putIfAbsent(configuration(change).text,
               () => SplayTreeMap<String, List<Change>>())
-          .putIfAbsent(change.changesText, () => List<Change>())
+          .putIfAbsent(change.changesText, () => <Change>[])
           .add(change);
     }
     return [
@@ -277,8 +291,9 @@ class Changes with IterableMixin<List<List<Change>>> {
           [
             ...configurationGroup.where(resultGroupIsFailure),
             ...configurationGroup.where(resultGroupIsSuccess),
-          ]
-    ]..addAll(unsorted.where(configurationGroupHasNoFailures));
+          ],
+      ...unsorted.where(configurationGroupHasNoFailures)
+    ];
   }
 
   static bool empty(x, f) => x.isEmpty;
@@ -292,13 +307,13 @@ class Changes with IterableMixin<List<List<Change>>> {
   /// Process a list by applying elementFilter to its elements, then throw
   /// out empty or otherwise filtered elements with the emptyTest filter.
   /// If no elements are modified or dropped, returns the input list object.
-  static applyFilter<T>(
-      T elementFilter(T t, Filter f), List<T> list, Filter filter,
-      [bool emptyTest(dynamic element, Filter f) = empty]) {
+  static List<T> applyFilter<T>(
+      T Function(T t, Filter f) elementFilter, List<T> list, Filter filter,
+      [bool Function(dynamic element, Filter f) emptyTest = empty]) {
     final newList = <T>[];
-    bool changed = false;
+    var changed = false;
     for (final element in list) {
-      final T newElement = elementFilter(element, filter);
+      final newElement = elementFilter(element, filter);
       if (emptyTest(newElement, filter)) {
         changed = true;
       } else {
@@ -328,32 +343,31 @@ class Changes with IterableMixin<List<List<Change>>> {
 }
 
 String githubNewIssueURL(Changes changes, String subject, String link) {
-  List<Change> failures =
-      changes.flat.where((change) => change.failed).toList();
+  final failures = changes.flat.where((change) => change.failed).toList();
   failures.sort((a, b) => a.name.compareTo(b.name));
   final failuresLimit = 30;
-  final title = "Failures on $subject";
+  final title = 'Failures on $subject';
   final body = failures.isEmpty
-      ? "There are no new test failures on [$subject]($link)."
+      ? 'There are no new test failures on [$subject]($link).'
       : [
-          "There are new test failures on [$subject]($link).",
-          "",
-          "The tests",
-          "```",
+          'There are new test failures on [$subject]($link).',
+          '',
+          'The tests',
+          '```',
           for (final change in failures.take(failuresLimit))
-            "${change.name} ${change.result} (expected ${change.expected})",
+            '${change.name} ${change.result} (expected ${change.expected})',
           if (failures.length > failuresLimit)
-            "    and ${failures.length - failuresLimit} more tests",
-          "```",
-          "are failing on configurations",
-          "```",
+            '    and ${failures.length - failuresLimit} more tests',
+          '```',
+          'are failing on configurations',
+          '```',
           ...{
             for (final change in failures)
               ...change.configurations.configurations
           }.toList()
             ..sort(),
-          "```"
+          '```'
         ].join('\n');
   final query = {'title': title, 'body': body};
-  return Uri.https("github.com", "dart-lang/sdk/issues/new", query).toString();
+  return Uri.https('github.com', 'dart-lang/sdk/issues/new', query).toString();
 }

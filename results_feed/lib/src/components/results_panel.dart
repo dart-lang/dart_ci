@@ -79,8 +79,8 @@ class ResultsPanel {
     final result = builds[patchset][builders[configuration]].buildbucketID;
     if (result == null) {
       throw StateError(
-          "Try builder record missing for builder ${builders[configuration]} "
-          "on patchset $patchset of this CL");
+          'Try builder record missing for builder ${builders[configuration]} '
+          'on patchset $patchset of this CL');
     }
     return result;
   }

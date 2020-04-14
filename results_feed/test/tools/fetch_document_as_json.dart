@@ -16,14 +16,14 @@ const urlBase =
 
 void main(List<String> args) async {
   if (args.isEmpty) {
-    print("Run command with a list of Firestore document references as args.");
+    print('Run command with a list of Firestore document references as args.');
     exit(0);
   }
   final client = Client();
   final documents = {};
 
-  for (String reference in args) {
-    final result = await client.get(Uri.parse("$urlBase/$reference"));
+  for (final reference in args) {
+    final result = await client.get(Uri.parse('$urlBase/$reference'));
     final json = jsonDecode(result.body);
     final fields = json['fields'];
     documents[reference] = {
@@ -41,7 +41,7 @@ dynamic toValue(dynamic valueJson) {
     'arrayValue': (m) => m['values'].map(toValue).toList()
   });
   if (result == null) {
-    print("Unknown value type $valueJson");
+    print('Unknown value type $valueJson');
     exit(1);
   }
   return result;

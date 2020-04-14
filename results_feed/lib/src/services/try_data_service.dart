@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase/src/firestore.dart';
 
 import '../model/comment.dart';
@@ -25,7 +23,7 @@ class TryDataService {
     final patchsets = reviewInfo.patchsets;
     if (patchsets.length < patchset) return [];
     // Patchset numbers start at 1, not 0.
-    int patchsetGroup = patchsets[patchset - 1].patchsetGroup;
+    final patchsetGroup = patchsets[patchset - 1].patchsetGroup;
     // Workaround while [ ... await foo() ] does not work in dartdevc.
     // Issue https://github.com/dart-lang/sdk/issues/38896
     final docs = [];
@@ -45,7 +43,7 @@ class TryDataService {
         ..setPatchsets(await _firestoreService.fetchPatchsetInfo(review))
         ..setBuilds(await _firestoreService.fetchTryBuilds(review));
     } else {
-      return ReviewInfo(review, "No results received yet for CL $review", [])
+      return ReviewInfo(review, 'No results received yet for CL $review', [])
         ..setBuilds([]);
     }
   }
@@ -66,10 +64,8 @@ class TryDataService {
 
   Future<Map<String, String>> _getBuilders() async {
     await _firestoreService.getFirebaseClient();
-    List<DocumentSnapshot> builderDocs =
-        await _firestoreService.fetchBuilders();
-    return Map<String, String>.fromIterable(builderDocs,
-        key: (doc) => doc.id, value: (doc) => '${doc.get('builder')}-try');
+    final builderDocs = await _firestoreService.fetchBuilders();
+    return {for (var doc in builderDocs) doc.id: '${doc.get('builder')}-try'};
   }
 }
 
@@ -110,9 +106,11 @@ class Patchset implements Comparable<Patchset> {
     kind = data['kind'];
   }
 
+  @override
   int compareTo(Patchset other) => number.compareTo(other.number);
 
-  String toString() => "Patchset($number, $patchsetGroup, $description, $kind)";
+  @override
+  String toString() => 'Patchset($number, $patchsetGroup, $description, $kind)';
 }
 
 class TryBuild {

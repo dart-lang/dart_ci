@@ -41,13 +41,13 @@ abstract class TryResultsPO {
           orElse: () => null);
 
   PageLoaderElement get approveCommentButton =>
-      _buttonCalled("Approve/Comment ...");
-  PageLoaderElement get cancelButton => _buttonCalled("Cancel");
+      _buttonCalled('Approve/Comment ...');
+  PageLoaderElement get cancelButton => _buttonCalled('Cancel');
   PageLoaderElement get revokeButton =>
-      _buttonCalled("Revoke Selected Approvals");
+      _buttonCalled('Revoke Selected Approvals');
   PageLoaderElement get commentOnlyButton =>
-      _buttonCalled("Comment without Approving");
-  PageLoaderElement get approveButton => _buttonCalled("Approve");
+      _buttonCalled('Comment without Approving');
+  PageLoaderElement get approveButton => _buttonCalled('Approve');
 
   void clickApproveComment() {
     approveCommentButton.click();

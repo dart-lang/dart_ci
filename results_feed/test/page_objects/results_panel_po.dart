@@ -73,6 +73,10 @@ PageLoaderElement checkbox(PageLoaderElement parent) =>
 
 @PageObject()
 abstract class ResultsSelectorPanelPO implements ResultsPanelPO {
+  // ignore_for_file:annotate_overrides
+  // Because we cannot use extends here, all the methods of
+  // the superclass are repeated here.  Some are modified
+  // because the page DOM is different
   ResultsSelectorPanelPO();
 
   factory ResultsSelectorPanelPO.create(PageLoaderElement context) =

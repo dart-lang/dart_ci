@@ -25,4 +25,4 @@ String formattedEmail(String email) {
 }
 
 // Checkmark followed by a space. Used for approved results.
-String checkmark = "\u2714 ";
+String checkmark = '\u2714 ';

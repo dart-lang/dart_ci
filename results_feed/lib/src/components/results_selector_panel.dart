@@ -112,9 +112,10 @@ class ResultsSelectorPanel {
 
   Set<Change> _selected;
 
-  final checked = Map<Change, bool>();
-  final resultCheckboxes = Map<List<Change>, FixedMixedCheckbox>();
-  final configurationCheckboxes = Map<List<List<Change>>, FixedMixedCheckbox>();
+  final Map<Change, bool> checked = {};
+  final Map<List<Change>, FixedMixedCheckbox> resultCheckboxes = {};
+  final Map<List<List<Change>>, FixedMixedCheckbox> configurationCheckboxes =
+      {};
 
   int resultLimit = 10;
 
@@ -167,7 +168,7 @@ class ResultsSelectorPanel {
     final checkbox = resultCheckboxes[resultGroup];
     if (checkbox.eventMatchesState(event)) return;
     assert(event != 'mixed');
-    bool newChecked = event == 'true';
+    final newChecked = event == 'true';
     checkbox.setState(newChecked, false);
     for (final change in resultGroup) {
       setCheckbox(change, newChecked);
@@ -180,7 +181,7 @@ class ResultsSelectorPanel {
     final checkbox = configurationCheckboxes[configurationGroup];
     if (checkbox.eventMatchesState(event)) return;
     assert(event != 'mixed');
-    bool newChecked = event == 'true';
+    final newChecked = event == 'true';
     checkbox.setState(newChecked, false);
     for (final subgroup in configurationGroup) {
       resultCheckboxes[subgroup].setState(newChecked, false);

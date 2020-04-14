@@ -48,7 +48,7 @@ void main() {
     await firestore.writeDocumentsFrom(commentsSampleData, delete: true);
   });
 
-  testEqual(Comment comment, Map<String, dynamic> original, String id) {
+  void testEqual(Comment comment, Map<String, dynamic> original, String id) {
     expect(comment.id, id);
     expect(comment.author, original['author']);
     expect(comment.created.isAtSameMomentAs(original['created']), true);
@@ -107,7 +107,7 @@ void main() {
     Future fetcher;
     final context =
         HtmlPageLoaderElement.createFromElement(fixture.rootElement);
-    fetchMoreCommits(AppComponent app) {
+    void fetchMoreCommits(AppComponent app) {
       fetcher = app.fetchData();
     }
 
@@ -138,10 +138,10 @@ void main() {
     final data = commentsSampleData;
     var expected = {
       'comments': [
-        data["comments/$commentThreadId"]["comment"],
-        data["comments/$commentId2"]["comment"]
+        data['comments/$commentThreadId']['comment'],
+        data['comments/$commentId2']['comment']
       ],
-      'author': data["comments/$commentThreadId"]["author"],
+      'author': data['comments/$commentThreadId']['author'],
       'date': '21:19 Thu Nov 21',
       'first_commit': '80fc4d',
       'last_commit': '80fc4d'
@@ -150,9 +150,9 @@ void main() {
     checkComments(commits[0].blamelist, expected);
     expected = {
       'comments': [
-        data["comments/$commentId3"]["comment"],
+        data['comments/$commentId3']['comment'],
       ],
-      'author': data["comments/$commentId3"]["author"],
+      'author': data['comments/$commentId3']['author'],
       'date': '0:19 Fri Nov 1',
       'first_commit': '8a09d7',
       'last_commit': '924ec3',

@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 import 'package:dart_results_feed/src/formatting.dart';
 
-main() {
+void main() {
   test('Test current year format', () {
     final currentYear = DateTime.now().year;
     expect(formattedDate(DateTime.parse('$currentYear-01-07T00:07:55')),
