@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:firebase/firestore.dart' show DocumentSnapshot;
+import '../formatting.dart';
 
 class Comment implements Comparable {
   final String id;
@@ -38,7 +39,7 @@ class Comment implements Comparable {
       this.patchset)
       : results = List<String>.from(_results),
         tryResults = List<String>.from(_tryResults) {
-    commentHtml = createCommentHtml();
+    commentHtml = formatComment(comment);
   }
 
   Comment.fromDocument(DocumentSnapshot document)
@@ -56,29 +57,11 @@ class Comment implements Comparable {
         pinnedIndex = document.get('pinned_index'),
         review = document.get('review'),
         patchset = document.get('patchset') {
-    commentHtml = createCommentHtml();
+    commentHtml = formatComment(comment);
   }
 
   String approvedText() =>
       (approved == null) ? '' : approved ? 'approved' : 'disapproved';
-
-  static const repositories = ['sdk', 'co19'];
-  // Matches a repository or nothing, followed by #[digits][word break].
-  static final issueMatcher =
-      RegExp('(${repositories.join("|")})?\\s*#(\\d+)\\b');
-
-  String createCommentHtml() {
-    final result = comment
-        ?.replaceAll('<', '&lt;')
-        ?.replaceAll('\\n', '<br>')
-        ?.replaceAllMapped(
-            issueMatcher,
-            (match) =>
-                '<a target="_blank" rel="noopener" href="https://github.com/'
-                'dart-lang/${match[1] ?? "sdk"}/issues/${match[2]}">'
-                '${match[0]}</a>');
-    return result;
-  }
 
   @override
   int compareTo(Object other) => created.compareTo((other as Comment).created);

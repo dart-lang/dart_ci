@@ -9,11 +9,13 @@ import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/services/firestore_service.dart';
 import 'package:dart_results_feed/src/components/routing_wrapper_component.template.dart'
     as ng;
+import 'package:dart_results_feed/src/formatting.dart' as formatting;
 import 'main.template.dart' as self;
 
-// Allow links from comments to GitHub issues in the dart-lang organization.
+// Allow links from comments to GitHub issues in allowed organizations.
 List<Uri> getUriWhitelist() => List.unmodifiable(<Uri>[
-      Uri.https('github.com', 'dart-lang/'),
+  for (final organization in formatting.organizations)
+      Uri.https('github.com', '$organization/')
     ]);
 
 // Use for local testing
