@@ -101,8 +101,7 @@ class FirestoreServiceImpl implements FirestoreService {
   // The update function may be run multiple times, if the transaction retries.
   // Increment documentsWritten and documentsRead in the update function body.
   // The counts will include reads and attempted writes during retries.
-  Future<T> runTransaction<T>(
-          String info, Future<T> update(Transaction t)) =>
+  Future<T> runTransaction<T>(String info, Future<T> update(Transaction t)) =>
       traceRequest<T>(
           'run transaction', info, () => firestore.runTransaction(update));
 

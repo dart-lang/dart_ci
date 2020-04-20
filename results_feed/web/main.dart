@@ -14,8 +14,8 @@ import 'main.template.dart' as self;
 
 // Allow links from comments to GitHub issues in allowed organizations.
 List<Uri> getUriWhitelist() => List.unmodifiable(<Uri>[
-  for (final organization in formatting.organizations)
-      Uri.https('github.com', '$organization/')
+      for (final organization in formatting.organizations)
+        Uri.https('github.com', '$organization/')
     ]);
 
 // Use for local testing

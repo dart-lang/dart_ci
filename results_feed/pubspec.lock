@@ -252,7 +252,7 @@ packages:
       name: firebase
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.2.1"
+    version: "7.3.0"
   fixnum:
     dependency: transitive
     description:
@@ -322,7 +322,7 @@ packages:
       name: io
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.4"
   js:
     dependency: transitive
     description:
@@ -434,7 +434,7 @@ packages:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.7.0"
   pedantic:
     dependency: "direct dev"
     description:
@@ -651,7 +651,7 @@ packages:
       name: vm_service
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.1"
   watcher:
     dependency: transitive
     description:
@@ -688,4 +688,4 @@ packages:
     source: hosted
     version: "2.2.0"
 sdks:
-  dart: ">=2.8.0-dev.10.0 <2.9.0"
+  dart: ">=2.8.0-dev.10.0 <=2.9.0-1.0.dev"
