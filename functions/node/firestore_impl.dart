@@ -150,15 +150,6 @@ class FirestoreServiceImpl implements FirestoreService {
     await setDocument(firestore.document('commits/$id'), data);
   }
 
-  Future<List<String>> getConfigurations(String builder) async {
-    QuerySnapshot snapshot = await runQuery(
-        firestore
-            .collection('configurations')
-            .where('builder', isEqualTo: builder),
-        'configurations where builder == $builder');
-    return [for (final document in snapshot.documents) document.documentID];
-  }
-
   Future<void> updateConfiguration(String configuration, String builder) async {
     final record =
         await getDocument(firestore.document('configurations/$configuration'));
@@ -469,24 +460,6 @@ class FirestoreServiceImpl implements FirestoreService {
     // Compute activeFailures outside transaction, because it runs queries.
     // Because "completed" might be true inside transaction, but not now,
     // we must compute activeFailures always, not just on last chunk.
-    var activeFailures = false;
-    final configurations = await getConfigurations(builder);
-    for (final configuration in configurations) {
-      // Find out if there are any unapproved unfixed failures,
-      // which we call "active" failures, to give sticky redness.
-      final snapshot = await runQuery(
-          firestore
-              .collection('results')
-              .where('active_configurations', arrayContains: configuration)
-              .where('approved', isEqualTo: false)
-              .limit(1),
-          'results where active_configurations contains $configuration, '
-          'approved == false, limit 1');
-      if (snapshot.isNotEmpty) {
-        activeFailures = true;
-        break;
-      }
-    }
     Future<void> updateStatus(Transaction transaction) async {
       final snapshot = await transaction.get(document);
       documentsFetched++;
@@ -498,7 +471,6 @@ class FirestoreServiceImpl implements FirestoreService {
         'processed_chunks': processedChunks + 1,
         'success': (data['success'] ?? true) && success,
         if (completed) 'completed': true,
-        if (completed && activeFailures) 'active_failures': true
       });
       transaction.update(document, update);
       documentsWritten++;
