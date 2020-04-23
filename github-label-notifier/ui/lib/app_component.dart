@@ -69,7 +69,8 @@ class AppComponent implements OnInit {
     _subscriptionsService.onAuth.listen((_) async {
       subscriptions = await _subscriptionsService.getSubscriptions();
 
-      final subscription = await _subscriptionsService.getKeywordSubscription('flutter/flutter');
+      final subscription =
+          await _subscriptionsService.getKeywordSubscription('flutter/flutter');
       if (subscription != null) {
         flutterKeywordLabel = subscription.label;
         flutterKeywords = subscription.keywords;

@@ -313,9 +313,10 @@ void main() async {
         contains('Matches keyword: third_party/dart'));
   });
 
-  test('ok - issue opened - test underscore as word boundary',
-      () async {
-    final rs = await sendEvent(body: makeIssueOpenedEvent(body: 'xyz, something_jit_something_else, foobar'));
+  test('ok - issue opened - test underscore as word boundary', () async {
+    final rs = await sendEvent(
+        body: makeIssueOpenedEvent(
+            body: 'xyz, something_jit_something_else, foobar'));
     expect(rs.statusCode, equals(HttpStatus.ok));
     expect(sendgridRequests.length, equals(1));
 
@@ -339,9 +340,10 @@ void main() async {
         contains('Matches keyword: jit'));
   });
 
-  test('ok - issue opened - no matching keyword',
-      () async {
-    final rs = await sendEvent(body: makeIssueOpenedEvent(body: 'xyz, somethingjitsomething_else, foobar'));
+  test('ok - issue opened - no matching keyword', () async {
+    final rs = await sendEvent(
+        body: makeIssueOpenedEvent(
+            body: 'xyz, somethingjitsomething_else, foobar'));
     expect(rs.statusCode, equals(HttpStatus.ok));
     expect(sendgridRequests.length, equals(0));
   });
