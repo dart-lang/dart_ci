@@ -86,6 +86,9 @@ class LoadedResultsStatus {
   bool loaded = true;
   bool failuresOnly = false;
   bool unapprovedOnly = false;
+  // If this is non-null, the ChangeGroup contains all results
+  // for this test only.
+  String singleTest;
 }
 
 class ChangeGroup implements Comparable {

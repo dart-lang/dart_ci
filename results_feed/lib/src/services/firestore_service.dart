@@ -42,10 +42,16 @@ class FirestoreService {
     return (await query.get()).docs;
   }
 
-  Future<List<firestore.DocumentSnapshot>> fetchChanges(int startIndex,
-      int endIndex, bool failuresOnly, bool unapprovedOnly) async {
+  Future<List<firestore.DocumentSnapshot>> fetchChanges(
+      int startIndex,
+      int endIndex,
+      bool failuresOnly,
+      bool unapprovedOnly,
+      String singleTest) async {
     firestore.Query query = app.firestore().collection('results');
-    if (failuresOnly) {
+    if (singleTest != null) {
+      query = query.where('name', '==', singleTest);
+    } else if (failuresOnly) {
       // Because the index contains 'active' and 'approved', we
       // always need to give values for both of them (or neither).
       query = query

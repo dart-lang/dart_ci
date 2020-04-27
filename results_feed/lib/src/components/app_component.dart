@@ -106,8 +106,11 @@ class AppComponent implements OnInit, CanReuse {
   void updateFetchDate() {
     if (commits.isNotEmpty) {
       fetchDate = commits.values.last.created;
+      final initialRange = filterService.filter.singleTest == null
+          ? Duration(days: 21)
+          : Duration(days: 60);
       infiniteScrollEnabled =
-          fetchDate.isAfter(DateTime.now().subtract(Duration(days: 21)));
+          fetchDate.isAfter(DateTime.now().subtract(initialRange));
     }
   }
 
@@ -115,7 +118,8 @@ class AppComponent implements OnInit, CanReuse {
         try {
           final loadedResultsStatus = LoadedResultsStatus()
             ..failuresOnly = filterService.filter.showLatestFailures
-            ..unapprovedOnly = filterService.filter.showUnapprovedOnly;
+            ..unapprovedOnly = filterService.filter.showUnapprovedOnly
+            ..singleTest = filterService.filter.singleTest;
           final before = commits.isEmpty ? null : commits.keys.last;
           final range = await fetchEarlierCommits(before);
           await fetchResults(range, loadedResultsStatus);
@@ -131,8 +135,10 @@ class AppComponent implements OnInit, CanReuse {
       }();
 
   Future<IntRange> fetchEarlierCommits(int before) async {
-    final newCommits = (await _firestoreService.fetchCommits(before, 100))
-        .map((x) => Commit.fromDocument(x));
+    final fetchAmount = filterService.filter.singleTest == null ? 100 : 500;
+    final newCommits =
+        (await _firestoreService.fetchCommits(before, fetchAmount))
+            .map((x) => Commit.fromDocument(x));
     if (newCommits.isEmpty) {
       throw Exception('Failed to fetch more commits');
     }
@@ -162,7 +168,8 @@ class AppComponent implements OnInit, CanReuse {
         commitRange.start,
         commitRange.end,
         loadedResultsStatus.failuresOnly,
-        loadedResultsStatus.unapprovedOnly);
+        loadedResultsStatus.unapprovedOnly,
+        loadedResultsStatus.singleTest);
     for (var resultData in resultsData) {
       final change = Change.fromDocument(resultData);
       final range = IntRange(change.pinnedIndex ?? change.blamelistStartIndex,

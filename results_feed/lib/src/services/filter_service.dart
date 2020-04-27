@@ -9,25 +9,28 @@ class Filter {
   final List<String> configurationGroups;
   final bool showLatestFailures;
   final bool showUnapprovedOnly;
+  final String singleTest; // null by default.
 
   const Filter._(this.configurations, this.configurationGroups,
-      this.showLatestFailures, this.showUnapprovedOnly);
+      this.showLatestFailures, this.showUnapprovedOnly, this.singleTest);
   Filter(this.configurations, this.configurationGroups, this.showLatestFailures,
-      this.showUnapprovedOnly);
+      this.showUnapprovedOnly, this.singleTest);
 
-  static const defaultFilter =
-      Filter._([], [], defaultShowLatestFailures, defaultShowUnapprovedOnly);
+  static const defaultFilter = Filter._(
+      [], [], defaultShowLatestFailures, defaultShowUnapprovedOnly, null);
 
   Filter copy(
           {List<String> configurations,
           List<String> configurationGroups,
           bool showLatestFailures,
-          bool showUnapprovedOnly}) =>
+          bool showUnapprovedOnly,
+          String singleTest}) =>
       Filter(
           configurations ?? this.configurations,
           configurationGroups ?? this.configurationGroups,
           showLatestFailures ?? this.showLatestFailures,
-          showUnapprovedOnly ?? this.showUnapprovedOnly);
+          showUnapprovedOnly ?? this.showUnapprovedOnly,
+          singleTest ?? this.singleTest); // Cannot reset singleTest to null.
 
   String fragment() => [
         if (showLatestFailures != defaultShowLatestFailures)
@@ -37,7 +40,8 @@ class Filter {
         if (configurations.isNotEmpty)
           'configurations=${configurations.join(',')}',
         if (configurationGroups.isNotEmpty)
-          'configurationGroups=${configurationGroups.join(',')}'
+          'configurationGroups=${configurationGroups.join(',')}',
+        if (singleTest != null) 'test=$singleTest'
       ].join('&');
 
   void updateUrl() {
@@ -61,6 +65,8 @@ class Filter {
       } else if (key == 'configurationGroups') {
         final configurationGroups = value.split(',');
         result = result.copy(configurationGroups: configurationGroups);
+      } else if (key == 'test') {
+        result = result.copy(singleTest: value);
       }
     }
     return result;
