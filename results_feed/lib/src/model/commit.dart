@@ -107,7 +107,8 @@ class ChangeGroup implements Comparable {
         latestChanges = Changes.active(changeList) {
     commits = [
       if (range != null)
-        for (int i in range) if (allCommits[i] != null) allCommits[i]
+        for (int i in range)
+          if (allCommits[i] != null) allCommits[i]
     ]..sort();
     this.comments = comments..sort();
   }

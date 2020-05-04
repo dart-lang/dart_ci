@@ -97,8 +97,9 @@ Future<void> redirectTemporary(HttpRequest request, String newPath) {
 }
 
 Future<void> serveChanges(HttpRequest request) async {
-  return request.response.redirect(Uri.parse(
-      'https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true'),
+  return request.response.redirect(
+      Uri.parse(
+          'https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true'),
       status: HttpStatus.movedPermanently);
 }
 
