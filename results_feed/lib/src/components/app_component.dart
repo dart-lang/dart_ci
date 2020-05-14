@@ -26,7 +26,7 @@ import '../services/firestore_service.dart';
 import '../services/build_service.dart';
 
 @Component(
-    selector: 'my-app',
+    selector: 'results-feed',
     pipes: [commonPipes],
     directives: [
       coreDirectives,

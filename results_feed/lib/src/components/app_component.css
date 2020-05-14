@@ -4,14 +4,42 @@
  * BSD-style license that can be found in the LICENSE file.
  */
 
-.material-header {
-    height: 64px;
-    position: fixed;
-    left: 0;
-    top: 0px;
-    z-index: 100;
+header {
+    flex: none;
     width: 100%;
     margin: 0px;
+    z-index: 1;
+}
+
+header.shadow {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+header span.space {
+    flex: 1;
+}
+
+header span.button {
+    font-variant: small-caps;
+}
+
+header span {
+    display: inline-block;
+    margin-left: 16px;
+    margin-right: 16px;
+    font-size: 24px;
+}
+
+header.blue {
+    background-color: rgb(63, 81, 181);
+    color: white;
+}
+
+.results-feed-body {
+    flex: auto;
+    overflow-y: scroll;
+    background-color: ghostwhite;
 }
 
 .info-dialog {

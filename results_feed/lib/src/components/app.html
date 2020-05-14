@@ -1,26 +1,23 @@
-<header class="material-header shadow">
-  <div class="material-header-row">
-    <material-button
-        icon
-        class="material-drawer-button"
-        (trigger)="showFilter = true">
-      <material-icon icon="filter_list"></material-icon>
-    </material-button>
-    <span class="material-header-title">{{title}}</span>
-    <div class="material-spacer"></div>
-    <span *ngIf="fetching != null">
-      <material-icon icon="autorenew"></material-icon>
-      fetching results...
-    </span>
-    <material-button
-        class="material-drawer-button"
-        (trigger)="toggleLogin()">
-      {{loginMessage}}
-    </material-button>
-  </div>
+<header class="shadow blue">
+  <material-button
+      icon
+      class="material-drawer-button"
+      (trigger)="showFilter = true">
+    <material-icon icon="filter_list"></material-icon>
+  </material-button>
+  <span class="title">{{title}}</span>
+  <span class="space"></span>
+  <span *ngIf="fetching != null">
+    <material-icon icon="autorenew"></material-icon>
+    fetching results...
+  </span>
+  <span
+      class="button"
+      (trigger)="toggleLogin()">
+    {{loginMessage}}
+  </span>
 </header>
-<material-content
-    style="margin:0px; background-color:ghostwhite; margin-top:64px">
+<div class="results-feed-body">
   <modal [(visible)]="showFilter">
     <material-dialog
         info
@@ -46,6 +43,7 @@
     <span *ngIf="infiniteScrollEnabled" #infiniteScroll>
       fetching results ...</span>
     <material-button raised *ngIf="!infiniteScrollEnabled" (trigger)="fetchData()">
-      Fetch more results</material-button>
+      Fetch more results
+    </material-button>
   </div>
-</material-content>
+</div>
