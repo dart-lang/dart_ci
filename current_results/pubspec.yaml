@@ -1,0 +1,15 @@
+name: current_results
+description: Cache and serve the most recent test results from Dart CI
+
+environment:
+  sdk: '>=2.7.2 <3.0.0'
+
+dependencies:
+  shelf: ^0.7.5
+  gcloud: ^0.7.0
+  googleapis_auth: ^0.2.11
+  protobuf: ^1.0.0
+
+dev_dependencies:
+  pedantic: ^1.8.0
+  protoc_plugin: 19.0.1

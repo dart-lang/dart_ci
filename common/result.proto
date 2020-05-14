@@ -1,0 +1,33 @@
+// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+syntax = "proto3";
+package dart_ci;
+
+// Documentation of the fields in a results.json line.
+// This data is used by current_results to load the latest results.json.
+
+// Describes a test run on a single configuration on a SDK commit.
+message Result {
+  string name = 1; // The full path of the test, as output by test.py.
+  string configuration = 2; // The configuration the test is run on.
+  string suite = 100; // TODO: remove
+  string test_name = 101; // TODO: remove
+  int32 time_ms = 3; // Run time in milliseconds.
+  string result = 4; // Result of test, from pkg/status_file/expectation.dart
+  string expected = 5; // Expected result of test
+  bool matches = 6; // Is the result a match for the expectation
+  string bot_name = 7; // The name of the machine the test ran on.
+  string commit_hash = 8; // The commit the test ran on. Can be a CL patch tag.
+  int32 commit_time = 102; // TODO: remove. The time of that commit.
+  string build_number = 9; // The number of the build. Deprecated by LUCI
+  string builder_name = 10; // The name of the builder.
+  bool flaky = 11; // Is the test in this configuration's flaky.json
+  bool previous_flaky = 12; // Was the test in flaky.json on the previous build.
+  string previous_commit_hash = 13;
+  int32 previous_commit_time = 14;
+  string previous_build_number = 15;
+  string previous_result = 16; // From pkg/status_file/expectation.dart
+  bool changed = 17; // Are result and previous_result the same.
+}
