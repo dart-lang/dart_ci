@@ -1,16 +1,6 @@
 <header class="blue">
-  <material-button
-      icon
-      class="material-drawer-button"
-      (trigger)="showFilter = true">
-    <material-icon icon="filter_list"></material-icon>
-  </material-button>
   <span class="title">{{title}}</span>
   <results-filter></results-filter>
-  <span *ngIf="fetching != null">
-    <material-icon icon="autorenew"></material-icon>
-    fetching results...
-  </span>
   <span
       class="button"
       (click)="toggleLogin()">
@@ -22,21 +12,6 @@
 </header>
 
 <div class="results-feed-body">
-  <modal [(visible)]="showFilter">
-    <material-dialog
-        info
-        class="info-dialog"
-        [autoDismissable]="showFilter"
-        (dismiss)="showFilter = false">
-      <h1 header>
-        Filter
-        <material-button icon autoFocus (trigger)="showFilter = false">
-          <material-icon icon="close"></material-icon>
-        </material-button>
-      </h1>
-      <app-filter style="padding: 16px; position: fixed"></app-filter>
-    </material-dialog>
-  </modal>
   <dart-commit
       *ngFor="let changeGroup of changeGroups.values"
       [changeGroup]="changeGroup"

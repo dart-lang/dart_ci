@@ -44,8 +44,3 @@ results-filter {
     overflow-y: scroll;
     background-color: ghostwhite;
 }
-
-.info-dialog {
-    width: 50%;
-    height: 70%;
-}

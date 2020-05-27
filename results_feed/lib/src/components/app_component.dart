@@ -7,13 +7,7 @@ import 'dart:html';
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-import 'package:angular_components/app_layout/material_temporary_drawer.dart';
-import 'package:angular_components/laminate/components/modal/modal.dart';
-import 'package:angular_components/laminate/overlay/module.dart';
 import 'package:angular_components/material_button/material_button.dart';
-import 'package:angular_components/material_dialog/material_dialog.dart';
-import 'package:angular_components/material_icon/material_icon.dart';
-import 'package:angular_components/material_toggle/material_toggle.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:dart_results_feed/src/components/results_filter_component.dart';
 
@@ -23,7 +17,6 @@ import 'results_filter_component.dart';
 import '../formatting.dart';
 import '../model/commit.dart';
 import '../model/comment.dart';
-import '../services/filter_component.dart';
 import '../services/filter_service.dart';
 import '../services/firestore_service.dart';
 import '../services/build_service.dart';
@@ -35,14 +28,8 @@ import '../services/build_service.dart';
       coreDirectives,
       AutoDismissDirective,
       CommitComponent,
-      FilterComponent,
       FilterRowComponent,
-      MaterialIconComponent,
       MaterialButtonComponent,
-      MaterialDialogComponent,
-      MaterialTemporaryDrawerComponent,
-      MaterialToggleComponent,
-      ModalComponent,
       ResultsFilterComponent,
     ],
     providers: [
@@ -68,7 +55,6 @@ class AppComponent implements OnInit, CanReuse {
   int lastIndex;
   Future fetching;
   num infiniteScrollVisibleRatio = 0;
-  bool showFilter = false;
 
   final ApplicationRef _applicationRef;
   final FirestoreService _firestoreService;
