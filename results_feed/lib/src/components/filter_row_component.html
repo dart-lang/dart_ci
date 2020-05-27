@@ -1,0 +1,34 @@
+<material-chip
+    *ngIf="test != null"
+    (remove)="service.clearTestFilter()">
+  t: {{test}}
+</material-chip>
+<material-chip
+    *ngFor="let configuration of configurations"
+    (remove)="service.removeConfiguration(configuration)">
+  c: {{configuration}}
+</material-chip>
+<material-chip
+    *ngIf="!addingFilter"
+    [removable]="false"
+    (click)="addFilter()">
+  Add Filter
+</material-chip>
+<material-icon
+    *ngIf="addingTestFilter"
+    baseline
+    icon="check_circle"
+    (click)="addTestFilter()">
+</material-icon>
+<material-auto-suggest-input
+    #addFilterTextInput
+    *ngIf="addingFilter"
+    [displayBottomPanel]="false"
+    [closeOnEnter]="true"
+    [showClearIcon]="true"
+    [selectionOptions]="selectionOptions"
+    [inputText]="filterText"
+    (inputTextChange)="inputTextChange($event)"
+    (selectionChange)="selectionChange($event)"
+    (clear)="clear()">
+</material-auto-suggest-input>

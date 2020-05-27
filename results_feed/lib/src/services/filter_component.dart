@@ -68,8 +68,7 @@ class FilterComponent {
 
   void onSelectionChange(_) {
     final values = groupSelector.selectedValues.toList();
-    service.filter = filter.copy(configurationGroups: values);
-    filter.updateUrl();
+    service.changeFilter(filter.copy(configurationGroups: values));
   }
 
   List<Map> changeTypes = [
@@ -94,10 +93,9 @@ class FilterComponent {
 
   void setChangeType(Map event) {
     changeType = event;
-    service.filter = filter.copy(
+    service.changeFilter(filter.copy(
         showLatestFailures: event['latestFailures'],
-        showUnapprovedOnly: event['unapprovedOnly']);
-    filter.updateUrl();
+        showUnapprovedOnly: event['unapprovedOnly']));
   }
 
   String identityFunction(t) => t;

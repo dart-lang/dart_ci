@@ -15,12 +15,15 @@ import 'package:angular_components/material_dialog/material_dialog.dart';
 import 'package:angular_components/material_icon/material_icon.dart';
 import 'package:angular_components/material_toggle/material_toggle.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:dart_results_feed/src/services/filter_component.dart';
+import 'package:dart_results_feed/src/components/results_filter_component.dart';
 
 import 'commit_component.dart';
+import 'filter_row_component.dart';
+import 'results_filter_component.dart';
 import '../formatting.dart';
 import '../model/commit.dart';
 import '../model/comment.dart';
+import '../services/filter_component.dart';
 import '../services/filter_service.dart';
 import '../services/firestore_service.dart';
 import '../services/build_service.dart';
@@ -33,12 +36,14 @@ import '../services/build_service.dart';
       AutoDismissDirective,
       CommitComponent,
       FilterComponent,
+      FilterRowComponent,
       MaterialIconComponent,
       MaterialButtonComponent,
       MaterialDialogComponent,
       MaterialTemporaryDrawerComponent,
       MaterialToggleComponent,
-      ModalComponent
+      ModalComponent,
+      ResultsFilterComponent,
     ],
     providers: [
       ClassProvider(FilterService),

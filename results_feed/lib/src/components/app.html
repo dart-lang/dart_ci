@@ -1,4 +1,4 @@
-<header class="shadow blue">
+<header class="blue">
   <material-button
       icon
       class="material-drawer-button"
@@ -6,7 +6,7 @@
     <material-icon icon="filter_list"></material-icon>
   </material-button>
   <span class="title">{{title}}</span>
-  <span class="space"></span>
+  <results-filter></results-filter>
   <span *ngIf="fetching != null">
     <material-icon icon="autorenew"></material-icon>
     fetching results...
@@ -17,6 +17,10 @@
     {{loginMessage}}
   </span>
 </header>
+<header class="shadow">
+  <filter-row></filter-row>
+</header>
+
 <div class="results-feed-body">
   <modal [(visible)]="showFilter">
     <material-dialog

@@ -11,13 +11,16 @@ class Filter {
   final bool showUnapprovedOnly;
   final String singleTest; // null by default.
 
-  const Filter._(this.configurations, this.configurationGroups,
-      this.showLatestFailures, this.showUnapprovedOnly, this.singleTest);
   Filter(this.configurations, this.configurationGroups, this.showLatestFailures,
       this.showUnapprovedOnly, this.singleTest);
 
-  static const defaultFilter = Filter._(
+  static final defaultFilter = Filter(
       [], [], defaultShowLatestFailures, defaultShowUnapprovedOnly, null);
+
+  bool get hasFilter =>
+      singleTest != null ||
+      configurations.isNotEmpty ||
+      configurationGroups.isNotEmpty;
 
   Filter copy(
           {List<String> configurations,
@@ -31,6 +34,9 @@ class Filter {
           showLatestFailures ?? this.showLatestFailures,
           showUnapprovedOnly ?? this.showUnapprovedOnly,
           singleTest ?? this.singleTest); // Cannot reset singleTest to null.
+
+  Filter clearTest() => Filter(configurations, configurationGroups,
+      showLatestFailures, showUnapprovedOnly, null);
 
   String fragment() => [
         if (showLatestFailures != defaultShowLatestFailures)
@@ -94,4 +100,38 @@ class FilterService {
   FilterService();
 
   Filter filter = Filter.fromUrl();
+
+  void changeFilter(Filter newFilter) {
+    newFilter.updateUrl();
+    if (newFilter.singleTest != filter.singleTest) {
+      window.location.reload();
+    }
+    filter = newFilter;
+  }
+
+  void addConfiguration(String configuration) {
+    if (configuration.endsWith('-')) {
+      changeFilter(filter.copy(
+          configurationGroups: [configuration, ...filter.configurationGroups]));
+    } else {
+      changeFilter(filter
+          .copy(configurations: [configuration, ...filter.configurations]));
+    }
+  }
+
+  void removeConfiguration(String configuration) {
+    changeFilter(filter.copy(
+        configurationGroups: List.from(filter.configurationGroups)
+          ..remove(configuration),
+        configurations: List.from(filter.configurations)
+          ..remove(configuration)));
+  }
+
+  void setTestFilter(String test) {
+    changeFilter(filter.copy(singleTest: test));
+  }
+
+  void clearTestFilter() {
+    changeFilter(filter.clearTest());
+  }
 }

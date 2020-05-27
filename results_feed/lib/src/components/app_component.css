@@ -7,17 +7,16 @@
 header {
     flex: none;
     width: 100%;
+    min-height: 50px;
     margin: 0px;
     z-index: 1;
+    display: flex;
+    align-items: center;
 }
 
 header.shadow {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
-}
-
-header span.space {
-    flex: 1;
 }
 
 header span.button {
@@ -34,6 +33,10 @@ header span {
 header.blue {
     background-color: rgb(63, 81, 181);
     color: white;
+}
+
+results-filter {
+    flex: 1;
 }
 
 .results-feed-body {
