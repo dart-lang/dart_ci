@@ -78,7 +78,7 @@ class Filter {
     return result;
   }
 
-  static const defaultShowLatestFailures = false;
+  static const defaultShowLatestFailures = true;
   static const defaultShowUnapprovedOnly = false;
   static const allConfigurationGroups = <String>[
     'analyzer',
