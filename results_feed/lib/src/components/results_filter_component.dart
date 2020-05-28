@@ -30,15 +30,20 @@ const allConfigurationGroups = Filter.allConfigurationGroups;
   '''
   :host {
     display: flex;
-    height: 100%;
-    box-sizing: border-box;}
+    box-sizing: border-box;
+    border-bottom-style:solid;
+    border-width: thin;
+    border-color: rgb(63, 81, 181);
+  }
   span {
-    color: lightgray;
+    color: gray;
     display: inline-flex;
     font-variant: small-caps;
     font-size: 20px;
     font-weight: bold;
-    align-items: center;
+    padding-left: 4px;
+    padding-top: 8px;
+    text-align: center;
     justify-content: center;
     height: auto;
     border-bottom-style: solid;
@@ -47,14 +52,14 @@ const allConfigurationGroups = Filter.allConfigurationGroups;
     flex: 1 1 auto;
   }
   span.selected {
-    color: white;
-    border-color: white;
+    color: rgb(63, 81, 181);
+    border-color: rgb(63, 81, 181);
   }'''
 ])
 class ResultsFilterComponent {
-  static const allResults = 'all results';
-  static const activeFailures = 'active failures';
-  static const unapprovedFailures = 'unapproved failures';
+  static const allResults = 'all';
+  static const activeFailures = 'failures';
+  static const unapprovedFailures = 'unapproved';
   static const resultTypes = [allResults, activeFailures, unapprovedFailures];
 
   final FilterService service;

@@ -6,8 +6,8 @@
 
 header {
     flex: none;
+    flex-wrap: wrap;
     width: 100%;
-    min-height: 50px;
     margin: 0px;
     z-index: 1;
     display: flex;
@@ -15,6 +15,7 @@ header {
 }
 
 header.shadow {
+    min-height: 40px;
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
     0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
@@ -27,16 +28,19 @@ header span {
     display: inline-block;
     margin-left: 16px;
     margin-right: 16px;
+    margin-top: 6px;
     font-size: 24px;
 }
 
 header.blue {
-    background-color: rgb(63, 81, 181);
-    color: white;
+    background-color: white;
+    color: rgb(63, 81, 181);
+    justify-content: space-between;
 }
 
 results-filter {
     flex: 1;
+    align-self: stretch;
 }
 
 .results-feed-body {

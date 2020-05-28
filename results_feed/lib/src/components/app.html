@@ -1,11 +1,16 @@
 <header class="blue">
-  <span class="title">{{title}}</span>
-  <results-filter></results-filter>
+  <span class="title">
+    <img style="width:2em; height:2em; margin-bottom:-0.5em"
+         src="dart_192.svg" alt="Dart" title="Dart">
+    Results Feed</span>
   <span
       class="button"
       (click)="toggleLogin()">
     {{loginMessage}}
   </span>
+</header>
+<header class="blue">
+  <results-filter></results-filter>
 </header>
 <header class="shadow">
   <filter-row></filter-row>

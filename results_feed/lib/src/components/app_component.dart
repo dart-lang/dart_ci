@@ -43,8 +43,6 @@ import '../services/build_service.dart';
       'app_component.css'
     ])
 class AppComponent implements OnInit, CanReuse {
-  String title = 'Dart Results Feed';
-
   Map<IntRange, ChangeGroup> changeGroups = SplayTreeMap(reverse);
   Map<int, Commit> commits = SplayTreeMap(reverse);
   Map<IntRange, List<Comment>> comments = SplayTreeMap(reverse);
