@@ -13,6 +13,7 @@ import '../services/build_service.dart';
 import '../services/filter_service.dart';
 
 const allConfigurationGroups = Filter.allConfigurationGroups;
+const testSuggestion = '[suite]/[test name]';
 
 @Component(
     selector: 'filter-row',
@@ -50,7 +51,7 @@ class FilterRowComponent implements OnInit {
 
   void ngOnInit() async {
     final configurations = await buildService.configurations;
-    selectionOptions = ['(any test name)']
+    selectionOptions = [testSuggestion]
         .followedBy({
           for (final configuration in configurations)
             configuration.split('-').first + '-'
@@ -76,7 +77,7 @@ class FilterRowComponent implements OnInit {
   }
 
   void selectionChange(event) {
-    if (event is String) {
+    if (event is String && event != testSuggestion) {
       service.addConfiguration(event);
       clear();
     }
@@ -88,7 +89,9 @@ class FilterRowComponent implements OnInit {
   }
 
   void addTestFilter() {
-    service.setTestFilter(filterText);
+    if (filterText != testSuggestion) {
+      service.setTestFilter(filterText);
+    }
     clear();
   }
 }

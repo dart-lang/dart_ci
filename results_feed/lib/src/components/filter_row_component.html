@@ -14,12 +14,6 @@
     (click)="addFilter()">
   Add Filter
 </material-chip>
-<material-icon
-    *ngIf="addingTestFilter"
-    baseline
-    icon="check_circle"
-    (click)="addTestFilter()">
-</material-icon>
 <material-auto-suggest-input
     #addFilterTextInput
     *ngIf="addingFilter"
@@ -32,3 +26,9 @@
     (selectionChange)="selectionChange($event)"
     (clear)="clear()">
 </material-auto-suggest-input>
+<material-icon
+    *ngIf="addingTestFilter"
+    baseline
+    icon="check_circle"
+    (click)="addTestFilter()">
+</material-icon>
