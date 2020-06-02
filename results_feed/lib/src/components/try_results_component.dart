@@ -16,6 +16,7 @@ import 'package:angular_router/angular_router.dart';
 import '../formatting.dart';
 import '../model/comment.dart';
 import '../model/commit.dart';
+import '../services/filter_service.dart';
 import '../services/try_data_service.dart';
 import 'results_panel.dart';
 import 'results_selector_panel.dart';
@@ -54,6 +55,7 @@ class TryResultsComponent implements OnActivate {
   Map<int, Map<String, TryBuild>> builds;
   Map<String, String> builders;
   final IntRange emptyRange = IntRange(1, 0);
+  Filter filter = Filter.defaultFilter.copy(showLatestFailures: false);
   bool updating = false;
   bool updatePending = false;
   bool _approving = false;

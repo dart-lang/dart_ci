@@ -8,12 +8,14 @@
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"
       [builds]="builds"
-      [builders]="builders">
+      [builders]="builders"
+      [filter]="filter">
   </results-panel>
   <results-selector-panel *ngIf="approving"
       [changes]="changeGroup.changes"
       [builds]="builds"
       [builders]="builders"
+      [filter]="filter"
       [selected]="selected"
       failuresOnly>
   </results-selector-panel>
