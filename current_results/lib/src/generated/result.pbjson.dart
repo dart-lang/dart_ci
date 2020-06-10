@@ -21,12 +21,41 @@ const Result$json = const {
     const {'1': 'build_number', '3': 9, '4': 1, '5': 9, '10': 'buildNumber'},
     const {'1': 'builder_name', '3': 10, '4': 1, '5': 9, '10': 'builderName'},
     const {'1': 'flaky', '3': 11, '4': 1, '5': 8, '10': 'flaky'},
-    const {'1': 'previous_flaky', '3': 12, '4': 1, '5': 8, '10': 'previousFlaky'},
-    const {'1': 'previous_commit_hash', '3': 13, '4': 1, '5': 9, '10': 'previousCommitHash'},
-    const {'1': 'previous_commit_time', '3': 14, '4': 1, '5': 5, '10': 'previousCommitTime'},
-    const {'1': 'previous_build_number', '3': 15, '4': 1, '5': 9, '10': 'previousBuildNumber'},
-    const {'1': 'previous_result', '3': 16, '4': 1, '5': 9, '10': 'previousResult'},
+    const {
+      '1': 'previous_flaky',
+      '3': 12,
+      '4': 1,
+      '5': 8,
+      '10': 'previousFlaky'
+    },
+    const {
+      '1': 'previous_commit_hash',
+      '3': 13,
+      '4': 1,
+      '5': 9,
+      '10': 'previousCommitHash'
+    },
+    const {
+      '1': 'previous_commit_time',
+      '3': 14,
+      '4': 1,
+      '5': 5,
+      '10': 'previousCommitTime'
+    },
+    const {
+      '1': 'previous_build_number',
+      '3': 15,
+      '4': 1,
+      '5': 9,
+      '10': 'previousBuildNumber'
+    },
+    const {
+      '1': 'previous_result',
+      '3': 16,
+      '4': 1,
+      '5': 9,
+      '10': 'previousResult'
+    },
     const {'1': 'changed', '3': 17, '4': 1, '5': 8, '10': 'changed'},
   ],
 };
-

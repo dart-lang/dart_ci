@@ -5,28 +5,23 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf/shelf_io.dart' as io;
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart';
+import 'package:pool/pool.dart';
 
-import '../gen/result.pbserver.dart';
+import 'package:current_results/src/slice.dart';
 
 // For Google Cloud Run, set _hostname to '0.0.0.0'.
 var _hostname = '0.0.0.0';
 
 Future initialized;
 
+final current = Slice();
+
 void main(List<String> args) async {
   initialized = loadData();
-  var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
-  var handler = const shelf.Pipeline()
-      .addMiddleware(shelf.logRequests())
-      .addHandler(_echoRequest);
-
-  var server = await io.serve(handler, _hostname, port);
-  print('Serving at http://${server.address.host}:${server.port}');
+  var port = int.tryParse(Platform.environment['PORT'] ?? '8081');
 }
 
 Future<void> loadData() async {
@@ -35,78 +30,33 @@ Future<void> loadData() async {
   final storage = Storage(client, 'dart-ci-staging');
   final bucket = storage.bucket('dart-test-results');
 
-  await for (final configuration
-      in bucket.list(prefix: 'configuration/master/')) {
-    if (configuration.isDirectory) {
-      try {
-        final revision = await bucket
-            .read('${configuration.name}latest')
-            .transform(ascii.decoder)
-            .transform(LineSplitter())
-            .single;
-        final lines = await bucket
-            .read('${configuration.name}$revision/results.json')
-            .transform(utf8.decoder)
-            .transform(LineSplitter());
-        await for (final line in lines) {
-          final result = Result()
-            ..mergeFromProto3Json(json.decode(line),
-                supportNamesWithUnderscores: true);
-          data.add(CurrentResult.fromResult(result));
-        }
-      } catch (e) {
-        print('Error reading results from ${configuration.name}:');
-        print(e);
-      }
+  final configurationDirectories = await bucket
+      .list(prefix: 'configuration/master/')
+      .where((entry) => entry.isDirectory)
+      .toList();
+  await Pool(10).forEach(configurationDirectories, (configuration) async {
+    print(configuration.name);
+    try {
+      final revision = await bucket
+          .read('${configuration.name}latest')
+          .transform(ascii.decoder)
+          .transform(LineSplitter())
+          .single;
+      final results = await bucket
+          .read('${configuration.name}$revision/results.json')
+          .transform(utf8.decoder)
+          .transform(LineSplitter())
+          .toList();
+      current.add(results);
+    } catch (e) {
+      print('Error reading results from ${configuration.name}:');
+      print(e);
     }
-  }
-  print("Records ingested: ${data.length}");
-}
-
-class CurrentResult {
-  final String name;
-  final String configuration;
-  final String commitHash;
-  final String result;
-  final bool flaky;
-  final String expected;
-  final Duration time;
-
-  CurrentResult(this.name, this.configuration, this.commitHash, this.result,
-      this.flaky, this.expected, this.time);
-
-  CurrentResult.fromResult(Result other)
-      : this(
-            unique(other.name),
-            unique(other.configuration),
-            unique(other.commitHash),
-            unique(other.result),
-            other.flaky,
-            unique(other.expected),
-            Duration(milliseconds: other.timeMs));
-}
-
-final set = Set<String>();
-final data = <CurrentResult>[];
-
-String unique(String string) =>
-    set.lookup(string) ?? (set.add(string) ? string : string);
-
-Map<String, dynamic> canonicalize(Map<String, dynamic> map) => {
-      for (final entry in map.entries)
-        unique(entry.key):
-            (entry.value is String) ? unique(entry.value) : entry.value
-    };
-
-Future<shelf.Response> _echoRequest(shelf.Request request) async {
-  print("Request ${request.url} received");
-  await initialized;
-  return shelf.Response.ok('Number of results: ${data.length}\n'
-      'Number of unique strings ${set.length}');
+  }).drain();
+  print("Records ingested: ${current.size}");
 }
 
 Future<AuthClient> getAuthenticatedClient() async {
-  AuthClient result;
   final localCredentials =
       Platform.environment['GOOGLE_APPLICATION_CREDENTIALS'];
   if (localCredentials == null) {
