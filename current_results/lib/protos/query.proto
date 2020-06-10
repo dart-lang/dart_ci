@@ -1,0 +1,75 @@
+// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package current_results;
+
+service Query {
+  // Returns all results matching the optional test and configuration filters.
+  rpc GetResults (GetResultsRequest) returns (GetResultsResponse);
+  // Returns the test names starting with an optional prefix.
+  rpc ListTests (ListTestsRequest) returns (ListTestsResponse);
+  // Returns the completions of a partial test name. Returns a list of
+  // the test paths starting with the prefix, completed to the next path
+  // component, perhaps followed by complete test paths.
+  rpc ListTestPathCompletions (ListTestsRequest) returns (ListTestsResponse);
+  // Returns a list of all configurations starting with an optional prefix.
+  rpc ListConfigurations (ListConfigurationsRequest)
+    returns (ListConfigurationsResponse);
+}
+
+message GetResultsRequest {
+  // If present, return only results with test names starting with one of
+  // these prefixes.  If absent, return all tests.
+  repeated string names = 1;
+
+  // If present, return only results with configurations on this list.
+  // If absent, return results for all configurations.
+  repeated string configurations = 2;
+
+  // The maximum number of results to return.
+  // The service may return fewer than this value.
+  // If unspecified, will be 100,000.
+  // The maximum value is 100,000.
+  int32 page_size = 3;
+
+  // The page token received from a previous call to GetResults.
+  // All arguments except page_size must be identical to the previous call.
+  string page_token = 4;
+}
+
+message GetResultsResponse {
+  repeated Result results = 1;
+
+  // A token, which can be sent as `page_token` to retrieve the next page.
+  // If this field is omitted, there are no subsequent pages.
+  string next_page_token = 2;
+}
+
+message Result {
+  string name = 1;
+  string configuration = 2;
+  string result = 3;
+  string expected = 4;
+  bool flaky = 5;
+  int32 time_ms = 6;
+}
+
+message ListTestsRequest {
+  string prefix = 1; // Optional
+  int32 limit = 2; // Default limit is 20, maximum is 100,000
+}
+
+message ListTestsResponse {
+  repeated string names = 1;
+}
+
+message ListConfigurationsRequest {
+  string prefix = 1; // Optional
+}
+
+message ListConfigurationsResponse {
+  repeated string configurations = 1;
+}
