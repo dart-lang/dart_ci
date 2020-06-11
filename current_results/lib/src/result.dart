@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:current_results/src/generated/query.pb.dart' as query_api;
 import 'package:current_results/src/generated/result.pb.dart' as api;
 
 class Result {
@@ -26,11 +27,21 @@ class Result {
             unique(other.expected),
             Duration(milliseconds: other.timeMs));
 
-  static final uniqueStrings = Set<String>();
+  static final uniqueStrings = <String>{};
 
   static String unique(String string) =>
       uniqueStrings.lookup(string) ??
       (uniqueStrings.add(string) ? string : string);
+
+  query_api.Result toQueryResult() => query_api.Result()
+    ..name = name
+    ..configuration = configuration
+    ..result = result
+    ..timeMs = time.inMilliseconds
+    ..expected = expected
+    ..flaky = flaky;
+
+  static query_api.Result toApi(Result result) => result.toQueryResult();
 
   Map<String, dynamic> toMap() => {
         'name': name,
@@ -42,5 +53,6 @@ class Result {
         'time': time,
       };
 
+  @override
   String toString() => toMap().toString();
 }

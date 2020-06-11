@@ -7,9 +7,11 @@ import 'dart:io';
 
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart';
+import 'package:grpc/grpc.dart';
+import 'package:http/http.dart' as http;
 import 'package:pool/pool.dart';
 
+import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/slice.dart';
 
 // For Google Cloud Run, set _hostname to '0.0.0.0'.
@@ -22,11 +24,14 @@ final current = Slice();
 void main(List<String> args) async {
   initialized = loadData();
   var port = int.tryParse(Platform.environment['PORT'] ?? '8081');
+  final grpcServer = Server([QueryService(current)]);
+  await grpcServer.serve(port: port);
+  print('Grpc serving on port ${grpcServer.port}');
 }
 
 Future<void> loadData() async {
   // Load files from cloud storage:
-  final AuthClient client = await getAuthenticatedClient();
+  final client = await getAuthenticatedClient();
   final storage = Storage(client, 'dart-ci-staging');
   final bucket = storage.bucket('dart-test-results');
 
@@ -53,7 +58,7 @@ Future<void> loadData() async {
       print(e);
     }
   }).drain();
-  print("Records ingested: ${current.size}");
+  print('Records ingested: ${current.size}');
 }
 
 Future<AuthClient> getAuthenticatedClient() async {
@@ -79,7 +84,7 @@ Future<AuthClient> getAuthenticatedClient() async {
         ClientId(credentials['client_id'], credentials['client_secret']),
         AccessCredentials(AccessToken('Bearer', '', DateTime(0).toUtc()),
             credentials['refresh_token'] as String, scopes),
-        Client(),
+        http.Client(),
       );
     } else {
       // Service credentials.
