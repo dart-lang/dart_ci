@@ -8,14 +8,14 @@ import 'package:current_results/src/generated/query.pbgrpc.dart';
 import 'package:current_results/src/slice.dart';
 
 class QueryService extends QueryServiceBase {
-  Slice store;
+  Slice current;
 
-  QueryService(this.store);
+  QueryService(this.current);
 
   @override
   Future<GetResultsResponse> getResults(
           ServiceCall call, GetResultsRequest query) =>
-      Future.value(store.query(query));
+      Future.value(current.query(query));
 
   @override
   Future<ListTestsResponse> listTests(

@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:grpc/grpc.dart';
 
 import 'package:current_results/src/result.dart';
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
@@ -46,6 +47,8 @@ class Slice {
     _stored[configuration] = sorted;
     _size += sorted.length;
     testNames = _mergeIfNeeded(testNames, sorted);
+    print('latest results of $configuration: ${sorted.length} results '
+        '(total: $_size)');
   }
 
   static List<String> _mergeIfNeeded(List<String> names, List<Result> sorted) {
@@ -81,6 +84,8 @@ class Slice {
     while (j < sorted.length) {
       result.add(sorted[j++].name);
     }
+    print('Added ${result.length - names.length} new test names '
+        '(total ${result.length})');
     return result;
   }
 
@@ -96,6 +101,10 @@ class Slice {
     }
     for (final configuration in configurations) {
       final sorted = _stored[configuration];
+      if (sorted == null) {
+        throw GrpcError.notFound(
+            "Results for configuration $configuration not found");
+      }
       for (final testNamePrefix in query.names) {
         final prefixResult =
             Result(testNamePrefix, null, null, null, null, null, null);
