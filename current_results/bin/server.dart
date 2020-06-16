@@ -10,13 +10,16 @@ import 'package:pool/pool.dart';
 import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/slice.dart';
+import 'package:current_results/src/notifications.dart';
 
 final current = Slice();
 final bucket = ResultsBucket();
-final grpcServer = Server([QueryService(current)]);
+final notifications = BucketNotifications();
+final grpcServer = Server([QueryService(current, notifications, bucket)]);
 
 void main(List<String> args) async {
   await bucket.initialize();
+  await notifications.initialize();
   await loadData();
   var port = int.tryParse(Platform.environment['PORT'] ?? '8081');
   await grpcServer.serve(port: port);

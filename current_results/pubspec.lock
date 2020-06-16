@@ -119,7 +119,7 @@ packages:
       name: grpc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.3"
+    version: "2.2.0"
   html:
     dependency: transitive
     description:

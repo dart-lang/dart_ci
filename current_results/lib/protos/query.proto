@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package current_results;
 
+import "google/protobuf/empty.proto";
+
 service Query {
   // Returns all results matching the optional test and configuration filters.
   rpc GetResults (GetResultsRequest) returns (GetResultsResponse);
@@ -18,6 +20,9 @@ service Query {
   // Returns a list of all configurations starting with an optional prefix.
   rpc ListConfigurations (ListConfigurationsRequest)
     returns (ListConfigurationsResponse);
+
+  // Fetches new results into the service
+  rpc Fetch(google.protobuf.Empty) returns (FetchResponse);
 }
 
 message GetResultsRequest {
@@ -72,4 +77,12 @@ message ListConfigurationsRequest {
 
 message ListConfigurationsResponse {
   repeated string configurations = 1;
+}
+
+message FetchResponse {
+  repeated ConfigurationUpdate updates = 1;
+}
+
+message ConfigurationUpdate {
+  string configuration = 1;
 }

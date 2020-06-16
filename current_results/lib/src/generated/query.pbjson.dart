@@ -88,3 +88,24 @@ const ListConfigurationsResponse$json = const {
     },
   ],
 };
+
+const FetchResponse$json = const {
+  '1': 'FetchResponse',
+  '2': const [
+    const {
+      '1': 'updates',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.current_results.ConfigurationUpdate',
+      '10': 'updates'
+    },
+  ],
+};
+
+const ConfigurationUpdate$json = const {
+  '1': 'ConfigurationUpdate',
+  '2': const [
+    const {'1': 'configuration', '3': 1, '4': 1, '5': 9, '10': 'configuration'},
+  ],
+};

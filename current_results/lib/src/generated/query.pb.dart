@@ -393,3 +393,79 @@ class ListConfigurationsResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.List<$core.String> get configurations => $_getList(0);
 }
+
+class FetchResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('FetchResponse',
+      package: const $pb.PackageName('current_results'),
+      createEmptyInstance: create)
+    ..pc<ConfigurationUpdate>(1, 'updates', $pb.PbFieldType.PM,
+        subBuilder: ConfigurationUpdate.create)
+    ..hasRequiredFields = false;
+
+  FetchResponse._() : super();
+  factory FetchResponse() => create();
+  factory FetchResponse.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory FetchResponse.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  FetchResponse clone() => FetchResponse()..mergeFromMessage(this);
+  FetchResponse copyWith(void Function(FetchResponse) updates) =>
+      super.copyWith((message) => updates(message as FetchResponse));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FetchResponse create() => FetchResponse._();
+  FetchResponse createEmptyInstance() => create();
+  static $pb.PbList<FetchResponse> createRepeated() =>
+      $pb.PbList<FetchResponse>();
+  @$core.pragma('dart2js:noInline')
+  static FetchResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<FetchResponse>(create);
+  static FetchResponse _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<ConfigurationUpdate> get updates => $_getList(0);
+}
+
+class ConfigurationUpdate extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('ConfigurationUpdate',
+      package: const $pb.PackageName('current_results'),
+      createEmptyInstance: create)
+    ..aOS(1, 'configuration')
+    ..hasRequiredFields = false;
+
+  ConfigurationUpdate._() : super();
+  factory ConfigurationUpdate() => create();
+  factory ConfigurationUpdate.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory ConfigurationUpdate.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  ConfigurationUpdate clone() => ConfigurationUpdate()..mergeFromMessage(this);
+  ConfigurationUpdate copyWith(void Function(ConfigurationUpdate) updates) =>
+      super.copyWith((message) => updates(message as ConfigurationUpdate));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ConfigurationUpdate create() => ConfigurationUpdate._();
+  ConfigurationUpdate createEmptyInstance() => create();
+  static $pb.PbList<ConfigurationUpdate> createRepeated() =>
+      $pb.PbList<ConfigurationUpdate>();
+  @$core.pragma('dart2js:noInline')
+  static ConfigurationUpdate getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ConfigurationUpdate>(create);
+  static ConfigurationUpdate _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get configuration => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set configuration($core.String v) {
+    $_setString(0, v);
+  }
+
+  @$pb.TagNumber(1)
+  $core.bool hasConfiguration() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearConfiguration() => clearField(1);
+}
