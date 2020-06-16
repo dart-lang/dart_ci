@@ -12,10 +12,11 @@ void main(List<String> args) async {
   final runner = CommandRunner<void>(
       'client.dart', 'Send gRPC requests to current results server')
     ..addCommand(QueryCommand())
+    ..addCommand(ListTestsCommand())
     ..addCommand(FetchCommand())
-    ..argParser.addOption('host', help: 'Current results server to query')
+    ..argParser.addOption('host', help: 'current results server to query')
     ..argParser
-        .addOption('port', abbr: 'p', help: 'Port of current results server');
+        .addOption('port', abbr: 'p', help: 'port of current results server');
   await runner.run(args);
 }
 
@@ -37,9 +38,9 @@ abstract class gRpcCommand extends Command {
 class QueryCommand extends gRpcCommand {
   QueryCommand() {
     argParser.addMultiOption('name',
-        abbr: 'n', help: 'Test name or prefix to fetch results for');
+        abbr: 'n', help: 'test name or prefix to fetch results for');
     argParser.addMultiOption('configuration',
-        abbr: 'c', help: 'Configuration to fetch results for');
+        abbr: 'c', help: 'configuration to fetch results for');
   }
   String get name => 'getResults';
   String get description => 'Send a GetResults gRPC request to the server';
@@ -49,6 +50,27 @@ class QueryCommand extends gRpcCommand {
     request.names.addAll(argResults['name']);
     request.configurations.addAll(argResults['configuration']);
     final result = await QueryClient(channel).getResults(request);
+    print(result.toProto3Json());
+  }
+}
+
+class ListTestsCommand extends gRpcCommand {
+  ListTestsCommand() {
+    argParser.addOption('prefix',
+        defaultsTo: '', help: 'test name prefix to fetch test names for');
+    argParser.addOption('limit',
+        defaultsTo: '0',
+        help: 'number of test names starting with prefix to return');
+  }
+
+  String get name => 'listTests';
+  String get description => 'Send a ListTests gRPC request to the server';
+
+  Future<void> runWithChannel(ClientChannel channel) async {
+    final query = ListTestsRequest()
+      ..prefix = argResults['prefix']
+      ..limit = int.parse(argResults['limit']);
+    final result = await QueryClient(channel).listTests(query);
     print(result.toProto3Json());
   }
 }

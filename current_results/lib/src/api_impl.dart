@@ -25,9 +25,8 @@ class QueryService extends QueryServiceBase {
 
   @override
   Future<ListTestsResponse> listTests(
-      ServiceCall call, ListTestsRequest query) async {
-    throw UnimplementedError();
-  }
+          ServiceCall call, ListTestsRequest query) =>
+      Future.value(current.listTests(query));
 
   @override
   Future<ListTestsResponse> listTestPathCompletions(

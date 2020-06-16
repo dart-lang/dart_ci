@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:grpc/grpc.dart';
@@ -121,6 +122,23 @@ class Slice {
           response.results
               .addAll(sorted.getRange(start, end).map(Result.toApi));
         }
+      }
+    }
+    return response;
+  }
+
+  query_api.ListTestsResponse listTests(query_api.ListTestsRequest query) {
+    var limit = min(query.limit, 100000);
+    if (limit == 0) limit = 20;
+    final prefix = query.prefix;
+    final response = query_api.ListTestsResponse();
+    final start = lowerBound(testNames, prefix);
+    final end = min(start + limit, testNames.length);
+    for (final name in testNames.getRange(start, end)) {
+      if (name.startsWith(prefix)) {
+        response.names.add(name);
+      } else {
+        break;
       }
     }
     return response;
