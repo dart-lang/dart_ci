@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'firestore.dart';
 import 'result.dart';
 
-/// Contains data about the commits on the master branch of the sdk repo.
+/// Contains data about the commits on the tracked branch of the SDK repo.
 /// An instance of this class is stored in a top-level variable, and is
 /// shared between cloud function invocations.
 ///
@@ -97,6 +97,13 @@ class CommitsCache {
     return commit;
   }
 
+  Future<String> get branchName async {
+    if (await firestore.isStaging()) {
+      return String.fromEnvironment('BRANCH') ?? 'master';
+    }
+    return 'master';
+  }
+
   Future<Map<String, dynamic>> _fetchByIndex(int index) => firestore
       .getCommitByIndex(index)
       .then((commit) => _fetchByHash(commit['hash']));
@@ -110,9 +117,10 @@ class CommitsCache {
     final lastHash = lastCommit['hash'];
     final lastIndex = lastCommit['index'];
 
+    final branch = await branchName;
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
-    final range = '$lastHash..master';
-    final parameters = ['format=JSON', 'topo-order', 'n=1000'];
+    final range = '$lastHash..$branch';
+    final parameters = ['format=JSON', 'topo-order', 'first-parent', 'n=1000'];
     final url = '$logUrl$range?${parameters.join('&')}';
     final response = await httpClient.get(url);
     final protectedJson = response.body;
@@ -121,13 +129,13 @@ class CommitsCache {
     final commits = jsonDecode(protectedJson.substring(prefix.length))['log']
         as List<dynamic>;
     if (commits.isEmpty) {
-      print('Found no new commits between $lastHash and master');
+      print('Found no new commits between $lastHash and $branch');
       return;
     }
     print('Fetched new commits from Gerrit (gitiles): $commits');
     final first = commits.last as Map<String, dynamic>;
     if (first['parents'].first != lastHash) {
-      throw 'First new commit ${first['parents'].first} is not'
+      throw 'First new commit ${first['commit']} is not'
           ' a child of last known commit $lastHash when fetching new commits';
     }
     var index = lastIndex + 1;

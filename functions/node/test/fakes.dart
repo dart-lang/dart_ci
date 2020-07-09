@@ -49,6 +49,8 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
       List.from(fakeFirestoreTryResults);
   int addedResultIdCounter = 1;
 
+  Future<bool> isStaging() async => false;
+
   Future<Map<String, dynamic>> getCommit(String hash) =>
       Future.value(commits[hash]);
 

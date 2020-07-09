@@ -38,7 +38,7 @@ message Result {
   // The configurations that produced this changed result when tested.
   repeated string configurations = 6;
 
-  // Commits to sdk/master are indexed consecutively in the table 'commits'.
+  // Commits to the SDK branch are indexed consecutively in the table 'commits'.
   int32 blamelist_start_index = 7;
   int32 blamelist_end_index = 8;  // Inclusive: this commit is in the blamelist.
   reserved 9;  // Unused
@@ -130,7 +130,7 @@ message Commit {
   // Stored as the document ID, not a field.
   string id = 1;
 
-  // The position of the commit in the sdk master branch, only considering
+  // The position of the commit in the SDK branch, only considering
   // the first parent of each commit, a linear chain.
   int32 index = 2;
   string author = 3; // The author of the commit, as an email address.
