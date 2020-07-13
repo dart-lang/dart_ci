@@ -8,37 +8,17 @@
 const GetResultsRequest$json = const {
   '1': 'GetResultsRequest',
   '2': const [
-    const {'1': 'names', '3': 1, '4': 3, '5': 9, '10': 'names'},
-    const {
-      '1': 'configurations',
-      '3': 2,
-      '4': 3,
-      '5': 9,
-      '10': 'configurations'
-    },
-    const {'1': 'page_size', '3': 3, '4': 1, '5': 5, '10': 'pageSize'},
-    const {'1': 'page_token', '3': 4, '4': 1, '5': 9, '10': 'pageToken'},
+    const {'1': 'filter', '3': 1, '4': 1, '5': 9, '10': 'filter'},
+    const {'1': 'page_size', '3': 2, '4': 1, '5': 5, '10': 'pageSize'},
+    const {'1': 'page_token', '3': 3, '4': 1, '5': 9, '10': 'pageToken'},
   ],
 };
 
 const GetResultsResponse$json = const {
   '1': 'GetResultsResponse',
   '2': const [
-    const {
-      '1': 'results',
-      '3': 1,
-      '4': 3,
-      '5': 11,
-      '6': '.current_results.Result',
-      '10': 'results'
-    },
-    const {
-      '1': 'next_page_token',
-      '3': 2,
-      '4': 1,
-      '5': 9,
-      '10': 'nextPageToken'
-    },
+    const {'1': 'results', '3': 1, '4': 3, '5': 11, '6': '.current_results.Result', '10': 'results'},
+    const {'1': 'next_page_token', '3': 2, '4': 1, '5': 9, '10': 'nextPageToken'},
   ],
 };
 
@@ -79,27 +59,14 @@ const ListConfigurationsRequest$json = const {
 const ListConfigurationsResponse$json = const {
   '1': 'ListConfigurationsResponse',
   '2': const [
-    const {
-      '1': 'configurations',
-      '3': 1,
-      '4': 3,
-      '5': 9,
-      '10': 'configurations'
-    },
+    const {'1': 'configurations', '3': 1, '4': 3, '5': 9, '10': 'configurations'},
   ],
 };
 
 const FetchResponse$json = const {
   '1': 'FetchResponse',
   '2': const [
-    const {
-      '1': 'updates',
-      '3': 1,
-      '4': 3,
-      '5': 11,
-      '6': '.current_results.ConfigurationUpdate',
-      '10': 'updates'
-    },
+    const {'1': 'updates', '3': 1, '4': 3, '5': 11, '6': '.current_results.ConfigurationUpdate', '10': 'updates'},
   ],
 };
 
@@ -109,3 +76,4 @@ const ConfigurationUpdate$json = const {
     const {'1': 'configuration', '3': 1, '4': 1, '5': 9, '10': 'configuration'},
   ],
 };
+

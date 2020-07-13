@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:grpc/grpc.dart';
 
 import 'package:current_results/src/result.dart';
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
@@ -90,23 +89,28 @@ class Slice {
     return result;
   }
 
-  query_api.GetResultsResponse query(query_api.GetResultsRequest query) {
+  query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
     final response = query_api.GetResultsResponse();
-    final configurations =
-        query.configurations.isEmpty ? _stored.keys : query.configurations;
-    if (query.names.isEmpty) {
-      for (final configuration in configurations) {
-        response.results.addAll(_stored[configuration].map(Result.toApi));
-      }
+    final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
+    final filterTerms =
+        query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
+    var configurations = filterTerms.where(_stored.containsKey);
+    if (configurations.isEmpty) {
+      configurations = _stored.keys;
+    }
+    final tests = filterTerms.where((t) => !_stored.containsKey(t)).toList();
+    if (tests.isEmpty) {
+      response.results.addAll(configurations
+          .expand((configuration) => _stored[configuration])
+          .map(Result.toApi)
+          .take(limit));
+
       return response;
     }
     for (final configuration in configurations) {
       final sorted = _stored[configuration];
-      if (sorted == null) {
-        throw GrpcError.notFound(
-            "Results for configuration $configuration not found");
-      }
-      for (final testNamePrefix in query.names) {
+      for (final testNamePrefix in tests) {
+        if (response.results.length >= limit) break;
         final prefixResult =
             Result(testNamePrefix, null, null, null, null, null, null);
         final start =
@@ -119,8 +123,10 @@ class Slice {
             end = lowerBound<Result>(sorted, prefixResult,
                 compare: compareNamesPrefixMatchesBelow);
           }
-          response.results
-              .addAll(sorted.getRange(start, end).map(Result.toApi));
+          response.results.addAll(sorted
+              .getRange(start, end)
+              .map(Result.toApi)
+              .take(limit - response.results.length));
         }
       }
     }

@@ -21,7 +21,7 @@ class QueryService extends QueryServiceBase {
   @override
   Future<GetResultsResponse> getResults(
           ServiceCall call, GetResultsRequest query) =>
-      Future.value(current.query(query));
+      Future.value(current.results(query));
 
   @override
   Future<ListTestsResponse> listTests(

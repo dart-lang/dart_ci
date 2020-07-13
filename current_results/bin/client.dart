@@ -37,18 +37,23 @@ abstract class gRpcCommand extends Command {
 
 class QueryCommand extends gRpcCommand {
   QueryCommand() {
-    argParser.addMultiOption('name',
-        abbr: 'n', help: 'test name or prefix to fetch results for');
-    argParser.addMultiOption('configuration',
-        abbr: 'c', help: 'configuration to fetch results for');
+    argParser.addOption('filter',
+        abbr: 'f',
+        help: 'test names, test name prefixes, and configurations, '
+            'comma-separated, to fetch results for');
+    argParser.addOption('limit',
+        abbr: 'l', help: 'number of results to return');
   }
   String get name => 'getResults';
   String get description => 'Send a GetResults gRPC request to the server';
 
   Future<void> runWithChannel(ClientChannel channel) async {
     final request = GetResultsRequest();
-    request.names.addAll(argResults['name']);
-    request.configurations.addAll(argResults['configuration']);
+    request.filter = argResults['filter'] ?? '';
+    if (argResults['limit'] != null) {
+      request.pageSize = int.parse(argResults['limit']);
+    }
+
     final result = await QueryClient(channel).getResults(request);
     print(result.toProto3Json());
   }
