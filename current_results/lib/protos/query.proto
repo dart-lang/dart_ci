@@ -6,23 +6,46 @@ syntax = "proto3";
 
 package current_results;
 
+import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service Query {
   // Returns all results matching the optional test and configuration filters.
-  rpc GetResults (GetResultsRequest) returns (GetResultsResponse);
+  rpc GetResults (GetResultsRequest) returns (GetResultsResponse) {
+    option(google.api.http) = {
+      get: "/v1/results"
+    };
+  }
   // Returns the test names starting with an optional prefix.
-  rpc ListTests (ListTestsRequest) returns (ListTestsResponse);
+  rpc ListTests (ListTestsRequest) returns (ListTestsResponse) {
+    // Maps to HTTP GET. prefix and limit are query parameters.
+    option (google.api.http) = {
+      get: "/v1/tests"
+    };
+  }
   // Returns the completions of a partial test name. Returns a list of
   // the test paths starting with the prefix, completed to the next path
   // component, perhaps followed by complete test paths.
-  rpc ListTestPathCompletions (ListTestsRequest) returns (ListTestsResponse);
+  rpc ListTestPathCompletions (ListTestsRequest) returns (ListTestsResponse) {
+    option (google.api.http) = {
+      get: "/v1/testPaths"
+    };
+  }
   // Returns a list of all configurations starting with an optional prefix.
   rpc ListConfigurations (ListConfigurationsRequest)
-    returns (ListConfigurationsResponse);
+    returns (ListConfigurationsResponse) {
+    option (google.api.http) = {
+      get: "/v1/configurations"
+    };
+
+  }
 
   // Fetches new results into the service
-  rpc Fetch(google.protobuf.Empty) returns (FetchResponse);
+  rpc Fetch(google.protobuf.Empty) returns (FetchResponse) {
+     option (google.api.http) = {
+       post: "/v1/fetch"
+     };
+  }
 }
 
 message GetResultsRequest {
