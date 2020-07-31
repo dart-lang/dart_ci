@@ -125,7 +125,8 @@ class CommitsCache {
     final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix))
-      throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
+      throw Exception('Gerrit response missing prefix $prefix: $protectedJson.'
+          'Requested URL: $url');
     final commits = jsonDecode(protectedJson.substring(prefix.length))['log']
         as List<dynamic>;
     if (commits.isEmpty) {
