@@ -89,15 +89,8 @@ class TryResultsComponent implements OnActivate {
         result.approved = approval;
       }
     }
-    final comment = await _tryDataService.saveApproval(
-        approval,
-        commentText,
-        changeGroup.comments.isEmpty
-            ? null
-            : changeGroup.comments.last.baseComment ??
-                changeGroup.comments.last.id,
-        [for (Change result in selected) result.id],
-        reviewInfo.review);
+    final comment = await _tryDataService.saveApproval(approval, commentText,
+        [for (Change result in selected) result.id], reviewInfo.review);
     comments
       ..add(comment)
       ..sort();

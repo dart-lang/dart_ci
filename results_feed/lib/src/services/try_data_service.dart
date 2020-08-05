@@ -53,12 +53,12 @@ class TryDataService {
     return [for (final doc in docs) Comment.fromDocument(doc)];
   }
 
-  Future<Comment> saveApproval(bool approve, String comment, String baseComment,
+  Future<Comment> saveApproval(bool approve, String comment,
       Iterable<String> resultIds, int review) async {
     await _firestoreService.saveApprovals(
         approve: approve, tryResultIds: resultIds);
     return Comment.fromDocument(await _firestoreService.saveComment(
-        approve, comment, baseComment,
+        approve, comment,
         tryResultIds: resultIds, review: review));
   }
 

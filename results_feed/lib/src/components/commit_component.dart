@@ -95,12 +95,7 @@ class CommitComponent implements AfterChanges {
         approve: approval,
         resultIds: [for (Change result in selected) result.id]);
     final comment = Comment.fromDocument(await firestoreService.saveComment(
-        approval,
-        commentText,
-        changeGroup.comments.isEmpty
-            ? null
-            : changeGroup.comments.last.baseComment ??
-                changeGroup.comments.last.id,
+        approval, commentText,
         resultIds: [for (Change result in selected) result.id],
         blamelistStart: changeGroup.range.start,
         blamelistEnd: changeGroup.range.end));

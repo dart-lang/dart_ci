@@ -14,7 +14,6 @@ class Comment implements Comparable {
   final bool approved;
   final List<String> results;
   final List<String> tryResults;
-  final String baseComment;
   final int blamelistStartIndex;
   final int blamelistEndIndex;
   final int pinnedIndex;
@@ -31,7 +30,6 @@ class Comment implements Comparable {
       this.approved,
       List _results,
       List _tryResults,
-      this.baseComment,
       this.blamelistStartIndex,
       this.blamelistEndIndex,
       this.pinnedIndex,
@@ -51,7 +49,6 @@ class Comment implements Comparable {
         approved = document.get('approved'),
         results = List<String>.from(document.get('results') ?? []),
         tryResults = List<String>.from(document.get('tryResults') ?? []),
-        baseComment = document.get('base_comment'),
         blamelistStartIndex = document.get('blamelist_start_index'),
         blamelistEndIndex = document.get('blamelist_end_index'),
         pinnedIndex = document.get('pinned_index'),

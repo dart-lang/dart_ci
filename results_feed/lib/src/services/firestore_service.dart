@@ -97,14 +97,6 @@ class FirestoreService {
   Future<firestore.DocumentSnapshot> fetchComment(String id) =>
       app.firestore().collection('comments').doc(id).get();
 
-  Future<List<firestore.DocumentSnapshot>> fetchCommentThread(
-      String baseId) async {
-    final results = app.firestore().collection('comments');
-    final doc = await results.doc(baseId).get();
-    final snapshot = await results.where('base_comment', '==', baseId).get();
-    return [doc, ...snapshot.docs];
-  }
-
   Future<List<firestore.DocumentSnapshot>> fetchCommentsForRange(
       int start, int end) async {
     final results = app.firestore().collection('comments');
@@ -152,8 +144,7 @@ class FirestoreService {
     }
   }
 
-  Future<firestore.DocumentSnapshot> saveComment(
-      bool approve, String comment, String baseComment,
+  Future<firestore.DocumentSnapshot> saveComment(bool approve, String comment,
       {List<String> resultIds,
       List<String> tryResultIds,
       int blamelistStart,

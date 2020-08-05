@@ -58,7 +58,6 @@ void main() {
     expect(comment.created.isAtSameMomentAs(original['created']), true);
     expect(comment.comment, original['comment']);
     expect(comment.link, original['link']);
-    expect(comment.baseComment, original['base_comment']);
     final results = comment.results;
     if (results.isEmpty) {
       expect(original.containsKey('results'), isFalse);
@@ -76,7 +75,6 @@ void main() {
       }
     }
     expect(comment.approved, original['approved']);
-    expect(comment.baseComment, original['base_comment']);
     expect(comment.link, original['link']);
     expect(comment.blamelistStartIndex, original['blamelist_start_index']);
     expect(comment.blamelistEndIndex, original['blamelist_end_index']);
