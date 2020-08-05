@@ -218,21 +218,25 @@ class StagingFirestoreService extends FirestoreService {
     // Firebase api key is public, and must be sent to client for use.
     // It is invalid over any connection except https to the app URL.
     // It is not used for security, only usage accounting.
-    app = firebase.initializeApp(
+    app = initializeApp();
+    await app.auth().setPersistence(firebase.Persistence.LOCAL);
+  }
+
+  static firebase.App initializeApp({String name}) {
+    return firebase.initializeApp(
         apiKey: 'AIzaSyBky7KGq1dbVn_J48iAI6oVyKRcMrRanns',
         authDomain: 'dart-ci-staging.firebaseapp.com',
         databaseURL: 'https://dart-ci-staging.firebaseio.com',
         messagingSenderId: '287461583823',
         projectId: 'dart-ci-staging',
-        storageBucket: 'dart-ci-staging.appspot.com');
-    await app.auth().setPersistence(firebase.Persistence.LOCAL);
+        storageBucket: 'dart-ci-staging.appspot.com',
+        name: name);
   }
 }
 
 class TestingFirestoreService extends StagingFirestoreService {
   // TestingFirestoreService uses the Firestore database at
   // dart-ci-staging.
-  // It adds additional methods used by integration tests.
   // It includes local password-based authentication for
   // tests that write to staging.
   @override
@@ -242,7 +246,9 @@ class TestingFirestoreService extends StagingFirestoreService {
   }
 
   @override
-  Future logIn() async {
+  Future logIn() => logInWithPassword(app);
+
+  static Future<void> logInWithPassword(firebase.App app) async {
     try {
       await app.auth().signInWithEmailAndPassword(
           'dartresultsfeedtestaccount2@example.com', r'');
@@ -253,7 +259,15 @@ class TestingFirestoreService extends StagingFirestoreService {
     } catch (e) {
       print(e.toString());
     }
-    return;
+  }
+}
+
+class FirestoreTestSetup {
+  firebase.App app;
+
+  Future<void> initialize() async {
+    app = StagingFirestoreService.initializeApp(name: 'testing');
+    await TestingFirestoreService.logInWithPassword(app);
   }
 
   Future<void> writeDocumentsFrom(Map<String, dynamic> documents,
@@ -280,5 +294,14 @@ class TestingFirestoreService extends StagingFirestoreService {
     for (final document in snapshot.docs) {
       await document.ref.delete();
     }
+  }
+
+  Future<int> lastIndex() async {
+    final commits = app.firestore().collection('commits');
+    var snapshot = await commits.orderBy('index', 'desc').limit(3).get();
+    if (snapshot.docs.length < 3) {
+      throw Exception('Staging database does not contain 3 commits');
+    }
+    return snapshot.docs.first.data()['index'];
   }
 }

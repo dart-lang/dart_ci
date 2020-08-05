@@ -17,8 +17,11 @@ import 'comments_sample_data.dart';
 import 'comments_test.template.dart' as self;
 import 'page_objects/app_po.dart';
 import 'page_objects/blamelist_po.dart';
+import 'page_objects/commit_po.dart';
 
 // pub run build_runner test --fail-on-severe -- -p chrome comments_test.dart
+
+const int neededCommits = 3;
 
 @GenerateInjector([
   ClassProvider(FirestoreService, useClass: TestingFirestoreService),
@@ -26,26 +29,27 @@ import 'page_objects/blamelist_po.dart';
 final InjectorFactory rootInjector = self.rootInjector$Injector;
 
 void main() {
+  final testSetup = FirestoreTestSetup();
   final testBed = NgTestBed.forComponent<AppComponent>(ng.AppComponentNgFactory,
       rootInjector: rootInjector);
   NgTestFixture<AppComponent> fixture;
+  Map<String, Map<String, dynamic>> commentsSampleData;
 
   setUpAll(() async {
     // Because the FirestoreService can only be initialized once, set up the
     // testBed (and component, and root injectors, and injected FirestoreService
     // instance, in a setupAll function that is created once.
+    await testSetup.initialize();
+    final lastIndex = await testSetup.lastIndex();
+    commentsSampleData = createCommentsSampleData(lastIndex);
+    await testSetup.writeDocumentsFrom(commentsSampleData);
     fixture = await testBed.create();
-    final firestore =
-        AppComponentTest(fixture.assertOnlyInstance).firestoreService;
-    await firestore.logIn();
-    await firestore.writeDocumentsFrom(commentsSampleData);
+    await fixture.assertOnlyInstance.fetching;
   });
 
   tearDownAll(() async {
     await disposeAnyRunningTest();
-    final firestore =
-        AppComponentTest(fixture.assertOnlyInstance).firestoreService;
-    await firestore.writeDocumentsFrom(commentsSampleData, delete: true);
+    await testSetup.writeDocumentsFrom(commentsSampleData, delete: true);
   });
 
   void testEqual(Comment comment, Map<String, dynamic> original, String id) {
@@ -90,83 +94,48 @@ void main() {
     testEqual(comment, original, commentId1);
   });
 
-  test('load comment threads', () async {
-    final firestore =
-        AppComponentTest(fixture.assertOnlyInstance).firestoreService;
-    final documents = await firestore.fetchCommentThread(commentThreadId);
-    expect(documents, hasLength(2));
-    final baseComment = Comment.fromDocument(documents[0]);
-    final baseOriginal = commentsSampleData['comments/$commentThreadId'];
-    testEqual(baseComment, baseOriginal, commentThreadId);
-    final threadComment = Comment.fromDocument(documents[1]);
-    final threadOriginal = commentsSampleData['comments/$commentId2'];
-    testEqual(threadComment, threadOriginal, commentId2);
-  });
-
   test('check comment ui', () async {
-    Future fetcher;
+    // TODO(whesse): The app fetches when initialized, with the old filter.
+    // Because our new result is an active failure, it is fetched.
+    // The fetch here fetches some earlier commits, does not really help.
+    await fixture.update((app) => app.filterService.filter = app
+        .filterService.filter
+        .copy(showLatestFailures: false, showUnapprovedOnly: false));
+    await fixture.update((app) => app.fetchData());
+    await fixture.assertOnlyInstance.fetching;
     final context =
         HtmlPageLoaderElement.createFromElement(fixture.rootElement);
-    void fetchMoreCommits(AppComponent app) {
-      fetcher = app.fetchData();
-    }
-
-    while (fixture.assertOnlyInstance.commits.length < 100) {
-      await fixture.update(fetchMoreCommits);
-      await fetcher;
-    }
-
     var app = AppPO.create(context);
+    // Take our sample commit with a non-trival buildlist, press button on it.
+    bool isSampleCommit(CommitPO commit) =>
+        commit.isNotEmpty &&
+        commit.blamelist.commentBodies.isNotEmpty &&
+        commit.blamelist.numCommits == neededCommits;
 
-    // Take commit with a non-trival buildlist, press button on it.
-    final unpinned = app.commits
-        .where((commit) =>
-            commit.isNotEmpty &&
-            commit.blamelist.commentBodies.isNotEmpty &&
-            commit.blamelist.firstCommit != commit.blamelist.lastCommit)
-        .single;
+    final unpinned = app.commits.firstWhere(isSampleCommit);
     await fixture.update((AppComponent app) => unpinned.pressPickerButton());
 
     // Create a new AppPO because AppPO fields are final and cached, and the
     // DOM has changed.
     app = AppPO.create(context);
-    final commits = app.commits
-        .where((commit) =>
-            commit.isNotEmpty && commit.blamelist.commentBodies.isNotEmpty)
-        .toList();
+    final commit = app.commits.firstWhere(isSampleCommit);
 
     final data = commentsSampleData;
     var expected = {
       'comments': [
-        data['comments/$commentThreadId']['comment'],
-        data['comments/$commentId2']['comment']
-      ],
-      'author': data['comments/$commentThreadId']['author'],
-      'date': '21:19 Thu Nov 21',
-      'first_commit': '80fc4d',
-      'last_commit': '80fc4d'
-    };
-
-    checkComments(commits[0].blamelist, expected);
-    expected = {
-      'comments': [
+        data['comments/$commentId1']['comment'],
+        data['comments/$commentId2']['comment'],
         data['comments/$commentId3']['comment'],
       ],
-      'author': data['comments/$commentId3']['author'],
-      'date': '0:19 Fri Nov 1',
-      'first_commit': '8a09d7',
-      'last_commit': '924ec3',
-      'is_blamelist_picker': true
+      'author': data['comments/$commentId1']['author'],
+      'is_blamelist_picker': true,
     };
-    checkComments(commits[1].blamelist, expected);
+    checkComments(commit.blamelist, expected);
   });
 }
 
 void checkComments(BlamelistPO blamelist, Map<String, dynamic> data) {
   expect(blamelist.commentBodies, equals(data['comments']));
   expect(blamelist.comments.first, matches(data['author']));
-  expect(blamelist.comments.first, matches(data['date']));
-  expect(blamelist.firstCommit, data['first_commit']);
-  expect(blamelist.lastCommit, data['last_commit']);
   expect(blamelist.hasRadioButtons, data['is_blamelist_picker'] ?? false);
 }

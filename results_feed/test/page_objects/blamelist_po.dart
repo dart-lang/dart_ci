@@ -28,6 +28,8 @@ abstract class BlamelistPO {
   @First(ByClass('commit'))
   PageLoaderElement get _firstCommit;
 
+  int get numCommits => _commits.length;
+
   String get firstCommit => _firstCommit.getElementsByCss('a').first.innerText;
 
   String get lastCommit => _commits.last.getElementsByCss('a').first.innerText;

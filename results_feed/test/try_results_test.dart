@@ -27,23 +27,28 @@ import 'page_objects/try_results_po.dart';
 final InjectorFactory rootInjector = self.rootInjector$Injector;
 
 void main() {
+  final testSetup = FirestoreTestSetup();
   final testBed = NgTestBed.forComponent<TryResultsComponent>(
       ng.TryResultsComponentNgFactory,
       rootInjector: rootInjector);
+
+  setUpAll(() async {
+    await testSetup.initialize();
+    await testSetup.writeDocumentsFrom(tryResultsCreateComponentSampleData);
+  });
+
+  tearDownAll(() async {
+    await testSetup.writeDocumentsFrom(tryResultsCreateComponentSampleData,
+        delete: true);
+    await testSetup.deleteCommentsForReview(createComponentReview);
+  });
 
   tearDown(() async {
     await disposeAnyRunningTest();
   });
 
   test('create component', () async {
-    TestingFirestoreService firestore;
-    final fixture =
-        await testBed.create(beforeComponentCreated: (Injector injector) async {
-      firestore =
-          injector.provideType<TestingFirestoreService>(FirestoreService);
-      await firestore.getFirebaseClient();
-      await firestore.writeDocumentsFrom(tryResultsCreateComponentSampleData);
-    });
+    final fixture = await testBed.create();
     await fixture.update((TryResultsComponent tryResultsComponent) {
       tryResultsComponent.review = createComponentReview;
       tryResultsComponent.patchset = createComponentPatchset;
@@ -137,9 +142,5 @@ void main() {
     ]);
     expect(tryResultsPO.comments.last.innerText,
         stringContainsInOrder(['approved', commentText]));
-
-    await firestore.writeDocumentsFrom(tryResultsCreateComponentSampleData,
-        delete: true);
-    await firestore.deleteCommentsForReview(createComponentReview);
   });
 }
