@@ -12,8 +12,13 @@ import '../services/build_service.dart';
   providers: [],
   directives: [coreDirectives],
   template: '''
+            {{configuration}}
+            <a
+            href="https://dart-ci.firebaseapp.com/#showLatestFailures=false&test={{test}}&configurations={{configuration}}"
+            target="_blank">history</a>
             <a *ngIf="build != null"
-            href="https://dart-ci.appspot.com/log/{{build.builder}}/{{configuration}}/{{build.buildNumber}}/{{test}}" target="_blank">{{configuration}}</a><br>
+            href="https://dart-ci.appspot.com/log/{{build.builder}}/{{configuration}}/{{build.buildNumber}}/{{test}}"
+            target="_blank">log</a><br>
   ''',
 )
 class LogComponent implements OnInit {
