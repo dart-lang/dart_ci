@@ -186,7 +186,7 @@ class FirestoreServiceImpl implements FirestoreService {
       Map<String, dynamic> change, int startIndex, int endIndex) async {
     String name = change['name'];
     String result = change['result'];
-    String previousResult = change['previous_result'] ?? 'new test';
+    String previousResult = change['previous_result'];
     QuerySnapshot snapshot = await runQuery(
         firestore
             .collection('results')
@@ -275,7 +275,7 @@ class FirestoreServiceImpl implements FirestoreService {
     String name = change['name'];
     String result = change['result'];
     String expected = change['expected'];
-    String previousResult = change['previous_result'] ?? 'new test';
+    String previousResult = change['previous_result'];
     // Find an existing TryResult for this test on this patchset.
     QuerySnapshot snapshot = await runQuery(
         firestore

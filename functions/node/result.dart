@@ -22,15 +22,29 @@ const fActive = 'active';
 const fConfigurations = 'configurations';
 const fActiveConfigurations = 'active_configurations';
 
-bool isChangedResult(Map<String, dynamic> change) =>
-    change[fChanged] && !change[fFlaky] && !change[fPreviousFlaky];
+bool isChangedResult(Map<String, dynamic> change) => change[fChanged];
 
-bool isFailure(Map<String, dynamic> change) => !change[fMatches];
+/// Whether the change will be marked as an active failure.
+/// New flaky tests will not be marked active, so they will appear in the
+/// results feed "all", but not turn the builder red
+bool isFailure(Map<String, dynamic> change) =>
+    !change[fMatches] && change[fResult] != 'flaky';
+
+void transformChange(Map<String, dynamic> change) {
+  change[fPreviousResult] ??= 'new test';
+  if (change[fPreviousFlaky]) {
+    change[fPreviousResult] = 'flaky';
+  }
+  if (change[fFlaky]) {
+    change[fResult] = 'flaky';
+    change[fMatches] = false;
+  }
+}
 
 String testResult(Map<String, dynamic> change) => [
       change[fName],
       change[fResult],
-      change[fPreviousResult] ?? 'new test',
+      change[fPreviousResult],
       change[fExpected]
     ].join(' ');
 

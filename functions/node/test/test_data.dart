@@ -177,6 +177,17 @@ Map<String, dynamic> landedResult = {
   "previous_result": "Pass",
 };
 
+Map<String, dynamic> flakyResult = {
+  "name": sampleTest,
+  "blamelist_start_index": existingCommitIndex + 1,
+  "blamelist_end_index": landedCommitIndex,
+  "configurations": [landedCommitChange["configuration"]],
+  "approved": false,
+  "result": "flaky",
+  "expected": "Pass",
+  "previous_result": "RuntimeError",
+};
+
 /// Try results
 /// These are documents from the try_results table in Firestore.
 const Map<String, dynamic> review44445Result = {

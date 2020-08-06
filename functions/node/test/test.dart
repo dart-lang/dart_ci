@@ -67,4 +67,26 @@ void main() async {
           ..single.remove('id'),
         [landedResult]);
   });
+
+  test('mark active result flaky', () async {
+    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    await builderTest.storeBuildCommitsInfo();
+    final flakyChange = Map<String, dynamic>.from(landedCommitChange)
+      ..[fPreviousResult] = 'RuntimeError'
+      ..[fFlaky] = true;
+    expect(flakyChange[fResult], 'RuntimeError');
+    await builderTest.storeChange(flakyChange);
+    expect(flakyChange[fResult], 'flaky');
+    expect(builderTest.builder.success, true);
+    expect(
+        builderTest.firestore.results['activeResultID'],
+        Map.from(activeResult)
+          ..[fActiveConfigurations] = ['another configuration']);
+
+    expect(builderTest.builder.countChanges, 1);
+    expect(
+        builderTest.firestore.results[await builderTest.firestore
+            .findResult(flakyChange, landedCommitIndex, landedCommitIndex)],
+        flakyResult);
+  });
 }

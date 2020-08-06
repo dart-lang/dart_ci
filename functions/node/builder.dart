@@ -131,6 +131,7 @@ class Build {
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;
     await fetchReviewsAndReverts();
+    transformChange(change);
     final failure = isFailure(change);
     var approved;
     String result = await firestore.findResult(change, startIndex, endIndex);
@@ -185,7 +186,7 @@ Map<String, dynamic> constructResult(
     {
       fName: change[fName],
       fResult: change[fResult],
-      fPreviousResult: change[fPreviousResult] ?? 'new test',
+      fPreviousResult: change[fPreviousResult],
       fExpected: change[fExpected],
       fBlamelistStartIndex: startIndex,
       fBlamelistEndIndex: endIndex,
@@ -195,10 +196,3 @@ Map<String, dynamic> constructResult(
       if (failure) fActive: true,
       if (failure) fActiveConfigurations: <String>[change['configuration']]
     };
-
-String testResult(Map<String, dynamic> change) => [
-      change['name'],
-      change['result'],
-      change['previous_result'] ?? 'new test',
-      change['expected']
-    ].join(' ');

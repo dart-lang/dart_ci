@@ -11,9 +11,6 @@ import 'firestore.dart';
 import 'gerrit_change.dart';
 import 'result.dart';
 
-bool isChangedResult(Map<String, dynamic> result) =>
-    result['changed'] && !result['flaky'] && !result['previous_flaky'];
-
 class Tryjob {
   static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   final http.BaseClient httpClient;
@@ -91,6 +88,7 @@ class Tryjob {
 
   Future<void> storeChange(change) async {
     countChanges++;
+    transformChange(change);
     final approved = await firestore.storeTryChange(change, review, patchset);
     if (!approved && !change['matches']) {
       countUnapproved++;
