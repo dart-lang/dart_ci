@@ -22,7 +22,8 @@ const fActive = 'active';
 const fConfigurations = 'configurations';
 const fActiveConfigurations = 'active_configurations';
 
-bool isChangedResult(Map<String, dynamic> change) => change[fChanged];
+bool isChangedResult(Map<String, dynamic> change) =>
+    change[fChanged] && (!change[fFlaky] || !change[fPreviousFlaky]);
 
 /// Whether the change will be marked as an active failure.
 /// New flaky tests will not be marked active, so they will appear in the
