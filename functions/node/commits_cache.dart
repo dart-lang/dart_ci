@@ -99,7 +99,7 @@ class CommitsCache {
 
   Future<String> get branchName async {
     if (await firestore.isStaging()) {
-      return const String.fromEnvironment('BRANCH') ?? 'master';
+      return const String.fromEnvironment('STAGING_BRANCH') ?? 'master';
     }
     return 'master';
   }
