@@ -43,6 +43,14 @@ const fakeConfiguration = 'a configuration';
 const otherConfiguration = 'another configuration';
 const fakeBuilderName = 'fake_builder-try';
 
+Set<String> fakeBuilders = {fakeBuilderName};
+Set<String> fakeTests = {fakeTest, otherFakeTest};
+
+void registerChangeForDeletion(Map<String, dynamic> change) {
+  fakeBuilders.add(change['builder_name']);
+  fakeTests.add(change['name']);
+}
+
 fs.FirestoreServiceImpl firestore;
 HttpClientMock client;
 CommitsCache commitsCache;
@@ -59,13 +67,15 @@ void main() async {
   tearDownAll(deleteFakeReviewAndResults);
 
   test('create fake review', () async {
+    registerChangeForDeletion(unchangedChange);
     final tryjob = Tryjob('refs/changes/$fakeReview/2', 1, buildBuildbucketId,
         buildBaseCommitHash, commitsCache, firestore, client);
     await tryjob.process([unchangedChange]);
     expect(tryjob.success, true);
   });
 
-  test('process spurious result', () async {
+  test('failure coming from a landed CL not in base', () async {
+    registerChangeForDeletion(changeMatchingLandedCL);
     final tryjob = Tryjob(
         'refs/changes/$fakeReview/2',
         null,
@@ -79,6 +89,10 @@ void main() async {
   });
 
   test('process result on different configuration', () async {
+    final changeOnDifferentConfiguration = Map<String, dynamic>.from(baseChange)
+      ..['configuration'] = otherConfiguration;
+
+    registerChangeForDeletion(changeOnDifferentConfiguration);
     final tryjob = Tryjob(
         'refs/changes/$fakeReview/2',
         null,
@@ -87,12 +101,14 @@ void main() async {
         commitsCache,
         firestore,
         client);
-    await tryjob.process(
-        [changeMatchingLandedCL..['configuration'] = otherConfiguration]);
+    await tryjob.process([changeOnDifferentConfiguration]);
     expect(tryjob.success, false);
   });
 
   test('process result where different result landed last', () async {
+    final otherNameChange = Map<String, dynamic>.from(baseChange)
+      ..['name'] = otherFakeTest;
+    registerChangeForDeletion(otherNameChange);
     final tryjob = Tryjob(
         'refs/changes/$fakeReview/2',
         null,
@@ -101,8 +117,65 @@ void main() async {
         commitsCache,
         firestore,
         client);
-    await tryjob.process([changeMatchingLandedCL..['name'] = otherFakeTest]);
+    await tryjob.process([otherNameChange]);
     expect(tryjob.success, false);
+  });
+
+  test('test becomes flaky', () async {
+    final flakyTest = <String, dynamic>{
+      'name': 'flaky_test',
+      'result': 'RuntimeError',
+      'flaky': true,
+      'matches': false,
+      'changed': true,
+      'build_number': '99995',
+      'builder_name': 'flaky_test_builder-try',
+    };
+
+    final flakyChange = Map<String, dynamic>.from(baseChange)
+      ..addAll(flakyTest);
+    final flakyTestBuildbucketId = 'flaky_buildbucket_ID';
+    registerChangeForDeletion(flakyChange);
+    final tryjob = Tryjob(
+        'refs/changes/$fakeReview/2',
+        null,
+        flakyTestBuildbucketId,
+        buildBaseCommitHash,
+        commitsCache,
+        firestore,
+        client);
+    await tryjob.process([flakyChange]);
+    expect(tryjob.success, true);
+    expect(tryjob.countNewFlakes, 1);
+    expect(tryjob.countUnapproved, 0);
+  });
+
+  test('new failure', () async {
+    final failingTest = <String, dynamic>{
+      'name': 'failing_test',
+      'result': 'RuntimeError',
+      'matches': false,
+      'changed': true,
+      'build_number': '99994',
+      'builder_name': 'failing_test_builder-try',
+    };
+
+    final failingChange = Map<String, dynamic>.from(baseChange)
+      ..addAll(failingTest);
+    final failingTestBuildbucketId = 'failing_buildbucket_ID';
+    registerChangeForDeletion(failingChange);
+    final tryjob = Tryjob(
+        'refs/changes/$fakeReview/2',
+        null,
+        failingTestBuildbucketId,
+        buildBaseCommitHash,
+        commitsCache,
+        firestore,
+        client);
+    await tryjob.process([failingChange]);
+    expect(tryjob.success, false);
+    expect(tryjob.countNewFlakes, 0);
+    expect(tryjob.countUnapproved, 1);
   });
 }
 
@@ -141,21 +214,21 @@ Future<void> deleteFakeReviewAndResults() async {
     }
   }
 
-  await deleteDocuments(fs.firestore
-      .collection('try_results')
-      .where('name', isEqualTo: fakeTest));
-  await deleteDocuments(fs.firestore
-      .collection('try_results')
-      .where('name', isEqualTo: otherFakeTest));
-  await deleteDocuments(fs.firestore
-      .collection('try_builds')
-      .where('builder', isEqualTo: fakeBuilderName));
+  for (final test in fakeTests) {
+    await deleteDocuments(
+        fs.firestore.collection('try_results').where('name', isEqualTo: test));
+  }
+  for (final builder in fakeBuilders) {
+    await deleteDocuments(fs.firestore
+        .collection('try_builds')
+        .where('builder', isEqualTo: builder));
+  }
   await deleteDocuments(
       fs.firestore.collection('reviews/$fakeReview/patchsets'));
   await fs.firestore.document('reviews/$fakeReview').delete();
 }
 
-Map<String, dynamic> changeMatchingLandedCL = {
+Map<String, dynamic> baseChange = {
   "name": fakeTest,
   "configuration": fakeConfiguration,
   'suite': fakeSuite,
@@ -178,7 +251,9 @@ Map<String, dynamic> changeMatchingLandedCL = {
   'previous_build_number': '306',
 };
 
-Map<String, dynamic> unchangedChange = Map.from(changeMatchingLandedCL)
+Map<String, dynamic> changeMatchingLandedCL = Map.from(baseChange);
+
+Map<String, dynamic> unchangedChange = Map.from(baseChange)
   ..addAll({
     'name': otherFakeTest,
     'test_name': otherFakeTestName,
@@ -189,7 +264,7 @@ Map<String, dynamic> unchangedChange = Map.from(changeMatchingLandedCL)
     'build_number': '99997'
   });
 
-Map<String, dynamic> matchingLandedChange = Map.from(changeMatchingLandedCL)
+Map<String, dynamic> matchingLandedChange = Map.from(baseChange)
   ..addAll({
     'commit_hash': 'refs/changes/$reviewForCommit69190/$patchsetForCommit69190',
     'build_number': tryBuildForCommit69190,

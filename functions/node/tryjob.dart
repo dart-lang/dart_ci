@@ -29,6 +29,7 @@ class Tryjob {
   final String buildbucketID;
   int countChanges = 0;
   int countUnapproved = 0;
+  int countNewFlakes = 0;
 
   Tryjob(String changeRef, this.countChunks, this.buildbucketID,
       this.baseRevision, this.commits, this.firestore, this.httpClient) {
@@ -79,7 +80,8 @@ class Tryjob {
       'Tryjob on CL $review patchset $patchset',
       if (countChanges > 0) 'Stored $countChanges changes',
       if (!success) 'Found unapproved new failures',
-      if (countUnapproved > 0) '$countUnapproved tests found',
+      if (countUnapproved > 0) '$countUnapproved unapproved tests found',
+      if (countNewFlakes > 0) '$countNewFlakes new flaky tests found',
       '${firestore.documentsFetched} documents fetched',
       '${firestore.documentsWritten} documents written',
     ];
@@ -90,9 +92,14 @@ class Tryjob {
     countChanges++;
     transformChange(change);
     final approved = await firestore.storeTryChange(change, review, patchset);
-    if (!approved && !change['matches']) {
+    if (!approved && isFailure(change)) {
       countUnapproved++;
       success = false;
+    }
+    if (change[fFlaky] && !change[fPreviousFlaky]) {
+      if (++countNewFlakes >= 10) {
+        success = false;
+      }
     }
   }
 
