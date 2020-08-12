@@ -214,6 +214,8 @@ class Change implements Comparable {
           document.get('active') ?? false,
         );
   static const skipped = 'skipped';
+  static const oldFlakyResult = 'flaky';
+  static const flakyResult = 'Flaky';
 
   final String id;
   final String name;
@@ -236,7 +238,8 @@ class Change implements Comparable {
   int compareTo(Object other) => name.compareTo((other as Change).name);
 
   bool get failed => result != expected && result != skipped;
-  String get resultStyle => failed ? 'failure' : 'success';
+  bool get flaky => result == oldFlakyResult || result == flakyResult;
+  String get resultStyle => failed ? flaky ? 'flaky' : 'failure' : 'success';
 }
 
 class Changes with IterableMixin<List<List<Change>>> {

@@ -6,6 +6,7 @@
 
 .failure { background-color:lightCoral; }
 .success { background-color:lightGreen; }
+.flaky { background-color:gold; }
 
 .indent { margin-left: 16px; }
 span.nowrap { white-space: nowrap; }
