@@ -94,22 +94,32 @@ class Slice {
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
     final filterTerms =
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
-    var configurations = filterTerms.where(_stored.containsKey);
-    if (configurations.isEmpty) {
-      configurations = _stored.keys;
+    final configurationSet = Set<String>();
+    final testPrefixes = <String>[];
+    for (final prefix in filterTerms) {
+      final matchingConfigurations = _stored.keys
+          .where((configuration) => configuration.startsWith(prefix));
+      if (matchingConfigurations.isEmpty) {
+        testPrefixes.add(prefix);
+      } else {
+        configurationSet.addAll(matchingConfigurations);
+      }
     }
-    final tests = filterTerms.where((t) => !_stored.containsKey(t)).toList();
-    if (tests.isEmpty) {
+    final configurations =
+        (configurationSet.isEmpty ? _stored.keys : configurationSet).toList()
+          ..sort();
+
+    if (testPrefixes.isEmpty) {
       response.results.addAll(configurations
           .expand((configuration) => _stored[configuration])
           .map(Result.toApi)
           .take(limit));
-
       return response;
     }
+
     for (final configuration in configurations) {
       final sorted = _stored[configuration];
-      for (final testNamePrefix in tests) {
+      for (final testNamePrefix in testPrefixes) {
         if (response.results.length >= limit) break;
         final prefixResult =
             Result(testNamePrefix, null, null, null, null, null, null);
