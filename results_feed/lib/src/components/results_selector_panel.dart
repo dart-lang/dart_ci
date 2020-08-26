@@ -63,6 +63,9 @@ class ResultsSelectorPanel {
     if (failuresOnly) {
       _changes = Changes(changes.flat.where((change) => change.failed));
     }
+    configurationCheckboxes.clear();
+    resultCheckboxes.clear();
+    checked.clear();
     for (final configurationGroup in changes) {
       configurationCheckboxes[configurationGroup] = FixedMixedCheckbox();
       for (final resultGroup in configurationGroup) {
@@ -140,6 +143,7 @@ class ResultsSelectorPanel {
 
   void initializeSelected() {
     if (_selected != null && _changes != null) {
+      _selected.clear();
       _selected.addAll(checked.keys);
     }
   }
