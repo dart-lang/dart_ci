@@ -213,7 +213,7 @@ class Change implements Comparable {
           // Field is only present when true.
           document.get('active') ?? false,
         );
-  static const skipped = 'skipped';
+  static const skippedResult = 'skipped';
   static const oldFlakyResult = 'flaky';
   static const flakyResult = 'Flaky';
 
@@ -237,9 +237,12 @@ class Change implements Comparable {
   @override
   int compareTo(Object other) => name.compareTo((other as Change).name);
 
-  bool get failed => result != expected && result != skipped;
   bool get flaky => result == oldFlakyResult || result == flakyResult;
-  String get resultStyle => failed ? flaky ? 'flaky' : 'failure' : 'success';
+  bool get skipped => result == skippedResult;
+  bool get success => result == expected;
+  bool get failed => !flaky && !skipped && !success;
+  String get resultStyle =>
+      flaky ? 'flaky' : skipped ? 'skipped' : success ? 'success' : 'failure';
 }
 
 class Changes with IterableMixin<List<List<Change>>> {
