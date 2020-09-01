@@ -53,14 +53,14 @@ class CurrentResultsApp extends StatelessWidget {
             border: Border(right: BorderSide(color: Colors.black))),
         child: Scaffold(
           appBar: AppBar(
-            leading: Image.asset('dart_64.png', width: 16.0, height: 32.0),
-            title: Text(
-              'Current Results',
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Color.fromARGB(255, 63, 81, 181),
-              ),
+            leading: Align(
+              alignment: Alignment.center,
+              child:
+                  Image.asset('assets/dart_64.png', width: 40.0, height: 40.0),
             ),
+            title: Text('Current Results',
+                style: TextStyle(
+                    fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
             backgroundColor: Colors.white,
             bottom: TabBar(
               tabs: [
