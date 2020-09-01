@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -21,6 +20,7 @@ class QueryResults extends ChangeNotifier {
   Filter filter;
   bool showAll = true;
   List<String> names = [];
+  Map<String, Map<String, int>> counts = {};
   Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
   bool partialResults = true;
 
@@ -35,9 +35,19 @@ class QueryResults extends ChangeNotifier {
       ..mergeFromProto3Json(json.decode(resultsResponse.body));
     final results = resultsObject.results;
 
-    grouped = groupBy<Result, String>(results, (Result result) => result.name)
-        .map((String name, List<Result> list) => MapEntry(name,
-            groupBy<Result, ChangeInResult>(list, ChangeInResult.fromResult)));
+    for (final result in results) {
+      grouped
+          .putIfAbsent(result.name, () => <ChangeInResult, List<Result>>{})
+          .putIfAbsent(ChangeInResult(result), () => <Result>[])
+          .add(result);
+    }
+    for (final name in grouped.keys) {
+      final count = counts[name] = <String, int>{};
+      for (final change in grouped[name].keys) {
+        count.putIfAbsent(change.kind, () => 0);
+        count[change.kind] += grouped[name][change].length;
+      }
+    }
     names = grouped.keys.toList()..sort();
     partialResults = results.length == fetchLimit;
     notifyListeners();
@@ -45,25 +55,27 @@ class QueryResults extends ChangeNotifier {
 }
 
 class ChangeInResult {
-  static const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
-  static const Color gold = Color.fromARGB(255, 255, 215, 0);
-
-  String result;
-  String expected;
-  bool flaky;
+  final String result;
+  final String expected;
+  final bool flaky;
+  final String text;
   bool get matches => result == expected;
-  Color get backgroundColor =>
-      flaky ? gold : matches ? Colors.lightGreen : lightCoral;
+  String get kind => flaky ? 'flaky' : matches ? 'pass' : 'fail';
 
-  ChangeInResult._(this.result, this.expected, this.flaky);
-  static ChangeInResult fromResult(Result result) =>
-      ChangeInResult._(result.result, result.expected, result.flaky);
+  ChangeInResult(Result result)
+      : this._(result.result, result.expected, result.flaky);
 
-  String toString() => flaky
-      ? "flaky (latest result $result expected $expected"
-      : "$result (expected $expected)";
-  bool operator ==(Object other) => toString() == other.toString();
-  int get hashCode => toString().hashCode;
+  ChangeInResult._(this.result, this.expected, this.flaky)
+      : text = flaky
+            ? "flaky (latest result $result expected $expected"
+            : "$result (expected $expected)";
+
+  @override
+  String toString() => text;
+  @override
+  bool operator ==(Object other) => text == (other as ChangeInResult)?.text;
+  @override
+  int get hashCode => text.hashCode;
 }
 
 String resultAsCommaSeparated(Result result) => [

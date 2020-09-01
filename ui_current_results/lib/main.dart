@@ -72,6 +72,7 @@ class CurrentResultsApp extends StatelessWidget {
             ),
           ),
           persistentFooterButtons: [
+            ApiPortalLink(),
             JsonLink(),
             textPopup(),
           ],
@@ -97,10 +98,30 @@ class CurrentResultsApp extends StatelessWidget {
   }
 }
 
+class ApiPortalLink extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<Filter>(
+      builder: (context, Filter filter, child) {
+        return FlatButton(
+          child: Text('API portal'),
+          onPressed: () => html.window.open(
+              'https://endpointsportal.dart-ci-staging.cloud.goog'
+                  '/docs/current-results-rest-zlujsyuhha-uc.a.run.app/g'
+                  '/routes/v1/results/get',
+              '_blank'),
+        );
+      },
+    );
+  }
+}
+
 class JsonLink extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Consumer<Filter>(
-        builder: (context, filter, child) => FlatButton(
+  Widget build(BuildContext context) {
+    return Consumer<Filter>(
+      builder: (context, filter, child) {
+        return FlatButton(
           child: Text('json'),
           onPressed: () => html.window.open(
               Uri.https(apiHost, 'v1/results', {
@@ -108,8 +129,10 @@ class JsonLink extends StatelessWidget {
                 'pageSize': '4000'
               }).toString(),
               '_blank'),
-        ),
-      );
+        );
+      },
+    );
+  }
 }
 
 Widget textPopup() {

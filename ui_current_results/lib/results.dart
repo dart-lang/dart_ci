@@ -5,26 +5,46 @@
 import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'query.dart';
 
-class ResultsPanel extends StatelessWidget {
+class ResultsPanel extends StatefulWidget {
   final QueryResults queryResults;
   final bool showAll;
 
   ResultsPanel(this.queryResults, {this.showAll = true});
 
   @override
+  ResultsPanelState createState() => ResultsPanelState();
+}
+
+class ResultsPanelState extends State<ResultsPanel> {
+  static const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
+  static const Color gold = Color.fromARGB(255, 255, 215, 0);
+  static const resultColors = {
+    'pass': Colors.lightGreen,
+    'flaky': gold,
+    'fail': lightCoral,
+  };
+
+  static const kinds = ['pass', 'fail', 'flaky'];
+  List<bool> expanded = [];
+
+  @override
   Widget build(BuildContext context) {
+    if (expanded.length != widget.queryResults.names.length) {
+      expanded = List<bool>.filled(widget.queryResults.names.length, false);
+    }
     return Align(
       alignment: Alignment.topLeft,
       child: SizedBox(
         width: 800.0,
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+          // decoration: BoxDecoration(border: Border.all(color: Colors.black)),
           child: ListView.builder(
-            itemCount: queryResults.names.length,
-            itemBuilder: itemBuilder(queryResults),
+            itemCount: widget.queryResults.names.length,
+            itemBuilder: itemBuilder(widget.queryResults),
           ),
         ),
       ),
@@ -35,70 +55,83 @@ class ResultsPanel extends StatelessWidget {
     return (BuildContext context, int index) {
       final name = results.names[index];
       final changeGroups = results.grouped[name];
-      if (!showAll && changeGroups.keys.every((change) => change.matches)) {
-        // Inserting this seems to break history icons on remaining tests.
+      final counts = results.counts[name];
+      if (!widget.showAll &&
+          changeGroups.keys.every((change) => change.matches)) {
         return Container(height: 0.0, width: 0.0);
       }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedOverflowBox(
-            size: Size(600.0, 18.0),
-            alignment: Alignment.topLeft,
-            child: Padding(
-              padding: EdgeInsets.only(top: 0.0, left: 8.0),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      reverse: true,
-                      child: SelectableText(
-                        results.partialResults
-                            ? '$name (partial results)'
-                            : name,
-                        style: TextStyle(fontSize: 16.0),
-                      ),
+          Container(
+            height: 28.0,
+            padding: EdgeInsets.only(top: 0.0, left: 8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(
+                      expanded[index] ? Icons.expand_less : Icons.expand_more),
+                  onPressed: () =>
+                      setState(() => expanded[index] = !expanded[index]),
+                ),
+                for (final kind in kinds)
+                  Container(
+                    width: 20,
+                    alignment: Alignment.bottomCenter,
+                    color: counts.containsKey(kind)
+                        ? resultColors[kind]
+                        : Colors.white,
+                    child: Text('${counts[kind] ?? ''}',
+                        style: TextStyle(fontSize: 14.0)),
+                  ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: SelectableText(
+                      results.partialResults ? '$name (partial results)' : name,
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ),
-                  IconButton(
+                ),
+                IconButton(
                     icon: Icon(Icons.history),
                     onPressed: () => html.window.open(
                         Uri(
                                 path: '/',
-                                fragment: showAll
+                                fragment: widget.showAll
                                     ? 'showLatestFailures=false&test=$name'
                                     : 'test=$name')
                             .toString(),
-                        '_blank'),
-                  ),
-                ],
-              ),
+                        '_blank')),
+              ],
             ),
           ),
-          for (final change
-              in changeGroups.keys.where((key) => showAll || !key.matches))
-            Container(
-              alignment: Alignment.topLeft,
-              constraints: BoxConstraints.loose(Size.fromWidth(500.0)),
-              child: ExpansionTile(
-                key: Key(name + change.toString()),
-                title: Text(
-                  '$change (${changeGroups[change].length} configurations)',
-                  style: TextStyle(
-                    backgroundColor: change.backgroundColor,
-                    fontSize: 14.0,
-                  ),
+          if (expanded[index])
+            for (final change in changeGroups.keys
+                .where((key) => widget.showAll || !key.matches))
+              Container(
+                alignment: Alignment.topLeft,
+                padding: EdgeInsets.only(left: 48.0),
+                constraints: BoxConstraints.loose(Size.fromWidth(500.0)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 12.0),
+                      child: Text(
+                          '$change (${changeGroups[change].length} configurations)',
+                          style: TextStyle(
+                              backgroundColor: resultColors[change.kind],
+                              fontSize: 16.0)),
+                    ),
+                    for (final result in changeGroups[change])
+                      SelectableText(result.configuration),
+                  ],
                 ),
-                expandedAlignment: Alignment.topLeft,
-                expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                childrenPadding: EdgeInsets.only(left: 48.0, bottom: 4.0),
-                children: [
-                  for (final result in changeGroups[change])
-                    SelectableText(result.configuration),
-                ],
               ),
-            ),
+          if (expanded[index]) SizedBox(height: 12.0),
         ],
       );
     };
