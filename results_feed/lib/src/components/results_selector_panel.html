@@ -70,12 +70,18 @@
           [for]="logs"
           [preferredPositions]="preferredTooltipPositions">
         <div *deferredContent>
-          <h4>Logs</h4>
+          <h4>{{change.name}}</h4>
           <div *ngFor="let configuration of change.configurations.configurations">
+            {{configuration}}
+            <a
+                href="https://dart-ci.firebaseapp.com/#showLatestFailures=false&test={{change.name}}&configurations={{configuration}}"
+                target="_blank">
+              history
+            </a>
             <a *ngIf="buildbucketID(change.patchset, configuration) != null"
                target="_blank"
                href="https://logs.chromium.org/logs/dart/buildbucket/cr-buildbucket.appspot.com/{{buildbucketID(change.patchset, configuration)}}/+/steps/test_results/0/logs/new_test_failures__logs_/0">
-              {{configuration}}
+              log
             </a>
           </div>
         </div>

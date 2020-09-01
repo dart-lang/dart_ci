@@ -21,6 +21,11 @@ import '../services/filter_service.dart';
 import '../services/firestore_service.dart';
 import '../services/build_service.dart';
 
+const historyInitialRange = Duration(days: 21);
+const historyInitialRangeSingleTest = Duration(days: 180);
+const commitFetchSize = 100;
+const commitFetchSizeSingleText = 1000;
+
 @Component(
     selector: 'results-feed',
     pipes: [commonPipes],
@@ -96,8 +101,8 @@ class AppComponent implements OnInit, CanReuse {
     if (commits.isNotEmpty) {
       fetchDate = commits.values.last.created;
       final initialRange = filterService.filter.singleTest == null
-          ? Duration(days: 21)
-          : Duration(days: 60);
+          ? historyInitialRange
+          : historyInitialRangeSingleTest;
       infiniteScrollEnabled =
           fetchDate.isAfter(DateTime.now().subtract(initialRange));
     }
@@ -124,7 +129,9 @@ class AppComponent implements OnInit, CanReuse {
       }();
 
   Future<IntRange> fetchEarlierCommits(int before) async {
-    final fetchAmount = filterService.filter.singleTest == null ? 100 : 500;
+    final fetchAmount = filterService.filter.singleTest == null
+        ? commitFetchSize
+        : commitFetchSizeSingleText;
     final newCommits =
         (await _firestoreService.fetchCommits(before, fetchAmount))
             .map((x) => Commit.fromDocument(x));
