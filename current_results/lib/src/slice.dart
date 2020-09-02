@@ -92,6 +92,11 @@ class Slice {
   query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
     final response = query_api.GetResultsResponse();
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
+    // TODO(whesse): Change the implementation to return results sorted by test name first.
+    // This will be less efficient, but it is much better for the clients.
+    // The page token will change to a test name and configuration when this is done.
+    final skip =
+        max(0, query.pageToken.isEmpty ? 0 : int.parse(query.pageToken));
     final filterTerms =
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
     final configurationSet = Set<String>();
@@ -105,6 +110,13 @@ class Slice {
         configurationSet.addAll(matchingConfigurations);
       }
     }
+    testPrefixes..sort();
+    for (int i = 0; i < testPrefixes.length; ++i) {
+      while (i + 1 < testPrefixes.length &&
+          testPrefixes[i + 1].startsWith(testPrefixes[i])) {
+        testPrefixes.removeAt(i + 1);
+      }
+    }
     final configurations =
         (configurationSet.isEmpty ? _stored.keys : configurationSet).toList()
           ..sort();
@@ -113,17 +125,22 @@ class Slice {
       response.results.addAll(configurations
           .expand((configuration) => _stored[configuration])
           .map(Result.toApi)
+          .skip(skip)
           .take(limit));
+      if (response.results.length >= limit) {
+        response.nextPageToken = (skip + response.results.length).toString();
+      }
       return response;
     }
 
+    var skipped = 0;
     for (final configuration in configurations) {
       final sorted = _stored[configuration];
       for (final testNamePrefix in testPrefixes) {
         if (response.results.length >= limit) break;
         final prefixResult =
             Result(testNamePrefix, null, null, null, null, null, null);
-        final start =
+        var start =
             lowerBound<Result>(sorted, prefixResult, compare: compareNames);
         if (start < sorted.length &&
             sorted[start].name.startsWith(testNamePrefix)) {
@@ -133,12 +150,22 @@ class Slice {
             end = lowerBound<Result>(sorted, prefixResult,
                 compare: compareNamesPrefixMatchesBelow);
           }
-          response.results.addAll(sorted
-              .getRange(start, end)
-              .map(Result.toApi)
-              .take(limit - response.results.length));
+          if (end - start > skip - skipped) {
+            // No-op if skipped == skip
+            start += skip - skipped;
+            skipped = skip;
+            response.results.addAll(sorted
+                .getRange(start, end)
+                .map(Result.toApi)
+                .take(limit - response.results.length));
+          } else {
+            skipped += end - start;
+          }
         }
       }
+    }
+    if (response.results.length >= limit) {
+      response.nextPageToken = (skip + response.results.length).toString();
     }
     return response;
   }

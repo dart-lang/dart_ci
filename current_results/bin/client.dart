@@ -43,6 +43,7 @@ class QueryCommand extends gRpcCommand {
             'comma-separated, to fetch results for');
     argParser.addOption('limit',
         abbr: 'l', help: 'number of results to return');
+    argParser.addOption('page', help: 'page token returned from previous call');
   }
   String get name => 'getResults';
   String get description => 'Send a GetResults gRPC request to the server';
@@ -52,6 +53,9 @@ class QueryCommand extends gRpcCommand {
     request.filter = argResults['filter'] ?? '';
     if (argResults['limit'] != null) {
       request.pageSize = int.parse(argResults['limit']);
+    }
+    if (argResults['page'] != null) {
+      request.pageToken = argResults['page'];
     }
 
     final result = await QueryClient(channel).getResults(request);
