@@ -36,18 +36,9 @@ class ResultsPanelState extends State<ResultsPanel> {
     if (expanded.length != widget.queryResults.names.length) {
       expanded = List<bool>.filled(widget.queryResults.names.length, false);
     }
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        width: 800.0,
-        child: Container(
-          // decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-          child: ListView.builder(
-            itemCount: widget.queryResults.names.length,
-            itemBuilder: itemBuilder(widget.queryResults),
-          ),
-        ),
-      ),
+    return ListView.builder(
+      itemCount: widget.queryResults.names.length,
+      itemBuilder: itemBuilder(widget.queryResults),
     );
   }
 
@@ -67,7 +58,7 @@ class ResultsPanelState extends State<ResultsPanel> {
             height: 28.0,
             padding: EdgeInsets.only(top: 0.0, left: 8.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(
@@ -77,21 +68,32 @@ class ResultsPanelState extends State<ResultsPanel> {
                 ),
                 for (final kind in kinds)
                   Container(
-                    width: 20,
-                    alignment: Alignment.bottomCenter,
-                    color: counts.containsKey(kind)
-                        ? resultColors[kind]
-                        : Colors.white,
+                    width: 24,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(horizontal: 1.0),
+                    decoration: BoxDecoration(
+                      color: counts.containsKey(kind)
+                          ? resultColors[kind]
+                          : Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                     child: Text('${counts[kind] ?? ''}',
                         style: TextStyle(fontSize: 14.0)),
                   ),
-                Flexible(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    reverse: true,
-                    child: SelectableText(
-                      results.partialResults ? '$name (partial results)' : name,
-                      style: TextStyle(fontSize: 16.0),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 4.0),
+                    alignment: Alignment.centerLeft,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      reverse: true,
+                      child: SelectableText(
+                        results.partialResults
+                            ? '$name (partial results)'
+                            : name,
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                     ),
                   ),
                 ),

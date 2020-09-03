@@ -48,9 +48,9 @@ class CurrentResultsApp extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
-        constraints: BoxConstraints(maxWidth: 808.0),
+        constraints: BoxConstraints(maxWidth: 1000.0),
         decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Colors.black))),
+            border: Border(right: BorderSide(color: Colors.grey[300]))),
         child: Scaffold(
           appBar: AppBar(
             leading: Align(
