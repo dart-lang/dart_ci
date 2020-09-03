@@ -36,6 +36,11 @@
           [preferredPositions]="preferredTooltipPositions">
         <div *deferredContent>
           <h4>{{change.name}}</h4>
+          <a
+              href="https://github.com/dart-lang/sdk/issues?q=is%3Aissue+{{change.name}}"
+              target="_blank">
+            GitHub issue search
+          </a><br>
           <dart-log
               *ngFor="let configuration of change.configurations.configurations"
               [configuration]="configuration"
@@ -50,6 +55,11 @@
           [preferredPositions]="preferredTooltipPositions">
         <div *deferredContent>
           <h4>{{change.name}}</h4>
+          <a
+              href="https://github.com/dart-lang/sdk/issues?q=is%3Aissue+{{change.name}}"
+              target="_blank">
+            GitHub issue search
+          </a><br>
           <div *ngFor="let configuration of change.configurations.configurations">
             {{configuration}}
             <a
