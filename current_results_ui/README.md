@@ -1,4 +1,4 @@
-# ui_current_results
+# current_results_ui
 
 A web UI displaying current test results for Dart CI
 
