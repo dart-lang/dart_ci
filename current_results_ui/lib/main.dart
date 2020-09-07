@@ -47,50 +47,55 @@ class CurrentResultsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topLeft,
-      child: Container(
-        constraints: BoxConstraints(maxWidth: 1000.0),
-        decoration: BoxDecoration(
-            border: Border(right: BorderSide(color: Colors.grey[300]))),
-        child: Scaffold(
-          appBar: AppBar(
-            leading: Align(
-              alignment: Alignment.center,
-              child:
-                  Image.asset('assets/dart_64.png', width: 40.0, height: 40.0),
-            ),
-            title: Text('Current Results',
-                style: TextStyle(
-                    fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
-            backgroundColor: Colors.white,
-            bottom: TabBar(
-              tabs: [
-                Tab(text: 'ALL'),
-                Tab(text: 'FAILURES'),
-              ],
-              indicatorColor: Color.fromARGB(255, 63, 81, 181),
-              labelColor: Color.fromARGB(255, 63, 81, 181),
-            ),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Align(
+            alignment: Alignment.center,
+            child: Image.asset('assets/dart_64.png', width: 40.0, height: 40.0),
           ),
-          persistentFooterButtons: [
-            ApiPortalLink(),
-            JsonLink(),
-            textPopup(),
-          ],
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FilterUI(),
-              Expanded(
-                child: Consumer<QueryResults>(
-                  builder: (context, results, child) => TabBarView(
-                    children: [
-                      ResultsPanel(results, showAll: true),
-                      ResultsPanel(results, showAll: false)
-                    ],
+          title: Text('Current Results',
+              style: TextStyle(
+                  fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
+          backgroundColor: Colors.white,
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'ALL'),
+              Tab(text: 'FAILURES'),
+            ],
+            indicatorColor: Color.fromARGB(255, 63, 81, 181),
+            labelColor: Color.fromARGB(255, 63, 81, 181),
+          ),
+        ),
+        persistentFooterButtons: [
+          ApiPortalLink(),
+          JsonLink(),
+          textPopup(),
+        ],
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            constraints: BoxConstraints(maxWidth: 1000.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FilterUI(),
+                Divider(
+                  color: Colors.grey[300],
+                  height: 20,
+                  thickness: 2,
+                ),
+                Expanded(
+                  child: Consumer<QueryResults>(
+                    builder: (context, results, child) => TabBarView(
+                      children: [
+                        ResultsPanel(results, showAll: true),
+                        ResultsPanel(results, showAll: false)
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
