@@ -2,6 +2,10 @@
   "hosting": {
     "public": "build/web",
     "rewrites": [ {
+      "source": "/current_results**",
+      "destination": "/current_results/index.html"
+    },
+    {
       "source": "**",
       "destination": "/index.html"
     }]
