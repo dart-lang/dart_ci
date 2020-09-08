@@ -47,9 +47,22 @@ class FilterUI extends StatelessWidget {
   }
 }
 
-class AddWidget extends StatelessWidget {
+class AddWidget extends StatefulWidget {
   final Filter filter;
   AddWidget(this.filter);
+
+  @override
+  _AddWidgetState createState() => _AddWidgetState();
+}
+
+class _AddWidgetState extends State<AddWidget> {
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +70,12 @@ class AddWidget extends StatelessWidget {
       width: 200.0,
       height: 40.0,
       child: TextField(
+        controller: controller,
         decoration: InputDecoration(hintText: 'Test or configuration prefix'),
-        onSubmitted: (value) => filter.addAll(value),
+        onSubmitted: (value) {
+          widget.filter.addAll(value);
+          controller.text = '';
+        },
       ),
     );
   }
