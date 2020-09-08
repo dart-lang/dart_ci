@@ -80,7 +80,7 @@ class ResultsPanelState extends State<ResultsPanel> {
                     decoration: BoxDecoration(
                       color: counts.containsKey(kind)
                           ? resultColors[kind]
-                          : Colors.white,
+                          : Colors.transparent,
                       shape: BoxShape.circle,
                     ),
                     child: Text('${counts[kind] ?? ''}',
