@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Filter extends ChangeNotifier {
-  List<String> terms = [
-    'dartk-',
-    'app_jitk',
-    'service/de',
-  ];
+  List<String> terms = [];
 
   void addAll(String value) {
     for (final term in value.split(',')) {

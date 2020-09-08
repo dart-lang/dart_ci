@@ -26,6 +26,7 @@ class QueryResults extends ChangeNotifier {
   Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
   int fetchedResultsCount = 0;
   bool partialResults = true;
+  bool get noQuery => filter.terms.isEmpty;
 
   GetResultsResponse resultsObject = GetResultsResponse.create();
 

@@ -4,9 +4,12 @@
 
 import 'dart:html' as html;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 
+import 'filter.dart';
 import 'query.dart';
 
 class ResultsPanel extends StatefulWidget {
@@ -33,6 +36,9 @@ class ResultsPanelState extends State<ResultsPanel> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.queryResults.noQuery) {
+      return Align(child: QuerySuggestionsPage());
+    }
     if (expanded.length != widget.queryResults.names.length) {
       expanded = List<bool>.filled(widget.queryResults.names.length, false);
     }
@@ -137,5 +143,58 @@ class ResultsPanelState extends State<ResultsPanel> {
         ],
       );
     };
+  }
+}
+
+class QuerySuggestionsPage extends StatelessWidget {
+  Widget build(context) {
+    Function setFilter(String terms) =>
+        () => Provider.of<Filter>(context, listen: false).addAll(terms);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        'Enter a query to see current test results',
+        style: TextStyle(fontSize: 24.0),
+      ),
+      SizedBox(height: 24.0),
+      Text(
+          'Enter query terms that are prefixes of configuration or test names.'),
+      Text('Multiple terms can be entered at once, separated by commas.'),
+      SizedBox(height: 12.0),
+      Text('Some example queries are:'),
+      for (final example in [
+        {
+          'description': 'language_2/ tests on analyzer configurations',
+          'terms': 'language_2/,analyzer'
+        },
+        {
+          'description': 'service/de* tests on dartk- configurations',
+          'terms': 'dartk-, service/de'
+        },
+        {'description': 'analyzer unit tests', 'terms': 'pkg/analyzer/'},
+        {
+          'description': 'all tests on dart2js strong null-safe configuration',
+          'terms': 'dart2js-hostasserts-strong'
+        },
+        {'description': 'null-safe language tests', 'terms': 'language/'},
+      ]) ...[
+        SizedBox(height: 12),
+        Text.rich(
+          TextSpan(
+            text: '${example['description']}: ',
+            children: [
+              TextSpan(
+                text: example['terms'],
+                style: TextStyle(
+                  color: Colors.blue[900],
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = setFilter(example['terms']),
+              )
+            ],
+          ),
+        ),
+      ],
+    ]);
   }
 }
