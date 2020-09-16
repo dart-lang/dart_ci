@@ -30,10 +30,15 @@ class ResultsPanel extends StatelessWidget {
     if (queryResults.noQuery) {
       return Align(child: QuerySuggestionsPage());
     }
+    bool hasFailedResult(String name) =>
+        queryResults.grouped[name].keys.any((change) => !change.matches);
+    final filteredNames = showAll
+        ? queryResults.names
+        : queryResults.names.where(hasFailedResult).toList();
     return ListView.builder(
-      itemCount: queryResults.names.length,
+      itemCount: filteredNames.length,
       itemBuilder: (BuildContext context, int index) {
-        final name = queryResults.names[index];
+        final name = filteredNames[index];
         final changeGroups = queryResults.grouped[name];
         final counts = queryResults.counts[name];
         final partialResults = queryResults.partialResults;
@@ -66,11 +71,6 @@ class _ExpandableResultState extends State<ExpandableResult> {
   Widget build(BuildContext context) {
     final name = widget.name;
     final changeGroups = widget.changeGroups;
-
-    if (!widget.showAll &&
-        changeGroups.keys.every((ChangeInResult change) => change.matches)) {
-      return Container(height: 0.0, width: 0.0);
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
