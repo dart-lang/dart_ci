@@ -5,22 +5,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Filter extends ChangeNotifier {
-  List<String> terms = [];
+class Filter {
+  final List<String> terms;
+  Filter(String termString) : terms = _parse(termString);
 
-  void addAll(String value) {
-    for (final term in value.split(',')) {
-      final trimmed = term.trim();
-      if (trimmed.isEmpty) continue;
-      if (terms.contains(trimmed)) continue;
-      terms.add(trimmed);
-    }
-    notifyListeners();
-  }
-
-  void remove(String term) {
-    terms.remove(term);
-    notifyListeners();
+  static List<String> _parse(String termString) {
+    if (termString.trim() == '') return List.unmodifiable([]);
+    return List.unmodifiable(termString.split(',').map((s) => s.trim()));
   }
 }
 
@@ -37,7 +28,15 @@ class FilterUI extends StatelessWidget {
             children: [
               for (final term in filter.terms)
                 InputChip(
-                    label: Text(term), onDeleted: () => filter.remove(term)),
+                  label: Text(term),
+                  onDeleted: () {
+                    final terms = filter.terms.where((t) => t != term);
+                    Navigator.pushNamed(
+                      context,
+                      '/filter=${terms.join(',')}',
+                    );
+                  },
+                ),
               AddWidget(filter),
             ],
           ),
@@ -73,8 +72,19 @@ class _AddWidgetState extends State<AddWidget> {
         controller: controller,
         decoration: InputDecoration(hintText: 'Test or configuration prefix'),
         onSubmitted: (value) {
-          widget.filter.addAll(value);
+          if (value.trim().isEmpty) return;
+          final newTerms = value.split(',').map((s) => s.trim());
+          bool isNotReplacedByNewTerm(String term) => !newTerms.any((newTerm) =>
+              term.startsWith(newTerm) || newTerm.startsWith(term));
+          final filterText = widget.filter.terms
+              .where(isNotReplacedByNewTerm)
+              .followedBy(newTerms)
+              .join(',');
           controller.text = '';
+          Navigator.pushNamed(
+            context,
+            '/filter=$filterText',
+          );
         },
       ),
     );

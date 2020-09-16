@@ -19,30 +19,47 @@ class CurrentResultsAppProviders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Current Results',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.compact,
-        ),
-        home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (context) => Filter()),
-              ChangeNotifierProxyProvider<Filter, QueryResults>(
-                  create: (context) => QueryResults(),
-                  update: (context, filter, queryResults) {
-                    return queryResults
-                      ..filter = filter
-                      ..fetchCurrentResults();
-                  })
-            ],
-            child: DefaultTabController(
-              length: 2,
-              child: CurrentResultsApp(),
-            )));
+      title: 'Current Results',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.compact,
+      ),
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings settings) {
+        final match = RegExp('/filter=(.*)').matchAsPrefix(settings.name);
+        final filter = (match == null) ? Filter('') : Filter(match[1]);
+        return NoTransitionPageRoute(
+            builder: (context) => AppProviders(filter),
+            settings: settings,
+            maintainState: false);
+      },
+    );
+  }
+}
+
+class AppProviders extends StatelessWidget {
+  final Filter filter;
+
+  AppProviders(this.filter);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: [
+          Provider.value(value: filter),
+          ChangeNotifierProvider(
+              create: (context) => QueryResults(filter)..fetchCurrentResults()),
+        ],
+        child: const DefaultTabController(
+          length: 2,
+          child: const CurrentResultsApp(),
+        ));
   }
 }
 
 class CurrentResultsApp extends StatelessWidget {
+  const CurrentResultsApp();
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -53,7 +70,7 @@ class CurrentResultsApp extends StatelessWidget {
             alignment: Alignment.center,
             child: Image.asset('assets/dart_64.png', width: 40.0, height: 40.0),
           ),
-          title: Text('Current Results',
+          title: const Text('Current Results',
               style: TextStyle(
                   fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
           backgroundColor: Colors.transparent,
@@ -67,9 +84,9 @@ class CurrentResultsApp extends StatelessWidget {
           ),
         ),
         persistentFooterButtons: [
-          ApiPortalLink(),
-          JsonLink(),
-          textPopup(),
+          const ApiPortalLink(),
+          const JsonLink(),
+          const TextPopup(),
         ],
         body: Align(
           alignment: Alignment.topCenter,
@@ -104,6 +121,8 @@ class CurrentResultsApp extends StatelessWidget {
 }
 
 class ApiPortalLink extends StatelessWidget {
+  const ApiPortalLink();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<Filter>(
@@ -122,6 +141,8 @@ class ApiPortalLink extends StatelessWidget {
 }
 
 class JsonLink extends StatelessWidget {
+  const JsonLink();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<Filter>(
@@ -140,38 +161,61 @@ class JsonLink extends StatelessWidget {
   }
 }
 
-Widget textPopup() {
-  return Consumer<QueryResults>(
-    builder: (context, QueryResults results, child) {
-      return FlatButton(
-        child: Text('text'),
-        onPressed: () => showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            final text = [resultTextHeader]
-                .followedBy(
-                    results.resultsObject.results.map(resultAsCommaSeparated))
-                .join('\n');
-            return AlertDialog(
-              title: Text('Results query as text'),
-              content: SelectableText(text),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Copy and dismiss'),
-                  onPressed: () {
-                    clippy.write(text);
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text('Dismiss'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        ),
-      );
-    },
-  );
+class TextPopup extends StatelessWidget {
+  const TextPopup();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResults>(
+      builder: (context, QueryResults results, child) {
+        return FlatButton(
+          child: Text('text'),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              final text = [resultTextHeader]
+                  .followedBy(
+                      results.resultsObject.results.map(resultAsCommaSeparated))
+                  .join('\n');
+              return AlertDialog(
+                title: Text('Results query as text'),
+                content: SelectableText(text),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Copy and dismiss'),
+                    onPressed: () {
+                      clippy.write(text);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text('Dismiss'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class NoTransitionPageRoute extends MaterialPageRoute {
+  NoTransitionPageRoute({
+    @required WidgetBuilder builder,
+    RouteSettings settings,
+    bool maintainState = true,
+  }) : super(
+          builder: builder,
+          settings: settings,
+          maintainState: maintainState,
+        );
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return child;
+  }
 }

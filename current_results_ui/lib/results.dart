@@ -7,9 +7,7 @@ import 'dart:html' as html;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
 
-import 'filter.dart';
 import 'query.dart';
 
 const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
@@ -70,7 +68,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
     final changeGroups = widget.changeGroups;
 
     if (!widget.showAll &&
-        changeGroups.keys.every((change) => change.matches)) {
+        changeGroups.keys.every((ChangeInResult change) => change.matches)) {
       return Container(height: 0.0, width: 0.0);
     }
     return Column(
@@ -159,8 +157,6 @@ class _ExpandableResultState extends State<ExpandableResult> {
 
 class QuerySuggestionsPage extends StatelessWidget {
   Widget build(context) {
-    Function setFilter(String terms) =>
-        () => Provider.of<Filter>(context, listen: false).addAll(terms);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         'Enter a query to see current test results',
@@ -179,7 +175,7 @@ class QuerySuggestionsPage extends StatelessWidget {
         },
         {
           'description': 'service/de* tests on dartk- configurations',
-          'terms': 'dartk-, service/de'
+          'terms': 'dartk-,service/de'
         },
         {'description': 'analyzer unit tests', 'terms': 'pkg/analyzer/'},
         {
@@ -200,7 +196,10 @@ class QuerySuggestionsPage extends StatelessWidget {
                   decoration: TextDecoration.underline,
                 ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = setFilter(example['terms']),
+                  ..onTap = () => Navigator.pushNamed(
+                        context,
+                        '/filter=${example['terms']}',
+                      ),
               )
             ],
           ),

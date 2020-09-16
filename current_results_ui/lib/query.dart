@@ -19,7 +19,7 @@ const int fetchLimit = 4000;
 const int maxFetchedResults = 100 * fetchLimit;
 
 class QueryResults extends ChangeNotifier {
-  Filter filter;
+  final Filter filter;
   StreamSubscription<GetResultsResponse> fetcher;
   List<String> names = [];
   Map<String, Map<String, int>> counts = {};
@@ -27,6 +27,14 @@ class QueryResults extends ChangeNotifier {
   int fetchedResultsCount = 0;
   bool partialResults = true;
   bool get noQuery => filter.terms.isEmpty;
+
+  QueryResults(this.filter);
+
+  @override
+  void dispose() {
+    fetcher?.cancel();
+    super.dispose();
+  }
 
   GetResultsResponse resultsObject = GetResultsResponse.create();
 
@@ -91,7 +99,11 @@ class ChangeInResult {
   final bool flaky;
   final String text;
   bool get matches => result == expected;
-  String get kind => flaky ? 'flaky' : matches ? 'pass' : 'fail';
+  String get kind => flaky
+      ? 'flaky'
+      : matches
+          ? 'pass'
+          : 'fail';
 
   ChangeInResult(Result result)
       : this._(result.result, result.expected, result.flaky);
