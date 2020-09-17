@@ -25,7 +25,6 @@ class QueryResults extends ChangeNotifier {
   Map<String, Map<String, int>> counts = {};
   Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
   int fetchedResultsCount = 0;
-  bool partialResults = true;
   bool get noQuery => filter.terms.isEmpty;
 
   QueryResults(this.filter);
@@ -44,7 +43,6 @@ class QueryResults extends ChangeNotifier {
     counts = {};
     grouped = {};
     fetchedResultsCount = 0;
-    partialResults = true;
 
     fetcher = fetchResults(filter).listen(onResults, onDone: onDone);
   }
@@ -72,7 +70,7 @@ class QueryResults extends ChangeNotifier {
   }
 
   void onDone() {
-    partialResults = false;
+    fetcher = null;
   }
 }
 

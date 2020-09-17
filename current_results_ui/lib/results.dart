@@ -41,9 +41,7 @@ class ResultsPanel extends StatelessWidget {
         final name = filteredNames[index];
         final changeGroups = queryResults.grouped[name];
         final counts = queryResults.counts[name];
-        final partialResults = queryResults.partialResults;
-        return ExpandableResult(
-            name, changeGroups, counts, showAll, partialResults);
+        return ExpandableResult(name, changeGroups, counts, showAll);
       },
     );
   }
@@ -54,10 +52,8 @@ class ExpandableResult extends StatefulWidget {
   final changeGroups;
   final counts;
   final bool showAll;
-  final bool partialResults;
 
-  ExpandableResult(this.name, this.changeGroups, this.counts, this.showAll,
-      this.partialResults)
+  ExpandableResult(this.name, this.changeGroups, this.counts, this.showAll)
       : super(key: Key(name));
 
   @override
@@ -107,7 +103,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
                     scrollDirection: Axis.horizontal,
                     reverse: true,
                     child: SelectableText(
-                      widget.partialResults ? '$name (partial results)' : name,
+                      name,
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ),
