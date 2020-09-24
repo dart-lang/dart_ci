@@ -21,7 +21,7 @@ void main(List<String> args) async {
   await bucket.initialize();
   await notifications.initialize();
   await loadData();
-  var port = int.tryParse(Platform.environment['PORT'] ?? '8081');
+  var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
   await grpcServer.serve(port: port);
   print('Grpc serving on port ${grpcServer.port}');
 }

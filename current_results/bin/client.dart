@@ -16,19 +16,23 @@ void main(List<String> args) async {
     ..addCommand(FetchCommand())
     ..argParser.addOption('host', help: 'current results server to query')
     ..argParser
-        .addOption('port', abbr: 'p', help: 'port of current results server');
+        .addOption('port', abbr: 'p', help: 'port of current results server')
+    ..argParser.addFlag('insecure', help: 'connect over insecure http');
   await runner.run(args);
 }
 
 abstract class gRpcCommand extends Command {
-  Future<void> runWithChannel(ClientChannel channel);
+  Future<void> runWithClient(QueryClient client);
   Future<void> run() async {
     final channel = ClientChannel(globalResults['host'],
         port: int.parse(globalResults['port']),
-        options:
-            const ChannelOptions(credentials: ChannelCredentials.insecure()));
+        options: globalResults['insecure'] == true
+            ? const ChannelOptions(credentials: ChannelCredentials.insecure())
+            : const ChannelOptions(credentials: ChannelCredentials.secure()));
+
+    final client = QueryClient(channel);
     try {
-      await runWithChannel(channel);
+      await runWithClient(client);
     } finally {
       await channel.shutdown();
     }
@@ -48,7 +52,7 @@ class QueryCommand extends gRpcCommand {
   String get name => 'getResults';
   String get description => 'Send a GetResults gRPC request to the server';
 
-  Future<void> runWithChannel(ClientChannel channel) async {
+  Future<void> runWithClient(QueryClient client) async {
     final request = GetResultsRequest();
     request.filter = argResults['filter'] ?? '';
     if (argResults['limit'] != null) {
@@ -58,7 +62,7 @@ class QueryCommand extends gRpcCommand {
       request.pageToken = argResults['page'];
     }
 
-    final result = await QueryClient(channel).getResults(request);
+    final result = await client.getResults(request);
     print(result.toProto3Json());
   }
 }
@@ -75,11 +79,11 @@ class ListTestsCommand extends gRpcCommand {
   String get name => 'listTests';
   String get description => 'Send a ListTests gRPC request to the server';
 
-  Future<void> runWithChannel(ClientChannel channel) async {
+  Future<void> runWithClient(QueryClient client) async {
     final query = ListTestsRequest()
       ..prefix = argResults['prefix']
       ..limit = int.parse(argResults['limit']);
-    final result = await QueryClient(channel).listTests(query);
+    final result = await client.listTests(query);
     print(result.toProto3Json());
   }
 }
@@ -88,8 +92,8 @@ class FetchCommand extends gRpcCommand {
   String get name => 'fetch';
   String get description => 'Send a Fetch gRPC request to the server';
 
-  Future<void> runWithChannel(ClientChannel channel) async {
-    final result = await QueryClient(channel).fetch(Empty());
+  Future<void> runWithClient(QueryClient client) async {
+    final result = await client.fetch(Empty());
     print(result.toProto3Json());
   }
 }
