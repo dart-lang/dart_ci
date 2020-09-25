@@ -10,11 +10,29 @@ import 'package:collection/collection.dart';
 import 'package:current_results/src/result.dart';
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
 import 'package:current_results/src/generated/result.pb.dart' as api;
+import 'package:current_results/src/iterable.dart';
 
 int compareNames(Result a, Result b) => a.name.compareTo(b.name);
 
-int compareNamesPrefixMatchesBelow(Result a, Result b) =>
-    a.name.compareTo(b.name) < 0 || a.name.startsWith(b.name) ? -1 : 1;
+/// All result names before or starting with [prefix] are "before" prefix.
+int isAfterPrefix(Result a, Result prefix) {
+  if (a.name.startsWith(prefix.name)) return -1;
+  return compareNames(a, prefix);
+}
+
+/// Returns the range from [sorted] of Result entries that are at or after
+/// [startResult] and begin with [prefixResult].
+Iterable<Result> getResultRange(
+    List<Result> sorted, Result startResult, Result prefixResult) {
+  var start = lowerBound<Result>(sorted, startResult, compare: compareNames);
+  if (start >= sorted.length) return [];
+  if (!sorted[start].name.startsWith(prefixResult.name)) return [];
+  var end = start + 1;
+  if (end < sorted.length && sorted[end].name.startsWith(prefixResult.name)) {
+    end = lowerBound<Result>(sorted, prefixResult, compare: isAfterPrefix);
+  }
+  return sorted.getRange(start, end);
+}
 
 /// Holds the test results for all configurations.
 /// Answers queries about the test results.
@@ -92,11 +110,8 @@ class Slice {
   query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
     final response = query_api.GetResultsResponse();
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
-    // TODO(whesse): Change the implementation to return results sorted by test name first.
-    // This will be less efficient, but it is much better for the clients.
-    // The page token will change to a test name and configuration when this is done.
-    final skip =
-        max(0, query.pageToken.isEmpty ? 0 : int.parse(query.pageToken));
+    final pageStart =
+        query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
     final filterTerms =
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
     final configurationSet = Set<String>();
@@ -117,57 +132,70 @@ class Slice {
         testPrefixes.removeAt(i + 1);
       }
     }
+    if (testPrefixes.isEmpty) {
+      testPrefixes.add('');
+    }
     final configurations =
         (configurationSet.isEmpty ? _stored.keys : configurationSet).toList()
           ..sort();
 
-    if (testPrefixes.isEmpty) {
-      response.results.addAll(configurations
-          .expand((configuration) => _stored[configuration])
-          .map(Result.toApi)
-          .skip(skip)
-          .take(limit));
-      if (response.results.length >= limit) {
-        response.nextPageToken = (skip + response.results.length).toString();
+    for (final prefix in testPrefixes) {
+      response.results.addAll(getSortedResults(
+              prefix, configurations, pageStart,
+              needed: limit - response.results.length)
+          .map(Result.toApi));
+      if (response.results.length == limit) {
+        response.nextPageToken = PageStart(
+                response.results.last.name, response.results.last.configuration)
+            .encode();
+        break;
       }
-      return response;
-    }
-
-    var skipped = 0;
-    for (final configuration in configurations) {
-      final sorted = _stored[configuration];
-      for (final testNamePrefix in testPrefixes) {
-        if (response.results.length >= limit) break;
-        final prefixResult =
-            Result(testNamePrefix, null, null, null, null, null, null);
-        var start =
-            lowerBound<Result>(sorted, prefixResult, compare: compareNames);
-        if (start < sorted.length &&
-            sorted[start].name.startsWith(testNamePrefix)) {
-          var end = start + 1;
-          if (end < sorted.length &&
-              sorted[end].name.startsWith(testNamePrefix)) {
-            end = lowerBound<Result>(sorted, prefixResult,
-                compare: compareNamesPrefixMatchesBelow);
-          }
-          if (end - start > skip - skipped) {
-            // No-op if skipped == skip
-            start += skip - skipped;
-            skipped = skip;
-            response.results.addAll(sorted
-                .getRange(start, end)
-                .map(Result.toApi)
-                .take(limit - response.results.length));
-          } else {
-            skipped += end - start;
-          }
-        }
-      }
-    }
-    if (response.results.length >= limit) {
-      response.nextPageToken = (skip + response.results.length).toString();
     }
     return response;
+  }
+
+  /// Returns up to [needed] results from the configurations in [configurations],
+  /// with test names that start with [prefix], sorted by test name.
+  /// If [pageStart] is not null, test names before pageStart.name are
+  /// filtered out.
+  List<Result> getSortedResults(
+      String prefix, List<String> configurations, PageStart pageStart,
+      {int needed}) {
+    final prefixResult = Result.nameOnly(prefix);
+    var startResult;
+    if (pageStart == null || pageStart.test.compareTo(prefixResult.name) <= 0) {
+      startResult = prefixResult;
+    } else if (pageStart.test.startsWith(prefixResult.name)) {
+      startResult = Result.nameOnly(pageStart.test);
+    } else {
+      return [];
+    }
+
+    var results = <Result>[];
+
+    for (final configuration in configurations) {
+      var configurationRange =
+          getResultRange(_stored[configuration], startResult, prefixResult);
+
+      if (configurationRange.isEmpty) continue;
+      if (pageStart != null &&
+          configurationRange.first.name == pageStart.test &&
+          configuration.compareTo(pageStart.configuration) <= 0) {
+        configurationRange = configurationRange.skip(1);
+        if (configurationRange.isEmpty) continue;
+      }
+      if (results.isEmpty ||
+          results.last.name.compareTo(configurationRange.first.name) <= 0) {
+        // Optimization
+        results.addAll(configurationRange.take(needed - results.length));
+      } else {
+        results =
+            merge(results, configurationRange, (Result result) => result.name)
+                .take(needed)
+                .toList();
+      }
+    }
+    return results;
   }
 
   query_api.ListTestsResponse listTests(query_api.ListTestsRequest query) {
@@ -185,5 +213,24 @@ class Slice {
       }
     }
     return response;
+  }
+}
+
+class PageStart {
+  final String test;
+  final String configuration;
+
+  PageStart(this.test, this.configuration);
+
+  factory PageStart.parse(String token) {
+    final decoded = jsonDecode(ascii.decode(base64Decode(token)));
+    return PageStart(decoded['test'], decoded['configuration']);
+  }
+
+  String encode() {
+    return base64UrlEncode(ascii.encode(jsonEncode({
+      'test': test,
+      'configuration': configuration,
+    })));
   }
 }

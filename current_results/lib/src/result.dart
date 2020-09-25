@@ -27,6 +27,8 @@ class Result {
             unique(other.expected),
             Duration(milliseconds: other.timeMs));
 
+  Result.nameOnly(String name) : this(name, null, null, null, null, null, null);
+
   static final uniqueStrings = <String>{};
 
   static String unique(String string) =>
