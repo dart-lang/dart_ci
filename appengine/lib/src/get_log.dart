@@ -13,6 +13,14 @@ import 'package:http/http.dart' as http;
 
 final resultsBucket = 'dart-test-results';
 
+class UserVisibleFailure {
+  final String message;
+
+  UserVisibleFailure(this.message);
+
+  String toString() => "error: $message";
+}
+
 Future<String> getCloudFile(String bucket, String path) async {
   final client = http.Client();
   try {
@@ -20,6 +28,9 @@ Future<String> getCloudFile(String bucket, String path) async {
     final media = await api.objects
         .get(bucket, path, downloadOptions: DownloadOptions.FullMedia) as Media;
     return await utf8.decodeStream(media.stream);
+  } catch (e) {
+    throw UserVisibleFailure(
+        'Failure when fetching $path from $bucket in cloud storage');
   } finally {
     client.close();
   }
@@ -27,6 +38,9 @@ Future<String> getCloudFile(String bucket, String path) async {
 
 Future<String> getLatestBuildNumber(String builder) =>
     getCloudFile(resultsBucket, "builders/$builder/latest");
+
+Future<String> getLatestConfigurationBuildNumber(String configuration) =>
+    getCloudFile(resultsBucket, 'configuration/master/$configuration/latest');
 
 Future<String> getApproval(String builder) async {
   try {
@@ -41,40 +55,52 @@ Future<String> getApproval(String builder) async {
 }
 
 /// Fetches a log or logs and formats them for output.
-/// If a failure occurs, signal error on the returned future.
 Future<String> getLog(
     String builder, String build, String configuration, String test) async {
-  if (build == "latest") {
-    build = await getLatestBuildNumber(builder);
-  }
   final safeRegExp = RegExp('^[-\\w]*\$');
   final digitsRegExp = RegExp('^\\d*\$');
   if (!safeRegExp.hasMatch(builder)) {
-    throw "Builder name $builder contains illegal characters";
+    throw UserVisibleFailure(
+        "Builder name $builder contains illegal characters");
+  }
+  if (builder == 'any') {
+    if (configuration.endsWith('*')) {
+      throw UserVisibleFailure(
+          'Wildcard not allowed in configuration with builder "any"');
+    }
+    if (!safeRegExp.hasMatch(configuration)) {
+      throw UserVisibleFailure(
+          'Configuration name $configuration contains illegal characters');
+    }
   }
   if (!digitsRegExp.hasMatch(build)) {
-    throw "Build number $build is not a number";
+    throw UserVisibleFailure('Build number $build is not a number');
   }
 
-  final logs_json =
-      await getCloudFile(resultsBucket, "builders/$builder/$build/logs.json");
-  final logs = LineSplitter.split(logs_json)
+  final cloudFile = builder == 'any'
+      ? 'configuration/master/$configuration/$build/logs.json'
+      : 'builders/$builder/$build/logs.json';
+  final jsonLogs = await getCloudFile(resultsBucket, cloudFile);
+
+  final logs = LineSplitter.split(jsonLogs)
       .where((line) => line.isNotEmpty)
       .map(jsonDecode);
-  var testFilter = (log) => log["name"] == test;
-  if (test.endsWith("*")) {
+  var testFilter = (Map<String, dynamic> log) => log['name'] == test;
+  if (test.endsWith('*')) {
     final prefix = test.substring(0, test.length - 1);
-    testFilter = (log) => log["name"].startsWith(prefix);
+    testFilter = (Map<String, dynamic> log) => log['name'].startsWith(prefix);
   }
-  var configurationFilter = (log) => log["configuration"] == configuration;
-  if (configuration.endsWith("*")) {
+  var configurationFilter =
+      (Map<String, dynamic> log) => log['configuration'] == configuration;
+  if (configuration.endsWith('*')) {
     final prefix = configuration.substring(0, configuration.length - 1);
-    configurationFilter = (log) => log["configuration"].startsWith(prefix);
+    configurationFilter =
+        (Map<String, dynamic> log) => log['configuration'].startsWith(prefix);
   }
   var result = logs
       .where((log) => testFilter(log) && configurationFilter(log))
-      .map((log) => log["log"])
-      .join("\n\n======================================================\n\n");
+      .map((log) => log['log'])
+      .join('\n\n======================================================\n\n');
   if (result.isEmpty) return null;
   return result;
 }

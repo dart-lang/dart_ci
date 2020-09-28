@@ -42,6 +42,9 @@ Future<void> dispatchingServer(HttpRequest request) async {
     } else {
       return await notFound(request);
     }
+  } on UserVisibleFailure catch (e) {
+    print(e);
+    showError(request, e);
   } catch (e, t) {
     print(e);
     print(t);
@@ -75,13 +78,16 @@ Future<void> serveLog(HttpRequest request) async {
   final test = parts.skip(4).join('/');
 
   if (build == 'latest') {
-    final actualBuild = await getLatestBuildNumber(builder);
+    final actualBuild = builder == 'any'
+        ? await getLatestConfigurationBuildNumber(configuration)
+        : await getLatestBuildNumber(builder);
     return redirectTemporary(
         request, '/log/$builder/$configuration/$actualBuild/$test');
   }
   final log = await getLog(builder, build, configuration, test);
   if (log == null) {
-    return noLog(request, builder, build, test);
+    throw UserVisibleFailure('No logs found for test $test on build $build of '
+        'builder $builder, configuration $configuration');
   }
   final response = request.response;
   response.headers.contentType = ContentType.text;
@@ -108,11 +114,9 @@ Future<void> notFound(HttpRequest request) {
   return request.response.close();
 }
 
-Future<void> noLog(
-    HttpRequest request, String builder, String build, String test) async {
+Future<void> showError(HttpRequest request, UserVisibleFailure failure) {
   request.response.headers.contentType = ContentType.text;
-  request.response
-      .write("No log for test $test on build $build of builder $builder");
+  request.response.write(failure.toString());
   return request.response.close();
 }
 
