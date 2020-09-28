@@ -7,41 +7,20 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_ci/src/approvals_feed.dart';
 import 'package:dart_ci/src/get_log.dart';
 
 void main() async {
-  await refresh();
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
-  Timer.periodic(Duration(minutes: 10), (timer) async {
-    try {
-      await refresh();
-    } catch (e, t) {
-      print(e);
-      print(t);
-    }
-  });
-}
-
-Future<void> refresh() async {
-  await getApprovals();
 }
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
-    if (request.uri.path == '/') {
-      return await serveFrontPage(request);
-    } else if (request.uri.path.startsWith('/log/')) {
+    if (request.uri.path.startsWith('/log/')) {
       return await serveLog(request);
-    } else if (request.uri.path.startsWith('/changes')) {
-      return await serveChanges(request);
-    } else if (request.uri.path.startsWith('/approvals/')) {
-      return await serveApprovals(request);
-    } else {
-      return await notFound(request);
     }
+    return await serveFrontPage(request);
   } on UserVisibleFailure catch (e) {
     print(e);
     showError(request, e);
@@ -58,12 +37,19 @@ void serveFrontPage(HttpRequest request) async {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Dart Continuous Integration</title>
+    <title>Dart Test Logs</title>
   </head>
   <body>
-    <h1>Dart Continuous Integration</h1>
-    <h2><a href="https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true">Results Feed</a></h2>
-    <h2><a href="approvals/">Approvals Feed</a></h2>
+    <h1>Dart Test Logs</h1>
+   URL formats:
+   <ul>
+   <li>/logs/any/[configuration name]/latest/[test name]
+   <li>/logs/any/[configuration name]/[build number]/[test name]
+   <li>/logs/any/[configuration name]/latest/[test name prefix]*
+   <li>/logs/[builder]/[configuration name]/latest/[test name]
+   <li>/logs/[builder]/*/latest/[test name]
+   </ul>
+   and all combinations of these except /logs/any/*/... .
   </body>
 </html>
 """);
@@ -100,13 +86,6 @@ Future<void> redirectTemporary(HttpRequest request, String newPath) {
   request.response.headers.add(HttpHeaders.locationHeader, newPath);
   request.response.statusCode = HttpStatus.movedTemporarily;
   return request.response.close();
-}
-
-Future<void> serveChanges(HttpRequest request) async {
-  return request.response.redirect(
-      Uri.parse(
-          'https://dart-ci.firebaseapp.com/#showAllCommits=false&showLatestFailures=true'),
-      status: HttpStatus.movedPermanently);
 }
 
 Future<void> notFound(HttpRequest request) {
