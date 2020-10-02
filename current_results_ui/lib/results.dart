@@ -21,32 +21,28 @@ const resultColors = {
 };
 
 class ResultsPanel extends StatelessWidget {
-  final QueryResults queryResults;
-  final bool showAll;
-  final bool flaky;
-
-  ResultsPanel(this.queryResults, {this.showAll = false, this.flaky = false});
-
   @override
   Widget build(BuildContext context) {
-    if (queryResults.noQuery) {
-      return Align(child: QuerySuggestionsPage());
-    }
-    bool isFailed(String name) => queryResults.counts[name].countFailing > 0;
-    bool isFlaky(String name) => queryResults.counts[name].countFlaky > 0;
-    final filter = flaky
-        ? isFlaky
-        : showAll
-            ? (name) => true
-            : isFailed;
-    final filteredNames = queryResults.names.where(filter).toList();
-    return ListView.builder(
-      itemCount: filteredNames.length,
-      itemBuilder: (BuildContext context, int index) {
-        final name = filteredNames[index];
-        final changeGroups = queryResults.grouped[name];
-        final counts = queryResults.counts[name];
-        return ExpandableResult(name, changeGroups, counts, showAll);
+    return Consumer2<QueryResults, TabController>(
+      builder: (context, queryResults, tabController, child) {
+        if (queryResults.noQuery) {
+          return Align(child: QuerySuggestionsPage());
+        }
+        bool isFailed(String name) =>
+            queryResults.counts[name].countFailing > 0;
+        bool isFlaky(String name) => queryResults.counts[name].countFlaky > 0;
+        final filter = [(name) => true, isFailed, isFlaky][tabController.index];
+        final filteredNames = queryResults.names.where(filter).toList();
+        return ListView.builder(
+          itemCount: filteredNames.length,
+          itemBuilder: (BuildContext context, int index) {
+            final name = filteredNames[index];
+            final changeGroups = queryResults.grouped[name];
+            final counts = queryResults.counts[name];
+            return ExpandableResult(
+                name, changeGroups, counts, tabController.index);
+          },
+        );
       },
     );
   }
@@ -56,9 +52,9 @@ class ExpandableResult extends StatefulWidget {
   final String name;
   final Map<ChangeInResult, List<Result>> changeGroups;
   final Counts counts;
-  final bool showAll;
+  final int tab;
 
-  ExpandableResult(this.name, this.changeGroups, this.counts, this.showAll)
+  ExpandableResult(this.name, this.changeGroups, this.counts, this.tab)
       : super(key: Key(name));
 
   @override
@@ -136,7 +132,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
                   onPressed: () => html.window.open(
                       Uri(
                               path: '/',
-                              fragment: widget.showAll
+                              fragment: widget.tab == 0
                                   ? 'showLatestFailures=false&test=$name'
                                   : 'test=$name')
                           .toString(),
@@ -145,8 +141,10 @@ class _ExpandableResultState extends State<ExpandableResult> {
           ),
         ),
         if (expanded)
-          for (final change in changeGroups.keys
-              .where((key) => widget.showAll || !key.matches))
+          for (final change in changeGroups.keys.where((key) =>
+              widget.tab == 0 ||
+              widget.tab == 1 && !key.matches ||
+              widget.tab == 2 && key.flaky))
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 48.0),

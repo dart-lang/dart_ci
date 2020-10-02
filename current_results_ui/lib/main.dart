@@ -28,11 +28,27 @@ class CurrentResultsApp extends StatelessWidget {
       ),
       initialRoute: '/',
       onGenerateRoute: (RouteSettings settings) {
-        final match = RegExp('/filter=(.*)').matchAsPrefix(settings.name);
-        final filter = (match == null) ? Filter('') : Filter(match[1]);
+        final parameters = settings.name.substring(1).split('&');
+
+        final terms = parameters
+            .firstWhere((parameter) => parameter.startsWith('filter='),
+                orElse: () => 'filter=')
+            .split('=')[1];
+        final filter = Filter(terms);
+        final showAll = parameters.contains('showAll');
+        final failures = parameters.contains('flaky');
+        final tab = showAll
+            ? 0
+            : failures
+                ? 2
+                : 1;
         return NoTransitionPageRoute(
             builder: (context) {
               Provider.of<QueryResults>(context, listen: false).fetch(filter);
+              // Not allowed to set state of tab controller in this builder.
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Provider.of<TabController>(context, listen: false).index = tab;
+              });
               return const CurrentResultsScaffold();
             },
             settings: settings,
@@ -42,6 +58,10 @@ class CurrentResultsApp extends StatelessWidget {
   }
 }
 
+/// Provides access to an QueryResults object which notifies when new
+/// results are fetched, a DefaultTabController widget used by the
+/// TabBar, and to the TabController object created by that
+/// DefaultTabController widget.
 class Providers extends StatelessWidget {
   const Providers({Key key}) : super(key: key);
 
@@ -49,10 +69,17 @@ class Providers extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => QueryResults(),
-      child: const DefaultTabController(
+      child: DefaultTabController(
         length: 3,
         initialIndex: 1,
-        child: const CurrentResultsApp(),
+        child: Builder(
+          // ChangeNotifierProvider.value in a Builder is needed to make
+          // the TabController available for widgets to observe.
+          builder: (context) => ChangeNotifierProvider<TabController>.value(
+            value: DefaultTabController.of(context),
+            child: const CurrentResultsApp(),
+          ),
+        ),
       ),
     );
   }
@@ -83,6 +110,10 @@ class CurrentResultsScaffold extends StatelessWidget {
             ],
             indicatorColor: Color.fromARGB(255, 63, 81, 181),
             labelColor: Color.fromARGB(255, 63, 81, 181),
+            onTap: (tab) {
+              // We cannot compare to the previous value, it is gone.
+              pushRoute(context, tab: tab);
+            },
           ),
         ),
         persistentFooterButtons: [
@@ -106,15 +137,7 @@ class CurrentResultsScaffold extends StatelessWidget {
                   thickness: 2,
                 ),
                 Expanded(
-                  child: Consumer<QueryResults>(
-                    builder: (context, results, child) => TabBarView(
-                      children: [
-                        ResultsPanel(results, showAll: true),
-                        ResultsPanel(results, showAll: false),
-                        ResultsPanel(results, flaky: true),
-                      ],
-                    ),
-                  ),
+                  child: ResultsPanel(),
                 ),
               ],
             ),
@@ -219,4 +242,24 @@ class NoTransitionPageRoute extends MaterialPageRoute {
       Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
+}
+
+void pushRoute(context, {Iterable<String> terms, int tab}) {
+  if (terms == null && tab == null) {
+    throw ArgumentError('pushRoute calls must have a named argument');
+  }
+  if (tab == null) {
+    tab = Provider.of<TabController>(context, listen: false).index;
+  }
+  if (terms == null) {
+    terms = Provider.of<QueryResults>(context, listen: false).filter.terms;
+  }
+  final tabItems = [if (tab == 0) 'showAll', if (tab == 2) 'flaky'];
+  Navigator.pushNamed(
+    context,
+    [
+      '/filter=${terms.join(',')}',
+      ...tabItems,
+    ].join('&'),
+  );
 }

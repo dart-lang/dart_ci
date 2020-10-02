@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'query.dart';
+import 'main.dart';
 
 class Filter {
   final List<String> terms;
@@ -37,11 +38,8 @@ class FilterUI extends StatelessWidget {
                 InputChip(
                   label: Text(term),
                   onDeleted: () {
-                    final terms = filter.terms.where((t) => t != term);
-                    Navigator.pushNamed(
-                      context,
-                      '/filter=${terms.join(',')}',
-                    );
+                    pushRoute(context,
+                        terms: filter.terms.where((t) => t != term));
                   },
                 ),
               AddWidget(filter),
@@ -83,15 +81,11 @@ class _AddWidgetState extends State<AddWidget> {
           final newTerms = value.split(',').map((s) => s.trim());
           bool isNotReplacedByNewTerm(String term) => !newTerms.any((newTerm) =>
               term.startsWith(newTerm) || newTerm.startsWith(term));
-          final filterText = widget.filter.terms
-              .where(isNotReplacedByNewTerm)
-              .followedBy(newTerms)
-              .join(',');
           controller.text = '';
-          Navigator.pushNamed(
-            context,
-            '/filter=$filterText',
-          );
+          pushRoute(context,
+              terms: widget.filter.terms
+                  .where(isNotReplacedByNewTerm)
+                  .followedBy(newTerms));
         },
       ),
     );
