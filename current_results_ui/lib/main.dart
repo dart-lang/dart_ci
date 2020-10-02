@@ -51,7 +51,7 @@ class AppProviders extends StatelessWidget {
               create: (context) => QueryResults(filter)..fetchCurrentResults()),
         ],
         child: const DefaultTabController(
-          length: 2,
+          length: 3,
           child: const CurrentResultsApp(),
         ));
   }
@@ -78,6 +78,7 @@ class CurrentResultsApp extends StatelessWidget {
             tabs: [
               Tab(text: 'ALL'),
               Tab(text: 'FAILURES'),
+              Tab(text: 'FLAKY'),
             ],
             indicatorColor: Color.fromARGB(255, 63, 81, 181),
             labelColor: Color.fromARGB(255, 63, 81, 181),
@@ -108,7 +109,8 @@ class CurrentResultsApp extends StatelessWidget {
                     builder: (context, results, child) => TabBarView(
                       children: [
                         ResultsPanel(results, showAll: true),
-                        ResultsPanel(results, showAll: false)
+                        ResultsPanel(results, showAll: false),
+                        ResultsPanel(results, flaky: true),
                       ],
                     ),
                   ),

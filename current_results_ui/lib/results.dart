@@ -23,19 +23,23 @@ const resultColors = {
 class ResultsPanel extends StatelessWidget {
   final QueryResults queryResults;
   final bool showAll;
+  final bool flaky;
 
-  ResultsPanel(this.queryResults, {this.showAll = true});
+  ResultsPanel(this.queryResults, {this.showAll = false, this.flaky = false});
 
   @override
   Widget build(BuildContext context) {
     if (queryResults.noQuery) {
       return Align(child: QuerySuggestionsPage());
     }
-    bool hasFailedResult(String name) =>
-        queryResults.grouped[name].keys.any((change) => !change.matches);
-    final filteredNames = showAll
-        ? queryResults.names
-        : queryResults.names.where(hasFailedResult).toList();
+    bool isFailed(String name) => queryResults.counts[name].countFailing > 0;
+    bool isFlaky(String name) => queryResults.counts[name].countFlaky > 0;
+    final filter = flaky
+        ? isFlaky
+        : showAll
+            ? (name) => true
+            : isFailed;
+    final filteredNames = queryResults.names.where(filter).toList();
     return ListView.builder(
       itemCount: filteredNames.length,
       itemBuilder: (BuildContext context, int index) {
