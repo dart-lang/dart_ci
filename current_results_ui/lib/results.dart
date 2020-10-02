@@ -4,12 +4,12 @@
 
 import 'dart:html' as html;
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import 'src/generated/query.pb.dart';
+import 'instructions.dart';
 import 'query.dart';
 
 const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
@@ -26,7 +26,7 @@ class ResultsPanel extends StatelessWidget {
     return Consumer2<QueryResults, TabController>(
       builder: (context, queryResults, tabController, child) {
         if (queryResults.noQuery) {
-          return Align(child: QuerySuggestionsPage());
+          return Align(child: Instructions());
         }
         bool isFailed(String name) =>
             queryResults.counts[name].countFailing > 0;
@@ -165,7 +165,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
                         onTap: () {
                           html.window.open(
                             'https://dart-ci.appspot.com/log/any/'
-                                '${result.configuration}/latest/${name}',
+                                '${result.configuration}/latest/$name',
                             '_blank',
                           );
                         },
@@ -176,60 +176,6 @@ class _ExpandableResultState extends State<ExpandableResult> {
         if (expanded) SizedBox(height: 12.0),
       ],
     );
-  }
-}
-
-class QuerySuggestionsPage extends StatelessWidget {
-  Widget build(context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        'Enter a query to see current test results',
-        style: TextStyle(fontSize: 24.0),
-      ),
-      SizedBox(height: 24.0),
-      Text(
-          'Enter query terms that are prefixes of configuration or test names.'),
-      Text('Multiple terms can be entered at once, separated by commas.'),
-      SizedBox(height: 12.0),
-      Text('Some example queries are:'),
-      for (final example in [
-        {
-          'description': 'language_2/ tests on analyzer configurations',
-          'terms': 'language_2/,analyzer'
-        },
-        {
-          'description': 'service/de* tests on dartk- configurations',
-          'terms': 'dartk-,service/de'
-        },
-        {'description': 'analyzer unit tests', 'terms': 'pkg/analyzer/'},
-        {
-          'description': 'all tests on dart2js strong null-safe configuration',
-          'terms': 'dart2js-hostasserts-strong'
-        },
-        {'description': 'null-safe language tests', 'terms': 'language/'},
-      ]) ...[
-        SizedBox(height: 12),
-        Text.rich(
-          TextSpan(
-            text: '${example['description']}: ',
-            children: [
-              TextSpan(
-                text: example['terms'],
-                style: TextStyle(
-                  color: Colors.blue[900],
-                  decoration: TextDecoration.underline,
-                ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => Navigator.pushNamed(
-                        context,
-                        '/filter=${example['terms']}',
-                      ),
-              )
-            ],
-          ),
-        ),
-      ],
-    ]);
   }
 }
 
