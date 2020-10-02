@@ -198,8 +198,10 @@ class TextPopup extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               final text = [resultTextHeader]
-                  .followedBy(
-                      results.resultsObject.results.map(resultAsCommaSeparated))
+                  .followedBy(results.names
+                      .expand((name) => results.grouped[name].values)
+                      .expand((list) => list)
+                      .map(resultAsCommaSeparated))
                   .join('\n');
               return AlertDialog(
                 title: Text('Results query as text'),
