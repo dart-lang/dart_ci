@@ -2,8 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'query.dart';
 
 class Filter {
   final List<String> terms;
@@ -13,13 +16,17 @@ class Filter {
     if (termString.trim() == '') return List.unmodifiable([]);
     return List.unmodifiable(termString.split(',').map((s) => s.trim()));
   }
+
+  bool hasSameTerms(Filter other) =>
+      const ListEquality().equals(terms, other.terms);
 }
 
 class FilterUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<Filter>(
-      builder: (context, filter, child) {
+    return Consumer<QueryResults>(
+      builder: (context, results, child) {
+        final filter = results.filter;
         return Padding(
           padding: EdgeInsets.all(8.0),
           child: Wrap(

@@ -19,7 +19,7 @@ const int fetchLimit = 4000;
 const int maxFetchedResults = 100 * fetchLimit;
 
 class QueryResults extends ChangeNotifier {
-  final Filter filter;
+  Filter filter = Filter('');
   StreamSubscription<GetResultsResponse> fetcher;
   List<String> names = [];
   Map<String, Counts> counts = {};
@@ -29,7 +29,14 @@ class QueryResults extends ChangeNotifier {
   int fetchedResultsCount = 0;
   bool get noQuery => filter.terms.isEmpty;
 
-  QueryResults(this.filter);
+  QueryResults();
+
+  void fetch(Filter newFilter) {
+    if (!filter.hasSameTerms(newFilter)) {
+      filter = newFilter;
+      fetchCurrentResults();
+    }
+  }
 
   @override
   void dispose() {
@@ -117,8 +124,11 @@ class ChangeInResult {
 
   @override
   String toString() => text;
+
   @override
-  bool operator ==(Object other) => text == (other as ChangeInResult)?.text;
+  bool operator ==(Object other) =>
+      other is ChangeInResult && text == other.text;
+
   @override
   int get hashCode => text.hashCode;
 }

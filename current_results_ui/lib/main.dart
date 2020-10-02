@@ -12,10 +12,12 @@ import 'query.dart';
 import 'results.dart';
 
 void main() {
-  runApp(CurrentResultsAppProviders());
+  runApp(Providers());
 }
 
-class CurrentResultsAppProviders extends StatelessWidget {
+class CurrentResultsApp extends StatelessWidget {
+  const CurrentResultsApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +31,10 @@ class CurrentResultsAppProviders extends StatelessWidget {
         final match = RegExp('/filter=(.*)').matchAsPrefix(settings.name);
         final filter = (match == null) ? Filter('') : Filter(match[1]);
         return NoTransitionPageRoute(
-            builder: (context) => AppProviders(filter),
+            builder: (context) {
+              Provider.of<QueryResults>(context, listen: false).fetch(filter);
+              return const CurrentResultsScaffold();
+            },
             settings: settings,
             maintainState: false);
       },
@@ -37,29 +42,24 @@ class CurrentResultsAppProviders extends StatelessWidget {
   }
 }
 
-class AppProviders extends StatelessWidget {
-  final Filter filter;
-
-  AppProviders(this.filter);
+class Providers extends StatelessWidget {
+  const Providers({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          Provider.value(value: filter),
-          ChangeNotifierProvider(
-              create: (context) => QueryResults(filter)..fetchCurrentResults()),
-        ],
-        child: const DefaultTabController(
-          length: 3,
-          initialIndex: 1,
-          child: const CurrentResultsApp(),
-        ));
+    return ChangeNotifierProvider(
+      create: (context) => QueryResults(),
+      child: const DefaultTabController(
+        length: 3,
+        initialIndex: 1,
+        child: const CurrentResultsApp(),
+      ),
+    );
   }
 }
 
-class CurrentResultsApp extends StatelessWidget {
-  const CurrentResultsApp();
+class CurrentResultsScaffold extends StatelessWidget {
+  const CurrentResultsScaffold({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -130,17 +130,13 @@ class ApiPortalLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Filter>(
-      builder: (context, Filter filter, child) {
-        return FlatButton(
-          child: Text('API portal'),
-          onPressed: () => html.window.open(
-              'https://endpointsportal.dart-ci-staging.cloud.goog'
-                  '/docs/current-results-rest-zlujsyuhha-uc.a.run.app/g'
-                  '/routes/v1/results/get',
-              '_blank'),
-        );
-      },
+    return FlatButton(
+      child: Text('API portal'),
+      onPressed: () => html.window.open(
+          'https://endpointsportal.dart-ci-staging.cloud.goog'
+              '/docs/current-results-rest-zlujsyuhha-uc.a.run.app/g'
+              '/routes/v1/results/get',
+          '_blank'),
     );
   }
 }
@@ -150,13 +146,13 @@ class JsonLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Filter>(
-      builder: (context, filter, child) {
+    return Consumer<QueryResults>(
+      builder: (context, results, child) {
         return FlatButton(
           child: Text('json'),
           onPressed: () => html.window.open(
               Uri.https(apiHost, 'v1/results', {
-                'filter': filter.terms.join(','),
+                'filter': results.filter.terms.join(','),
                 'pageSize': '4000'
               }).toString(),
               '_blank'),
