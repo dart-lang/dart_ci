@@ -84,6 +84,8 @@ class CurrentResultsApp extends StatelessWidget {
           ),
         ),
         persistentFooterButtons: [
+          const TestSummary(),
+          const ResultsSummary(),
           const ApiPortalLink(),
           const JsonLink(),
           const TextPopup(),

@@ -22,8 +22,10 @@ class QueryResults extends ChangeNotifier {
   final Filter filter;
   StreamSubscription<GetResultsResponse> fetcher;
   List<String> names = [];
-  Map<String, Map<String, int>> counts = {};
+  Map<String, Counts> counts = {};
   Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
+  TestCounts testCounts = TestCounts();
+  Counts resultCounts = Counts();
   int fetchedResultsCount = 0;
   bool get noQuery => filter.terms.isEmpty;
 
@@ -39,11 +41,14 @@ class QueryResults extends ChangeNotifier {
 
   void fetchCurrentResults() async {
     fetcher?.cancel();
+    fetcher = null;
     names = [];
     counts = {};
     grouped = {};
+    testCounts = TestCounts();
+    resultCounts = Counts();
     fetchedResultsCount = 0;
-
+    if (noQuery) return;
     fetcher = fetchResults(filter).listen(onResults, onDone: onDone);
   }
 
@@ -60,10 +65,9 @@ class QueryResults extends ChangeNotifier {
           .putIfAbsent(result.name, () => <ChangeInResult, List<Result>>{})
           .putIfAbsent(change, () => <Result>[])
           .add(result);
-      counts
-          .putIfAbsent(result.name, () => <String, int>{})
-          .putIfAbsent(change.kind, () => 0);
-      ++counts[result.name][change.kind];
+      counts.putIfAbsent(result.name, () => Counts()).addResult(change, result);
+      testCounts.addResult(change, result);
+      resultCounts.addResult(change, result);
     }
     names = grouped.keys.toList()..sort();
     notifyListeners();
@@ -129,3 +133,49 @@ String resultAsCommaSeparated(Result result) => [
     ].join(',');
 
 String resultTextHeader = "name,configuration,result,expected,flaky,timeMs";
+
+class Counts {
+  int count = 0;
+  int countFailing = 0;
+  int countFlaky = 0;
+
+  int get countPassing => count - countFailing - countFlaky;
+
+  void addResult(ChangeInResult change, Result result) {
+    count++;
+    if (change.flaky) {
+      countFlaky++;
+    } else if (!change.matches) {
+      countFailing++;
+    }
+  }
+}
+
+class TestCounts extends Counts {
+  String currentTest = '';
+  bool currentFailing = false;
+  bool currentFlaky = false;
+
+  void addResult(ChangeInResult change, Result result) {
+    if (currentTest != result.name) {
+      if (currentTest.compareTo(result.name) > 0) {
+        print('Results are not sorted by test name: '
+            '$currentTest, ${result.name}');
+        return;
+      }
+      currentFlaky = false;
+      currentFailing = false;
+      currentTest = result.name;
+      count++;
+    }
+    if (change.flaky) {
+      if (!currentFlaky) {
+        currentFlaky = true;
+        countFlaky++;
+      }
+    } else if (!change.matches && !currentFailing) {
+      currentFailing = true;
+      countFailing++;
+    }
+  }
+}

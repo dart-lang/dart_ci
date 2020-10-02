@@ -7,7 +7,9 @@ import 'dart:html' as html;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 
+import 'src/generated/query.pb.dart';
 import 'query.dart';
 
 const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
@@ -17,7 +19,6 @@ const resultColors = {
   'flaky': gold,
   'fail': lightCoral,
 };
-const kinds = ['pass', 'fail', 'flaky'];
 
 class ResultsPanel extends StatelessWidget {
   final QueryResults queryResults;
@@ -49,8 +50,8 @@ class ResultsPanel extends StatelessWidget {
 
 class ExpandableResult extends StatefulWidget {
   final String name;
-  final changeGroups;
-  final counts;
+  final Map<ChangeInResult, List<Result>> changeGroups;
+  final Counts counts;
   final bool showAll;
 
   ExpandableResult(this.name, this.changeGroups, this.counts, this.showAll)
@@ -59,6 +60,26 @@ class ExpandableResult extends StatefulWidget {
   @override
   _ExpandableResultState createState() => _ExpandableResultState();
 }
+
+class CountItem {
+  String text;
+  Color color;
+
+  CountItem(int count, this.color) {
+    if (count > 0) {
+      text = count.toString();
+    } else {
+      color = Colors.transparent;
+      text = '';
+    }
+  }
+}
+
+List<CountItem> countItems(Counts counts) => [
+      CountItem(counts.countPassing, resultColors['pass']),
+      CountItem(counts.countFailing, resultColors['fail']),
+      CountItem(counts.countFlaky, resultColors['flaky'])
+    ];
 
 class _ExpandableResultState extends State<ExpandableResult> {
   bool expanded = false;
@@ -80,19 +101,16 @@ class _ExpandableResultState extends State<ExpandableResult> {
                 icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
                 onPressed: () => setState(() => expanded = !expanded),
               ),
-              for (final kind in kinds)
+              for (final item in countItems(widget.counts))
                 Container(
                   width: 24,
                   alignment: Alignment.center,
                   margin: EdgeInsets.symmetric(horizontal: 1.0),
                   decoration: BoxDecoration(
-                    color: widget.counts.containsKey(kind)
-                        ? resultColors[kind]
-                        : Colors.transparent,
+                    color: item.color,
                     shape: BoxShape.circle,
                   ),
-                  child: Text('${widget.counts[kind] ?? ''}',
-                      style: TextStyle(fontSize: 14.0)),
+                  child: Text(item.text, style: TextStyle(fontSize: 14.0)),
                 ),
               Expanded(
                 flex: 1,
@@ -202,5 +220,83 @@ class QuerySuggestionsPage extends StatelessWidget {
         ),
       ],
     ]);
+  }
+}
+
+class ResultsSummary extends StatelessWidget {
+  const ResultsSummary() : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResults>(
+      builder: (context, results, child) =>
+          Summary("results", results.resultCounts),
+    );
+  }
+}
+
+class TestSummary extends StatelessWidget {
+  const TestSummary() : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResults>(
+      builder: (context, results, child) =>
+          Summary("tests", results.testCounts),
+    );
+  }
+}
+
+class Summary extends StatelessWidget {
+  final String typeText;
+  final Counts counts;
+
+  Summary(this.typeText, this.counts);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: AlignmentDirectional.centerStart,
+      width: 200.0,
+      height: 36.0,
+      child: Row(
+        children: [
+          Text(
+            typeText,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Pill(Colors.black26, counts.count, 'total'),
+          Pill(resultColors['fail'], counts.countFailing, 'failing'),
+          Pill(resultColors['flaky'], counts.countFlaky, 'flaky'),
+        ],
+      ),
+    );
+  }
+}
+
+class Pill extends StatelessWidget {
+  final Color color;
+  final int count;
+  final String tooltip;
+
+  Pill(this.color, this.count, this.tooltip);
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Container(
+        //width: 24,
+        height: 24,
+        alignment: Alignment.center,
+        margin: EdgeInsets.symmetric(horizontal: 4.0),
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(14.0),
+        ),
+        child: Text(count.toString(), style: TextStyle(fontSize: 14.0)),
+      ),
+    );
   }
 }
