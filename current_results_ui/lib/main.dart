@@ -52,6 +52,7 @@ class AppProviders extends StatelessWidget {
         ],
         child: const DefaultTabController(
           length: 3,
+          initialIndex: 1,
           child: const CurrentResultsApp(),
         ));
   }
