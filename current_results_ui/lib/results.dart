@@ -161,7 +161,15 @@ class _ExpandableResultState extends State<ExpandableResult> {
                             fontSize: 16.0)),
                   ),
                   for (final result in changeGroups[change])
-                    SelectableText(result.configuration),
+                    InkWell(
+                        onTap: () {
+                          html.window.open(
+                            'https://dart-ci.appspot.com/log/any/'
+                                '${result.configuration}/latest/${name}',
+                            '_blank',
+                          );
+                        },
+                        child: Text(result.configuration)),
                 ],
               ),
             ),
