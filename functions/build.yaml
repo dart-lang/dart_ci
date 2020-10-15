@@ -3,6 +3,7 @@ targets:
     sources:
       - "node/**"
       - "lib/**"
+      - "$package$"
     builders:
       build_node_compilers|entrypoint:
         generate_for:
