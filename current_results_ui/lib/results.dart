@@ -39,8 +39,7 @@ class ResultsPanel extends StatelessWidget {
             final name = filteredNames[index];
             final changeGroups = queryResults.grouped[name];
             final counts = queryResults.counts[name];
-            return ExpandableResult(
-                name, changeGroups, counts, tabController.index);
+            return ExpandableResult(name, changeGroups, counts);
           },
         );
       },
@@ -52,9 +51,8 @@ class ExpandableResult extends StatefulWidget {
   final String name;
   final Map<ChangeInResult, List<Result>> changeGroups;
   final Counts counts;
-  final int tab;
 
-  ExpandableResult(this.name, this.changeGroups, this.counts, this.tab)
+  ExpandableResult(this.name, this.changeGroups, this.counts)
       : super(key: Key(name));
 
   @override
@@ -132,19 +130,14 @@ class _ExpandableResultState extends State<ExpandableResult> {
                   onPressed: () => html.window.open(
                       Uri(
                               path: '/',
-                              fragment: widget.tab == 0
-                                  ? 'showLatestFailures=false&test=$name'
-                                  : 'test=$name')
+                              fragment: 'showLatestFailures=false&test=$name')
                           .toString(),
                       '_blank')),
             ],
           ),
         ),
         if (expanded)
-          for (final change in changeGroups.keys.where((key) =>
-              widget.tab == 0 ||
-              widget.tab == 1 && !key.matches ||
-              widget.tab == 2 && key.flaky))
+          for (final change in changeGroups.keys)
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 48.0),
