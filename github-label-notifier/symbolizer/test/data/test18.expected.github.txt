@@ -1,0 +1,44 @@
+crash from null symbolized using symbols for `defa8be2b10650dad50dfee9324ed8d16eeec13f` `ios-arm64-release`
+```
+#00 000000010604661c Flutter Flutter + 4089372
+                             std::__1::unique_ptr<bssl::SSL_HANDSHAKE, bssl::internal::Deleter<bssl::SSL_HANDSHAKE> >::get() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/memory:2625:19
+                             SSL_in_init
+                             third_party/boringssl/src/ssl/ssl_lib.cc:2673:0
+                             SSL_get_session
+                             third_party/boringssl/src/ssl/ssl_session.cc:1060:0
+                             SSL_get_peer_full_cert_chain
+                             third_party/boringssl/src/ssl/ssl_x509.cc:554:0
+                             dart::bin::TrustEvaluateHandler(long long, _Dart_CObject*)
+                             third_party/dart/runtime/bin/security_context_macos.cc:181:0
+#01 0000000106046604 Flutter Flutter + 4089348
+                             dart::bin::CObject::operator new(unsigned long)
+                             third_party/dart/runtime/bin/dartutils.h:332:44
+                             dart::bin::CObjectArray::operator[](long) const
+                             third_party/dart/runtime/bin/dartutils.h:508:0
+                             dart::bin::TrustEvaluateHandler(long long, _Dart_CObject*)
+                             third_party/dart/runtime/bin/security_context_macos.cc:178:0
+#02 000000010613e080 Flutter Flutter + 5103744
+                             dart::NativeMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)
+                             third_party/dart/runtime/vm/native_message_handler.cc:43:3
+#03 000000010613c7bc Flutter Flutter + 5097404
+                             dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)
+                             third_party/dart/runtime/vm/message_handler.cc:233:16
+#04 000000010613c3a0 Flutter Flutter + 5096352
+                             dart::MessageHandler::TaskCallback()
+                             third_party/dart/runtime/vm/message_handler.cc:443:18
+                             dart::MessageHandlerTask::Run()
+                             third_party/dart/runtime/vm/message_handler.cc:31:0
+#05 00000001061be4e0 Flutter Flutter + 5629152
+                             dart::ThreadPool::WorkerLoop(dart::ThreadPool::Worker*)
+                             third_party/dart/runtime/vm/thread_pool.cc:158:15
+                             dart::ThreadPool::Worker::Main(unsigned long)
+                             third_party/dart/runtime/vm/thread_pool.cc:323:0
+#06 0000000106176c04 Flutter Flutter + 5336068
+                             dart::ThreadStart(void*)
+                             third_party/dart/runtime/vm/os_thread_macos.cc:132:5
+#07 00000001f6849ca4 libsystem_pthread.dylib libsystem_pthread.dylib + 7332
+
+```
+_(Load address missing from the report, detected heuristically: 0000000105c60000)_
+<!-- {"symbolized":[1001]} -->

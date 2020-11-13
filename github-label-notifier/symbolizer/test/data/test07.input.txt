@@ -1,0 +1,90 @@
+@flutter-symbolizer-bot engine#499a70f
+
+```
+10-18 11:05:50.120   617   617 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.allocator@4.0::IAllocator/default in either framework or device manifest.
+10-18 11:05:50.120 22568 22568 W Gralloc4: allocator 3.x is not supported
+10-18 11:05:50.173 22568 22568 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 22568 (n.platformviews), pid 22568 (n.platformviews)
+10-18 11:05:50.227 22656 22656 I crash_dump64: obtaining output fd from tombstoned, type: kDebuggerdTombstone
+10-18 11:05:50.228   892   892 I tombstoned: received crash request for pid 22568
+10-18 11:05:50.228 22656 22656 I crash_dump64: performing dump of process 22568 (target tid = 22568)
+10-18 11:05:50.234 22656 22656 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-18 11:05:50.234 22656 22656 F DEBUG   : Build fingerprint: 'google/flame/flame:11/RP1A.200720.009/6720564:user/release-keys'
+10-18 11:05:50.234 22656 22656 F DEBUG   : Revision: 'MP1.0'
+10-18 11:05:50.234 22656 22656 F DEBUG   : ABI: 'arm64'
+10-18 11:05:50.234 22656 22656 F DEBUG   : Timestamp: 2020-10-18 11:05:50-0700
+10-18 11:05:50.234 22656 22656 F DEBUG   : pid: 22568, tid: 22568, name: n.platformviews  >>> io.flutter.integration.platformviews <<<
+10-18 11:05:50.234 22656 22656 F DEBUG   : uid: 10466
+10-18 11:05:50.234 22656 22656 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+10-18 11:05:50.234 22656 22656 F DEBUG   : Cause: null pointer dereference
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x0  0000000000000000  x1  0000000000000000  x2  0000007fee1c8ad0  x3  0000007fee1c8ac0
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x4  0000007fee1c8ab0  x5  00000076aefffc4d  x6  0000000000000339  x7  0000000000000437
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x8  0000000000000000  x9  0000000000000000  x10 0000000000000000  x11 0000000000000000
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x12 0000000000000000  x13 0000000000000000  x14 0000000000000002  x15 00000079ad34a090
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x16 00000076a9833178  x17 00000079ac09fad4  x18 00000079ae724000  x19 00000077482eccd0
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x20 000000779832e6b0  x21 0000007fee1c8ae0  x22 00000077482eccd8  x23 0000007fee1c8ac0
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x24 0000007fee1c8ab0  x25 000000779832e6b0  x26 0000000000000438  x27 0000000000000339
+10-18 11:05:50.234 22656 22656 F DEBUG   :     x28 0000000000000437  x29 0000000000000339
+10-18 11:05:50.234 22656 22656 F DEBUG   :     lr  00000076a90e64cc  sp  0000007fee1c8920  pc  00000076a90e64ec  pst 0000000060000000
+10-18 11:05:50.420 22656 22656 F DEBUG   : backtrace:
+10-18 11:05:50.420 22656 22656 F DEBUG   :       #00 pc 00000000012de4ec  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.420 22656 22656 F DEBUG   :       #01 pc 00000000012dcbb4  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #02 pc 00000000012dca70  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #03 pc 00000000012cf0d4  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #04 pc 00000000012cf9ac  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #05 pc 00000000012d033c  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #06 pc 00000000012cf410  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #07 pc 00000000012cf1e4  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #08 pc 00000000012d0598  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #09 pc 0000000001298e74  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #10 pc 000000000129df34  /data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #11 pc 0000000000019d8c  /system/lib64/libutils.so (android::Looper::pollInner(int)+916) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #12 pc 0000000000019990  /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+112) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #13 pc 0000000000110f74  /system/lib64/libandroid_runtime.so (android::android_os_MessageQueue_nativePollOnce(_JNIEnv*, _jobject*, long, int)+44) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #14 pc 000000000020fadc  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #15 pc 0000000000133564  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #16 pc 00000000001a8a78  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #17 pc 000000000031830c  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #18 pc 000000000030e638  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #19 pc 000000000067d794  /apex/com.android.art/lib64/libart.so (MterpInvokeDirect+576) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #20 pc 000000000012d914  /apex/com.android.art/lib64/libart.so (mterp_op_invoke_direct+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #21 pc 00000000003975ae  /system/framework/framework.jar (offset 0x92b000) (android.os.MessageQueue.next+34)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #22 pc 000000000067b3b8  /apex/com.android.art/lib64/libart.so (MterpInvokeVirtual+1520) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #23 pc 000000000012d814  /apex/com.android.art/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #24 pc 0000000000396964  /system/framework/framework.jar (offset 0x92b000) (android.os.Looper.loop+156)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #25 pc 0000000000305c34  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #26 pc 000000000030dc24  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #27 pc 000000000030f00c  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, true>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+1772) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #28 pc 0000000000177f40  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<true, false>(art::interpreter::SwitchImplContext*)+57848) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #29 pc 000000000013f7d8  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #30 pc 00000000001a1698  /system/framework/framework.jar (android.app.ActivityThread.main)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #31 pc 0000000000305d3c  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+532) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #32 pc 0000000000669e20  /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #33 pc 000000000013cff8  /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #34 pc 00000000001337e8  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #35 pc 00000000001a8a94  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #36 pc 000000000055431c  /apex/com.android.art/lib64/libart.so (art::InvokeMethod(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+1364) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #37 pc 00000000004d3b28  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*)+52) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #38 pc 00000000000896f4  /apex/com.android.art/javalib/arm64/boot.oat (art_jni_trampoline+180) (BuildId: 13577ce71153c228ecf0eb73fc39f45010d487f8)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #39 pc 0000000000133564  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #40 pc 00000000001a8a78  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #41 pc 000000000031830c  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #42 pc 000000000030e638  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #43 pc 000000000067b118  /apex/com.android.art/lib64/libart.so (MterpInvokeVirtual+848) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #44 pc 000000000012d814  /apex/com.android.art/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #45 pc 00000000004492be  /system/framework/framework.jar (offset 0x125d000) (com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run+22)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #46 pc 0000000000305c34  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #47 pc 0000000000669e20  /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #48 pc 000000000013cff8  /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #49 pc 0000000000897668  /system/framework/arm64/boot-framework.oat (com.android.internal.os.ZygoteInit.main+2280) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #50 pc 00000000001337e8  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #51 pc 00000000001a8a94  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #52 pc 0000000000552d58  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeWithVarArgs<art::ArtMethod*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, art::ArtMethod*, std::__va_list)+448) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #53 pc 000000000055320c  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeWithVarArgs<_jmethodID*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+92) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #54 pc 000000000043811c  /apex/com.android.art/lib64/libart.so (art::JNI<true>::CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+656) (BuildId: 0252adff22f4c0297f97cb35735c7649)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #55 pc 0000000000099424  /system/lib64/libandroid_runtime.so (_JNIEnv::CallStaticVoidMethod(_jclass*, _jmethodID*, ...)+124) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #56 pc 00000000000a08b0  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+836) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #57 pc 0000000000003580  /system/bin/app_process64 (main+1336) (BuildId: 3254c0fd94c1b04edc39169c6c635aac)
+10-18 11:05:50.421 22656 22656 F DEBUG   :       #58 pc 0000000000049418  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: 03452a4a418e14ff93948f26561eace6)
+10-18 11:05:50.432   938  1052 D VSC     : @ 2171979.791: [WO] tilt angle 89
+
+```

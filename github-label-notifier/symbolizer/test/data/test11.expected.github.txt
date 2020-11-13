@@ -1,0 +1,279 @@
+crash from null symbolized using symbols for `c9506cb8e93e5e8879152ff5c948b175abb5b997` `ios-arm64-release`
+```
+#00 0000000185d3ad88 libsystem_kernel.dylib __pthread_kill + 8
+#01 0000000185c531e8 libsystem_pthread.dylib pthread_kill$VARIANT$mp + 136 (pthread.c:145)
+#02 0000000185ba6644 libsystem_c.dylib abort + 100 (abort.c:11)
+#03 0000000102c48240 Flutter 0x1027f8000 + 4522560
+                             dart::Assert::Fail(char const*, ...)
+                             third_party/dart/runtime/platform/assert.cc:44:3
+#04 0000000102cfbea0 Flutter 0x1027f8000 + 5258912
+                             dart::SaveUnlinkedCall(dart::Zone*, dart::Isolate*, unsigned long, dart::UnlinkedCall const&)
+                             third_party/dart/runtime/vm/runtime_entry.cc:1568:3
+                             dart::DRT_HelperUnlinkedCall(dart::Isolate*, dart::Thread*, dart::Zone*, dart::NativeArguments)
+                             third_party/dart/runtime/vm/runtime_entry.cc:1660:0
+                             dart::DRT_UnlinkedCall(dart::NativeArguments)
+                             third_party/dart/runtime/vm/runtime_entry.cc:1596:0
+#05 000000010527820c App Precompiled_Stub_CallToRuntime + 84
+#06 0000000105277b60 App Precompiled_Stub_UnlinkedCall + 44
+#07 00000001053d7ff8 App Precompiled_AnimatedWidgetBaseState_initState_4854 + 76
+#08 00000001054eff5c App Precompiled_StatefulElement__firstBuild_396042623_8467 + 80
+#09 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#10 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#11 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#12 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#13 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#14 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#15 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#16 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#17 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#18 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#19 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#20 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#21 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#22 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#23 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#24 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#25 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#26 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#27 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#28 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#29 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#30 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#31 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#32 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#33 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#34 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#35 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#36 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#37 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#38 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#39 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#40 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#41 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#42 00000001054bd014 App Precompiled_SingleChildRenderObjectElement_mount_7858 + 432
+#43 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#44 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#45 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#46 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#47 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#48 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#49 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#50 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#51 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#52 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#53 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#54 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#55 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#56 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#57 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#58 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#59 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#60 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#61 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#62 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#63 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#64 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#65 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#66 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#67 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#68 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#69 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#70 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#71 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#72 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#73 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#74 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#75 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#76 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#77 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#78 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#79 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#80 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#81 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#82 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#83 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#84 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#85 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#86 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#87 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#88 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#89 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#90 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#91 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#92 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#93 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#94 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#95 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#96 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#97 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#98 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#99 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#100 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#101 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#102 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#103 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#104 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#105 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#106 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#107 00000001054bd014 App Precompiled_SingleChildRenderObjectElement_mount_7858 + 432
+#108 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#109 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#110 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#111 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#112 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#113 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#114 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#115 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#116 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#117 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#118 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#119 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#120 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#121 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#122 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#123 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#124 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#125 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#126 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#127 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#128 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#129 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#130 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#131 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#132 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#133 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#134 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#135 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#136 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#137 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#138 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#139 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#140 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#141 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#142 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#143 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#144 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#145 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#146 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#147 00000001054be168 App Precompiled_StatefulElement_performRebuild_7870 + 104
+#148 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#149 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#150 00000001054effa8 App Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+#151 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#152 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#153 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#154 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#155 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#156 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#157 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#158 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#159 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#160 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#161 00000001054be1cc App Precompiled___DefaultInheritedProviderScopeElement_InheritedElement__InheritedProviderScopeMixin_... + 72
+#162 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#163 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#164 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#165 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#166 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#167 00000001054be3fc App Precompiled_ComponentElement_performRebuild_7873 + 484
+#168 00000001052e7848 App Precompiled_Element_rebuild_1634 + 96
+#169 00000001054f00c4 App Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+#170 00000001054bd2f4 App Precompiled_ComponentElement_mount_7863 + 76
+#171 00000001054bd270 App Precompiled__SingleChildStatelessElement_StatelessElement_SingleChildWidgetElementMixin_524485488... + 60
+#172 00000001052cce98 App Precompiled_Element_inflateWidget_1296 + 404
+#173 00000001054c1010 App Precompiled_Element_updateChild_7906 + 508
+#174 00000001052fc01c App Precompiled_RenderObjectToWidgetElement__rebuild_414399801_1965 + 84
+#175 00000001054bd094 App Precompiled_RenderObjectToWidgetElement_mount_7859 + 60
+#176 00000001055a840c App Precompiled_RenderObjectToWidgetAdapter_attachToRenderTree__anonymous_closure__10738 + 84
+#177 00000001052e9614 App Precompiled_BuildOwner_buildScope_1653 + 256
+#178 0000000105300f58 App Precompiled_RenderObjectToWidgetAdapter_attachToRenderTree_2058 + 288
+#179 00000001052fd3d0 App Precompiled__WidgetsFlutterBinding_BindingBase_GestureBinding_ServicesBinding_SchedulerBinding_Pa... + 168
+#180 00000001055a8540 App Precompiled__WidgetsFlutterBinding_BindingBase_GestureBinding_ServicesBinding_SchedulerBinding_Pa... + 76
+#181 000000010529294c App Precompiled_____rootRun_4048458_315 + 156
+#182 0000000105292bf0 App Precompiled_____rootRun_4048458__rootRun_4048458_316 + 504
+#183 00000001054ffae4 App Precompiled__CustomZone_4048458_run_8789 + 240
+#184 0000000105500850 App Precompiled__CustomZone_4048458_runGuarded_8808 + 52
+#185 0000000105585974 App Precompiled__CustomZone_4048458_bindCallbackGuarded__anonymous_closure__10427 + 76
+#186 0000000105292998 App Precompiled_____rootRun_4048458_315 + 232
+#187 0000000105292bf0 App Precompiled_____rootRun_4048458__rootRun_4048458_316 + 504
+#188 00000001054ffae4 App Precompiled__CustomZone_4048458_run_8789 + 240
+#189 00000001055857bc App Precompiled__CustomZone_4048458_bindCallback__anonymous_closure__10425 + 148
+#190 0000000105589ba0 App Precompiled_Timer__createTimer_4048458__anonymous_closure__10485 + 228
+#191 00000001055c3114 App Precompiled__Closure_0150898_call_11047 + 72
+#192 00000001054a0d0c App Precompiled__Timer_1026248__runTimers_1026248_7429 + 720
+#193 00000001054a0964 App Precompiled__Timer_1026248__handleMessage_1026248_7427 + 140
+#194 00000001054a0a1c App Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_7428 + 112
+#195 00000001055c3114 App Precompiled__Closure_0150898_call_11047 + 72
+#196 000000010529dc08 App Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_473 + 52
+#197 0000000105277de4 App Precompiled_Stub_InvokeDartCode + 252
+#198 0000000102c891a8 Flutter 0x1027f8000 + 4788648
+                              dart::DartEntry::InvokeCode(dart::Code const&, dart::Array const&, dart::Array const&, dart::Thread*)
+                              third_party/dart/runtime/vm/dart_entry.cc:190:10
+                              dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&, dart::Array const&, unsigned long)
+                              third_party/dart/runtime/vm/dart_entry.cc:168:0
+#199 0000000102c8f6a4 Flutter 0x1027f8000 + 4814500
+                              dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&)
+                              third_party/dart/runtime/vm/dart_entry.cc:36:10
+                              dart::DartLibraryCalls::HandleMessage(dart::Object const&, dart::Instance const&)
+                              third_party/dart/runtime/vm/dart_entry.cc:688:0
+                              dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)
+                              third_party/dart/runtime/vm/isolate.cc:1093:0
+#200 0000000102c9a824 Flutter 0x1027f8000 + 4859940
+                              dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)
+                              third_party/dart/runtime/vm/message_handler.cc:233:16
+#201 0000000102b1d2c4 Flutter 0x1027f8000 + 3297988
+                              dart::MessageHandler::HandleNextMessage()
+                              third_party/dart/runtime/vm/message_handler.cc:294:10
+                              Dart_HandleMessage
+                              third_party/dart/runtime/vm/dart_api_impl.cc:1959:0
+                              tonic::DartMessageHandler::OnHandleMessage(tonic::DartState*)
+                              flutter/third_party/tonic/dart_message_handler.cc:113:0
+                              tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0::operator()() const
+                              flutter/third_party/tonic/dart_message_handler.cc:42:0
+                              decltype(std::__1::forward<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0&>(fp)()) std::__1::__invoke<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0&>(tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0&)
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/type_traits:4361:0
+                              void std::__1::__invoke_void_return_wrapper<void>::__call<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0&>(tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0&)
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__functional_base:349:0
+                              std::__1::__function::__alloc_func<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0, std::__1::allocator<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0>, void ()>::operator()()
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:1527:0
+                              std::__1::__function::__func<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0, std::__1::allocator<tonic::DartMessageHandler::OnMessage(tonic::DartState*)::$_0>, void ()>::operator()()
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:1651:0
+#202 0000000102834ba0 Flutter 0x1027f8000 + 248736
+                              std::__1::__function::__value_func<void ()>::operator()() const
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:1799:16
+                              std::__1::function<void ()>::operator()() const
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/functional:2347:0
+                              fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                              flutter/fml/message_loop_impl.cc:127:0
+#203 0000000102836818 Flutter 0x1027f8000 + 256024
+                              fml::MessageLoopImpl::RunExpiredTasksNow()
+                              flutter/fml/message_loop_impl.cc:137:3
+                              fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)
+                              flutter/fml/platform/darwin/message_loop_darwin.mm:75:0
+#204 0000000185ec41c0 CoreFoundation __CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 28 (CFRunLoop.c:176)
+#205 0000000185ec3edc CoreFoundation __CFRunLoopDoTimer + 880 (CFRunLoop.c:235)
+#206 0000000185ec35b8 CoreFoundation __CFRunLoopDoTimers + 276 (CFRunLoop.c:251)
+#207 0000000185ebe5c8 CoreFoundation __CFRunLoopRun + 1640 (CFRunLoop.c:)
+#208 0000000185ebdc34 CoreFoundation CFRunLoopRunSpecific + 424 (CFRunLoop.c:319)
+#209 00000001028366f4 Flutter 0x1027f8000 + 255732
+                              fml::MessageLoopDarwin::Run()
+                              flutter/fml/platform/darwin/message_loop_darwin.mm:46:20
+#210 00000001028360c0 Flutter 0x1027f8000 + 254144
+                              fml::MessageLoopImpl::DoRun()
+                              flutter/fml/message_loop_impl.cc:96:3
+                              fml::MessageLoop::Run()
+                              flutter/fml/message_loop.cc:49:0
+                              fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const
+                              flutter/fml/thread.cc:34:0
+                              decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/type_traits:4361:0
+                              void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/thread:342:0
+                              void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)
+                              /b/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/thread:352:0
+#211 0000000185c5bd98 libsystem_pthread.dylib _pthread_start + 156 (pthread.c:89)
+#212 0000000185c5f74c libsystem_pthread.dylib thread_start + 8
+
+```
+
+<!-- {"symbolized":[1042]} -->

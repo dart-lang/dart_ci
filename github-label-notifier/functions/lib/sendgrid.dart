@@ -14,7 +14,7 @@ import 'package:node_io/node_io.dart';
 
 final _SendgridModule _sendgrid = (() {
   // Load and configure the module.
-  final _SendgridModule module = require('@sendgrid/mail');
+  final module = require('@sendgrid/mail') as _SendgridModule;
   module.setApiKey(Platform.environment['SENDGRID_SECRET']);
 
   // To enable offline testing we redirect all requests to our mock server.

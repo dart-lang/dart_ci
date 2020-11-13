@@ -6,6 +6,7 @@
 library github_label_notifier.github_utils;
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:node_interop/buffer.dart';
 import 'package:node_io/node_io.dart';
@@ -19,14 +20,22 @@ String signEvent(dynamic body) {
   if (secret == null) {
     throw 'GITHUB_SECRET is missing';
   }
-  final bodyHmac =
-      crypto.createHmac('sha1', secret).update(jsonEncode(body)).digest('hex');
+  final bodyHmac = crypto.createHmac('sha1', secret).update(body).digest('hex');
   return 'sha1=${bodyHmac}';
 }
 
 /// Validate that the given [body] and [signature] against `GITHUB_SECRET`
 /// environment variable.
 bool verifyEventSignature(dynamic body, String signature) {
+  final expectedSignature = signEvent(jsonEncode(body));
+  return signature.length == expectedSignature.length &&
+      crypto.timingSafeEqual(
+          Buffer.from(signature), Buffer.from(expectedSignature));
+}
+
+/// Validate that the given [body] and [signature] against `GITHUB_SECRET`
+/// environment variable.
+bool verifyEventSignatureRaw(Uint8List body, String signature) {
   final expectedSignature = signEvent(body);
   return signature.length == expectedSignature.length &&
       crypto.timingSafeEqual(

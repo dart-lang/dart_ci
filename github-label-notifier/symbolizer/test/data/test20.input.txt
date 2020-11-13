@@ -1,0 +1,51 @@
+@flutter-symbolizer-bot this ios release flutter#1.22.3
+
+Incident Identifier: 21BAAC4A-459E-458B-A0F3-CE6CB3BD5665
+Code Type:           ARM-64 (Native)
+
+Thread 0 name:  Dispatch queue: com.apple.main-thread
+Thread 0 Crashed:
+0   libsystem_kernel.dylib            0x00000001df39c72c __psynch_cvwait + 8
+1   libsystem_pthread.dylib           0x00000001f9f83330 _pthread_cond_wait$VARIANT$mp + 1180
+2   libc++.1.dylib                    0x00000001c88cee0c std::__1::condition_variable::wait+ 52748 (std::__1::unique_lock<std::__1::mutex>&) + 24
+3   Flutter                           0x0000000101154814 0x101118000 + 247828
+4   Flutter                           0x000000010141ea7c 0x101118000 + 3172988
+5   Flutter                           0x000000010113a674 0x101118000 + 140916
+6   Flutter                           0x000000010113b000 0x101118000 + 143360
+7   CoreFoundation                    0x00000001b4ef9098 __CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__ + 20
+8   CoreFoundation                    0x00000001b4ef9058 ___CFXRegistrationPost_block_invoke + 48
+9   CoreFoundation                    0x00000001b4ef8650 _CFXRegistrationPost + 400
+10  CoreFoundation                    0x00000001b4ef8048 _CFXNotificationPost + 696
+11  Foundation                        0x00000001b611bb20 -[NSNotificationCenter postNotificationName:object:userInfo:] + 60
+12  UIKitCore                         0x00000001b77d373c -[UIApplication _deactivateForReason:notify:] + 1540
+13  UIKitCore                         0x00000001b6ebac0c -[_UISceneLifecycleMultiplexer _performBlock:withApplicationOfDeactivationReasons:fromReasons:] + 260
+14  UIKitCore                         0x00000001b6ebb004 -[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:] + 740
+15  UIKitCore                         0x00000001b6eba8c0 -[_UISceneLifecycleMultiplexer uiScene:transitionedFromState:withTransitionContext:] + 336
+16  UIKitCore                         0x00000001b6ec2460 __186-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]_block_invoke + 188
+17  UIKitCore                         0x00000001b72f73a8 +[BSAnimationSettings+ 6554536 (UIKit) tryAnimatingWithSettings:actions:completion:] + 812
+18  UIKitCore                         0x00000001b73f5458 _UISceneSettingsDiffActionPerformChangesWithTransitionContext + 244
+19  UIKitCore                         0x00000001b6ec21f8 -[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:] + 348
+20  UIKitCore                         0x00000001b6d04390 __64-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]_block_invoke + 772
+21  UIKitCore                         0x00000001b6d02e30 -[UIScene _emitSceneSettingsUpdateResponseForCompletion:afterSceneUpdateWork:] + 248
+22  UIKitCore                         0x00000001b6d03fdc -[UIScene scene:didUpdateWithDiff:transitionContext:completion:] + 220
+23  UIKitCore                         0x00000001b731e08c -[UIApplicationSceneClientAgent scene:handleEvent:withCompletion:] + 464
+24  FrontBoardServices                0x00000001c384d4a0 -[FBSScene updater:didUpdateSettings:withDiff:transitionContext:completion:] + 456
+25  FrontBoardServices                0x00000001c3875cdc __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke_2 + 124
+26  FrontBoardServices                0x00000001c385a400 -[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:] + 232
+27  FrontBoardServices                0x00000001c3875c28 __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke + 368
+28  libdispatch.dylib                 0x00000001b4bcf280 _dispatch_client_callout + 16
+29  libdispatch.dylib                 0x00000001b4b74b0c _dispatch_block_invoke_direct$VARIANT$mp + 224
+30  FrontBoardServices                0x00000001c38994a8 __FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__ + 40
+31  FrontBoardServices                0x00000001c3899170 -[FBSSerialQueue _targetQueue_performNextIfPossible] + 404
+32  FrontBoardServices                0x00000001c3899644 -[FBSSerialQueue _performNextFromRunLoopSource] + 28
+33  CoreFoundation                    0x00000001b4f16240 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ + 24
+34  CoreFoundation                    0x00000001b4f16140 __CFRunLoopDoSource0 + 204
+35  CoreFoundation                    0x00000001b4f15488 __CFRunLoopDoSources0 + 256
+36  CoreFoundation                    0x00000001b4f0fa40 __CFRunLoopRun + 776
+37  CoreFoundation                    0x00000001b4f0f200 CFRunLoopRunSpecific + 572
+38  GraphicsServices                  0x00000001cb08c598 GSEventRunModal + 160
+39  UIKitCore                         0x00000001b77d8bcc -[UIApplication _run] + 1052
+40  UIKitCore                         0x00000001b77de1a0 UIApplicationMain + 164
+41  Runner                            0x0000000100d5de84 main + 24196 (AppDelegate.swift:5)
+42  libdyld.dylib                     0x00000001b4bee588 start + 4
+

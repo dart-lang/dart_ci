@@ -1,0 +1,179 @@
+crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
+```
+#00 000000019007e5c0 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 1185216
+#01 00000001a416c42c libobjc.A.dylib objc_exception_throw + 60
+#02 000000018ff7aa9c CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 121500
+#03 0000000102419508 XX XX + 1742088
+#04 00000001d7f6927c libsystem_platform.dylib 79AAC6D7-C39F-3B6B-882F-AA494B891C56 + 21116
+#05 00000001029708c0 Flutter Flutter + 952512
+                             SkArenaAlloc::RunDtorsOnBlock(char*)
+                             third_party/skia/src/core/SkArenaAlloc.cpp:61:21
+                             SkArenaAlloc::~SkArenaAlloc()
+                             third_party/skia/src/core/SkArenaAlloc.cpp:36:0
+                             SkArenaAlloc::~SkArenaAlloc()
+                             third_party/skia/src/core/SkArenaAlloc.cpp:35:0
+                             SkRecord::~SkRecord()
+                             third_party/skia/src/core/SkRecord.cpp:17:0
+#06 00000001029708c0 Flutter Flutter + 952512
+                             SkArenaAlloc::RunDtorsOnBlock(char*)
+                             third_party/skia/src/core/SkArenaAlloc.cpp:61:21
+                             SkArenaAlloc::~SkArenaAlloc()
+                             third_party/skia/src/core/SkArenaAlloc.cpp:36:0
+                             SkArenaAlloc::~SkArenaAlloc()
+                             third_party/skia/src/core/SkArenaAlloc.cpp:35:0
+                             SkRecord::~SkRecord()
+                             third_party/skia/src/core/SkRecord.cpp:17:0
+#07 0000000102970848 Flutter Flutter + 952392
+                             SkRecord::~SkRecord()
+                             third_party/skia/src/core/SkRecord.cpp:12:23
+                             SkRecord::~SkRecord()
+                             third_party/skia/src/core/SkRecord.cpp:12:0
+#08 00000001029c0b68 Flutter Flutter + 1280872
+                             SkRefCntBase::unref() const
+                             third_party/skia/include/core/SkRefCnt.h:77:19
+                             void SkSafeUnref<SkRecord const>(SkRecord const*)
+                             third_party/skia/include/core/SkRefCnt.h:150:0
+                             sk_sp<SkRecord const>::~sk_sp()
+                             third_party/skia/include/core/SkRefCnt.h:251:0
+                             sk_sp<SkRecord const>::~sk_sp()
+                             third_party/skia/include/core/SkRefCnt.h:250:0
+                             SkBigPicture::~SkBigPicture()
+                             third_party/skia/src/core/SkBigPicture.h:22:0
+                             SkBigPicture::~SkBigPicture()
+                             third_party/skia/src/core/SkBigPicture.h:22:0
+                             SkBigPicture::~SkBigPicture()
+                             third_party/skia/src/core/SkBigPicture.h:22:0
+#09 0000000102914a40 Flutter Flutter + 576064
+                             SkRefCntBase::unref() const
+                             third_party/skia/include/core/SkRefCnt.h:77:19
+                             flutter::SkiaUnrefQueue::Drain()
+                             flutter/flow/skia_gpu_object.cc:44:0
+#10 00000001028c344c Flutter Flutter + 242764
+                             std::__1::__function::__value_func<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16
+                             std::__1::function<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0
+                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                             flutter/fml/message_loop_impl.cc:130:0
+#11 00000001028c53c0 Flutter Flutter + 250816
+                             fml::MessageLoopImpl::RunExpiredTasksNow()
+                             flutter/fml/message_loop_impl.cc:143:3
+                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0
+#12 000000018fffc050 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 651344
+#13 000000018fffbc50 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 650320
+#14 000000018fffb0c4 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 647364
+#15 000000018fff5178 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 622968
+#16 000000018fff44bc CoreFoundation CFRunLoopRunSpecific + 600
+#17 00000001028c529c Flutter Flutter + 250524
+                             fml::MessageLoopDarwin::Run()
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20
+#18 00000001028c4c24 Flutter Flutter + 248868
+                             fml::MessageLoopImpl::DoRun()
+                             flutter/fml/message_loop_impl.cc:96:3
+                             fml::MessageLoop::Run()
+                             flutter/fml/message_loop.cc:49:0
+                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const
+                             flutter/fml/thread.cc:36:0
+                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0
+                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:342:0
+                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:352:0
+#19 00000001d7f6dca8 libsystem_pthread.dylib _pthread_start + 320
+#20 00000001d7f76788 libsystem_pthread.dylib thread_start + 8
+
+```
+
+crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
+```
+#00 0000000192b825c0 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 1185216
+#01 00000001a6bfc42c libobjc.A.dylib objc_exception_throw + 60
+#02 0000000192a7ea9c CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 121500
+#03 00000001044ed508 XX XX + 1742088
+#04 00000001da0d627c libsystem_platform.dylib DAE36DD6-F44A-39F4-9924-261898BD82CC + 21116
+#05 00000001da0dbc74 libsystem_pthread.dylib pthread_kill + 272
+#06 000000019bc84bb4 libsystem_c.dylib abort + 104
+#07 00000001a1bd24dc libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124124
+#08 00000001a1bd2768 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124776
+#09 00000001a1bbde84 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 40580
+#10 00000001a1bbaeb8 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 28344
+#11 00000001a1bbbf30 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 32560
+#12 0000000104d577d0 Flutter Flutter + 5634000
+                             dart::FinalizablePersistentHandle::Finalize(dart::IsolateGroup*, dart::FinalizablePersistentHandle*)
+                             third_party/dart/runtime/vm/dart_api_impl.cc:729:5
+                             dart::FinalizablePersistentHandle::UpdateUnreachable(dart::IsolateGroup*)
+                             third_party/dart/runtime/vm/dart_api_state.h:273:0
+                             dart::ScavengerWeakVisitor::VisitHandle(unsigned long)
+                             third_party/dart/runtime/vm/heap/scavenger.cc:454:0
+#13 0000000104d5859c Flutter Flutter + 5637532
+                             dart::Handles<5, 64, 0>::HandlesBlock::Visit(dart::HandleVisitor*)
+                             third_party/dart/runtime/vm/handles_impl.h:302:14
+                             dart::Handles<5, 64, 0>::Visit(dart::HandleVisitor*)
+                             third_party/dart/runtime/vm/handles_impl.h:55:0
+                             dart::FinalizablePersistentHandles::VisitHandles(dart::HandleVisitor*)
+                             third_party/dart/runtime/vm/dart_api_state.h:581:0
+                             dart::ApiState::VisitWeakHandlesUnlocked(dart::HandleVisitor*)
+                             third_party/dart/runtime/vm/dart_api_state.h:792:0
+                             dart::IsolateGroup::VisitWeakPersistentHandles(dart::HandleVisitor*)
+                             third_party/dart/runtime/vm/isolate.cc:2952:0
+                             dart::Scavenger::MournWeakHandles()
+                             third_party/dart/runtime/vm/heap/scavenger.cc:1131:0
+                             dart::Scavenger::Scavenge()
+                             third_party/dart/runtime/vm/heap/scavenger.cc:1516:0
+#14 0000000104d4cd64 Flutter Flutter + 5590372
+                             dart::Heap::CollectNewSpaceGarbage(dart::Thread*, dart::Heap::GCReason)
+                             third_party/dart/runtime/vm/heap/heap.cc:467:18
+#15 0000000104d4e280 Flutter Flutter + 5595776
+                             dart::Heap::NotifyIdle(long long)
+                             third_party/dart/runtime/vm/heap/heap.cc:378:5
+#16 0000000104c6166c Flutter Flutter + 4626028
+                             dart::IdleTimeHandler::NotifyIdle(long long)
+                             third_party/dart/runtime/vm/isolate.cc:249:12
+                             Dart_NotifyIdle
+                             third_party/dart/runtime/vm/dart_api_impl.cc:1910:0
+                             flutter::RuntimeController::NotifyIdle(long long, unsigned long)
+                             flutter/runtime/runtime_controller.cc:251:0
+#17 0000000104af5b9c Flutter Flutter + 3136412
+                             flutter::Engine::NotifyIdle(long long)
+                             flutter/shell/common/engine.cc:260:24
+#18 000000010483344c Flutter Flutter + 242764
+                             std::__1::__function::__value_func<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16
+                             std::__1::function<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0
+                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                             flutter/fml/message_loop_impl.cc:130:0
+#19 00000001048353c0 Flutter Flutter + 250816
+                             fml::MessageLoopImpl::RunExpiredTasksNow()
+                             flutter/fml/message_loop_impl.cc:143:3
+                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0
+#20 0000000192b00050 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 651344
+#21 0000000192affc50 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 650320
+#22 0000000192aff0c4 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 647364
+#23 0000000192af9178 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 622968
+#24 0000000192af84bc CoreFoundation CFRunLoopRunSpecific + 600
+#25 000000010483529c Flutter Flutter + 250524
+                             fml::MessageLoopDarwin::Run()
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20
+#26 0000000104834c24 Flutter Flutter + 248868
+                             fml::MessageLoopImpl::DoRun()
+                             flutter/fml/message_loop_impl.cc:96:3
+                             fml::MessageLoop::Run()
+                             flutter/fml/message_loop.cc:49:0
+                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const
+                             flutter/fml/thread.cc:36:0
+                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0
+                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:342:0
+                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:352:0
+#27 00000001da0daca8 libsystem_pthread.dylib _pthread_start + 320
+#28 00000001da0e3788 libsystem_pthread.dylib thread_start + 8
+
+```
+
+<!-- {"symbolized":[1001]} -->

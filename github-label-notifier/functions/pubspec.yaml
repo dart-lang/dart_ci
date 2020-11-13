@@ -3,9 +3,10 @@ description: >-
   Cloud Function that can serve as a GitHub WebHook which sends notifications
   to developers subscribed to a particular label.
 version: 0.0.1
+publish_to: none
 
 environment:
-  sdk: '>=2.3.0 <3.0.0'
+  sdk: '>=2.6.0 <3.0.0'
 
 dependencies:
   firebase_functions_interop: ^1.0.0
@@ -14,6 +15,8 @@ dependencies:
   node_io: ^1.0.1
   js: any
   test: any
+  symbolizer:
+    path: ../symbolizer
 
 dev_dependencies:
   # Needed to compile Dart to valid Node.js module.

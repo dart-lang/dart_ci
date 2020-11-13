@@ -33,7 +33,7 @@ abstract class Hmac {
   /// Append data to the content of this [Hmac].
   ///
   /// See [docs](https://nodejs.org/api/crypto.html#crypto_hmac_update_data_inputencoding).
-  external Hmac update(String data);
+  external Hmac update(Object data);
 
   /// Compute the digest of the content accumulated via [update].
   ///

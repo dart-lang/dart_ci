@@ -1,0 +1,29 @@
+```
+[  +54 ms] Launching lib\main.dart on Something XYZ in debug mode...
+[ +114 ms] F/libc    (12964): Fatal signal 11 (SIGSEGV), code 1, fault addr 0x0 in tid 13108 (example.app), pid 12964 (example.app)
+[+1325 ms] *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+[   +1 ms] Build fingerprint: 'xiaomi/cactus/cactus:8.1.0/O11019/V10.3.8.0.OCBMIXM:user/release-keys'
+[   +1 ms] Revision: '0'
+[   +1 ms] ABI: 'arm'
+[        ] pid: 12964, tid: 13108, name: example.app  >>> com.example.app <<<
+[        ] signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+[        ] Cause: null pointer dereference
+[   +7 ms] backtrace:
+[   +1 ms]     #00 pc 0107f1b6  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +1 ms]     #01 pc 0107f2bb  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +1 ms]     #02 pc 010d077d  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +1 ms]     #03 pc 01049053  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +1 ms]     #04 pc 01049ce9  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +1 ms]     #05 pc 0103dbf9  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[   +2 ms]     #06 pc 0103dfc3  /data/app/com.example.app-/lib/arm/libflutter.so (offset 0x102f000)
+[        ]     #07 pc 00047507  /system/lib/libc.so (__pthread_start(void*)+22)
+[        ]     #08 pc 0001af75  /system/lib/libc.so (__start_thread+32)
+```
+
+```
+[√] Flutter (Channel stable, 1.22.0, on Microsoft Windows [Version 10.0.18363.1082], locale en-US)
+    • Flutter version 1.22.0 at ...
+    • Framework revision d408d302e2 (12 days ago), 2020-09-29 11:49:17 -0700
+    • Engine revision 5babba6c4d
+    • Dart version 2.10.0
+```

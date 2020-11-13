@@ -1,0 +1,234 @@
+```
+Incident Identifier: AEF1125A-C235-4216-89F7-E3131F9EFB84
+Code Type:           ARM-64 (Native)
+
+Thread 7:
+0   libsystem_pthread.dylib       	0x0000000185c5f738 start_wqthread + 0
+
+Thread 8 name:
+Thread 8 Crashed:
+0   libsystem_kernel.dylib        	0x0000000185d3ad88 __pthread_kill + 8
+1   libsystem_pthread.dylib       	0x0000000185c531e8 pthread_kill$VARIANT$mp + 136 (pthread.c:1458)
+2   libsystem_c.dylib             	0x0000000185ba6644 abort + 100 (abort.c:110)
+3   Flutter                       	0x0000000102c48240 0x1027f8000 + 4522560
+4   Flutter                       	0x0000000102cfbea0 0x1027f8000 + 5258912
+5   App                           	0x000000010527820c Precompiled_Stub_CallToRuntime + 84
+6   App                           	0x0000000105277b60 Precompiled_Stub_UnlinkedCall + 44
+7   App                           	0x00000001053d7ff8 Precompiled_AnimatedWidgetBaseState_initState_4854 + 76
+8   App                           	0x00000001054eff5c Precompiled_StatefulElement__firstBuild_396042623_8467 + 80
+9   App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+10  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+11  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+12  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+13  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+14  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+15  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+16  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+17  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+18  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+19  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+20  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+21  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+22  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+23  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+24  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+25  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+26  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+27  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+28  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+29  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+30  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+31  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+32  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+33  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+34  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+35  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+36  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+37  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+38  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+39  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+40  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+41  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+42  App                           	0x00000001054bd014 Precompiled_SingleChildRenderObjectElement_mount_7858 + 432
+43  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+44  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+45  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+46  App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+47  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+48  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+49  App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+50  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+51  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+52  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+53  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+54  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+55  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+56  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+57  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+58  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+59  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+60  App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+61  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+62  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+63  App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+64  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+65  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+66  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+67  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+68  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+69  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+70  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+71  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+72  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+73  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+74  App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+75  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+76  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+77  App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+78  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+79  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+80  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+81  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+82  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+83  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+84  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+85  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+86  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+87  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+88  App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+89  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+90  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+91  App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+92  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+93  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+94  App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+95  App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+96  App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+97  App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+98  App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+99  App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+100 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+101 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+102 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+103 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+104 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+105 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+106 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+107 App                           	0x00000001054bd014 Precompiled_SingleChildRenderObjectElement_mount_7858 + 432
+108 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+109 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+110 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+111 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+112 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+113 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+114 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+115 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+116 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+117 App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+118 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+119 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+120 App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+121 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+122 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+123 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+124 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+125 App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+126 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+127 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+128 App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+129 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+130 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+131 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+132 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+133 App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+134 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+135 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+136 App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+137 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+138 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+139 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+140 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+141 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+142 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+143 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+144 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+145 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+146 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+147 App                           	0x00000001054be168 Precompiled_StatefulElement_performRebuild_7870 + 104
+148 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+149 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+150 App                           	0x00000001054effa8 Precompiled_StatefulElement__firstBuild_396042623_8467 + 156
+151 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+152 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+153 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+154 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+155 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+156 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+157 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+158 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+159 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+160 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+161 App                           	0x00000001054be1cc Precompiled___DefaultInheritedProviderScopeElement_InheritedElement__InheritedProviderScopeMixin_... + 72
+162 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+163 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+164 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+165 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+166 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+167 App                           	0x00000001054be3fc Precompiled_ComponentElement_performRebuild_7873 + 484
+168 App                           	0x00000001052e7848 Precompiled_Element_rebuild_1634 + 96
+169 App                           	0x00000001054f00c4 Precompiled_ComponentElement__firstBuild_396042623_8469 + 32
+170 App                           	0x00000001054bd2f4 Precompiled_ComponentElement_mount_7863 + 76
+171 App                           	0x00000001054bd270 Precompiled__SingleChildStatelessElement_StatelessElement_SingleChildWidgetElementMixin_524485488... + 60
+172 App                           	0x00000001052cce98 Precompiled_Element_inflateWidget_1296 + 404
+173 App                           	0x00000001054c1010 Precompiled_Element_updateChild_7906 + 508
+174 App                           	0x00000001052fc01c Precompiled_RenderObjectToWidgetElement__rebuild_414399801_1965 + 84
+175 App                           	0x00000001054bd094 Precompiled_RenderObjectToWidgetElement_mount_7859 + 60
+176 App                           	0x00000001055a840c Precompiled_RenderObjectToWidgetAdapter_attachToRenderTree__anonymous_closure__10738 + 84
+177 App                           	0x00000001052e9614 Precompiled_BuildOwner_buildScope_1653 + 256
+178 App                           	0x0000000105300f58 Precompiled_RenderObjectToWidgetAdapter_attachToRenderTree_2058 + 288
+179 App                           	0x00000001052fd3d0 Precompiled__WidgetsFlutterBinding_BindingBase_GestureBinding_ServicesBinding_SchedulerBinding_Pa... + 168
+180 App                           	0x00000001055a8540 Precompiled__WidgetsFlutterBinding_BindingBase_GestureBinding_ServicesBinding_SchedulerBinding_Pa... + 76
+181 App                           	0x000000010529294c Precompiled_____rootRun_4048458_315 + 156
+182 App                           	0x0000000105292bf0 Precompiled_____rootRun_4048458__rootRun_4048458_316 + 504
+183 App                           	0x00000001054ffae4 Precompiled__CustomZone_4048458_run_8789 + 240
+184 App                           	0x0000000105500850 Precompiled__CustomZone_4048458_runGuarded_8808 + 52
+185 App                           	0x0000000105585974 Precompiled__CustomZone_4048458_bindCallbackGuarded__anonymous_closure__10427 + 76
+186 App                           	0x0000000105292998 Precompiled_____rootRun_4048458_315 + 232
+187 App                           	0x0000000105292bf0 Precompiled_____rootRun_4048458__rootRun_4048458_316 + 504
+188 App                           	0x00000001054ffae4 Precompiled__CustomZone_4048458_run_8789 + 240
+189 App                           	0x00000001055857bc Precompiled__CustomZone_4048458_bindCallback__anonymous_closure__10425 + 148
+190 App                           	0x0000000105589ba0 Precompiled_Timer__createTimer_4048458__anonymous_closure__10485 + 228
+191 App                           	0x00000001055c3114 Precompiled__Closure_0150898_call_11047 + 72
+192 App                           	0x00000001054a0d0c Precompiled__Timer_1026248__runTimers_1026248_7429 + 720
+193 App                           	0x00000001054a0964 Precompiled__Timer_1026248__handleMessage_1026248_7427 + 140
+194 App                           	0x00000001054a0a1c Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_7428 + 112
+195 App                           	0x00000001055c3114 Precompiled__Closure_0150898_call_11047 + 72
+196 App                           	0x000000010529dc08 Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_473 + 52
+197 App                           	0x0000000105277de4 Precompiled_Stub_InvokeDartCode + 252
+198 Flutter                       	0x0000000102c891a8 0x1027f8000 + 4788648
+199 Flutter                       	0x0000000102c8f6a4 0x1027f8000 + 4814500
+200 Flutter                       	0x0000000102c9a824 0x1027f8000 + 4859940
+201 Flutter                       	0x0000000102b1d2c4 0x1027f8000 + 3297988
+202 Flutter                       	0x0000000102834ba0 0x1027f8000 + 248736
+203 Flutter                       	0x0000000102836818 0x1027f8000 + 256024
+204 CoreFoundation                	0x0000000185ec41c0 __CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 28 (CFRunLoop.c:1766)
+205 CoreFoundation                	0x0000000185ec3edc __CFRunLoopDoTimer + 880 (CFRunLoop.c:2357)
+206 CoreFoundation                	0x0000000185ec35b8 __CFRunLoopDoTimers + 276 (CFRunLoop.c:2512)
+207 CoreFoundation                	0x0000000185ebe5c8 __CFRunLoopRun + 1640 (CFRunLoop.c:0)
+208 CoreFoundation                	0x0000000185ebdc34 CFRunLoopRunSpecific + 424 (CFRunLoop.c:3192)
+209 Flutter                       	0x00000001028366f4 0x1027f8000 + 255732
+210 Flutter                       	0x00000001028360c0 0x1027f8000 + 254144
+211 libsystem_pthread.dylib       	0x0000000185c5bd98 _pthread_start + 156 (pthread.c:896)
+212 libsystem_pthread.dylib       	0x0000000185c5f74c thread_start + 8
+
+Binary Images:
+0x105270000 - 0x10584bfff App arm64  <f9e361ff2c6930499d85ae47d9dbfd3b> /var/containers/Bundle/Application/E5512921-87CB-437A-8E27-5C3037AEED7C/Runner.app/Frameworks/App.framework/App
+```
+
+```
+[✓] Flutter (Channel beta, v1.17.0, on ..., locale en-US)
+    • Flutter version 1.17.0 at ...
+    • Framework revision d3ed9ec945 (10 days ago), 2020-04-06 14:07:34 -0700
+    • Engine revision c9506cb8e9
+    • Dart version 2.8.0 (build 2.8.0-dev.18.0 eea9717938)
+```

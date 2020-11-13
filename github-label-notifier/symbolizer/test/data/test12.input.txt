@@ -1,0 +1,31 @@
+@flutter-symbolizer-bot this force ios flutter#v1.22.2 arm64
+
+Crashed: io.flutter.1.io
+0  IOGPU                          0x1cb298b8c -[IOGPUMetalCommandBuffer commandBufferResourceInfo] + 12
+1  AGXMetalA9                     0x1d812f4e0 (Missing)
+2  AGXMetalA9                     0x1d80ae408 (Missing)
+3  AGXMetalA9                     0x1d80baff0 (Missing)
+4  Flutter                        0x106013134 (Missing)
+5  Flutter                        0x1060161e4 (Missing)
+6  Flutter                        0x105f27e84 (Missing)
+7  Flutter                        0x105f27ae4 (Missing)
+8  Flutter                        0x105f45a64 (Missing)
+9  Flutter                        0x105f336f4 (Missing)
+10 Flutter                        0x105f510d4 (Missing)
+11 Flutter                        0x105f332d0 (Missing)
+12 Flutter                        0x105f104d4 (Missing)
+13 Flutter                        0x105fc8ac4 (Missing)
+14 Flutter                        0x10610f670 (Missing)
+15 Flutter                        0x105da8768 (Missing)
+16 Flutter                        0x10610ef50 (Missing)
+17 Flutter                        0x105da744c (Missing)
+18 Flutter                        0x105da93c0 (Missing)
+19 CoreFoundation                 0x1922a4a30 __CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 28
+20 CoreFoundation                 0x1922a4634 __CFRunLoopDoTimer + 1004
+21 CoreFoundation                 0x1922a3b14 __CFRunLoopDoTimers + 324
+22 CoreFoundation                 0x19229deb0 __CFRunLoopRun + 1912
+23 CoreFoundation                 0x19229d200 CFRunLoopRunSpecific + 572
+24 Flutter                        0x105da929c (Missing)
+25 Flutter                        0x105da8c24 (Missing)
+26 libsystem_pthread.dylib        0x1d7bcab70 _pthread_start + 288
+27 libsystem_pthread.dylib        0x1d7bcf880 thread_start + 8

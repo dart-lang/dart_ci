@@ -5,13 +5,11 @@
 
 set -e
 
+export SYMBOLIZER_SERVER=localhost:4040
+
 # Don't use real SendGrid servers during testing - instead redirect API
 # calls to a mock server.
 export SENDGRID_MOCK_SERVER=localhost:8151
-
-# Similarly don't use real symbolizer server. We are going to start our own
-# mock server.
-export SYMBOLIZER_SERVER=localhost:4040
 
 # Note: these are randomly generated secrets purely for testing purposes.
 # They should not be used during deployment.
@@ -20,4 +18,4 @@ export SENDGRID_SECRET=SG.I9JN-n6oQb-X686126S.qJasdasdasda_lyadasd
 
 pub run build_runner build --output=build
 
-firebase emulators:exec --project github-label-notifier 'node build/node/index.test.dart.js'
+firebase emulators:start --project github-label-notifier

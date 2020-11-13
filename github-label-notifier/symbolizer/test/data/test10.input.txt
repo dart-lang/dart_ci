@@ -1,0 +1,66 @@
+@flutter-symbolizer-bot symbolize this force ios arm64
+
+```
+    0 CoreFoundation 0x000000019007e5c0 52963DBA-FA89-36C2-8262-28B9776F8C12 + 1185216
+    1 libobjc.A.dylib 0x00000001a416c42c objc_exception_throw + 60
+    2 CoreFoundation 0x000000018ff7aa9c 52963DBA-FA89-36C2-8262-28B9776F8C12 + 121500
+    3 XX 0x0000000102419508 XX + 1742088
+    4 libsystem_platform.dylib 0x00000001d7f6927c 79AAC6D7-C39F-3B6B-882F-AA494B891C56 + 21116
+    5 Flutter 0x00000001029708c0 Flutter + 952512
+    6 Flutter 0x00000001029708c0 Flutter + 952512
+    7 Flutter 0x0000000102970848 Flutter + 952392
+    8 Flutter 0x00000001029c0b68 Flutter + 1280872
+    9 Flutter 0x0000000102914a40 Flutter + 576064
+    10 Flutter 0x00000001028c344c Flutter + 242764
+    11 Flutter 0x00000001028c53c0 Flutter + 250816
+    12 CoreFoundation 0x000000018fffc050 52963DBA-FA89-36C2-8262-28B9776F8C12 + 651344
+    13 CoreFoundation 0x000000018fffbc50 52963DBA-FA89-36C2-8262-28B9776F8C12 + 650320
+    14 CoreFoundation 0x000000018fffb0c4 52963DBA-FA89-36C2-8262-28B9776F8C12 + 647364
+    15 CoreFoundation 0x000000018fff5178 52963DBA-FA89-36C2-8262-28B9776F8C12 + 622968
+    16 CoreFoundation 0x000000018fff44bc CFRunLoopRunSpecific + 600
+    17 Flutter 0x00000001028c529c Flutter + 250524
+    18 Flutter 0x00000001028c4c24 Flutter + 248868
+    19 libsystem_pthread.dylib 0x00000001d7f6dca8 _pthread_start + 320
+    20 libsystem_pthread.dylib 0x00000001d7f76788 thread_start + 8
+```
+
+```
+    0 CoreFoundation 0x0000000192b825c0 472C9193-115D-34CD-AD1D-0E7E091C9432 + 1185216
+    1 libobjc.A.dylib 0x00000001a6bfc42c objc_exception_throw + 60
+    2 CoreFoundation 0x0000000192a7ea9c 472C9193-115D-34CD-AD1D-0E7E091C9432 + 121500
+    3 XX 0x00000001044ed508 XX + 1742088
+    4 libsystem_platform.dylib 0x00000001da0d627c DAE36DD6-F44A-39F4-9924-261898BD82CC + 21116
+    5 libsystem_pthread.dylib 0x00000001da0dbc74 pthread_kill + 272
+    6 libsystem_c.dylib 0x000000019bc84bb4 abort + 104
+    7 libsystem_malloc.dylib 0x00000001a1bd24dc C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124124
+    8 libsystem_malloc.dylib 0x00000001a1bd2768 C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124776
+    9 libsystem_malloc.dylib 0x00000001a1bbde84 C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 40580
+    10 libsystem_malloc.dylib 0x00000001a1bbaeb8 C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 28344
+    11 libsystem_malloc.dylib 0x00000001a1bbbf30 C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 32560
+    12 Flutter 0x0000000104d577d0 Flutter + 5634000
+    13 Flutter 0x0000000104d5859c Flutter + 5637532
+    14 Flutter 0x0000000104d4cd64 Flutter + 5590372
+    15 Flutter 0x0000000104d4e280 Flutter + 5595776
+    16 Flutter 0x0000000104c6166c Flutter + 4626028
+    17 Flutter 0x0000000104af5b9c Flutter + 3136412
+    18 Flutter 0x000000010483344c Flutter + 242764
+    19 Flutter 0x00000001048353c0 Flutter + 250816
+    20 CoreFoundation 0x0000000192b00050 472C9193-115D-34CD-AD1D-0E7E091C9432 + 651344
+    21 CoreFoundation 0x0000000192affc50 472C9193-115D-34CD-AD1D-0E7E091C9432 + 650320
+    22 CoreFoundation 0x0000000192aff0c4 472C9193-115D-34CD-AD1D-0E7E091C9432 + 647364
+    23 CoreFoundation 0x0000000192af9178 472C9193-115D-34CD-AD1D-0E7E091C9432 + 622968
+    24 CoreFoundation 0x0000000192af84bc CFRunLoopRunSpecific + 600
+    25 Flutter 0x000000010483529c Flutter + 250524
+    26 Flutter 0x0000000104834c24 Flutter + 248868
+    27 libsystem_pthread.dylib 0x00000001da0daca8 _pthread_start + 320
+    28 libsystem_pthread.dylib 0x00000001da0e3788 thread_start + 8
+)
+```
+
+```
+[✓] Flutter (Channel stable, 1.22.2, on Mac OS X 10.15.7 19H2, locale ...)
+    • Flutter version 1.22.2 at ...
+    • Framework revision 84f3d28555 (7 days ago), 2020-10-15 16:26:19 -0700
+    • Engine revision b8752bbfff
+    • Dart version 2.10.2
+```

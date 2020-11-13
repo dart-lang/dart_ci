@@ -1,0 +1,21 @@
+```
+[ +206 ms] *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+[        ] Build fingerprint: 'motorola/river_amz/river:10/QPUS30.52-23-4/6de4a:user/release-keys'
+[        ] Revision: 'PVT'
+[        ] ABI: 'arm64'
+[   +1 ms] Timestamp: 2020-09-12 08:54:59-0400
+[  +23 ms] pid: 6901, tid: 7008, name: com.example.app  >>> com.example.app <<<
+[   +1 ms] uid: 10266
+[        ] signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0
+[  +49 ms] Cause: null pointer dereference
+[        ] backtrace:
+[   +1 ms]       #00 pc 00000000013461f4  /data/app/com.example.app/lib/arm64/libflutter.so (BuildId: ed61359865ec8404e21864594776b9dcbe60a137)
+```
+
+```
+[√] Flutter (Channel dev, 1.22.0-9.0.pre, on Microsoft Windows [Version ...], locale en-US)
+    • Flutter version 1.22.0-9.0.pre at ...
+    • Framework revision 7a43175198 (2 weeks ago), 2020-08-28 23:18:04 -0400
+    • Engine revision 07e2520d5d
+    • Dart version 2.10.0 (build 2.10.0-73.0.dev)
+```

@@ -1,0 +1,39 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": null,
+        "mode": null
+      },
+      "frames": [
+        {
+          "no": "00",
+          "pc": 107580,
+          "binary": "/system/lib/libc.so",
+          "rest": " (abort+63)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "01",
+          "pc": 2870917,
+          "binary": "/data/app/com.example.app/lib/arm/libflutter.so",
+          "rest": " (offset 0x1002000)",
+          "buildId": null,
+          "runtimeType": "android"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": 8
+    },
+    "engineBuild": null,
+    "symbolized": null,
+    "notes": [
+      {
+        "kind": "unknownEngineHash",
+        "message": null
+      }
+    ]
+  }
+]

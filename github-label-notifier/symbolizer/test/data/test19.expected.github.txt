@@ -1,0 +1,13 @@
+crash from null symbolized using symbols for `014da89eb01520ab7bbeba9971f852488ee80eaf` `android-arm-profile`
+```
+#00 00066638 /system/lib/libc.so (ifree+219)
+#01 000669e7 /system/lib/libc.so (je_free+74)
+#02 0039fc47 <...>/lib/arm/libflutter.so (offset 0x508000)
+                                         dart::TimelineEventArguments::Free()
+                                         third_party/dart/runtime/vm/timeline.cc:386:3
+                                         dart::TimelineEvent::Init(dart::TimelineEvent::EventType, char const*)
+                                         third_party/dart/runtime/vm/timeline.cc:581:14
+
+```
+
+<!-- {"symbolized":[1042]} -->

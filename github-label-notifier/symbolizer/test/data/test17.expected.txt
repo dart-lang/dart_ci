@@ -1,0 +1,46 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": null
+      },
+      "frames": [
+        {
+          "no": "00",
+          "pc": 107580,
+          "binary": "/system/lib/libc.so",
+          "rest": " (abort+63)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "01",
+          "pc": 2870917,
+          "binary": "/data/app/com.example.app/lib/arm/libflutter.so",
+          "rest": " (offset 0x1002000)",
+          "buildId": null,
+          "runtimeType": "android"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": 8
+    },
+    "engineBuild": {
+      "engineHash": "75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d",
+      "variant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": "release"
+      }
+    },
+    "symbolized": "#00 0001a43c /system/lib/libc.so (abort+63)\n#01 002bce85 <...>/lib/arm/libflutter.so (offset 0x1002000)\n                                         EllipticalRRectOp::EllipticalRRectOp(GrSimpleMeshDrawOpHelper::MakeArgs, SkRGBA4f<(SkAlphaType)2> const&, SkMatrix const&, SkRect const&, float, float, SkPoint, bool)\n                                         third_party/skia/src/gpu/ops/GrOvalOpFactory.cpp:2896:18\n",
+    "notes": [
+      {
+        "kind": "defaultedToReleaseBuildIdUnavailable",
+        "message": null
+      }
+    ]
+  }
+]

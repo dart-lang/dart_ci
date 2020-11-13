@@ -1,0 +1,30 @@
+name: symbolizer
+description: >-
+  Symbolization tooling capable of extracting Android and iOS crashes from
+  plain text comments on GitHub and then automatically symbolize these crash
+  reports using Flutter Engine symbols stored in the Cloud Storage.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=2.8.0 <3.0.0'
+
+dependencies:
+  args: ^1.6.0
+  corsac_jwt: ^0.2.2
+  freezed_annotation: ^0.12.0
+  github: ^7.0.3
+  http: ^0.12.2
+  json_annotation: ^3.1.0
+  logging: ^0.11.4
+  path: ^1.6.0
+  pedantic: ^1.9.2
+  sendgrid_mailer: ^0.1.2
+
+dev_dependencies:
+  build_runner: ^1.10.0
+  freezed: ^0.12.2
+  json_serializable: ^3.5.0
+  meta: ^1.2.3
+  mockito: ^4.1.2
+  test: ^1.15.4

@@ -1,0 +1,18 @@
+
+<details>
+<summary>There were failures symbolizing some of the crashes I found</summary>
+
+When processing null I found crash
+
+```
+Crash(engineVariant: EngineVariant(os: android, arch: null, mode: null), frames: [CrashFrame.android(no: 00, pc: 107580, binary: /system/lib/libc.so, rest:  (abort+63), buildId: null), CrashFrame.android(no: 01, pc: 2870917, binary: /data/app/com.example.app/lib/arm/libflutter.so, rest:  (offset 0x1002000), buildId: null)], format: native, androidMajorVersion: 8)
+```
+
+but failed to symbolize it with the following notes:
+
+* Unknown engine ABI
+
+See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symbolizer-bot/blob/main/README.md#commands) for more details.
+</details>
+
+<!-- {"symbolized":[]} -->

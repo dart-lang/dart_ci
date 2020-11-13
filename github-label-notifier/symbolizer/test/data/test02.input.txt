@@ -1,0 +1,30 @@
+@flutter-symbolizer-bot debug
+
+```bash
+0000-00-00 00:00:00.000 11111-22222/? E/Dart: ../../third_party/dart/runtime/vm/zone.cc: 94: error: Out of memory.
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM: version=2.10.1 (stable) (Mon Jan 1 00:00:00 XXXX +0000) on "android_arm"
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM: pid=11111, thread=22222, isolate_group=main(0x9550b600), isolate=main(0x933c4000)
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM: isolate_instructions=969c0e00, vm_instructions=969c0e00
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM:   pc 0x96a85449 fp 0x885fef58 /data/app/com.example.app/lib/arm/libflutter.so+0x1384449
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM:   pc 0x969c0e81 fp 0x885ff014 /data/app/com.example.app/lib/arm/libflutter.so+0x12bfe81
+0000-00-00 00:00:00.000 11111-22222/? E/DartVM: -- End of DumpStackTrace
+0000-00-00 00:00:00.000 11111-22222/? A/libc: Fatal signal 6 (SIGABRT), code -6 in tid 22222 (DartWorker), pid 11111 (example.app)
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: Build fingerprint: '...:8.1.0/.../...:...'
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: Revision: '0'
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: ABI: 'arm'
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: pid: 11111, tid: 22222, name: DartWorker  >>> com.example.app <<<
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: signal 6 (SIGABRT), code -6 (SI_TKILL), fault addr --------
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r0 00000000  r1 00000000  r2 00000000  r3 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r4 00000000  r5 00000000  r6 00000000  r7 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r8 00000000  r9 00000000  sl 00000000  fp 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     ip 00000000  sp 00000000  lr 00000000  pc 00000000  cpsr 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: backtrace:
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     #00 pc 0001a43c  /system/lib/libc.so (abort+63)
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     #01 pc 002bce85  /data/app/com.example.app/lib/arm/libflutter.so (offset 0x1002000)
+```
+
+```bash
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 1.22.1, on xxxx, locale xxxx)
+```

@@ -1,0 +1,41 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": "arm64",
+        "mode": null
+      },
+      "frames": [
+        {
+          "no": "00",
+          "pc": 12133784,
+          "binary": "/data/app/io.flutter.integration.platformviews-Uh7C5I-KFJChGzUncdxDdw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)",
+          "buildId": "212dfb5693ad13476239acde23c8ce47d1d91a3a",
+          "runtimeType": "android"
+        },
+        {
+          "no": "01",
+          "pc": 7211068,
+          "binary": "/data/app/io.flutter.integration.platformviews-Uh7C5I-KFJChGzUncdxDdw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)",
+          "buildId": "212dfb5693ad13476239acde23c8ce47d1d91a3a",
+          "runtimeType": "android"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": 10
+    },
+    "engineBuild": {
+      "engineHash": "499a70f5e21b2d2ee2fd360f2f58579fc29e0c55",
+      "variant": {
+        "os": "android",
+        "arch": "arm64",
+        "mode": "profile"
+      }
+    },
+    "symbolized": "#00 0000000000b92598 <...>/lib/arm64/libflutter.so (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)\n                                                   OUTLINED_FUNCTION_7710\n                                                   ??:0:0\n#01 00000000006e083c <...>/lib/arm64/libflutter.so (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)\n                                                   flutter::SurfacePool::GetLayer(GrDirectContext*, std::__1::shared_ptr<flutter::AndroidContext>, std::__1::shared_ptr<flutter::PlatformViewAndroidJNI>, std::__1::shared_ptr<flutter::AndroidSurfaceFactory>)\n                                                   flutter/shell/platform/android/external_view_embedder/surface_pool.cc:0:7\n                                                   flutter::AndroidExternalViewEmbedder::CreateSurfaceIfNeeded(GrDirectContext*, long, sk_sp<SkPicture>, SkRect const&)\n                                                   flutter/shell/platform/android/external_view_embedder/external_view_embedder.cc:192:56\n                                                   flutter::AndroidExternalViewEmbedder::SubmitFrame(GrDirectContext*, std::__1::unique_ptr<flutter::SurfaceFrame, std::__1::default_delete<flutter::SurfaceFrame> >)\n                                                   flutter/shell/platform/android/external_view_embedder/external_view_embedder.cc:174:11\n",
+    "notes": []
+  }
+]

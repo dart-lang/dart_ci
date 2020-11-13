@@ -1,0 +1,10 @@
+@flutter-symbolizer-bot internal engine#defa8be2b10650dad50dfee9324ed8d16eeec13f ios release arm64 this
+
+0x000000010604661c	(Flutter + 0x003e661c)
+0x0000000106046604	(Flutter + 0x003e6604)
+0x000000010613e080	(Flutter + 0x004de080)
+0x000000010613c7bc	(Flutter + 0x004dc7bc)
+0x000000010613c3a0	(Flutter + 0x004dc3a0)
+0x00000001061be4e0	(Flutter + 0x0055e4e0)
+0x0000000106176c04	(Flutter + 0x00516c04)
+0x00000001f6849ca4	(libsystem_pthread.dylib + 0x00001ca4)

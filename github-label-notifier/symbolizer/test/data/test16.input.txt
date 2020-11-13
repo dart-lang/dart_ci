@@ -1,0 +1,19 @@
+```bash
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: Build fingerprint: '...:8.1.0/.../...:...'
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: Revision: '0'
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: pid: 11111, tid: 22222, name: DartWorker  >>> com.example.app <<<
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: signal 6 (SIGABRT), code -6 (SI_TKILL), fault addr --------
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r0 00000000  r1 00000000  r2 00000000  r3 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r4 00000000  r5 00000000  r6 00000000  r7 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     r8 00000000  r9 00000000  sl 00000000  fp 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     ip 00000000  sp 00000000  lr 00000000  pc 00000000  cpsr 00000000
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG: backtrace:
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     #00 pc 0001a43c  /system/lib/libc.so (abort+63)
+0000-00-00 00:00:00.000 33333-33333/? A/DEBUG:     #01 pc 002bce85  /data/app/com.example.app/lib/arm/libflutter.so (offset 0x1002000)
+```
+
+```bash
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 1.22.1, on xxxx, locale xxxx)
+```

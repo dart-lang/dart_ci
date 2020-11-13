@@ -1,0 +1,16 @@
+crash from null symbolized using symbols for `499a70f5e21b2d2ee2fd360f2f58579fc29e0c55` `android-arm64-profile`
+```
+#00 0000000000b92598 <...>/lib/arm64/libflutter.so (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)
+                                                   OUTLINED_FUNCTION_7710
+                                                   ??:0:0
+#01 00000000006e083c <...>/lib/arm64/libflutter.so (BuildId: 212dfb5693ad13476239acde23c8ce47d1d91a3a)
+                                                   flutter::SurfacePool::GetLayer(GrDirectContext*, std::__1::shared_ptr<flutter::AndroidContext>, std::__1::shared_ptr<flutter::PlatformViewAndroidJNI>, std::__1::shared_ptr<flutter::AndroidSurfaceFactory>)
+                                                   flutter/shell/platform/android/external_view_embedder/surface_pool.cc:0:7
+                                                   flutter::AndroidExternalViewEmbedder::CreateSurfaceIfNeeded(GrDirectContext*, long, sk_sp<SkPicture>, SkRect const&)
+                                                   flutter/shell/platform/android/external_view_embedder/external_view_embedder.cc:192:56
+                                                   flutter::AndroidExternalViewEmbedder::SubmitFrame(GrDirectContext*, std::__1::unique_ptr<flutter::SurfaceFrame, std::__1::default_delete<flutter::SurfaceFrame> >)
+                                                   flutter/shell/platform/android/external_view_embedder/external_view_embedder.cc:174:11
+
+```
+
+<!-- {"symbolized":[1042]} -->

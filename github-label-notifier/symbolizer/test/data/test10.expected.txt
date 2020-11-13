@@ -1,0 +1,498 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      },
+      "frames": [
+        {
+          "no": "0",
+          "binary": "CoreFoundation",
+          "pc": 6711403968,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 1185216,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "1",
+          "binary": "libobjc.A.dylib",
+          "pc": 7047922732,
+          "symbol": "objc_exception_throw",
+          "offset": 60,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "2",
+          "binary": "CoreFoundation",
+          "pc": 6710340252,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 121500,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "3",
+          "binary": "XX",
+          "pc": 4332819720,
+          "symbol": "XX",
+          "offset": 1742088,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "4",
+          "binary": "libsystem_platform.dylib",
+          "pc": 7918228092,
+          "symbol": "79AAC6D7-C39F-3B6B-882F-AA494B891C56",
+          "offset": 21116,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "5",
+          "binary": "Flutter",
+          "pc": 4338419904,
+          "symbol": "Flutter",
+          "offset": 952512,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "6",
+          "binary": "Flutter",
+          "pc": 4338419904,
+          "symbol": "Flutter",
+          "offset": 952512,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "7",
+          "binary": "Flutter",
+          "pc": 4338419784,
+          "symbol": "Flutter",
+          "offset": 952392,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "8",
+          "binary": "Flutter",
+          "pc": 4338748264,
+          "symbol": "Flutter",
+          "offset": 1280872,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "9",
+          "binary": "Flutter",
+          "pc": 4338043456,
+          "symbol": "Flutter",
+          "offset": 576064,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "10",
+          "binary": "Flutter",
+          "pc": 4337710156,
+          "symbol": "Flutter",
+          "offset": 242764,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "11",
+          "binary": "Flutter",
+          "pc": 4337718208,
+          "symbol": "Flutter",
+          "offset": 250816,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "12",
+          "binary": "CoreFoundation",
+          "pc": 6710870096,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 651344,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "13",
+          "binary": "CoreFoundation",
+          "pc": 6710869072,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 650320,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "14",
+          "binary": "CoreFoundation",
+          "pc": 6710866116,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 647364,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "15",
+          "binary": "CoreFoundation",
+          "pc": 6710841720,
+          "symbol": "52963DBA-FA89-36C2-8262-28B9776F8C12",
+          "offset": 622968,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "16",
+          "binary": "CoreFoundation",
+          "pc": 6710838460,
+          "symbol": "CFRunLoopRunSpecific",
+          "offset": 600,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "17",
+          "binary": "Flutter",
+          "pc": 4337717916,
+          "symbol": "Flutter",
+          "offset": 250524,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "18",
+          "binary": "Flutter",
+          "pc": 4337716260,
+          "symbol": "Flutter",
+          "offset": 248868,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "19",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 7918247080,
+          "symbol": "_pthread_start",
+          "offset": 320,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "20",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 7918282632,
+          "symbol": "thread_start",
+          "offset": 8,
+          "location": "",
+          "runtimeType": "ios"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": null
+    },
+    "engineBuild": {
+      "engineHash": "b8752bbfff0419c8bf616b602bc59fd28f6a3d1b",
+      "variant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      }
+    },
+    "symbolized": "#00 000000019007e5c0 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 1185216\n#01 00000001a416c42c libobjc.A.dylib objc_exception_throw + 60\n#02 000000018ff7aa9c CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 121500\n#03 0000000102419508 XX XX + 1742088\n#04 00000001d7f6927c libsystem_platform.dylib 79AAC6D7-C39F-3B6B-882F-AA494B891C56 + 21116\n#05 00000001029708c0 Flutter Flutter + 952512\n                             SkArenaAlloc::RunDtorsOnBlock(char*)\n                             third_party/skia/src/core/SkArenaAlloc.cpp:61:21\n                             SkArenaAlloc::~SkArenaAlloc()\n                             third_party/skia/src/core/SkArenaAlloc.cpp:36:0\n                             SkArenaAlloc::~SkArenaAlloc()\n                             third_party/skia/src/core/SkArenaAlloc.cpp:35:0\n                             SkRecord::~SkRecord()\n                             third_party/skia/src/core/SkRecord.cpp:17:0\n#06 00000001029708c0 Flutter Flutter + 952512\n                             SkArenaAlloc::RunDtorsOnBlock(char*)\n                             third_party/skia/src/core/SkArenaAlloc.cpp:61:21\n                             SkArenaAlloc::~SkArenaAlloc()\n                             third_party/skia/src/core/SkArenaAlloc.cpp:36:0\n                             SkArenaAlloc::~SkArenaAlloc()\n                             third_party/skia/src/core/SkArenaAlloc.cpp:35:0\n                             SkRecord::~SkRecord()\n                             third_party/skia/src/core/SkRecord.cpp:17:0\n#07 0000000102970848 Flutter Flutter + 952392\n                             SkRecord::~SkRecord()\n                             third_party/skia/src/core/SkRecord.cpp:12:23\n                             SkRecord::~SkRecord()\n                             third_party/skia/src/core/SkRecord.cpp:12:0\n#08 00000001029c0b68 Flutter Flutter + 1280872\n                             SkRefCntBase::unref() const\n                             third_party/skia/include/core/SkRefCnt.h:77:19\n                             void SkSafeUnref<SkRecord const>(SkRecord const*)\n                             third_party/skia/include/core/SkRefCnt.h:150:0\n                             sk_sp<SkRecord const>::~sk_sp()\n                             third_party/skia/include/core/SkRefCnt.h:251:0\n                             sk_sp<SkRecord const>::~sk_sp()\n                             third_party/skia/include/core/SkRefCnt.h:250:0\n                             SkBigPicture::~SkBigPicture()\n                             third_party/skia/src/core/SkBigPicture.h:22:0\n                             SkBigPicture::~SkBigPicture()\n                             third_party/skia/src/core/SkBigPicture.h:22:0\n                             SkBigPicture::~SkBigPicture()\n                             third_party/skia/src/core/SkBigPicture.h:22:0\n#09 0000000102914a40 Flutter Flutter + 576064\n                             SkRefCntBase::unref() const\n                             third_party/skia/include/core/SkRefCnt.h:77:19\n                             flutter::SkiaUnrefQueue::Drain()\n                             flutter/flow/skia_gpu_object.cc:44:0\n#10 00000001028c344c Flutter Flutter + 242764\n                             std::__1::__function::__value_func<void ()>::operator()() const\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16\n                             std::__1::function<void ()>::operator()() const\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0\n                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)\n                             flutter/fml/message_loop_impl.cc:130:0\n#11 00000001028c53c0 Flutter Flutter + 250816\n                             fml::MessageLoopImpl::RunExpiredTasksNow()\n                             flutter/fml/message_loop_impl.cc:143:3\n                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0\n#12 000000018fffc050 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 651344\n#13 000000018fffbc50 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 650320\n#14 000000018fffb0c4 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 647364\n#15 000000018fff5178 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 622968\n#16 000000018fff44bc CoreFoundation CFRunLoopRunSpecific + 600\n#17 00000001028c529c Flutter Flutter + 250524\n                             fml::MessageLoopDarwin::Run()\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20\n#18 00000001028c4c24 Flutter Flutter + 248868\n                             fml::MessageLoopImpl::DoRun()\n                             flutter/fml/message_loop_impl.cc:96:3\n                             fml::MessageLoop::Run()\n                             flutter/fml/message_loop.cc:49:0\n                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const\n                             flutter/fml/thread.cc:36:0\n                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0\n                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:342:0\n                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:352:0\n#19 00000001d7f6dca8 libsystem_pthread.dylib _pthread_start + 320\n#20 00000001d7f76788 libsystem_pthread.dylib thread_start + 8\n",
+    "notes": []
+  },
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      },
+      "frames": [
+        {
+          "no": "0",
+          "binary": "CoreFoundation",
+          "pc": 6756509120,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 1185216,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "1",
+          "binary": "libobjc.A.dylib",
+          "pc": 7092552748,
+          "symbol": "objc_exception_throw",
+          "offset": 60,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "2",
+          "binary": "CoreFoundation",
+          "pc": 6755445404,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 121500,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "3",
+          "binary": "XX",
+          "pc": 4367242504,
+          "symbol": "XX",
+          "offset": 1742088,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "4",
+          "binary": "libsystem_platform.dylib",
+          "pc": 7953277564,
+          "symbol": "DAE36DD6-F44A-39F4-9924-261898BD82CC",
+          "offset": 21116,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "5",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 7953300596,
+          "symbol": "pthread_kill",
+          "offset": 272,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "6",
+          "binary": "libsystem_c.dylib",
+          "pc": 6908562356,
+          "symbol": "abort",
+          "offset": 104,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "7",
+          "binary": "libsystem_malloc.dylib",
+          "pc": 7008494812,
+          "symbol": "C39547F4-E0DF-3637-85A6-FD564AAB9C45",
+          "offset": 124124,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "8",
+          "binary": "libsystem_malloc.dylib",
+          "pc": 7008495464,
+          "symbol": "C39547F4-E0DF-3637-85A6-FD564AAB9C45",
+          "offset": 124776,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "9",
+          "binary": "libsystem_malloc.dylib",
+          "pc": 7008411268,
+          "symbol": "C39547F4-E0DF-3637-85A6-FD564AAB9C45",
+          "offset": 40580,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "10",
+          "binary": "libsystem_malloc.dylib",
+          "pc": 7008399032,
+          "symbol": "C39547F4-E0DF-3637-85A6-FD564AAB9C45",
+          "offset": 28344,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "11",
+          "binary": "libsystem_malloc.dylib",
+          "pc": 7008403248,
+          "symbol": "C39547F4-E0DF-3637-85A6-FD564AAB9C45",
+          "offset": 32560,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "12",
+          "binary": "Flutter",
+          "pc": 4376066000,
+          "symbol": "Flutter",
+          "offset": 5634000,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "13",
+          "binary": "Flutter",
+          "pc": 4376069532,
+          "symbol": "Flutter",
+          "offset": 5637532,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "14",
+          "binary": "Flutter",
+          "pc": 4376022372,
+          "symbol": "Flutter",
+          "offset": 5590372,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "15",
+          "binary": "Flutter",
+          "pc": 4376027776,
+          "symbol": "Flutter",
+          "offset": 5595776,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "16",
+          "binary": "Flutter",
+          "pc": 4375058028,
+          "symbol": "Flutter",
+          "offset": 4626028,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "17",
+          "binary": "Flutter",
+          "pc": 4373568412,
+          "symbol": "Flutter",
+          "offset": 3136412,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "18",
+          "binary": "Flutter",
+          "pc": 4370674764,
+          "symbol": "Flutter",
+          "offset": 242764,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "19",
+          "binary": "Flutter",
+          "pc": 4370682816,
+          "symbol": "Flutter",
+          "offset": 250816,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "20",
+          "binary": "CoreFoundation",
+          "pc": 6755975248,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 651344,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "21",
+          "binary": "CoreFoundation",
+          "pc": 6755974224,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 650320,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "22",
+          "binary": "CoreFoundation",
+          "pc": 6755971268,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 647364,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "23",
+          "binary": "CoreFoundation",
+          "pc": 6755946872,
+          "symbol": "472C9193-115D-34CD-AD1D-0E7E091C9432",
+          "offset": 622968,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "24",
+          "binary": "CoreFoundation",
+          "pc": 6755943612,
+          "symbol": "CFRunLoopRunSpecific",
+          "offset": 600,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "25",
+          "binary": "Flutter",
+          "pc": 4370682524,
+          "symbol": "Flutter",
+          "offset": 250524,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "26",
+          "binary": "Flutter",
+          "pc": 4370680868,
+          "symbol": "Flutter",
+          "offset": 248868,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "27",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 7953296552,
+          "symbol": "_pthread_start",
+          "offset": 320,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "28",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 7953332104,
+          "symbol": "thread_start",
+          "offset": 8,
+          "location": "",
+          "runtimeType": "ios"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": null
+    },
+    "engineBuild": {
+      "engineHash": "b8752bbfff0419c8bf616b602bc59fd28f6a3d1b",
+      "variant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      }
+    },
+    "symbolized": "#00 0000000192b825c0 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 1185216\n#01 00000001a6bfc42c libobjc.A.dylib objc_exception_throw + 60\n#02 0000000192a7ea9c CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 121500\n#03 00000001044ed508 XX XX + 1742088\n#04 00000001da0d627c libsystem_platform.dylib DAE36DD6-F44A-39F4-9924-261898BD82CC + 21116\n#05 00000001da0dbc74 libsystem_pthread.dylib pthread_kill + 272\n#06 000000019bc84bb4 libsystem_c.dylib abort + 104\n#07 00000001a1bd24dc libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124124\n#08 00000001a1bd2768 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 124776\n#09 00000001a1bbde84 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 40580\n#10 00000001a1bbaeb8 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 28344\n#11 00000001a1bbbf30 libsystem_malloc.dylib C39547F4-E0DF-3637-85A6-FD564AAB9C45 + 32560\n#12 0000000104d577d0 Flutter Flutter + 5634000\n                             dart::FinalizablePersistentHandle::Finalize(dart::IsolateGroup*, dart::FinalizablePersistentHandle*)\n                             third_party/dart/runtime/vm/dart_api_impl.cc:729:5\n                             dart::FinalizablePersistentHandle::UpdateUnreachable(dart::IsolateGroup*)\n                             third_party/dart/runtime/vm/dart_api_state.h:273:0\n                             dart::ScavengerWeakVisitor::VisitHandle(unsigned long)\n                             third_party/dart/runtime/vm/heap/scavenger.cc:454:0\n#13 0000000104d5859c Flutter Flutter + 5637532\n                             dart::Handles<5, 64, 0>::HandlesBlock::Visit(dart::HandleVisitor*)\n                             third_party/dart/runtime/vm/handles_impl.h:302:14\n                             dart::Handles<5, 64, 0>::Visit(dart::HandleVisitor*)\n                             third_party/dart/runtime/vm/handles_impl.h:55:0\n                             dart::FinalizablePersistentHandles::VisitHandles(dart::HandleVisitor*)\n                             third_party/dart/runtime/vm/dart_api_state.h:581:0\n                             dart::ApiState::VisitWeakHandlesUnlocked(dart::HandleVisitor*)\n                             third_party/dart/runtime/vm/dart_api_state.h:792:0\n                             dart::IsolateGroup::VisitWeakPersistentHandles(dart::HandleVisitor*)\n                             third_party/dart/runtime/vm/isolate.cc:2952:0\n                             dart::Scavenger::MournWeakHandles()\n                             third_party/dart/runtime/vm/heap/scavenger.cc:1131:0\n                             dart::Scavenger::Scavenge()\n                             third_party/dart/runtime/vm/heap/scavenger.cc:1516:0\n#14 0000000104d4cd64 Flutter Flutter + 5590372\n                             dart::Heap::CollectNewSpaceGarbage(dart::Thread*, dart::Heap::GCReason)\n                             third_party/dart/runtime/vm/heap/heap.cc:467:18\n#15 0000000104d4e280 Flutter Flutter + 5595776\n                             dart::Heap::NotifyIdle(long long)\n                             third_party/dart/runtime/vm/heap/heap.cc:378:5\n#16 0000000104c6166c Flutter Flutter + 4626028\n                             dart::IdleTimeHandler::NotifyIdle(long long)\n                             third_party/dart/runtime/vm/isolate.cc:249:12\n                             Dart_NotifyIdle\n                             third_party/dart/runtime/vm/dart_api_impl.cc:1910:0\n                             flutter::RuntimeController::NotifyIdle(long long, unsigned long)\n                             flutter/runtime/runtime_controller.cc:251:0\n#17 0000000104af5b9c Flutter Flutter + 3136412\n                             flutter::Engine::NotifyIdle(long long)\n                             flutter/shell/common/engine.cc:260:24\n#18 000000010483344c Flutter Flutter + 242764\n                             std::__1::__function::__value_func<void ()>::operator()() const\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16\n                             std::__1::function<void ()>::operator()() const\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0\n                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)\n                             flutter/fml/message_loop_impl.cc:130:0\n#19 00000001048353c0 Flutter Flutter + 250816\n                             fml::MessageLoopImpl::RunExpiredTasksNow()\n                             flutter/fml/message_loop_impl.cc:143:3\n                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0\n#20 0000000192b00050 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 651344\n#21 0000000192affc50 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 650320\n#22 0000000192aff0c4 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 647364\n#23 0000000192af9178 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 622968\n#24 0000000192af84bc CoreFoundation CFRunLoopRunSpecific + 600\n#25 000000010483529c Flutter Flutter + 250524\n                             fml::MessageLoopDarwin::Run()\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20\n#26 0000000104834c24 Flutter Flutter + 248868\n                             fml::MessageLoopImpl::DoRun()\n                             flutter/fml/message_loop_impl.cc:96:3\n                             fml::MessageLoop::Run()\n                             flutter/fml/message_loop.cc:49:0\n                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const\n                             flutter/fml/thread.cc:36:0\n                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0\n                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:342:0\n                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:352:0\n#27 00000001da0daca8 libsystem_pthread.dylib _pthread_start + 320\n#28 00000001da0e3788 libsystem_pthread.dylib thread_start + 8\n",
+    "notes": []
+  }
+]

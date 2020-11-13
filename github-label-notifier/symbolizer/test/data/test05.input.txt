@@ -1,0 +1,22 @@
+@flutter-symbolizer-bot debug
+
+```
+F/libc    (18690): Fatal signal 11 (SIGSEGV), code 1, fault addr 0x36013f in tid 22036 (2.ui)
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+Revision: '0'
+ABI: 'arm64'
+pid: 18690, tid: 22036, name: 2.ui  >>> com.example.app <<<
+backtrace:
+    #00 pc 0000000000633dbc  /data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so (offset 0x1240000)
+    #01 pc 000000000051cca0  /data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so (offset 0x1240000)
+```
+
+```
+Flutter 1.20.4 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision fba99f6cf9 (5 days ago) • 2020-09-14 15:32:52 -0700
+Engine • revision d1bc06f032
+Tools • Dart 2.9.2
+```
+
+
+

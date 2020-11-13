@@ -1,0 +1,76 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": "debug"
+      },
+      "frames": [
+        {
+          "pc": 2527614025,
+          "binary": "/data/app/com.example.app/lib/arm/libflutter.so",
+          "offset": 20464713,
+          "runtimeType": "dartvm"
+        },
+        {
+          "pc": 2526809729,
+          "binary": "/data/app/com.example.app/lib/arm/libflutter.so",
+          "offset": 19660417,
+          "runtimeType": "dartvm"
+        }
+      ],
+      "format": "dartvm",
+      "androidMajorVersion": null
+    },
+    "engineBuild": {
+      "engineHash": "75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d",
+      "variant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": "debug"
+      }
+    },
+    "symbolized": "#00 96a85449 <...>/lib/arm/libflutter.so+0x1384449\n                                         dart::Profiler::DumpStackTrace(bool)\n                                         third_party/dart/runtime/vm/profiler.cc:1110:18\n                                         dart::Profiler::DumpStackTrace(void*)\n                                         third_party/dart/runtime/vm/profiler.cc:1077:5\n#01 969c0e81 <...>/lib/arm/libflutter.so+0x12bfe81\n                                         dart::Assert::Fail(char const*, ...)\n                                         third_party/dart/runtime/platform/assert.cc:43:3\n",
+    "notes": []
+  },
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": "debug"
+      },
+      "frames": [
+        {
+          "no": "00",
+          "pc": 107580,
+          "binary": "/system/lib/libc.so",
+          "rest": " (abort+63)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "01",
+          "pc": 2870917,
+          "binary": "/data/app/com.example.app/lib/arm/libflutter.so",
+          "rest": " (offset 0x1002000)",
+          "buildId": null,
+          "runtimeType": "android"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": 8
+    },
+    "engineBuild": {
+      "engineHash": "75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d",
+      "variant": {
+        "os": "android",
+        "arch": "arm",
+        "mode": "debug"
+      }
+    },
+    "symbolized": "#00 0001a43c /system/lib/libc.so (abort+63)\n#01 002bce85 <...>/lib/arm/libflutter.so (offset 0x1002000)\n                                         dart::Assert::Fail(char const*, ...)\n                                         third_party/dart/runtime/platform/assert.cc:44:3\n",
+    "notes": []
+  }
+]

@@ -1,0 +1,36 @@
+@flutter-symbolizer-bot flutter#bbc0161 profile
+
+tdout:            11-09 15:27:57.618 D/ActivityManager( 1462): cleanUpApplicationRecord -- 14311
+2020-11-09T15:32:20.230036: stdout: [  +19 ms] executing: /home/flutter/.cocoon/flutter/bin/cache/dart-sdk/bin/dart pub run test test_driver/multi_widget_construction_perf_test.dart -rexpanded
+2020-11-09T15:32:33.378428: stdout: [+13148 ms] 00:00 �[32m+0�[0m: multi_widget_construction_perf�[0m
+2020-11-09T15:32:33.409464: stderr: [  +31 ms] VMServiceFlutterDriver: Connecting to Flutter application at http://127.0.0.1:35015/D39pZt4yXxM=/
+2020-11-09T15:32:33.554340: stderr: [ +144 ms] VMServiceFlutterDriver: Isolate found with number: 3413807003351991
+2020-11-09T15:32:33.662966: stderr: [ +108 ms] VMServiceFlutterDriver: Isolate is paused at start.
+2020-11-09T15:32:33.663920: stderr: [   +1 ms] VMServiceFlutterDriver: Attempting to resume isolate
+2020-11-09T15:32:35.900610: stderr: [+2236 ms] VMServiceFlutterDriver: Connected to Flutter application.
+2020-11-09T15:32:41.572089: stdout: [+5672 ms] F/libc    (14836): Fatal signal 11 (SIGSEGV), code 1, fault addr 0xfffffffc in tid 14854 (1.raster)
+2020-11-09T15:32:41.678820: stdout: [ +106 ms] *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+2020-11-09T15:32:41.679115: stdout: [        ] Build fingerprint: 'motorola/athene/athene:7.0/NPJS25.93-14.7-8/6:user/release-keys'
+2020-11-09T15:32:41.679498: stdout: [        ] Revision: 'p2a0'
+2020-11-09T15:32:41.680057: stdout: [        ] ABI: 'arm'
+2020-11-09T15:32:41.680357: stdout: [        ] pid: 14836, tid: 14854, name: 1.raster  >>> com.example.macrobenchmarks <<<
+2020-11-09T15:32:41.680724: stdout: [        ] signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xfffffffc
+2020-11-09T15:32:41.681146: stdout: [        ]     r0 ffffffff  r1 00000000  r2 00000000  r3 00000000
+2020-11-09T15:32:41.681682: stdout: [        ]     r4 a2056000  r5 8dc3d8f1  r6 a20574d0  r7 000000dc
+2020-11-09T15:32:41.682121: stdout: [        ]     r8 a54af288  r9 00000000  sl 8dba2048  fp 8dc3d8f1
+2020-11-09T15:32:41.682474: stdout: [        ]     ip aef56628  sp 94bf5fd8  lr aef3d309  pc aef35638  cpsr 80070030
+2020-11-09T15:32:41.685668: stdout: [   +2 ms] backtrace:
+2020-11-09T15:32:41.686361: stdout: [        ]     #00 pc 00066638  /system/lib/libc.so (ifree+219)
+2020-11-09T15:32:41.687106: stdout: [        ]     #01 pc 000669e7  /system/lib/libc.so (je_free+74)
+stdout: [        ]     #02 pc 0039fc47  /data/app/com.example.macrobenchmarks-1/lib/arm/libflutter.so (offset 0x508000)
+2020-11-09T15:32:43.070687: stdout: [+1383 ms] 00:09 �[32m+0�[0m�[31m -1�[0m: multi_widget_construction_perf �[1m�[31m[E]�[0m�[0m
+2020-11-09T15:32:43.076963: stdout: [   +6 ms]   DriverError: Failed to start tracing due to remote error
+2020-11-09T15:32:43.077338: stdout: [        ]   Original error: setVMTimelineFlags: (-32000) Bad state: The client closed with pending request "setVMTimelineFlags".
+2020-11-09T15:32:43.077641: stdout: [        ]   Original stack trace:
+stdout: [        ]   dart:async/future_impl.dart 23:44                               _Completer.completeError
+2020-11-09T15:32:43.077890: stdout: [        ]   package:vm_service/src/vm_service.dart 2050:17                  VmService._processResponse
+stdout: [        ]   package:vm_service/src/vm_service.dart 2037:7                   VmService._processMessageStr
+2020-11-09T15:32:43.078081: stdout: [        ]   package:vm_service/src/vm_service.dart 1988:7                   VmService._processMessage
+2020-11-09T15:32:43.078296: stdout: [        ]   package:stack_trace/src/stack_zone_specification.dart 126:26    StackZoneSpecification._registerUnaryCallback.<fn>.<fn>
+stdout: [        ]   package:stack_trace/src/stack_zone_specification.dart 208:15    StackZoneSpecification._run
+2020-11-09T15:32:43.078472: stdout: [        ]   package:stack_trace/src/stack_zone_specification.dart 126:14

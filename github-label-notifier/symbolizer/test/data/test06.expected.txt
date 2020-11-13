@@ -1,0 +1,502 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "android",
+        "arch": "arm64",
+        "mode": "profile"
+      },
+      "frames": [
+        {
+          "no": "00",
+          "pc": 19784940,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "01",
+          "pc": 19778484,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "02",
+          "pc": 19778160,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "03",
+          "pc": 19722452,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "04",
+          "pc": 19724716,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "05",
+          "pc": 19727164,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "06",
+          "pc": 19723280,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "07",
+          "pc": 19722724,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "08",
+          "pc": 19727768,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "09",
+          "pc": 19500660,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "10",
+          "pc": 19521332,
+          "binary": "/data/app/~~26h8wU6-ipZ3oX50ip-uBA==/io.flutter.integration.platformviews-SzfN5V-3ue43jUkolPPxKw==/lib/arm64/libflutter.so",
+          "rest": " (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)",
+          "buildId": "bad8640c836d37c147451a3a6ff5fbc721467212",
+          "runtimeType": "android"
+        },
+        {
+          "no": "11",
+          "pc": 105868,
+          "binary": "/system/lib64/libutils.so",
+          "rest": " (android::Looper::pollInner(int)+916) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)",
+          "buildId": "dfbf9171cc06645d34e6cd7beb8516d6",
+          "runtimeType": "android"
+        },
+        {
+          "no": "12",
+          "pc": 104848,
+          "binary": "/system/lib64/libutils.so",
+          "rest": " (android::Looper::pollOnce(int, int*, int*, void**)+112) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)",
+          "buildId": "dfbf9171cc06645d34e6cd7beb8516d6",
+          "runtimeType": "android"
+        },
+        {
+          "no": "13",
+          "pc": 1118068,
+          "binary": "/system/lib64/libandroid_runtime.so",
+          "rest": " (android::android_os_MessageQueue_nativePollOnce(_JNIEnv*, _jobject*, long, int)+44) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)",
+          "buildId": "d3ad3cbe4c6876e3de4e909ccf51f0b6",
+          "runtimeType": "android"
+        },
+        {
+          "no": "14",
+          "pc": 2161372,
+          "binary": "/system/framework/arm64/boot-framework.oat",
+          "rest": " (art_jni_trampoline+140) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)",
+          "buildId": "c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3",
+          "runtimeType": "android"
+        },
+        {
+          "no": "15",
+          "pc": 1258852,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "16",
+          "pc": 1739384,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "17",
+          "pc": 3244812,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "18",
+          "pc": 3204664,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "19",
+          "pc": 6805396,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (MterpInvokeDirect+576) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "20",
+          "pc": 1235220,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (mterp_op_invoke_direct+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "21",
+          "pc": 3765678,
+          "binary": "/system/framework/framework.jar",
+          "rest": " (offset 0x92b000) (android.os.MessageQueue.next+34)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "22",
+          "pc": 6796216,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (MterpInvokeVirtual+1520) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "23",
+          "pc": 1234964,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "24",
+          "pc": 3762532,
+          "binary": "/system/framework/framework.jar",
+          "rest": " (offset 0x92b000) (android.os.Looper.loop+156)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "25",
+          "pc": 3169332,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "26",
+          "pc": 3202084,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "27",
+          "pc": 3207180,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (bool art::interpreter::DoCall<false, true>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+1772) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "28",
+          "pc": 1539904,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (void art::interpreter::ExecuteSwitchImplCpp<true, false>(art::interpreter::SwitchImplContext*)+57848) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "29",
+          "pc": 1308632,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (ExecuteSwitchImplAsm+8) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "30",
+          "pc": 1709720,
+          "binary": "/system/framework/framework.jar",
+          "rest": " (android.app.ActivityThread.main)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "31",
+          "pc": 3169596,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+532) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "32",
+          "pc": 6725152,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "33",
+          "pc": 1298424,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "34",
+          "pc": 1259496,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "35",
+          "pc": 1739412,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "36",
+          "pc": 5587740,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::InvokeMethod(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+1364) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "37",
+          "pc": 5061416,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*)+52) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "38",
+          "pc": 562932,
+          "binary": "/apex/com.android.art/javalib/arm64/boot.oat",
+          "rest": " (art_jni_trampoline+180) (BuildId: 13577ce71153c228ecf0eb73fc39f45010d487f8)",
+          "buildId": "13577ce71153c228ecf0eb73fc39f45010d487f8",
+          "runtimeType": "android"
+        },
+        {
+          "no": "39",
+          "pc": 1258852,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "40",
+          "pc": 1739384,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "41",
+          "pc": 3244812,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "42",
+          "pc": 3204664,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "43",
+          "pc": 6795544,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (MterpInvokeVirtual+848) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "44",
+          "pc": 1234964,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "45",
+          "pc": 4494014,
+          "binary": "/system/framework/framework.jar",
+          "rest": " (offset 0x125d000) (com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run+22)",
+          "buildId": null,
+          "runtimeType": "android"
+        },
+        {
+          "no": "46",
+          "pc": 3169332,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "47",
+          "pc": 6725152,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "48",
+          "pc": 1298424,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "49",
+          "pc": 9008744,
+          "binary": "/system/framework/arm64/boot-framework.oat",
+          "rest": " (com.android.internal.os.ZygoteInit.main+2280) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)",
+          "buildId": "c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3",
+          "runtimeType": "android"
+        },
+        {
+          "no": "50",
+          "pc": 1259496,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "51",
+          "pc": 1739412,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "52",
+          "pc": 5582168,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::JValue art::InvokeWithVarArgs<art::ArtMethod*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, art::ArtMethod*, std::__va_list)+448) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "53",
+          "pc": 5583372,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::JValue art::InvokeWithVarArgs<_jmethodID*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+92) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "54",
+          "pc": 4423964,
+          "binary": "/apex/com.android.art/lib64/libart.so",
+          "rest": " (art::JNI<true>::CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+656) (BuildId: 0252adff22f4c0297f97cb35735c7649)",
+          "buildId": "0252adff22f4c0297f97cb35735c7649",
+          "runtimeType": "android"
+        },
+        {
+          "no": "55",
+          "pc": 627748,
+          "binary": "/system/lib64/libandroid_runtime.so",
+          "rest": " (_JNIEnv::CallStaticVoidMethod(_jclass*, _jmethodID*, ...)+124) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)",
+          "buildId": "d3ad3cbe4c6876e3de4e909ccf51f0b6",
+          "runtimeType": "android"
+        },
+        {
+          "no": "56",
+          "pc": 657584,
+          "binary": "/system/lib64/libandroid_runtime.so",
+          "rest": " (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+836) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)",
+          "buildId": "d3ad3cbe4c6876e3de4e909ccf51f0b6",
+          "runtimeType": "android"
+        },
+        {
+          "no": "57",
+          "pc": 13696,
+          "binary": "/system/bin/app_process64",
+          "rest": " (main+1336) (BuildId: 3254c0fd94c1b04edc39169c6c635aac)",
+          "buildId": "3254c0fd94c1b04edc39169c6c635aac",
+          "runtimeType": "android"
+        },
+        {
+          "no": "58",
+          "pc": 300056,
+          "binary": "/apex/com.android.runtime/lib64/bionic/libc.so",
+          "rest": " (__libc_init+108) (BuildId: 03452a4a418e14ff93948f26561eace6)",
+          "buildId": "03452a4a418e14ff93948f26561eace6",
+          "runtimeType": "android"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": 11
+    },
+    "engineBuild": {
+      "engineHash": "499a70f5e21b2d2ee2fd360f2f58579fc29e0c55",
+      "variant": {
+        "os": "android",
+        "arch": "arm64",
+        "mode": "profile"
+      }
+    },
+    "symbolized": "#00 00000000012de4ec <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#01 00000000012dcbb4 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#02 00000000012dca70 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#03 00000000012cf0d4 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#04 00000000012cf9ac <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#05 00000000012d033c <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#06 00000000012cf410 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#07 00000000012cf1e4 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#08 00000000012d0598 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#09 0000000001298e74 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#10 000000000129df34 <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)\n                                                   ??\n                                                   ??:0:0\n#11 0000000000019d8c /system/lib64/libutils.so (android::Looper::pollInner(int)+916) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)\n#12 0000000000019990 /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+112) (BuildId: dfbf9171cc06645d34e6cd7beb8516d6)\n#13 0000000000110f74 /system/lib64/libandroid_runtime.so (android::android_os_MessageQueue_nativePollOnce(_JNIEnv*, _jobject*, long, int)+44) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)\n#14 000000000020fadc /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)\n#15 0000000000133564 /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#16 00000000001a8a78 /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#17 000000000031830c /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#18 000000000030e638 /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#19 000000000067d794 /apex/com.android.art/lib64/libart.so (MterpInvokeDirect+576) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#20 000000000012d914 /apex/com.android.art/lib64/libart.so (mterp_op_invoke_direct+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#21 00000000003975ae /system/framework/framework.jar (offset 0x92b000) (android.os.MessageQueue.next+34)\n#22 000000000067b3b8 /apex/com.android.art/lib64/libart.so (MterpInvokeVirtual+1520) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#23 000000000012d814 /apex/com.android.art/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#24 0000000000396964 /system/framework/framework.jar (offset 0x92b000) (android.os.Looper.loop+156)\n#25 0000000000305c34 /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#26 000000000030dc24 /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#27 000000000030f00c /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, true>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+1772) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#28 0000000000177f40 /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<true, false>(art::interpreter::SwitchImplContext*)+57848) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#29 000000000013f7d8 /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#30 00000000001a1698 /system/framework/framework.jar (android.app.ActivityThread.main)\n#31 0000000000305d3c /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+532) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#32 0000000000669e20 /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#33 000000000013cff8 /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#34 00000000001337e8 /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#35 00000000001a8a94 /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#36 000000000055431c /apex/com.android.art/lib64/libart.so (art::InvokeMethod(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+1364) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#37 00000000004d3b28 /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*)+52) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#38 00000000000896f4 /apex/com.android.art/javalib/arm64/boot.oat (art_jni_trampoline+180) (BuildId: 13577ce71153c228ecf0eb73fc39f45010d487f8)\n#39 0000000000133564 /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+548) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#40 00000000001a8a78 /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+200) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#41 000000000031830c /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToCompiledCodeBridge(art::Thread*, art::ArtMethod*, art::ShadowFrame*, unsigned short, art::JValue*)+376) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#42 000000000030e638 /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+996) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#43 000000000067b118 /apex/com.android.art/lib64/libart.so (MterpInvokeVirtual+848) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#44 000000000012d814 /apex/com.android.art/lib64/libart.so (mterp_op_invoke_virtual+20) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#45 00000000004492be /system/framework/framework.jar (offset 0x125d000) (com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run+22)\n#46 0000000000305c34 /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.llvm.16249794272548105830)+268) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#47 0000000000669e20 /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+780) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#48 000000000013cff8 /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#49 0000000000897668 /system/framework/arm64/boot-framework.oat (com.android.internal.os.ZygoteInit.main+2280) (BuildId: c0c6ddca30ccdc4ccaf4b39f4e24792c1ce6f6d3)\n#50 00000000001337e8 /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+568) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#51 00000000001a8a94 /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+228) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#52 0000000000552d58 /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeWithVarArgs<art::ArtMethod*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, art::ArtMethod*, std::__va_list)+448) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#53 000000000055320c /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeWithVarArgs<_jmethodID*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+92) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#54 000000000043811c /apex/com.android.art/lib64/libart.so (art::JNI<true>::CallStaticVoidMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+656) (BuildId: 0252adff22f4c0297f97cb35735c7649)\n#55 0000000000099424 /system/lib64/libandroid_runtime.so (_JNIEnv::CallStaticVoidMethod(_jclass*, _jmethodID*, ...)+124) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)\n#56 00000000000a08b0 /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+836) (BuildId: d3ad3cbe4c6876e3de4e909ccf51f0b6)\n#57 0000000000003580 /system/bin/app_process64 (main+1336) (BuildId: 3254c0fd94c1b04edc39169c6c635aac)\n#58 0000000000049418 /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+108) (BuildId: 03452a4a418e14ff93948f26561eace6)\n",
+    "notes": [
+      {
+        "kind": "buildIdMismatch",
+        "message": "Backtrace refers to bad8640c836d37c147451a3a6ff5fbc721467212 but we used engine with 212dfb5693ad13476239acde23c8ce47d1d91a3a"
+      }
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+crash from null symbolized using symbols for `07e2520d5d8f837da439317adab4ecd7bff2f72d` `android-arm64-debug`
+```
+#00 00000000013461f4 <...>/lib/arm64/libflutter.so (BuildId: ed61359865ec8404e21864594776b9dcbe60a137)
+                                                   SkImage::peekPixels(SkPixmap*) const
+                                                   third_party/skia/src/image/SkImage.cpp:50:25
+
+```
+
+<!-- {"symbolized":[1042]} -->

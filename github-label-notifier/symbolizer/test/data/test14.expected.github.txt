@@ -1,0 +1,3 @@
+@somebody Sorry, only **public members of Flutter org** can trigger my services.
+
+Check your privacy settings as described [here](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-user-account/publicizing-or-hiding-organization-membership).

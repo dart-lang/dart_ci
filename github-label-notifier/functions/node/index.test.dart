@@ -12,6 +12,7 @@ import 'package:node_interop/http.dart' show http, HttpServer;
 import 'package:node_interop/node_interop.dart';
 import 'package:node_interop/util.dart' show dartify, jsify;
 import 'package:node_io/node_io.dart' hide HttpServer;
+import 'package:symbolizer/model.dart';
 import 'package:test/test.dart';
 
 import 'package:github_label_notifier/github_utils.dart';
@@ -27,6 +28,9 @@ void main() async {
   // Mock SendGrid server which simply records all requests it recieves.
   HttpServer sendgridMockServer;
   final sendgridRequests = <SendgridRequest>[];
+
+  HttpServer symbolizerServer;
+  final symbolizerCommands = <String>[];
 
   setUpAll(() async {
     // Populate firestore with mock data.
@@ -62,46 +66,121 @@ void main() async {
             'jit',
             'aot',
             'third_party/dart',
+            'crash',
           ],
           'label': 'special-label',
         }));
 
-    // Start mock SendGrid server at the address/port specified in
-    // SENDGRID_MOCK_SERVER environment variable.
-    // This server will simply record headers and bodies of all requests
-    // it receives in the [sendgridRequests] variable.
-    sendgridMockServer = http.createServer(allowInterop((rq, rs) {
-      final body = [];
-      rq.on('data', allowInterop((chunk) {
-        body.add(chunk);
-      }));
-      rq.on('end', allowInterop(() {
-        sendgridRequests.add(SendgridRequest(
-            headers: dartify(rq.headers),
-            body: jsonDecode(_bufferToString(Buffer.concat(body)))));
+    {
+      // Start mock SendGrid server at the address/port specified in
+      // SENDGRID_MOCK_SERVER environment variable.
+      // This server will simply record headers and bodies of all requests
+      // it receives in the [sendgridRequests] variable.
+      sendgridMockServer = http.createServer(allowInterop((rq, rs) {
+        final body = [];
+        rq.on('data', allowInterop((chunk) {
+          body.add(chunk);
+        }));
+        rq.on('end', allowInterop(() {
+          sendgridRequests.add(SendgridRequest(
+              headers: dartify(rq.headers),
+              body: jsonDecode(_bufferToString(Buffer.concat(body)))));
 
-        // Reply with 200 OK.
-        rs.writeHead(200, 'OK', jsify({'Content-Type': 'text/plain'}));
-        rs.write('OK');
-        rs.end();
+          // Reply with 200 OK.
+          rs.writeHead(200, 'OK', jsify({'Content-Type': 'text/plain'}));
+          rs.write('OK');
+          rs.end();
+        }));
       }));
-    }));
 
-    final serverAddress = Platform.environment['SENDGRID_MOCK_SERVER'];
-    if (serverAddress == null) {
-      throw 'SENDGRID_MOCK_SERVER environment variable is not set';
+      final serverAddress = Platform.environment['SENDGRID_MOCK_SERVER'];
+      if (serverAddress == null) {
+        throw 'SENDGRID_MOCK_SERVER environment variable is not set';
+      }
+      final serverUri = Uri.parse('http://$serverAddress');
+      sendgridMockServer.listen(serverUri.port, serverUri.host);
     }
-    final serverUri = Uri.parse('http://$serverAddress');
-    sendgridMockServer.listen(serverUri.port, serverUri.host);
+
+    {
+      // Start mock Symbolizer server at the address/port specified in
+      // SYMBOLIZER_SERVER environment variable.
+      symbolizerServer = http.createServer(allowInterop((rq, rs) {
+        final body = [];
+        rq.on('data', allowInterop((chunk) {
+          body.add(chunk);
+        }));
+        rq.on('end', allowInterop(() {
+          switch (Uri.parse(rq.url).path) {
+            case '/symbolize':
+              // Reply with symbolized crash.
+              rs.writeHead(
+                  200, 'OK', jsify({'Content-Type': 'application/json'}));
+              rs.write(jsonEncode([
+                SymbolizationResult(
+                    crash: Crash(
+                        engineVariant: EngineVariant(
+                            arch: 'arm', os: 'ios', mode: 'debug'),
+                        format: 'native',
+                        frames: [
+                          CrashFrame.ios(
+                            no: '00',
+                            binary: 'BINARY',
+                            pc: 0x10042,
+                            symbol: '0x',
+                            offset: 42,
+                            location: '',
+                          )
+                        ]),
+                    engineBuild: EngineBuild(
+                      engineHash: 'aaabbb',
+                      variant:
+                          EngineVariant(arch: 'arm', os: 'ios', mode: 'debug'),
+                    ),
+                    symbolized: 'SYMBOLIZED_STACK_HERE')
+              ]));
+              rs.end();
+              break;
+            case '/command':
+              symbolizerCommands.add(
+                  jsonDecode(_bufferToString(Buffer.concat(body)))['comment']
+                      ['body']);
+
+              // Reply with 200 OK.
+              rs.writeHead(200, 'OK', jsify({'Content-Type': 'text/plain'}));
+              rs.write('OK');
+              rs.end();
+              break;
+            default:
+              // Reply with 404.
+              rs.writeHead(
+                  404, 'Not Found', jsify({'Content-Type': 'text/plain'}));
+              rs.write('Not Found');
+              rs.end();
+              break;
+          }
+        }));
+      }));
+
+      final serverAddress = Platform.environment['SYMBOLIZER_SERVER'];
+      if (serverAddress == null) {
+        throw 'SENDGRID_MOCK_SERVER environment variable is not set';
+      }
+      final serverUri = Uri.parse('http://$serverAddress');
+      symbolizerServer.listen(serverUri.port, serverUri.host);
+    }
   });
 
   setUp(() {
     sendgridRequests.clear();
+    symbolizerCommands.clear();
   });
 
   tearDownAll(() async {
     // Shutdown the mock SendGrid server.
     await sendgridMockServer.close();
+
+    // Shutdown the mock symbolizer.
+    await symbolizerServer.close();
   });
 
   // Helper to send a mock GitHub event to the locally running instance of the
@@ -124,8 +203,9 @@ void main() async {
       headers['X-GitHub-Event'] = event;
     }
 
+    final encodedBody = jsonEncode(body);
     if (signature != '') {
-      headers['X-Hub-Signature'] = signature ?? signEvent(body);
+      headers['X-Hub-Signature'] = signature ?? signEvent(encodedBody);
     }
 
     // Note: there does not seem to be a good way to get a trigger uri for
@@ -133,7 +213,7 @@ void main() async {
     return await http_client.post(
         'http://localhost:5001/$projectId/us-central1/githubWebhook',
         headers: headers,
-        body: jsonEncode(body));
+        body: encodedBody);
   }
 
   // Create mock event body.
@@ -186,8 +266,37 @@ void main() async {
         },
       };
 
+  Map<String, dynamic> makeIssueCommentEvent(
+          {int number = 1,
+          String repositoryName = 'dart-lang/webhook-test',
+          String issueBody =
+              'This is an amazing ../third_party/dart/runtime/vm solution',
+          String commentBody = 'comment body goes here',
+          String authorAssociation = 'NONE'}) =>
+      {
+        'action': 'created',
+        'issue': {
+          'html_url':
+              'https://github.com/dart-lang/webhook-test/issues/${number}',
+          'number': number,
+          'title': 'TEST ISSUE TITLE',
+          'body': issueBody,
+          'user': {
+            'login': 'hest',
+            'html_url': 'https://github.com/hest',
+          },
+        },
+        'comment': {
+          'body': commentBody,
+          'author_association': authorAssociation,
+        },
+        'repository': {
+          'full_name': 'dart-lang/webhook-test',
+        },
+      };
+
   test('signing', () {
-    expect(signEvent(makeLabeledEvent(labelName: 'bug')),
+    expect(signEvent(jsonEncode(makeLabeledEvent(labelName: 'bug'))),
         equals('sha1=76af51cdb9c7a43b146d4df721ac8f83e53182e5'));
   });
 
@@ -347,6 +456,35 @@ void main() async {
     expect(rs.statusCode, equals(HttpStatus.ok));
     expect(sendgridRequests.length, equals(0));
   });
+
+  test('ok - issue opened - crash', () async {
+    final rs = await sendEvent(body: makeIssueOpenedEvent(body: '''
+I had Flutter engine c_r_a_s_h on me with the following message
+
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+Such c_r_a_s_h
+Much information
+'''));
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(sendgridRequests.length, equals(1));
+    final rq = sendgridRequests.first;
+    final plainTextBody = rq.body['content']
+        .firstWhere((c) => c['type'] == 'text/plain')['value'];
+    expect(plainTextBody, contains('engine aaabbb ios-arm-debug crash'));
+    expect(plainTextBody, contains('SYMBOLIZED_STACK_HERE'));
+  });
+
+  test('ok - issue comment - forward bot command', () async {
+    final command = '''@flutter-symbolizer-bot aaa bbb''';
+    final rs = await sendEvent(
+        event: 'issue_comment',
+        body: makeIssueCommentEvent(
+          commentBody: command,
+          authorAssociation: 'MEMBER',
+        ));
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(symbolizerCommands, equals([command]));
+  });
 }
 
 /// Helper method to convert a [Buffer] to a [String].
@@ -363,4 +501,6 @@ class SendgridRequest {
   final Map<String, dynamic> body;
 
   SendgridRequest({this.headers, this.body});
+
+  Map<String, dynamic> toJson() => {'headers': headers, 'body': body};
 }
