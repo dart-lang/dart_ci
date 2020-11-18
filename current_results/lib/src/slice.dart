@@ -12,6 +12,8 @@ import 'package:current_results/src/generated/query.pb.dart' as query_api;
 import 'package:current_results/src/generated/result.pb.dart' as api;
 import 'package:current_results/src/iterable.dart';
 
+const maximumAge = Duration(days: 7);
+
 int compareNames(Result a, Result b) => a.name.compareTo(b.name);
 
 /// All result names before or starting with [prefix] are "before" prefix.
@@ -43,6 +45,9 @@ class Slice {
   /// list sorted by test name.
   final _stored = <String, List<Result>>{};
 
+  /// The date on which the current results of a configuration were fetched
+  final _lastFetched = <String, DateTime>{};
+
   /// A sorted list of all test names seen. Names are not removed from this list.
   List<String> testNames = [];
   int _size = 0;
@@ -63,10 +68,17 @@ class Slice {
     final sorted = results.toList()..sort(compareNames);
     _size -= _stored[configuration]?.length ?? 0;
     _stored[configuration] = sorted;
+    _lastFetched[configuration] = DateTime.now();
     _size += sorted.length;
-    testNames = _mergeIfNeeded(testNames, sorted);
     print('latest results of $configuration: ${sorted.length} results '
         '(total: $_size)');
+  }
+
+  void collectTestNames() {
+    testNames.clear();
+    for (final results in _stored.values) {
+      testNames = _mergeIfNeeded(testNames, results);
+    }
   }
 
   static List<String> _mergeIfNeeded(List<String> names, List<Result> sorted) {
@@ -102,8 +114,6 @@ class Slice {
     while (j < sorted.length) {
       result.add(sorted[j++].name);
     }
-    print('Added ${result.length - names.length} new test names '
-        '(total ${result.length})');
     return result;
   }
 
@@ -213,6 +223,17 @@ class Slice {
       }
     }
     return response;
+  }
+
+  void dropResultsOlderThan(Duration maximumAge) {
+    final now = DateTime.now();
+    for (final configuration in _lastFetched.keys.toList()) {
+      if (now.difference(_lastFetched[configuration]) > maximumAge) {
+        _size -= _stored[configuration].length;
+        _stored.remove(configuration);
+        _lastFetched.remove(configuration);
+      }
+    }
   }
 }
 

@@ -30,7 +30,10 @@ Future<void> loadData() async {
   final configurationDirectories = await bucket.configurationDirectories();
   await Pool(10).forEach(configurationDirectories,
       (configurationDirectory) async {
-    final results = await bucket.latestResults(configurationDirectory);
-    current.add(results);
+    final resultsDate = await bucket.latestResultsDate(configurationDirectory);
+    if (DateTime.now().difference(resultsDate) <= maximumAge) {
+      final results = await bucket.latestResults(configurationDirectory);
+      current.add(results);
+    }
   }).drain();
 }

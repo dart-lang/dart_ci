@@ -62,6 +62,8 @@ class QueryService extends QueryServiceBase {
       response.updates
           .add(ConfigurationUpdate()..configuration = configuration);
     }
+    current.dropResultsOlderThan(maximumAge);
+    current.collectTestNames();
     return response;
   }
 }

@@ -27,6 +27,11 @@ class ResultsBucket {
       .map((entry) => entry.name)
       .toList();
 
+  Future<DateTime> latestResultsDate(String configurationDirectory) async {
+    final info = await bucket.info('${configurationDirectory}latest');
+    return info.updated;
+  }
+
   Future<List<String>> latestResults(String configurationDirectory) async {
     try {
       final revision = await bucket
