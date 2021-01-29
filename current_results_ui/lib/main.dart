@@ -101,7 +101,7 @@ class CurrentResultsScaffold extends StatelessWidget {
           title: const Text('Current Results',
               style: TextStyle(
                   fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           bottom: TabBar(
             tabs: [
               Tab(text: 'ALL'),
