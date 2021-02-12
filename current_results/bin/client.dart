@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:args/command_runner.dart';
 import 'package:grpc/grpc.dart';
 
@@ -63,7 +65,7 @@ class QueryCommand extends gRpcCommand {
     }
 
     final result = await client.getResults(request);
-    print(result.toProto3Json());
+    print(jsonEncode(result.toProto3Json()));
   }
 }
 
@@ -84,7 +86,7 @@ class ListTestsCommand extends gRpcCommand {
       ..prefix = argResults['prefix']
       ..limit = int.parse(argResults['limit']);
     final result = await client.listTests(query);
-    print(result.toProto3Json());
+    print(jsonEncode(result.toProto3Json()));
   }
 }
 
@@ -94,6 +96,6 @@ class FetchCommand extends gRpcCommand {
 
   Future<void> runWithClient(QueryClient client) async {
     final result = await client.fetch(Empty());
-    print(result.toProto3Json());
+    print(jsonEncode(result.toProto3Json()));
   }
 }
