@@ -205,8 +205,8 @@ class Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: AlignmentDirectional.centerStart,
-      width: 200.0,
+      alignment: AlignmentDirectional.centerEnd,
+      padding: EdgeInsets.only(right: 8.0),
       height: 36.0,
       child: Row(
         children: [
@@ -238,7 +238,7 @@ class Pill extends StatelessWidget {
         //width: 24,
         height: 24,
         alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: 4.0),
+        margin: EdgeInsets.symmetric(horizontal: 2.0),
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
           color: color,

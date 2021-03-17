@@ -28,23 +28,45 @@ class FilterUI extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, results, child) {
         final filter = results.filter;
-        return Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Wrap(
-            spacing: 12.0,
-            alignment: WrapAlignment.start,
-            children: [
-              for (final term in filter.terms)
-                InputChip(
-                  label: Text(term),
-                  onDeleted: () {
-                    pushRoute(context,
-                        terms: filter.terms.where((t) => t != term));
-                  },
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 100.0),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    alignment: Alignment.topLeft,
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        for (final term in filter.terms)
+                          InputChip(
+                            label: Text(term),
+                            onDeleted: () {
+                              pushRoute(context,
+                                  terms: filter.terms.where((t) => t != term));
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-              AddWidget(filter),
-            ],
-          ),
+              ),
+            ),
+            Divider(
+              color: Colors.grey[300],
+              height: 2,
+              thickness: 2,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 12.0),
+              child: AddWidget(filter),
+            ),
+          ],
         );
       },
     );
@@ -72,7 +94,7 @@ class _AddWidgetState extends State<AddWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200.0,
-      height: 40.0,
+      height: 36.0,
       child: TextField(
         controller: controller,
         decoration: InputDecoration(hintText: 'Test or configuration prefix'),
