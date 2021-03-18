@@ -11,7 +11,8 @@ import subprocess
 
 
 def _NeedsFormat(path):
-  return subprocess.call(['dartfmt', '--set-exit-if-changed', '-n', path]) != 0
+  return subprocess.call(['dart', 'format', '--set-exit-if-changed',
+                          '--output','none', path]) != 0
 
 
 def _CheckDartFormat(input_api, output_api):
@@ -29,7 +30,7 @@ def _CheckDartFormat(input_api, output_api):
         output_api.PresubmitError(
             'File output does not match dartfmt.\n'
             'Fix these issues with:\n'
-            'dartfmt -w%s%s' %
+            'dart format%s%s' %
             (escapedNewline, escapedNewline.join(unformatted_files)))
     ]
   return []
