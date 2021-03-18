@@ -204,21 +204,17 @@ class Summary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: AlignmentDirectional.centerEnd,
-      padding: EdgeInsets.only(right: 8.0),
-      height: 36.0,
-      child: Row(
-        children: [
-          Text(
-            typeText,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Pill(Colors.black26, counts.count, 'total'),
-          Pill(resultColors['fail'], counts.countFailing, 'failing'),
-          Pill(resultColors['flaky'], counts.countFlaky, 'flaky'),
-        ],
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          typeText,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Pill(Colors.black26, counts.count, 'total'),
+        Pill(resultColors['fail'], counts.countFailing, 'failing'),
+        Pill(resultColors['flaky'], counts.countFlaky, 'flaky'),
+      ],
     );
   }
 }
