@@ -141,7 +141,6 @@ class _ExpandableResultState extends State<ExpandableResult> {
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 48.0),
-              constraints: BoxConstraints.loose(Size.fromWidth(500.0)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -214,6 +213,7 @@ class Summary extends StatelessWidget {
         Pill(Colors.black26, counts.count, 'total'),
         Pill(resultColors['fail'], counts.countFailing, 'failing'),
         Pill(resultColors['flaky'], counts.countFlaky, 'flaky'),
+        SizedBox.fromSize(size: Size.fromWidth(8.0)),
       ],
     );
   }

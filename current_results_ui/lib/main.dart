@@ -153,7 +153,7 @@ class ApiPortalLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: Text('API portal'),
       onPressed: () => html.window.open(
           'https://endpointsportal.dart-ci-staging.cloud.goog'
@@ -171,7 +171,7 @@ class JsonLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
       builder: (context, results, child) {
-        return FlatButton(
+        return TextButton(
           child: Text('json'),
           onPressed: () => html.window.open(
               Uri.https(apiHost, 'v1/results', {
@@ -192,7 +192,7 @@ class TextPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
       builder: (context, QueryResults results, child) {
-        return FlatButton(
+        return TextButton(
           child: Text('text'),
           onPressed: () => showDialog(
             context: context,
