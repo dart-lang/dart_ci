@@ -157,7 +157,7 @@ class ApiPortalLink extends StatelessWidget {
       child: Text('API portal'),
       onPressed: () => html.window.open(
           'https://endpointsportal.dart-ci-staging.cloud.goog'
-              '/docs/current-results-rest-zlujsyuhha-uc.a.run.app/g'
+              '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
               '/routes/v1/results/get',
           '_blank'),
     );

@@ -11,10 +11,9 @@ import 'dart:convert';
 import 'src/generated/query.pb.dart';
 import 'filter.dart';
 
-const String apiHost = 'current-results-rest-zlujsyuhha-uc.a.run.app';
+const String apiHost = 'current-results-qvyo5rktwa-uc.a.run.app';
 // Current endpoints proxy is limited to 1 MB response size,
-// so we limit results fetched to 4000.
-// Implement paging on the service in the future to remove this limit.
+// so we limit results fetched to 4000 per page.  Paging is implemented.
 const int fetchLimit = 4000;
 const int maxFetchedResults = 100 * fetchLimit;
 
