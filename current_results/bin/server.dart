@@ -29,11 +29,16 @@ void main(List<String> args) async {
 Future<void> loadData() async {
   final configurationDirectories = await bucket.configurationDirectories();
   await Pool(10).forEach(configurationDirectories,
-      (configurationDirectory) async {
-    final resultsDate = await bucket.latestResultsDate(configurationDirectory);
-    if (DateTime.now().difference(resultsDate) <= maximumAge) {
-      final results = await bucket.latestResults(configurationDirectory);
-      current.add(results);
+      (String configurationDirectory) async {
+    try {
+      final resultsDate =
+          await bucket.latestResultsDate(configurationDirectory);
+      if (DateTime.now().difference(resultsDate) <= maximumAge) {
+        final results = await bucket.latestResults(configurationDirectory);
+        current.add(results);
+      }
+    } catch (e, stack) {
+      print('Error loading configuration $configurationDirectory: $e\n$stack');
     }
   }).drain();
 }
