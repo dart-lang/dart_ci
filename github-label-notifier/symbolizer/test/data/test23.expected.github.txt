@@ -1,0 +1,138 @@
+crash from null symbolized using symbols for `2eac514f26a676d1df0821e815d501149d3ead7f` `ios-arm64-release`
+```
+#00 0000000182e17a74 Metal Metal + 68212
+#01 00000001a0963190 AGXMetalA8 AGXMetalA8 + 520592
+#02 00000001a095c3f4 AGXMetalA8 AGXMetalA8 + 492532
+#03 00000001a093ea58 AGXMetalA8 AGXMetalA8 + 371288
+#04 0000000105340708 Flutter Flutter + 2836232
+                             GrMtlCommandBuffer::getRenderCommandEncoder(MTLRenderPassDescriptor*, GrMtlPipelineState const*, GrMtlOpsRenderPass*)
+                             third_party/skia/src/gpu/mtl/GrMtlCommandBuffer.mm:89:35
+#05 0000000105347e48 Flutter Flutter + 2866760
+                             GrMtlOpsRenderPass::precreateCmdEncoder()
+                             third_party/skia/src/gpu/mtl/GrMtlOpsRenderPass.mm:37:36
+#06 0000000105348458 Flutter Flutter + 2868312
+                             GrMtlOpsRenderPass::setupRenderPass(GrOpsRenderPass::LoadAndStoreInfo const&, GrOpsRenderPass::StencilLoadAndStoreInfo const&)
+                             third_party/skia/src/gpu/mtl/GrMtlOpsRenderPass.mm:238:15
+                             GrMtlOpsRenderPass::GrMtlOpsRenderPass(GrMtlGpu*, GrRenderTarget*, GrSurfaceOrigin, GrOpsRenderPass::LoadAndStoreInfo const&, GrOpsRenderPass::StencilLoadAndStoreInfo const&)
+                             third_party/skia/src/gpu/mtl/GrMtlOpsRenderPass.mm:27:0
+                             GrMtlOpsRenderPass::GrMtlOpsRenderPass(GrMtlGpu*, GrRenderTarget*, GrSurfaceOrigin, GrOpsRenderPass::LoadAndStoreInfo const&, GrOpsRenderPass::StencilLoadAndStoreInfo const&)
+                             third_party/skia/src/gpu/mtl/GrMtlOpsRenderPass.mm:26:0
+#07 0000000105340fa4 Flutter Flutter + 2838436
+                             GrMtlGpu::getOpsRenderPass(GrRenderTarget*, GrStencilAttachment*, GrSurfaceOrigin, SkIRect const&, GrOpsRenderPass::LoadAndStoreInfo const&, GrOpsRenderPass::StencilLoadAndStoreInfo const&, SkTArray<GrSurfaceProxy*, true> const&, GrXferBarrierFlags)
+                             third_party/skia/src/gpu/mtl/GrMtlGpu.mm:192:16
+#08 000000010525944c Flutter Flutter + 1889356
+                             create_render_pass(GrGpu*, GrRenderTarget*, GrStencilAttachment*, GrSurfaceOrigin, SkIRect const&, GrLoadOp, SkRGBA4f<(SkAlphaType)2> const&, GrLoadOp, GrStoreOp, SkTArray<GrSurfaceProxy*, true> const&, GrXferBarrierFlags)
+                             third_party/skia/src/gpu/GrOpsTask.cpp:509:17
+                             GrOpsTask::onExecute(GrOpFlushState*)
+                             third_party/skia/src/gpu/GrOpsTask.cpp:593:0
+#09 000000010524cad8 Flutter Flutter + 1837784
+                             GrRenderTask::execute(GrOpFlushState*)
+                             third_party/skia/src/gpu/GrRenderTask.h:38:61
+                             GrDrawingManager::executeRenderTasks(int, int, GrOpFlushState*, int*)
+                             third_party/skia/src/gpu/GrDrawingManager.cpp:456:0
+                             GrDrawingManager::flush(GrSurfaceProxy**, int, SkSurface::BackendSurfaceAccess, GrFlushInfo const&, GrBackendSurfaceMutableState const*)
+                             third_party/skia/src/gpu/GrDrawingManager.cpp:335:0
+#10 000000010524cdf8 Flutter Flutter + 1838584
+                             GrDrawingManager::flushSurfaces(GrSurfaceProxy**, int, SkSurface::BackendSurfaceAccess, GrFlushInfo const&, GrBackendSurfaceMutableState const*)
+                             third_party/skia/src/gpu/GrDrawingManager.cpp:562:27
+#11 00000001052787c8 Flutter Flutter + 2017224
+                             GrDrawingManager::flushSurface(GrSurfaceProxy*, SkSurface::BackendSurfaceAccess, GrFlushInfo const&, GrBackendSurfaceMutableState const*)
+                             third_party/skia/src/gpu/GrDrawingManager.h:109:22
+                             GrSurfaceContext::flush(SkSurface::BackendSurfaceAccess, GrFlushInfo const&, GrBackendSurfaceMutableState const*)
+                             third_party/skia/src/gpu/GrSurfaceContext.cpp:1232:0
+#12 00000001052ef5a4 Flutter Flutter + 2504100
+                             SkGpuDevice::flush(SkSurface::BackendSurfaceAccess, GrFlushInfo const&, GrBackendSurfaceMutableState const*)
+                             third_party/skia/src/gpu/SkGpuDevice.cpp:1054:34
+                             SkGpuDevice::flush()
+                             third_party/skia/src/gpu/SkGpuDevice.cpp:1045:0
+#13 000000010550b5cc Flutter Flutter + 4715980
+                             SkCanvas::flush()
+                             third_party/skia/src/core/SkCanvas.cpp:614:11
+                             flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0::operator()(flutter::SurfaceFrame const&, SkCanvas*) const
+                             flutter/shell/gpu/gpu_surface_metal.mm:89:0
+                             decltype(std::__1::forward<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0&>(fp)(std::__1::forward<flutter::SurfaceFrame const&>(fp0), std::__1::forward<SkCanvas*>(fp0))) std::__1::__invoke<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0&, flutter::SurfaceFrame const&, SkCanvas*>(flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0&, flutter::SurfaceFrame const&, SkCanvas*&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0
+                             bool std::__1::__invoke_void_return_wrapper<bool>::__call<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0&, flutter::SurfaceFrame const&, SkCanvas*>(flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0&, flutter::SurfaceFrame const&, SkCanvas*&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:318:0
+                             std::__1::__function::__alloc_func<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0, std::__1::allocator<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0>, bool (flutter::SurfaceFrame const&, SkCanvas*)>::operator()(flutter::SurfaceFrame const&, SkCanvas*&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1527:0
+                             std::__1::__function::__func<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0, std::__1::allocator<flutter::GPUSurfaceMetal::AcquireFrame(SkISize const&)::$_0>, bool (flutter::SurfaceFrame const&, SkCanvas*)>::operator()(flutter::SurfaceFrame const&, SkCanvas*&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1651:0
+#14 000000010511b60c Flutter Flutter + 587276
+                             std::__1::__function::__value_func<bool (flutter::SurfaceFrame const&, SkCanvas*)>::operator()(flutter::SurfaceFrame const&, SkCanvas*&&) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16
+                             std::__1::function<bool (flutter::SurfaceFrame const&, SkCanvas*)>::operator()(flutter::SurfaceFrame const&, SkCanvas*) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0
+                             flutter::SurfaceFrame::PerformSubmit()
+                             flutter/flow/surface_frame.cc:65:0
+                             flutter::SurfaceFrame::Submit()
+                             flutter/flow/surface_frame.cc:43:0
+#15 00000001050a5268 Flutter Flutter + 103016
+                             flutter::FlutterPlatformViewsController::GetLayer(GrDirectContext*, std::__1::shared_ptr<flutter::IOSContext>, sk_sp<SkPicture>, SkRect, long long, long long)
+                             flutter/shell/platform/darwin/ios/framework/Source/FlutterPlatformViews.mm:634:41
+                             flutter::FlutterPlatformViewsController::SubmitFrame(GrDirectContext*, std::__1::shared_ptr<flutter::IOSContext>, std::__1::unique_ptr<flutter::SurfaceFrame, std::__1::default_delete<flutter::SurfaceFrame> >)
+                             flutter/shell/platform/darwin/ios/framework/Source/FlutterPlatformViews.mm:533:0
+#16 00000001050bee8c Flutter Flutter + 208524
+                             flutter::IOSSurface::SubmitFrame(GrDirectContext*, std::__1::unique_ptr<flutter::SurfaceFrame, std::__1::default_delete<flutter::SurfaceFrame> >)
+                             flutter/shell/platform/darwin/ios/ios_surface.mm:121:31
+#17 000000010539e840 Flutter Flutter + 3221568
+                             flutter::Rasterizer::DrawToSurface(flutter::LayerTree&)
+                             flutter/shell/common/rasterizer.cc:474:31
+#18 000000010539f400 Flutter Flutter + 3224576
+                             flutter::Rasterizer::DoDraw(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)
+                             flutter/shell/common/rasterizer.cc:339:32
+                             flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >) const
+                             flutter/shell/common/rasterizer.cc:173:0
+                             decltype(std::__1::forward<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&>(fp)(std::__1::forward<std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(fp0))) std::__1::__invoke<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0
+                             void std::__1::__invoke_void_return_wrapper<void>::__call<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:349:0
+                             std::__1::__function::__alloc_func<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1, std::__1::allocator<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1>, void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1527:0
+                             std::__1::__function::__func<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1, std::__1::allocator<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1>, void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1651:0
+#19 000000010539eb10 Flutter Flutter + 3222288
+                             std::__1::__function::__value_func<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16
+                             std::__1::function<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0
+                             flutter::Pipeline<flutter::LayerTree>::Consume(std::__1::function<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)> const&)
+                             flutter/shell/common/pipeline.h:161:0
+                             flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)
+                             flutter/shell/common/rasterizer.cc:177:0
+#20 00000001053a5208 Flutter Flutter + 3248648
+                             flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31::operator()() const
+                             flutter/shell/common/shell.cc:1046:23
+                             decltype(std::__1::forward<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31&>(fp)()) std::__1::__invoke<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31&>(flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4361:0
+                             void std::__1::__invoke_void_return_wrapper<void>::__call<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31&>(flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:349:0
+                             std::__1::__function::__alloc_func<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31, std::__1::allocator<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31>, void ()>::operator()()
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1527:0
+                             std::__1::__function::__func<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31, std::__1::allocator<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_31>, void ()>::operator()()
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1651:0
+#21 00000001050c9c7c Flutter Flutter + 253052
+                             std::__1::__function::__value_func<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1799:16
+                             std::__1::function<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2347:0
+                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                             flutter/fml/message_loop_impl.cc:130:0
+#22 00000001050cbbf0 Flutter Flutter + 261104
+                             fml::MessageLoopImpl::RunExpiredTasksNow()
+                             flutter/fml/message_loop_impl.cc:143:3
+                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0
+#23 00000001810e3dbc CoreFoundation CoreFoundation + 966076
+#24 00000001810e3ae0 CoreFoundation CoreFoundation + 965344
+#25 00000001810e32e0 CoreFoundation CoreFoundation + 963296
+#26 00000001810e0ec8 CoreFoundation CoreFoundation + 954056
+#27 0000000181000c54 CoreFoundation CoreFoundation + 35924
+#28 0000000182eacf80 GraphicsServices GraphicsServices + 44928
+#29 000000018a7595c0 UIKit UIKit + 472512
+#30 00000001003cb6b4 ios_prod_global main -main.m:35
+#31 0000000180b20568 libdyld.dylib libdyld.dylib + 5480
+
+```
+_(Load address missing from the report, detected heuristically: 000000010508c000)_
+<!-- {"symbolized":[1001]} -->

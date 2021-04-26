@@ -1,0 +1,124 @@
+crash from null symbolized using symbols for `40441def692f444660a11e20fac37af9050245ab` `ios-arm64-release`
+```
+#00 000000018598f0dc libsystem_kernel.dylib __pthread_kill + 8
+#01 0000000185a08094 libsystem_pthread.dylib pthread_kill$VARIANT$mp + 380
+#02 00000001858e7ea8 libsystem_c.dylib abort + 140
+#03 0000000101c5f630 Flutter Flutter + 4994608 (hashmap.cc:2)
+                             dart::Assert::Fail(char const*, ...)
+                             third_party/dart/runtime/platform/assert.cc:44:3
+#04 0000000101caaec4 Flutter Flutter + 5304004 (exceptions.cc:7)
+                             dart::realloc(void*, unsigned long)
+                             third_party/dart/runtime/platform/allocation.cc:22:5
+                             dart::MallocWriteStream::Realloc(long)
+                             third_party/dart/runtime/vm/datastream.cc:24:0
+#05 0000000101ca8218 Flutter Flutter + 5292568 (datastream.h:52)
+                             dart::BaseWriteStream::EnsureSpace(long)
+                             third_party/dart/runtime/vm/datastream.h:525:5
+                             dart::BaseWriteStream::WriteByte(unsigned char)
+                             third_party/dart/runtime/vm/datastream.h:431:0
+                             void dart::BaseWriteStream::Write<short>(short)
+                             third_party/dart/runtime/vm/datastream.h:419:0
+#06 0000000101cfd658 Flutter Flutter + 5641816 (raw_object_snapshot.cc:90)
+                             dart::BaseWriteStream::Raw<2, unsigned short>::Write(dart::BaseWriteStream*, unsigned short)
+                             third_party/dart/runtime/vm/datastream.h:337:11
+                             void dart::BaseWriter::Write<unsigned short>(unsigned short)
+                             third_party/dart/runtime/vm/snapshot.h:440:0
+                             void dart::StringWriteTo<unsigned short>(dart::SnapshotWriter*, long, dart::Snapshot::Kind, long, long, dart::SmiPtr, unsigned short*)
+                             third_party/dart/runtime/vm/raw_object_snapshot.cc:908:0
+                             dart::UntaggedTwoByteString::WriteTo(dart::SnapshotWriter*, long, dart::Snapshot::Kind, bool)
+                             third_party/dart/runtime/vm/raw_object_snapshot.cc:926:0
+#07 0000000101d30420 Flutter Flutter + 5850144 (snapshot.cc:151)
+                             dart::SnapshotWriter::WriteInstance(dart::ObjectPtr, dart::ClassPtr, long, long, bool)
+                             third_party/dart/runtime/vm/snapshot.cc:1519:9
+                             dart::SnapshotWriter::WriteMarkedObjectImpl(dart::ObjectPtr, long, long, bool)
+                             third_party/dart/runtime/vm/snapshot.cc:1223:0
+#08 0000000101d34cc0 Flutter Flutter + 5868736 (snapshot.h:54)
+                             dart::ForwardList::SerializeAll(dart::ObjectVisitor*)
+                             third_party/dart/runtime/vm/snapshot.cc:1316:15
+                             dart::SnapshotWriter::WriteForwardedObjects()
+                             third_party/dart/runtime/vm/snapshot.cc:1297:0
+                             dart::SnapshotWriter::WriteObject(dart::ObjectPtr)
+                             third_party/dart/runtime/vm/snapshot.cc:930:0
+                             dart::MessageWriter::WriteMessage(dart::Object const&, long long, dart::Message::Priority)
+                             third_party/dart/runtime/vm/snapshot.cc:1613:0
+#09 0000000101c72af0 Flutter Flutter + 5073648 (isolate.cc:11)
+                             dart::DN_HelperSendPortImpl_sendInternal_(dart::Isolate*, dart::Thread*, dart::Zone*, dart::NativeArguments*)
+                             third_party/dart/runtime/lib/isolate.cc:116:33
+                             dart::BootstrapNatives::DN_SendPortImpl_sendInternal_(dart::Thread*, dart::Zone*, dart::NativeArguments*)
+                             third_party/dart/runtime/lib/isolate.cc:102:0
+#10 0000000101cbb8f8 Flutter Flutter + 5372152 (object.h:45)
+                             dart::NativeEntry::BootstrapNativeCallWrapper(_Dart_NativeArguments*, void (*)(_Dart_NativeArguments*))
+                             third_party/dart/runtime/vm/native_entry.cc:140:37
+#11 0000000106006500 App Precompiled_Stub_CallBootstrapNative + 80
+#12 000000010607ff00 App Precompiled__SendPortImpl_1026248__sendInternal_1026248_2318 + 52
+#13 000000010607feb0 App Precompiled__SendPortImpl_1026248_send_2317 + 36
+#14 0000000106a0bc70 App Precompiled_____handleWithPorts_2174461950__async_op_41161 + 2412
+#15 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140
+#16 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208
+#17 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+#18 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+#19 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+#20 0000000106a30b54 App Precompiled__Future_4048458_timeout__anonymous_closure__41723 + 92
+#21 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140
+#22 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208
+#23 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+#24 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+#25 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+#26 000000010602d428 App Precompiled_____completeOnAsyncReturn_4048458_621 + 248
+#27 0000000106a0aec4 App Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op_41155 + 360
+#28 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140
+#29 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208
+#30 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+#31 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+#32 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+#33 000000010602d428 App Precompiled_____completeOnAsyncReturn_4048458_621 + 248
+#34 0000000106a0ab5c App Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op__anonymous_closure___async_op_41153 + 596
+#35 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140
+#36 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208
+#37 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+#38 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+#39 0000000106a30a58 App Precompiled__Future_4048458__prependListeners_4048458__anonymous_closure__41721 + 44
+#40 0000000106030260 App Precompiled_____microtaskLoop_4048458_694 + 120
+#41 0000000106031d30 App Precompiled_____startMicrotaskLoop_4048458_732 + 40
+#42 0000000106031dec App Precompiled_____startMicrotaskLoop_4048458__startMicrotaskLoop_4048458_733 + 24
+#43 000000010608226c App Precompiled__Timer_1026248__runTimers_1026248_2359 + 1072
+#44 0000000106081df0 App Precompiled__Timer_1026248__handleMessage_1026248_2358 + 116
+#45 0000000106082460 App Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_2360 + 32
+#46 0000000106a36300 App Precompiled__Closure_0150898_dyn_call_41991 + 556
+#47 000000010607fcd0 App Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_2313 + 56
+#48 00000001060061e4 App Precompiled_Stub_InvokeDartCode + 268
+#49 0000000101ca8ad0 Flutter Flutter + 5294800 (dart_entry.cc:18)
+                             dart::DartEntry::InvokeCode(dart::Code const&, dart::Array const&, dart::Array const&, dart::Thread*)
+                             third_party/dart/runtime/vm/dart_entry.cc:181:7
+                             dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&, dart::Array const&, unsigned long)
+                             third_party/dart/runtime/vm/dart_entry.cc:147:0
+#50 0000000101cb000c Flutter Flutter + 5324812 (dart_entry.cc:3)
+                             dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&)
+                             third_party/dart/runtime/vm/dart_entry.cc:37:10
+                             dart::DartLibraryCalls::HandleMessage(dart::Object const&, dart::Instance const&)
+                             third_party/dart/runtime/vm/dart_entry.cc:792:0
+                             dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)
+                             third_party/dart/runtime/vm/isolate.cc:1401:0
+#51 0000000101cbae1c Flutter Flutter + 5369372 (message_handler.cc:23)
+                             dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)
+                             third_party/dart/runtime/vm/message_handler.cc:233:16
+#52 0000000101cbaacc Flutter Flutter + 5368524 (message_handler.cc:44)
+                             dart::MessageHandler::TaskCallback()
+                             third_party/dart/runtime/vm/message_handler.cc:443:18
+                             dart::MessageHandlerTask::Run()
+                             third_party/dart/runtime/vm/message_handler.cc:31:0
+#53 0000000101d4092c Flutter Flutter + 5916972 (memory:233)
+                             dart::ThreadPool::WorkerLoop(dart::ThreadPool::Worker*)
+                             third_party/dart/runtime/vm/thread_pool.cc:158:15
+                             dart::ThreadPool::Worker::Main(unsigned long)
+                             third_party/dart/runtime/vm/thread_pool.cc:323:0
+#54 0000000101cf8020 Flutter Flutter + 5619744 (os_thread_macos.cc:13)
+                             dart::ThreadStart(void*)
+                             third_party/dart/runtime/vm/os_thread_macos.cc:132:5
+#55 0000000185a112c0 libsystem_pthread.dylib _pthread_body + 128
+#56 0000000185a11220 libsystem_pthread.dylib _pthread_start + 44
+#57 0000000185a14cdc libsystem_pthread.dylib thread_start + 4
+
+```
+_(Load address missing from the report, detected heuristically: 000000010179c000)_
+<!-- {"symbolized":[1001]} -->

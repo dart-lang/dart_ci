@@ -1,0 +1,66 @@
+@flutter-symbolizer-bot this force ios arm64 flutter#v2.0.1 release
+
+```
+SIGABRT ABORT 0x000000018598f0dc
+dart::SimpleHashMap::Lookup(void*, unsigned int, bool)
+
+Crashed: DartWorker
+0  libsystem_kernel.dylib         0x18598f0dc __pthread_kill + 8
+1  libsystem_pthread.dylib        0x185a08094 pthread_kill$VARIANT$mp + 380
+2  libsystem_c.dylib              0x1858e7ea8 abort + 140
+3  Flutter                        0x101c5f630 dart::SimpleHashMap::Lookup(void*, unsigned int, bool) + 22 (hashmap.cc:22)
+4  Flutter                        0x101caaec4 dart::PreallocatedStackTraceBuilder::~PreallocatedStackTraceBuilder() + 75 (exceptions.cc:75)
+5  Flutter                        0x101ca8218 void dart::BaseWriteStream::Write<short>(short) + 526 (datastream.h:526)
+6  Flutter                        0x101cfd658 dart::UntaggedTwoByteString::WriteTo(dart::SnapshotWriter*, long, dart::Snapshot::Kind, bool) + 907 (raw_object_snapshot.cc:907)
+7  Flutter                        0x101d30420 dart::SnapshotWriter::WriteMarkedObjectImpl(dart::ObjectPtr, long, long, bool) + 1519 (snapshot.cc:1519)
+8  Flutter                        0x101d34cc0 dart::MessageWriter::WriteMessage(dart::Object const&, long long, dart::Message::Priority) + 546 (snapshot.h:546)
+9  Flutter                        0x101c72af0 dart::BootstrapNatives::DN_SendPortImpl_sendInternal_(dart::Thread*, dart::Zone*, dart::NativeArguments*) + 116 (isolate.cc:116)
+10 Flutter                        0x101cbb8f8 dart::NativeEntry::BootstrapNativeCallWrapper(_Dart_NativeArguments*, void (*)(_Dart_NativeArguments*)) + 454 (object.h:454)
+11 App                            0x106006500 Precompiled_Stub_CallBootstrapNative + 80
+12 App                            0x10607ff00 Precompiled__SendPortImpl_1026248__sendInternal_1026248_2318 + 52
+13 App                            0x10607feb0 Precompiled__SendPortImpl_1026248_send_2317 + 36
+14 App                            0x106a0bc70 Precompiled_____handleWithPorts_2174461950__async_op_41161 + 2412
+15 App                            0x106778014 Precompiled__RootZone_4048458_runUnary_32348 + 140
+16 App                            0x106031104 Precompiled__FutureListener_4048458_handleValue_709 + 208
+17 App                            0x106a3115c Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+18 App                            0x10602c80c Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+19 App                            0x10602d4c8 Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+20 App                            0x106a30b54 Precompiled__Future_4048458_timeout__anonymous_closure__41723 + 92
+21 App                            0x106778014 Precompiled__RootZone_4048458_runUnary_32348 + 140
+22 App                            0x106031104 Precompiled__FutureListener_4048458_handleValue_709 + 208
+23 App                            0x106a3115c Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+24 App                            0x10602c80c Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+25 App                            0x10602d4c8 Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+26 App                            0x10602d428 Precompiled_____completeOnAsyncReturn_4048458_621 + 248
+27 App                            0x106a0aec4 Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op_41155 + 360
+28 App                            0x106778014 Precompiled__RootZone_4048458_runUnary_32348 + 140
+29 App                            0x106031104 Precompiled__FutureListener_4048458_handleValue_709 + 208
+30 App                            0x106a3115c Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+31 App                            0x10602c80c Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+32 App                            0x10602d4c8 Precompiled__Future_4048458__completeWithValue_4048458_622 + 124
+33 App                            0x10602d428 Precompiled_____completeOnAsyncReturn_4048458_621 + 248
+34 App                            0x106a0ab5c Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op__anonymous_closure___async_op_41153 + 596
+35 App                            0x106778014 Precompiled__RootZone_4048458_runUnary_32348 + 140
+36 App                            0x106031104 Precompiled__FutureListener_4048458_handleValue_709 + 208
+37 App                            0x106a3115c Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52
+38 App                            0x10602c80c Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136
+39 App                            0x106a30a58 Precompiled__Future_4048458__prependListeners_4048458__anonymous_closure__41721 + 44
+40 App                            0x106030260 Precompiled_____microtaskLoop_4048458_694 + 120
+41 App                            0x106031d30 Precompiled_____startMicrotaskLoop_4048458_732 + 40
+42 App                            0x106031dec Precompiled_____startMicrotaskLoop_4048458__startMicrotaskLoop_4048458_733 + 24
+43 App                            0x10608226c Precompiled__Timer_1026248__runTimers_1026248_2359 + 1072
+44 App                            0x106081df0 Precompiled__Timer_1026248__handleMessage_1026248_2358 + 116
+45 App                            0x106082460 Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_2360 + 32
+46 App                            0x106a36300 Precompiled__Closure_0150898_dyn_call_41991 + 556
+47 App                            0x10607fcd0 Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_2313 + 56
+48 App                            0x1060061e4 Precompiled_Stub_InvokeDartCode + 268
+49 Flutter                        0x101ca8ad0 dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&, dart::Array const&, unsigned long) + 181 (dart_entry.cc:181)
+50 Flutter                        0x101cb000c dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >) + 37 (dart_entry.cc:37)
+51 Flutter                        0x101cbae1c dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool) + 233 (message_handler.cc:233)
+52 Flutter                        0x101cbaacc dart::MessageHandlerTask::Run() + 449 (message_handler.cc:449)
+53 Flutter                        0x101d4092c dart::ThreadPool::Worker::Main(unsigned long) + 2338 (memory:2338)
+54 Flutter                        0x101cf8020 dart::ThreadStart(void*) + 132 (os_thread_macos.cc:132)
+55 libsystem_pthread.dylib        0x185a112c0 _pthread_body + 128
+56 libsystem_pthread.dylib        0x185a11220 _pthread_start + 44
+57 libsystem_pthread.dylib        0x185a14cdc thread_start + 4
+```

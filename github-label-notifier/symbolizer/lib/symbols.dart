@@ -213,23 +213,37 @@ class SymbolsCache {
     final nestedZip =
         build.variant.os == 'ios' ? 'Flutter.framework.zip' : 'flutter.jar';
 
-    await _run('unzip', [artifactsFile, nestedZip],
-        workingDirectory: tempDir.path);
+    var libraryPath;
+    if (build.variant.os == 'ios' &&
+        !(await _run('unzip', ['-l', artifactsFile],
+                workingDirectory: tempDir.path))
+            .contains(nestedZip)) {
+      // Newer versions don't contains nested zip inside and instead contain
+      // Flutter.xcframework folder.
+      libraryPath =
+          'Flutter.xcframework/ios-armv7_arm64/Flutter.framework/Flutter';
+      await _run('unzip', [artifactsFile, libraryPath],
+          workingDirectory: tempDir.path);
+    } else {
+      libraryPath = _libflutterPath(build);
+      await _run('unzip', [artifactsFile, nestedZip],
+          workingDirectory: tempDir.path);
 
-    final libraryPath = _libflutterPath(build);
-    await _run('unzip', [nestedZip, libraryPath],
-        workingDirectory: tempDir.path);
+      await _run('unzip', [nestedZip, libraryPath],
+          workingDirectory: tempDir.path);
+    }
 
     if (p.dirname(libraryPath) != '.') {
       await File(p.join(tempDir.path, libraryPath))
           .rename(p.join(tempDir.path, p.basename(libraryPath)));
-      await Directory(p.join(tempDir.path, p.dirname(libraryPath)))
+      await Directory(
+              p.join(tempDir.path, p.split(p.normalize(libraryPath)).first))
           .delete(recursive: true);
     }
 
     // Delete downloaded ZIP file.
-    await File(p.join(tempDir.path, artifactsFile)).delete();
-    await File(p.join(tempDir.path, nestedZip)).delete();
+    await _deleteIfExists(p.join(tempDir.path, artifactsFile));
+    await _deleteIfExists(p.join(tempDir.path, nestedZip));
   }
 
   static String _libflutterPath(EngineBuild build) {
@@ -248,7 +262,14 @@ class SymbolsCache {
     throw 'Unsupported combination of architecture and OS: ${build.variant}';
   }
 
-  Future<void> _run(String executable, List<String> args,
+  static Future<void> _deleteIfExists(String path) async {
+    final f = File(path);
+    if (f.existsSync()) {
+      await f.delete();
+    }
+  }
+
+  Future<String> _run(String executable, List<String> args,
       {String workingDirectory}) async {
     final result =
         await Process.run(executable, args, workingDirectory: workingDirectory);
@@ -256,6 +277,7 @@ class SymbolsCache {
       throw 'Failed to run ${executable} ${args.join(' ')} '
           '(exit code ${result.exitCode}): ${result.stdout} ${result.stderr}';
     }
+    return result.stdout;
   }
 
   void _touch(String path) {

@@ -1,0 +1,552 @@
+[
+  {
+    "crash": {
+      "engineVariant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      },
+      "frames": [
+        {
+          "no": "0",
+          "binary": "libsystem_kernel.dylib",
+          "pc": 6536360156,
+          "symbol": "__pthread_kill",
+          "offset": 8,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "1",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 6536855700,
+          "symbol": "pthread_kill$VARIANT$mp",
+          "offset": 380,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "2",
+          "binary": "libsystem_c.dylib",
+          "pc": 6535675560,
+          "symbol": "abort",
+          "offset": 140,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "3",
+          "binary": "Flutter",
+          "pc": 4324718128,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "hashmap.cc:2",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "4",
+          "binary": "Flutter",
+          "pc": 4325027524,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "exceptions.cc:7",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "5",
+          "binary": "Flutter",
+          "pc": 4325016088,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "datastream.h:52",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "6",
+          "binary": "Flutter",
+          "pc": 4325365336,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "raw_object_snapshot.cc:90",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "7",
+          "binary": "Flutter",
+          "pc": 4325573664,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "snapshot.cc:151",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "8",
+          "binary": "Flutter",
+          "pc": 4325592256,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "snapshot.h:54",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "9",
+          "binary": "Flutter",
+          "pc": 4324797168,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "isolate.cc:11",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "10",
+          "binary": "Flutter",
+          "pc": 4325095672,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "object.h:45",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "11",
+          "binary": "App",
+          "pc": 4395656448,
+          "symbol": "Precompiled_Stub_CallBootstrapNative",
+          "offset": 80,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "12",
+          "binary": "App",
+          "pc": 4396154624,
+          "symbol": "Precompiled__SendPortImpl_1026248__sendInternal_1026248_2318",
+          "offset": 52,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "13",
+          "binary": "App",
+          "pc": 4396154544,
+          "symbol": "Precompiled__SendPortImpl_1026248_send_2317",
+          "offset": 36,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "14",
+          "binary": "App",
+          "pc": 4406164592,
+          "symbol": "Precompiled_____handleWithPorts_2174461950__async_op_41161",
+          "offset": 2412,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "15",
+          "binary": "App",
+          "pc": 4403462164,
+          "symbol": "Precompiled__RootZone_4048458_runUnary_32348",
+          "offset": 140,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "16",
+          "binary": "App",
+          "pc": 4395831556,
+          "symbol": "Precompiled__FutureListener_4048458_handleValue_709",
+          "offset": 208,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "17",
+          "binary": "App",
+          "pc": 4406317404,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732",
+          "offset": 52,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "18",
+          "binary": "App",
+          "pc": 4395812876,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_611",
+          "offset": 1136,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "19",
+          "binary": "App",
+          "pc": 4395816136,
+          "symbol": "Precompiled__Future_4048458__completeWithValue_4048458_622",
+          "offset": 124,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "20",
+          "binary": "App",
+          "pc": 4406315860,
+          "symbol": "Precompiled__Future_4048458_timeout__anonymous_closure__41723",
+          "offset": 92,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "21",
+          "binary": "App",
+          "pc": 4403462164,
+          "symbol": "Precompiled__RootZone_4048458_runUnary_32348",
+          "offset": 140,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "22",
+          "binary": "App",
+          "pc": 4395831556,
+          "symbol": "Precompiled__FutureListener_4048458_handleValue_709",
+          "offset": 208,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "23",
+          "binary": "App",
+          "pc": 4406317404,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732",
+          "offset": 52,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "24",
+          "binary": "App",
+          "pc": 4395812876,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_611",
+          "offset": 1136,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "25",
+          "binary": "App",
+          "pc": 4395816136,
+          "symbol": "Precompiled__Future_4048458__completeWithValue_4048458_622",
+          "offset": 124,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "26",
+          "binary": "App",
+          "pc": 4395815976,
+          "symbol": "Precompiled_____completeOnAsyncReturn_4048458_621",
+          "offset": 248,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "27",
+          "binary": "App",
+          "pc": 4406161092,
+          "symbol": "Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op_41155",
+          "offset": 360,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "28",
+          "binary": "App",
+          "pc": 4403462164,
+          "symbol": "Precompiled__RootZone_4048458_runUnary_32348",
+          "offset": 140,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "29",
+          "binary": "App",
+          "pc": 4395831556,
+          "symbol": "Precompiled__FutureListener_4048458_handleValue_709",
+          "offset": 208,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "30",
+          "binary": "App",
+          "pc": 4406317404,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732",
+          "offset": 52,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "31",
+          "binary": "App",
+          "pc": 4395812876,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_611",
+          "offset": 1136,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "32",
+          "binary": "App",
+          "pc": 4395816136,
+          "symbol": "Precompiled__Future_4048458__completeWithValue_4048458_622",
+          "offset": 124,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "33",
+          "binary": "App",
+          "pc": 4395815976,
+          "symbol": "Precompiled_____completeOnAsyncReturn_4048458_621",
+          "offset": 248,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "34",
+          "binary": "App",
+          "pc": 4406160220,
+          "symbol": "Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op__anonymous_closure___async_op_41153",
+          "offset": 596,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "35",
+          "binary": "App",
+          "pc": 4403462164,
+          "symbol": "Precompiled__RootZone_4048458_runUnary_32348",
+          "offset": 140,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "36",
+          "binary": "App",
+          "pc": 4395831556,
+          "symbol": "Precompiled__FutureListener_4048458_handleValue_709",
+          "offset": 208,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "37",
+          "binary": "App",
+          "pc": 4406317404,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732",
+          "offset": 52,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "38",
+          "binary": "App",
+          "pc": 4395812876,
+          "symbol": "Precompiled__Future_4048458__propagateToListeners_4048458_611",
+          "offset": 1136,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "39",
+          "binary": "App",
+          "pc": 4406315608,
+          "symbol": "Precompiled__Future_4048458__prependListeners_4048458__anonymous_closure__41721",
+          "offset": 44,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "40",
+          "binary": "App",
+          "pc": 4395827808,
+          "symbol": "Precompiled_____microtaskLoop_4048458_694",
+          "offset": 120,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "41",
+          "binary": "App",
+          "pc": 4395834672,
+          "symbol": "Precompiled_____startMicrotaskLoop_4048458_732",
+          "offset": 40,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "42",
+          "binary": "App",
+          "pc": 4395834860,
+          "symbol": "Precompiled_____startMicrotaskLoop_4048458__startMicrotaskLoop_4048458_733",
+          "offset": 24,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "43",
+          "binary": "App",
+          "pc": 4396163692,
+          "symbol": "Precompiled__Timer_1026248__runTimers_1026248_2359",
+          "offset": 1072,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "44",
+          "binary": "App",
+          "pc": 4396162544,
+          "symbol": "Precompiled__Timer_1026248__handleMessage_1026248_2358",
+          "offset": 116,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "45",
+          "binary": "App",
+          "pc": 4396164192,
+          "symbol": "Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_2360",
+          "offset": 32,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "46",
+          "binary": "App",
+          "pc": 4406338304,
+          "symbol": "Precompiled__Closure_0150898_dyn_call_41991",
+          "offset": 556,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "47",
+          "binary": "App",
+          "pc": 4396154064,
+          "symbol": "Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_2313",
+          "offset": 56,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "48",
+          "binary": "App",
+          "pc": 4395655652,
+          "symbol": "Precompiled_Stub_InvokeDartCode",
+          "offset": 268,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "49",
+          "binary": "Flutter",
+          "pc": 4325018320,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "dart_entry.cc:18",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "50",
+          "binary": "Flutter",
+          "pc": 4325048332,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "dart_entry.cc:3",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "51",
+          "binary": "Flutter",
+          "pc": 4325092892,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "message_handler.cc:23",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "52",
+          "binary": "Flutter",
+          "pc": 4325092044,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "message_handler.cc:44",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "53",
+          "binary": "Flutter",
+          "pc": 4325640492,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "memory:233",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "54",
+          "binary": "Flutter",
+          "pc": 4325343264,
+          "symbol": "(Missing)",
+          "offset": null,
+          "location": "os_thread_macos.cc:13",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "55",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 6536893120,
+          "symbol": "_pthread_body",
+          "offset": 128,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "56",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 6536892960,
+          "symbol": "_pthread_start",
+          "offset": 44,
+          "location": "",
+          "runtimeType": "ios"
+        },
+        {
+          "no": "57",
+          "binary": "libsystem_pthread.dylib",
+          "pc": 6536907996,
+          "symbol": "thread_start",
+          "offset": 4,
+          "location": "",
+          "runtimeType": "ios"
+        }
+      ],
+      "format": "native",
+      "androidMajorVersion": null
+    },
+    "engineBuild": {
+      "engineHash": "40441def692f444660a11e20fac37af9050245ab",
+      "variant": {
+        "os": "ios",
+        "arch": "arm64",
+        "mode": "release"
+      }
+    },
+    "symbolized": "#00 000000018598f0dc libsystem_kernel.dylib __pthread_kill + 8\n#01 0000000185a08094 libsystem_pthread.dylib pthread_kill$VARIANT$mp + 380\n#02 00000001858e7ea8 libsystem_c.dylib abort + 140\n#03 0000000101c5f630 Flutter Flutter + 4994608 (hashmap.cc:2)\n                             dart::Assert::Fail(char const*, ...)\n                             third_party/dart/runtime/platform/assert.cc:44:3\n#04 0000000101caaec4 Flutter Flutter + 5304004 (exceptions.cc:7)\n                             dart::realloc(void*, unsigned long)\n                             third_party/dart/runtime/platform/allocation.cc:22:5\n                             dart::MallocWriteStream::Realloc(long)\n                             third_party/dart/runtime/vm/datastream.cc:24:0\n#05 0000000101ca8218 Flutter Flutter + 5292568 (datastream.h:52)\n                             dart::BaseWriteStream::EnsureSpace(long)\n                             third_party/dart/runtime/vm/datastream.h:525:5\n                             dart::BaseWriteStream::WriteByte(unsigned char)\n                             third_party/dart/runtime/vm/datastream.h:431:0\n                             void dart::BaseWriteStream::Write<short>(short)\n                             third_party/dart/runtime/vm/datastream.h:419:0\n#06 0000000101cfd658 Flutter Flutter + 5641816 (raw_object_snapshot.cc:90)\n                             dart::BaseWriteStream::Raw<2, unsigned short>::Write(dart::BaseWriteStream*, unsigned short)\n                             third_party/dart/runtime/vm/datastream.h:337:11\n                             void dart::BaseWriter::Write<unsigned short>(unsigned short)\n                             third_party/dart/runtime/vm/snapshot.h:440:0\n                             void dart::StringWriteTo<unsigned short>(dart::SnapshotWriter*, long, dart::Snapshot::Kind, long, long, dart::SmiPtr, unsigned short*)\n                             third_party/dart/runtime/vm/raw_object_snapshot.cc:908:0\n                             dart::UntaggedTwoByteString::WriteTo(dart::SnapshotWriter*, long, dart::Snapshot::Kind, bool)\n                             third_party/dart/runtime/vm/raw_object_snapshot.cc:926:0\n#07 0000000101d30420 Flutter Flutter + 5850144 (snapshot.cc:151)\n                             dart::SnapshotWriter::WriteInstance(dart::ObjectPtr, dart::ClassPtr, long, long, bool)\n                             third_party/dart/runtime/vm/snapshot.cc:1519:9\n                             dart::SnapshotWriter::WriteMarkedObjectImpl(dart::ObjectPtr, long, long, bool)\n                             third_party/dart/runtime/vm/snapshot.cc:1223:0\n#08 0000000101d34cc0 Flutter Flutter + 5868736 (snapshot.h:54)\n                             dart::ForwardList::SerializeAll(dart::ObjectVisitor*)\n                             third_party/dart/runtime/vm/snapshot.cc:1316:15\n                             dart::SnapshotWriter::WriteForwardedObjects()\n                             third_party/dart/runtime/vm/snapshot.cc:1297:0\n                             dart::SnapshotWriter::WriteObject(dart::ObjectPtr)\n                             third_party/dart/runtime/vm/snapshot.cc:930:0\n                             dart::MessageWriter::WriteMessage(dart::Object const&, long long, dart::Message::Priority)\n                             third_party/dart/runtime/vm/snapshot.cc:1613:0\n#09 0000000101c72af0 Flutter Flutter + 5073648 (isolate.cc:11)\n                             dart::DN_HelperSendPortImpl_sendInternal_(dart::Isolate*, dart::Thread*, dart::Zone*, dart::NativeArguments*)\n                             third_party/dart/runtime/lib/isolate.cc:116:33\n                             dart::BootstrapNatives::DN_SendPortImpl_sendInternal_(dart::Thread*, dart::Zone*, dart::NativeArguments*)\n                             third_party/dart/runtime/lib/isolate.cc:102:0\n#10 0000000101cbb8f8 Flutter Flutter + 5372152 (object.h:45)\n                             dart::NativeEntry::BootstrapNativeCallWrapper(_Dart_NativeArguments*, void (*)(_Dart_NativeArguments*))\n                             third_party/dart/runtime/vm/native_entry.cc:140:37\n#11 0000000106006500 App Precompiled_Stub_CallBootstrapNative + 80\n#12 000000010607ff00 App Precompiled__SendPortImpl_1026248__sendInternal_1026248_2318 + 52\n#13 000000010607feb0 App Precompiled__SendPortImpl_1026248_send_2317 + 36\n#14 0000000106a0bc70 App Precompiled_____handleWithPorts_2174461950__async_op_41161 + 2412\n#15 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140\n#16 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208\n#17 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52\n#18 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136\n#19 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124\n#20 0000000106a30b54 App Precompiled__Future_4048458_timeout__anonymous_closure__41723 + 92\n#21 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140\n#22 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208\n#23 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52\n#24 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136\n#25 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124\n#26 000000010602d428 App Precompiled_____completeOnAsyncReturn_4048458_621 + 248\n#27 0000000106a0aec4 App Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op_41155 + 360\n#28 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140\n#29 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208\n#30 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52\n#31 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136\n#32 000000010602d4c8 App Precompiled__Future_4048458__completeWithValue_4048458_622 + 124\n#33 000000010602d428 App Precompiled_____completeOnAsyncReturn_4048458_621 + 248\n#34 0000000106a0ab5c App Precompiled_____handleWithPorts_2174461950__async_op_execute__async_op__anonymous_closure___async_op__anonymous_closure___async_op_41153 + 596\n#35 0000000106778014 App Precompiled__RootZone_4048458_runUnary_32348 + 140\n#36 0000000106031104 App Precompiled__FutureListener_4048458_handleValue_709 + 208\n#37 0000000106a3115c App Precompiled__Future_4048458__propagateToListeners_4048458_handleValueCallback_41732 + 52\n#38 000000010602c80c App Precompiled__Future_4048458__propagateToListeners_4048458_611 + 1136\n#39 0000000106a30a58 App Precompiled__Future_4048458__prependListeners_4048458__anonymous_closure__41721 + 44\n#40 0000000106030260 App Precompiled_____microtaskLoop_4048458_694 + 120\n#41 0000000106031d30 App Precompiled_____startMicrotaskLoop_4048458_732 + 40\n#42 0000000106031dec App Precompiled_____startMicrotaskLoop_4048458__startMicrotaskLoop_4048458_733 + 24\n#43 000000010608226c App Precompiled__Timer_1026248__runTimers_1026248_2359 + 1072\n#44 0000000106081df0 App Precompiled__Timer_1026248__handleMessage_1026248_2358 + 116\n#45 0000000106082460 App Precompiled__Timer_1026248__handleMessage_1026248__handleMessage_1026248_2360 + 32\n#46 0000000106a36300 App Precompiled__Closure_0150898_dyn_call_41991 + 556\n#47 000000010607fcd0 App Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_2313 + 56\n#48 00000001060061e4 App Precompiled_Stub_InvokeDartCode + 268\n#49 0000000101ca8ad0 Flutter Flutter + 5294800 (dart_entry.cc:18)\n                             dart::DartEntry::InvokeCode(dart::Code const&, dart::Array const&, dart::Array const&, dart::Thread*)\n                             third_party/dart/runtime/vm/dart_entry.cc:181:7\n                             dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&, dart::Array const&, unsigned long)\n                             third_party/dart/runtime/vm/dart_entry.cc:147:0\n#50 0000000101cb000c Flutter Flutter + 5324812 (dart_entry.cc:3)\n                             dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&)\n                             third_party/dart/runtime/vm/dart_entry.cc:37:10\n                             dart::DartLibraryCalls::HandleMessage(dart::Object const&, dart::Instance const&)\n                             third_party/dart/runtime/vm/dart_entry.cc:792:0\n                             dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)\n                             third_party/dart/runtime/vm/isolate.cc:1401:0\n#51 0000000101cbae1c Flutter Flutter + 5369372 (message_handler.cc:23)\n                             dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)\n                             third_party/dart/runtime/vm/message_handler.cc:233:16\n#52 0000000101cbaacc Flutter Flutter + 5368524 (message_handler.cc:44)\n                             dart::MessageHandler::TaskCallback()\n                             third_party/dart/runtime/vm/message_handler.cc:443:18\n                             dart::MessageHandlerTask::Run()\n                             third_party/dart/runtime/vm/message_handler.cc:31:0\n#53 0000000101d4092c Flutter Flutter + 5916972 (memory:233)\n                             dart::ThreadPool::WorkerLoop(dart::ThreadPool::Worker*)\n                             third_party/dart/runtime/vm/thread_pool.cc:158:15\n                             dart::ThreadPool::Worker::Main(unsigned long)\n                             third_party/dart/runtime/vm/thread_pool.cc:323:0\n#54 0000000101cf8020 Flutter Flutter + 5619744 (os_thread_macos.cc:13)\n                             dart::ThreadStart(void*)\n                             third_party/dart/runtime/vm/os_thread_macos.cc:132:5\n#55 0000000185a112c0 libsystem_pthread.dylib _pthread_body + 128\n#56 0000000185a11220 libsystem_pthread.dylib _pthread_start + 44\n#57 0000000185a14cdc libsystem_pthread.dylib thread_start + 4\n",
+    "notes": [
+      {
+        "kind": "loadBaseDetected",
+        "message": "000000010179c000"
+      }
+    ]
+  }
+]

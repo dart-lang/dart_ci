@@ -48,11 +48,6 @@ class _CrashExtractor {
     }
   }
 
-  // 0x00000001003cb6b4(ios_prod_global -main.m:35)main
-  // 0x000000010539eb10(Flutter + 0x00312b10)
-  final _internalFramePattern = RegExp(
-      r'(?<pc>0x[a-f0-9]+)\s*\((?<binary>\S+)\s+(\+\s+(?<offset>0x[a-f0-9]+)|(?<location>[^+][^\)]+))\)(?<symbol>.*)');
-
   /// Extract only stack traces from the text which match the given regexp.
   /// Used when 'internal' override is in effect.
   void parseAsCustomBacktrace(RegExp pattern, String os) {
@@ -94,13 +89,21 @@ class _CrashExtractor {
     for (; lineNo < lines.length; lineNo++) {
       final line = lines[lineNo];
 
-      final frame = parseIosFrame(line);
+      var frame = parseIosFrame(line);
 
       if (frame == null) {
         if (collectingFrames) {
           endCrash();
         }
         continue;
+      }
+
+      // Force resymbolization of frames that correspond to the Flutter
+      // framework by discarding symbol information already contained in
+      // the stack trace.
+      if (frame.binary == 'Flutter' && frame.symbol != 'Flutter') {
+        frame = frame.copyWith(
+            offset: null, symbol: CrashFrame.crashalyticsMissingSymbol);
       }
 
       // Allow frames that miss offset and instead contain `(Missing)`
@@ -425,11 +428,16 @@ class _CrashExtractor {
   static final _crashedThreadPattern = RegExp(r'^\s*Thread \d+ Crashed:');
   static final _iosFramePattern = RegExp(
       r'^\s*(?<no>\d+)\s+(?<binary>\S+)\s+(?<pc>0x[a-f0-9]+)\s+(?<rest>.*)$',
-      unicode: true);
+      unicode: true,
+      caseSensitive: false);
   static final _offsetSuffixPattern =
       RegExp(r'^(?<symbol>.*)\s+\+\s+(?<offset>\d+)$');
 
   static final _endOfDumpStackTracePattern = '-- End of DumpStackTrace';
   static final _dartvmFramePattern = RegExp(
       r'(^|\s+)pc\s+(?<pc>0x[a-f0-9]+)\s+fp\s+(?<fp>0x[a-f0-9]+)\s+(?<binary>[^\s+]+)\+(?<offset>0x[a-f0-9]+)');
+
+  final _internalFramePattern = RegExp(
+      r'(?<pc>0x[a-f0-9]+)\s*\((?<binary>\S+)\s+(\+\s+(?<offset>0x[a-f0-9]+)|(?<location>[^+][^\)]+))\)(?<symbol>.*)',
+      caseSensitive: false);
 }

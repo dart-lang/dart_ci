@@ -1,0 +1,28 @@
+@flutter-symbolizer-bot this engine#1d12d82d9c ios release arm64
+
+```
+Incident Identifier: AAAAA
+
+Thread 8 name:  io.flutter.1.ui
+Thread 8 Crashed:
+0   libsystem_kernel.dylib          0x00000001ca274414 0x1ca24c000 + 164884
+1   libsystem_pthread.dylib         0x00000001e76aab40 0x1e76a8000 + 11072
+2   libsystem_c.dylib               0x00000001a5f2fb74 0x1a5eb9000 + 486260
+3   Flutter                         0x00000001032ad650 0x103274000 + 235088
+4   Flutter                         0x00000001036d3104 0x103274000 + 4583684
+5   Flutter                         0x00000001036d25b8 0x103274000 + 4580792
+6   Flutter                         0x00000001036d1b5c 0x103274000 + 4578140
+7   Flutter                         0x00000001036dcb08 0x103274000 + 4623112
+8   Flutter                         0x0000000103585c98 0x103274000 + 3218584
+9   Flutter                         0x00000001032af44c 0x103274000 + 242764
+10  Flutter                         0x00000001032b13c0 0x103274000 + 250816
+11  CoreFoundation                  0x000000019cb0efa0 0x19ca6d000 + 663456
+12  CoreFoundation                  0x000000019cb0eba0 0x19ca6d000 + 662432
+13  CoreFoundation                  0x000000019cb0dffc 0x19ca6d000 + 659452
+14  CoreFoundation                  0x000000019cb07ee4 0x19ca6d000 + 634596
+15  CoreFoundation                  0x000000019cb0721c 0x19ca6d000 + 631324
+16  Flutter                         0x00000001032b129c 0x103274000 + 250524
+17  Flutter                         0x00000001032b0c24 0x103274000 + 248868
+18  libsystem_pthread.dylib         0x00000001e76a9b40 0x1e76a8000 + 6976
+19  libsystem_pthread.dylib         0x00000001e76b2768 0x1e76a8000 + 42856
+```
