@@ -7,7 +7,8 @@ syntax = "proto3";
 package current_results;
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
+
+message Empty {}
 
 service Query {
   // Returns all results matching the optional test and configuration filters.
@@ -41,7 +42,7 @@ service Query {
   }
 
   // Fetches new results into the service
-  rpc Fetch(google.protobuf.Empty) returns (FetchResponse) {
+  rpc Fetch(Empty) returns (FetchResponse) {
      option (google.api.http) = {
        post: "/v1/fetch"
      };

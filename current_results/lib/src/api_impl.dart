@@ -9,8 +9,6 @@ import 'package:current_results/src/generated/query.pbgrpc.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
 
-import 'generated/google/protobuf/empty.pb.dart';
-
 class QueryService extends QueryServiceBase {
   Slice current;
   BucketNotifications notifications;

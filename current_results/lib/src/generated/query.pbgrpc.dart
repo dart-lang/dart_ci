@@ -2,8 +2,8 @@
 //  Generated code. Do not modify.
 //  source: query.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
 
@@ -11,7 +11,6 @@ import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
 import 'query.pb.dart' as $0;
-import 'google/protobuf/empty.pb.dart' as $1;
 export 'query.pb.dart';
 
 class QueryClient extends $grpc.Client {
@@ -39,54 +38,44 @@ class QueryClient extends $grpc.Client {
       ($0.ListConfigurationsRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
           $0.ListConfigurationsResponse.fromBuffer(value));
-  static final _$fetch = $grpc.ClientMethod<$1.Empty, $0.FetchResponse>(
+  static final _$fetch = $grpc.ClientMethod<$0.Empty, $0.FetchResponse>(
       '/current_results.Query/Fetch',
-      ($1.Empty value) => value.writeToBuffer(),
+      ($0.Empty value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.FetchResponse.fromBuffer(value));
 
-  QueryClient($grpc.ClientChannel channel, {$grpc.CallOptions options})
-      : super(channel, options: options);
+  QueryClient($grpc.ClientChannel channel,
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
+      : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$0.GetResultsResponse> getResults(
       $0.GetResultsRequest request,
-      {$grpc.CallOptions options}) {
-    final call = $createCall(
-        _$getResults, $async.Stream.fromIterable([request]),
-        options: options);
-    return $grpc.ResponseFuture(call);
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$getResults, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.ListTestsResponse> listTests(
       $0.ListTestsRequest request,
-      {$grpc.CallOptions options}) {
-    final call = $createCall(_$listTests, $async.Stream.fromIterable([request]),
-        options: options);
-    return $grpc.ResponseFuture(call);
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$listTests, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.ListTestsResponse> listTestPathCompletions(
       $0.ListTestsRequest request,
-      {$grpc.CallOptions options}) {
-    final call = $createCall(
-        _$listTestPathCompletions, $async.Stream.fromIterable([request]),
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$listTestPathCompletions, request,
         options: options);
-    return $grpc.ResponseFuture(call);
   }
 
   $grpc.ResponseFuture<$0.ListConfigurationsResponse> listConfigurations(
       $0.ListConfigurationsRequest request,
-      {$grpc.CallOptions options}) {
-    final call = $createCall(
-        _$listConfigurations, $async.Stream.fromIterable([request]),
-        options: options);
-    return $grpc.ResponseFuture(call);
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$listConfigurations, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.FetchResponse> fetch($1.Empty request,
-      {$grpc.CallOptions options}) {
-    final call = $createCall(_$fetch, $async.Stream.fromIterable([request]),
-        options: options);
-    return $grpc.ResponseFuture(call);
+  $grpc.ResponseFuture<$0.FetchResponse> fetch($0.Empty request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$fetch, request, options: options);
   }
 }
 
@@ -124,12 +113,12 @@ abstract class QueryServiceBase extends $grpc.Service {
         ($core.List<$core.int> value) =>
             $0.ListConfigurationsRequest.fromBuffer(value),
         ($0.ListConfigurationsResponse value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$1.Empty, $0.FetchResponse>(
+    $addMethod($grpc.ServiceMethod<$0.Empty, $0.FetchResponse>(
         'Fetch',
         fetch_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $1.Empty.fromBuffer(value),
+        ($core.List<$core.int> value) => $0.Empty.fromBuffer(value),
         ($0.FetchResponse value) => value.writeToBuffer()));
   }
 
@@ -156,7 +145,7 @@ abstract class QueryServiceBase extends $grpc.Service {
   }
 
   $async.Future<$0.FetchResponse> fetch_Pre(
-      $grpc.ServiceCall call, $async.Future<$1.Empty> request) async {
+      $grpc.ServiceCall call, $async.Future<$0.Empty> request) async {
     return fetch(call, await request);
   }
 
@@ -169,5 +158,5 @@ abstract class QueryServiceBase extends $grpc.Service {
   $async.Future<$0.ListConfigurationsResponse> listConfigurations(
       $grpc.ServiceCall call, $0.ListConfigurationsRequest request);
   $async.Future<$0.FetchResponse> fetch(
-      $grpc.ServiceCall call, $1.Empty request);
+      $grpc.ServiceCall call, $0.Empty request);
 }

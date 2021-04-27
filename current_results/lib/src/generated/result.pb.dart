@@ -2,49 +2,161 @@
 //  Generated code. Do not modify.
 //  source: result.proto
 //
-// @dart = 2.3
-// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
+// @dart = 2.12
+// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class Result extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Result',
-      package: const $pb.PackageName('dart_ci'), createEmptyInstance: create)
-    ..aOS(1, 'name')
-    ..aOS(2, 'configuration')
-    ..a<$core.int>(3, 'timeMs', $pb.PbFieldType.O3)
-    ..aOS(4, 'result')
-    ..aOS(5, 'expected')
-    ..aOB(6, 'matches')
-    ..aOS(7, 'botName')
-    ..aOS(8, 'commitHash')
-    ..aOS(9, 'buildNumber')
-    ..aOS(10, 'builderName')
-    ..aOB(11, 'flaky')
-    ..aOB(12, 'previousFlaky')
-    ..aOS(13, 'previousCommitHash')
-    ..a<$core.int>(14, 'previousCommitTime', $pb.PbFieldType.O3)
-    ..aOS(15, 'previousBuildNumber')
-    ..aOS(16, 'previousResult')
-    ..aOB(17, 'changed')
-    ..aOS(100, 'suite')
-    ..aOS(101, 'testName')
-    ..a<$core.int>(102, 'commitTime', $pb.PbFieldType.O3)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      const $core.bool.fromEnvironment('protobuf.omit_message_names')
+          ? ''
+          : 'Result',
+      package: const $pb.PackageName(
+          const $core.bool.fromEnvironment('protobuf.omit_message_names')
+              ? ''
+              : 'dart_ci'),
+      createEmptyInstance: create)
+    ..aOS(
+        1,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'name')
+    ..aOS(
+        2,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'configuration')
+    ..a<$core.int>(
+        3,
+        const $core.bool.fromEnvironment('protobuf.omit_field_names')
+            ? ''
+            : 'timeMs',
+        $pb.PbFieldType.O3)
+    ..aOS(
+        4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'result')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expected')
+    ..aOB(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'matches')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'botName')
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitHash')
+    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'buildNumber')
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'builderName')
+    ..aOB(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flaky')
+    ..aOB(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousFlaky')
+    ..aOS(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousCommitHash')
+    ..a<$core.int>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousCommitTime', $pb.PbFieldType.O3)
+    ..aOS(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousBuildNumber')
+    ..aOS(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousResult')
+    ..aOB(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'changed')
+    ..aOS(100, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'suite')
+    ..aOS(101, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'testName')
+    ..a<$core.int>(102, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitTime', $pb.PbFieldType.O3)
     ..hasRequiredFields = false;
 
   Result._() : super();
-  factory Result() => create();
+  factory Result({
+    $core.String? name,
+    $core.String? configuration,
+    $core.int? timeMs,
+    $core.String? result,
+    $core.String? expected,
+    $core.bool? matches,
+    $core.String? botName,
+    $core.String? commitHash,
+    $core.String? buildNumber,
+    $core.String? builderName,
+    $core.bool? flaky,
+    $core.bool? previousFlaky,
+    $core.String? previousCommitHash,
+    $core.int? previousCommitTime,
+    $core.String? previousBuildNumber,
+    $core.String? previousResult,
+    $core.bool? changed,
+    $core.String? suite,
+    $core.String? testName,
+    $core.int? commitTime,
+  }) {
+    final _result = create();
+    if (name != null) {
+      _result.name = name;
+    }
+    if (configuration != null) {
+      _result.configuration = configuration;
+    }
+    if (timeMs != null) {
+      _result.timeMs = timeMs;
+    }
+    if (result != null) {
+      _result.result = result;
+    }
+    if (expected != null) {
+      _result.expected = expected;
+    }
+    if (matches != null) {
+      _result.matches = matches;
+    }
+    if (botName != null) {
+      _result.botName = botName;
+    }
+    if (commitHash != null) {
+      _result.commitHash = commitHash;
+    }
+    if (buildNumber != null) {
+      _result.buildNumber = buildNumber;
+    }
+    if (builderName != null) {
+      _result.builderName = builderName;
+    }
+    if (flaky != null) {
+      _result.flaky = flaky;
+    }
+    if (previousFlaky != null) {
+      _result.previousFlaky = previousFlaky;
+    }
+    if (previousCommitHash != null) {
+      _result.previousCommitHash = previousCommitHash;
+    }
+    if (previousCommitTime != null) {
+      _result.previousCommitTime = previousCommitTime;
+    }
+    if (previousBuildNumber != null) {
+      _result.previousBuildNumber = previousBuildNumber;
+    }
+    if (previousResult != null) {
+      _result.previousResult = previousResult;
+    }
+    if (changed != null) {
+      _result.changed = changed;
+    }
+    if (suite != null) {
+      _result.suite = suite;
+    }
+    if (testName != null) {
+      _result.testName = testName;
+    }
+    if (commitTime != null) {
+      _result.commitTime = commitTime;
+    }
+    return _result;
+  }
   factory Result.fromBuffer($core.List<$core.int> i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory Result.fromJson($core.String i,
           [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   Result clone() => Result()..mergeFromMessage(this);
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
   Result copyWith(void Function(Result) updates) =>
-      super.copyWith((message) => updates(message as Result));
+      super.copyWith((message) => updates(message as Result))
+          as Result; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static Result create() => Result._();
@@ -53,7 +165,7 @@ class Result extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static Result getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Result>(create);
-  static Result _defaultInstance;
+  static Result? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get name => $_getSZ(0);

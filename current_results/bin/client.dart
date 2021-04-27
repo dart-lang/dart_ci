@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:args/command_runner.dart';
 import 'package:grpc/grpc.dart';
 
-import 'package:current_results/src/generated/google/protobuf/empty.pb.dart';
 import 'package:current_results/src/generated/query.pbgrpc.dart';
 
 void main(List<String> args) async {

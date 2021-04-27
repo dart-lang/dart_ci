@@ -19,18 +19,17 @@ To generate the Dart code reading the records from results.json,
 and the gRPC server and client code from query.proto,
 run protogen on the .proto files declaring them:
 ```
-protoc --dart_out=lib/src/generated ../common/result.proto
-protoc --dart_out=grpc:lib/src/generated -I/usr/local/include -Ilib/protos lib/protos/query.proto
-dartfmt -w lib/src/generated
+protoc --dart_out=lib/src/generated -I../common ../common/result.proto
+protoc --dart_out=grpc:lib/src/generated -Ilib/protos -Ithird_party/proto lib/protos/query.proto
+dart format lib/src/generated/query* lib/src/generated/result*
 ```
 
-Our gRPC api protocol uses the google/protobuf/Empty message, and
-we use the gRPC api of Pub/Sub from google/pubsub/v1, so we need to
-check out the googleapis protocol buffer definitions and generate them.
+Our gRPC api protocol uses the gRPC api of Pub/Sub from google/pubsub/v1, so we
+need to check out the googleapis protocol buffer definitions and generate them.
 They are not checked into the repository, and must be generated.
 ```
-protoc --dart_out=lib/src/generated -I/usr/local/include /usr/local/include/google/protobuf/*.proto
-protoc --dart_out=grpc:lib/src/generated -I/src/googleapis /src/googleapis/google/pubsub/v1/pubsub.proto
+protoc --dart_out=lib/src/generated -I[protobuf checkout]/src [protobuf checkout]/src/google/protobuf/*.proto
+protoc --dart_out=grpc:lib/src/generated -I[googleapis checkout] [googleapis checkout]/google/pubsub/v1/pubsub.proto
 ```
 
 
