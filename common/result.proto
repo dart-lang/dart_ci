@@ -30,4 +30,5 @@ message Result {
   string previous_build_number = 15;
   string previous_result = 16; // From pkg/status_file/expectation.dart
   bool changed = 17; // Are result and previous_result the same.
+  repeated string experiments = 18; // Experiments enabled when running this test.
 }

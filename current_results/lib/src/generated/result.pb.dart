@@ -50,6 +50,7 @@ class Result extends $pb.GeneratedMessage {
     ..aOS(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousBuildNumber')
     ..aOS(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'previousResult')
     ..aOB(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'changed')
+    ..pPS(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'experiments')
     ..aOS(100, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'suite')
     ..aOS(101, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'testName')
     ..a<$core.int>(102, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitTime', $pb.PbFieldType.O3)
@@ -74,6 +75,7 @@ class Result extends $pb.GeneratedMessage {
     $core.String? previousBuildNumber,
     $core.String? previousResult,
     $core.bool? changed,
+    $core.Iterable<$core.String>? experiments,
     $core.String? suite,
     $core.String? testName,
     $core.int? commitTime,
@@ -129,6 +131,9 @@ class Result extends $pb.GeneratedMessage {
     }
     if (changed != null) {
       _result.changed = changed;
+    }
+    if (experiments != null) {
+      _result.experiments.addAll(experiments);
     }
     if (suite != null) {
       _result.suite = suite;
@@ -371,39 +376,42 @@ class Result extends $pb.GeneratedMessage {
   @$pb.TagNumber(17)
   void clearChanged() => clearField(17);
 
+  @$pb.TagNumber(18)
+  $core.List<$core.String> get experiments => $_getList(17);
+
   @$pb.TagNumber(100)
-  $core.String get suite => $_getSZ(17);
+  $core.String get suite => $_getSZ(18);
   @$pb.TagNumber(100)
   set suite($core.String v) {
-    $_setString(17, v);
+    $_setString(18, v);
   }
 
   @$pb.TagNumber(100)
-  $core.bool hasSuite() => $_has(17);
+  $core.bool hasSuite() => $_has(18);
   @$pb.TagNumber(100)
   void clearSuite() => clearField(100);
 
   @$pb.TagNumber(101)
-  $core.String get testName => $_getSZ(18);
+  $core.String get testName => $_getSZ(19);
   @$pb.TagNumber(101)
   set testName($core.String v) {
-    $_setString(18, v);
+    $_setString(19, v);
   }
 
   @$pb.TagNumber(101)
-  $core.bool hasTestName() => $_has(18);
+  $core.bool hasTestName() => $_has(19);
   @$pb.TagNumber(101)
   void clearTestName() => clearField(101);
 
   @$pb.TagNumber(102)
-  $core.int get commitTime => $_getIZ(19);
+  $core.int get commitTime => $_getIZ(20);
   @$pb.TagNumber(102)
   set commitTime($core.int v) {
-    $_setSignedInt32(19, v);
+    $_setSignedInt32(20, v);
   }
 
   @$pb.TagNumber(102)
-  $core.bool hasCommitTime() => $_has(19);
+  $core.bool hasCommitTime() => $_has(20);
   @$pb.TagNumber(102)
   void clearCommitTime() => clearField(102);
 }
