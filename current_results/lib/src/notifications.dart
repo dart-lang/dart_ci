@@ -26,9 +26,6 @@ class BucketNotifications {
       ..subscription = subscription.name
       ..maxMessages = 1000);
     if (response.receivedMessages.isNotEmpty) {
-      final ackIds = [
-        for (final message in response.receivedMessages) message.ackId
-      ];
       await client.acknowledge(AcknowledgeRequest()
         ..subscription = subscription.name
         ..ackIds

@@ -72,7 +72,7 @@ void main() {
     expect(merge(empty, b, xField), b);
   });
 
-  test("Iterable from Iterator", () {
+  test('Iterable from Iterator', () {
     final a = [
       1,
       2,
@@ -87,7 +87,9 @@ void main() {
     final m = {'x': 1, 'y': 2};
     expect(m.keys.iterator.iterable, ['x', 'y']);
     Iterable<Map<String, int>> unbounded() sync* {
-      for (;;) yield m;
+      for (;;) {
+        yield m;
+      }
     }
 
     expect(unbounded().iterator.iterable.take(2), [m, m]);

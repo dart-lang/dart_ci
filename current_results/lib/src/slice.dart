@@ -91,8 +91,9 @@ class Slice {
       } else if (compare == 0) {
         i++;
         j++;
-      } else
+      } else {
         break;
+      }
     }
     if (j == sorted.length) return names;
 
@@ -124,7 +125,7 @@ class Slice {
         query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
     final filterTerms =
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
-    final configurationSet = Set<String>();
+    final configurationSet = <String>{};
     final testPrefixes = <String>[];
     for (final prefix in filterTerms) {
       final matchingConfigurations = _stored.keys

@@ -13,6 +13,7 @@ class SingleUseIterable<T> extends IterableBase<T> {
   bool _used = false;
   SingleUseIterable(this._iterator);
 
+  @override
   Iterator<T> get iterator {
     if (_used) throw StateError('SingleUseIterable.iterator called twice');
     _used = true;

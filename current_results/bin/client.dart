@@ -24,6 +24,7 @@ void main(List<String> args) async {
 
 abstract class gRpcCommand extends Command {
   Future<void> runWithClient(QueryClient client);
+  @override
   Future<void> run() async {
     final channel = ClientChannel(globalResults['host'],
         port: int.parse(globalResults['port']),
@@ -50,9 +51,12 @@ class QueryCommand extends gRpcCommand {
         abbr: 'l', help: 'number of results to return');
     argParser.addOption('page', help: 'page token returned from previous call');
   }
+  @override
   String get name => 'getResults';
+  @override
   String get description => 'Send a GetResults gRPC request to the server';
 
+  @override
   Future<void> runWithClient(QueryClient client) async {
     final request = GetResultsRequest();
     request.filter = argResults['filter'] ?? '';
@@ -77,9 +81,12 @@ class ListTestsCommand extends gRpcCommand {
         help: 'number of test names starting with prefix to return');
   }
 
+  @override
   String get name => 'listTests';
+  @override
   String get description => 'Send a ListTests gRPC request to the server';
 
+  @override
   Future<void> runWithClient(QueryClient client) async {
     final query = ListTestsRequest()
       ..prefix = argResults['prefix']
@@ -90,9 +97,12 @@ class ListTestsCommand extends gRpcCommand {
 }
 
 class FetchCommand extends gRpcCommand {
+  @override
   String get name => 'fetch';
+  @override
   String get description => 'Send a Fetch gRPC request to the server';
 
+  @override
   Future<void> runWithClient(QueryClient client) async {
     final result = await client.fetch(Empty());
     print(jsonEncode(result.toProto3Json()));
