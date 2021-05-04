@@ -136,8 +136,8 @@ class Slice {
         configurationSet.addAll(matchingConfigurations);
       }
     }
-    testPrefixes..sort();
-    for (int i = 0; i < testPrefixes.length; ++i) {
+    testPrefixes.sort();
+    for (var i = 0; i < testPrefixes.length; ++i) {
       while (i + 1 < testPrefixes.length &&
           testPrefixes[i + 1].startsWith(testPrefixes[i])) {
         testPrefixes.removeAt(i + 1);
