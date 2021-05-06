@@ -83,6 +83,7 @@ message Result {
   string expected = 4;
   bool flaky = 5;
   int32 time_ms = 6;
+  repeated string experiments = 7;
 }
 
 message ListTestsRequest {

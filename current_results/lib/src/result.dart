@@ -13,9 +13,10 @@ class Result {
   final bool flaky;
   final String expected;
   final Duration time;
+  final List<String> experiments;
 
   Result(this.name, this.configuration, this.commitHash, this.result,
-      this.flaky, this.expected, this.time);
+      this.flaky, this.expected, this.time, this.experiments);
 
   Result.fromApi(api.Result other)
       : this(
@@ -25,9 +26,13 @@ class Result {
             unique(other.result),
             other.flaky,
             unique(other.expected),
-            Duration(milliseconds: other.timeMs));
+            Duration(milliseconds: other.timeMs),
+            other.experiments.isEmpty
+                ? const []
+                : other.experiments.map(unique).toList(growable: false));
 
-  Result.nameOnly(String name) : this(name, null, null, null, null, null, null);
+  Result.nameOnly(String name)
+      : this(name, null, null, null, null, null, null, null);
 
   static final uniqueStrings = <String>{};
 
@@ -41,7 +46,8 @@ class Result {
     ..result = result
     ..timeMs = time.inMilliseconds
     ..expected = expected
-    ..flaky = flaky;
+    ..flaky = flaky
+    ..experiments.addAll(experiments);
 
   static query_api.Result toApi(Result result) => result.toQueryResult();
 
@@ -53,6 +59,7 @@ class Result {
         'flaky': flaky,
         'expected': expected,
         'time': time,
+        'experiments': experiments,
       };
 
   @override

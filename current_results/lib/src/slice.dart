@@ -24,16 +24,23 @@ int isAfterPrefix(Result a, Result prefix) {
 
 /// Returns the range from [sorted] of Result entries that are at or after
 /// [startResult] and begin with [prefixResult].
-Iterable<Result> getResultRange(
-    List<Result> sorted, Result startResult, Result prefixResult) {
-  var start = lowerBound<Result>(sorted, startResult, compare: compareNames);
+/// If [experiments] is not empty, only results with one of the contained
+/// experiment names are included.
+Iterable<Result> getResultRange(List<Result> sorted, Result startResult,
+    Result prefixResult, Set<String> experiments) {
+  final start = lowerBound<Result>(sorted, startResult, compare: compareNames);
   if (start >= sorted.length) return [];
   if (!sorted[start].name.startsWith(prefixResult.name)) return [];
   var end = start + 1;
   if (end < sorted.length && sorted[end].name.startsWith(prefixResult.name)) {
     end = lowerBound<Result>(sorted, prefixResult, compare: isAfterPrefix);
   }
-  return sorted.getRange(start, end);
+  var range = sorted.getRange(start, end);
+  if (experiments.isNotEmpty) {
+    range = range.where((result) => experiments
+        .any((experiment) => result.experiments.contains(experiment)));
+  }
+  return range;
 }
 
 /// Holds the test results for all configurations.
@@ -49,16 +56,19 @@ class Slice {
   final _lastFetched = <String, DateTime>{};
 
   /// A sorted list of all test names seen. Names are not removed from this list.
-  List<String> testNames = [];
+  List<String> _testNames = [];
+
   int _size = 0;
 
   int get size => _size;
 
   void add(List<String> lines) {
     if (lines.isEmpty) return;
-    final results = lines.map((line) => Result.fromApi(api.Result()
-      ..mergeFromProto3Json(json.decode(line),
-          supportNamesWithUnderscores: true)));
+    final results = lines
+        .map((line) => Result.fromApi(api.Result()
+          ..mergeFromProto3Json(json.decode(line),
+              supportNamesWithUnderscores: true)))
+        .toList();
     final configuration = results.first.configuration;
     if (results.any((result) => result.configuration != configuration)) {
       print('Loaded results list with multiple configurations: '
@@ -75,9 +85,9 @@ class Slice {
   }
 
   void collectTestNames() {
-    testNames.clear();
+    _testNames.clear();
     for (final results in _stored.values) {
-      testNames = _mergeIfNeeded(testNames, results);
+      _testNames = _mergeIfNeeded(_testNames, results);
     }
   }
 
@@ -119,7 +129,6 @@ class Slice {
   }
 
   query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
-    final response = query_api.GetResultsResponse();
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
     final pageStart =
         query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
@@ -127,13 +136,19 @@ class Slice {
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
     final configurationSet = <String>{};
     final testPrefixes = <String>[];
-    for (final prefix in filterTerms) {
-      final matchingConfigurations = _stored.keys
-          .where((configuration) => configuration.startsWith(prefix));
-      if (matchingConfigurations.isEmpty) {
-        testPrefixes.add(prefix);
+    final experiments = <String>{};
+    for (final term in filterTerms) {
+      const experimentPrefix = 'experiment:';
+      if (term.startsWith(experimentPrefix)) {
+        experiments.add(term.substring(experimentPrefix.length));
       } else {
-        configurationSet.addAll(matchingConfigurations);
+        final matchingConfigurations = _stored.keys
+            .where((configuration) => configuration.startsWith(term));
+        if (matchingConfigurations.isEmpty) {
+          testPrefixes.add(term);
+        } else {
+          configurationSet.addAll(matchingConfigurations);
+        }
       }
     }
     testPrefixes.sort();
@@ -150,11 +165,12 @@ class Slice {
         (configurationSet.isEmpty ? _stored.keys : configurationSet).toList()
           ..sort();
 
+    final response = query_api.GetResultsResponse();
     for (final prefix in testPrefixes) {
-      response.results.addAll(getSortedResults(
-              prefix, configurations, pageStart,
-              needed: limit - response.results.length)
-          .map(Result.toApi));
+      var sortedResults = getSortedResults(
+          prefix, configurations, experiments, pageStart,
+          needed: limit - response.results.length);
+      response.results.addAll(sortedResults.map(Result.toApi));
       if (response.results.length == limit) {
         response.nextPageToken = PageStart(
                 response.results.last.name, response.results.last.configuration)
@@ -167,10 +183,12 @@ class Slice {
 
   /// Returns up to [needed] results from the configurations in [configurations],
   /// with test names that start with [prefix], sorted by test name.
+  /// If [experiments] is not empty, only results with one of the contained
+  /// experiment names are included.
   /// If [pageStart] is not null, test names before pageStart.name are
   /// filtered out.
-  List<Result> getSortedResults(
-      String prefix, List<String> configurations, PageStart pageStart,
+  List<Result> getSortedResults(String prefix, List<String> configurations,
+      Set<String> experiments, PageStart pageStart,
       {int needed}) {
     final prefixResult = Result.nameOnly(prefix);
     var startResult;
@@ -185,8 +203,8 @@ class Slice {
     var results = <Result>[];
 
     for (final configuration in configurations) {
-      var configurationRange =
-          getResultRange(_stored[configuration], startResult, prefixResult);
+      var configurationRange = getResultRange(
+          _stored[configuration], startResult, prefixResult, experiments);
 
       if (configurationRange.isEmpty) continue;
       if (pageStart != null &&
@@ -214,9 +232,9 @@ class Slice {
     if (limit == 0) limit = 20;
     final prefix = query.prefix;
     final response = query_api.ListTestsResponse();
-    final start = lowerBound(testNames, prefix);
-    final end = min(start + limit, testNames.length);
-    for (final name in testNames.getRange(start, end)) {
+    final start = lowerBound(_testNames, prefix);
+    final end = min(start + limit, _testNames.length);
+    for (final name in _testNames.getRange(start, end)) {
       if (name.startsWith(prefix)) {
         response.names.add(name);
       } else {

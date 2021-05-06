@@ -267,6 +267,7 @@ class Result extends $pb.GeneratedMessage {
         const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'expected')
     ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flaky')
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeMs', $pb.PbFieldType.O3)
+    ..pPS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'experiments')
     ..hasRequiredFields = false;
 
   Result._() : super();
@@ -277,6 +278,7 @@ class Result extends $pb.GeneratedMessage {
     $core.String? expected,
     $core.bool? flaky,
     $core.int? timeMs,
+    $core.Iterable<$core.String>? experiments,
   }) {
     final _result = create();
     if (name != null) {
@@ -296,6 +298,9 @@ class Result extends $pb.GeneratedMessage {
     }
     if (timeMs != null) {
       _result.timeMs = timeMs;
+    }
+    if (experiments != null) {
+      _result.experiments.addAll(experiments);
     }
     return _result;
   }
@@ -396,6 +401,9 @@ class Result extends $pb.GeneratedMessage {
   $core.bool hasTimeMs() => $_has(5);
   @$pb.TagNumber(6)
   void clearTimeMs() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.List<$core.String> get experiments => $_getList(6);
 }
 
 class ListTestsRequest extends $pb.GeneratedMessage {
