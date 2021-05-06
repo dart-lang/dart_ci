@@ -6,40 +6,32 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
-import 'package:googleapis_auth/auth_io.dart';
 
 /// Fetches la(st )test results from the dart-test-results GCS bucket.
 class ResultsBucket {
-  AuthClient client;
-  Bucket bucket;
+  final Bucket _bucket;
 
-  Future<void> initialize() async {
-    client = await clientViaApplicationDefaultCredentials(scopes: [
-      'https://www.googleapis.com/auth/devstorage.read_only',
-    ]);
-    final storage = Storage(client, 'dart-ci');
-    bucket = storage.bucket('dart-test-results');
-  }
+  ResultsBucket(this._bucket);
 
-  Future<List<String>> configurationDirectories() => bucket
+  Future<List<String>> configurationDirectories() => _bucket
       .list(prefix: 'configuration/master/')
       .where((entry) => entry.isDirectory)
       .map((entry) => entry.name)
       .toList();
 
   Future<DateTime> latestResultsDate(String configurationDirectory) async {
-    final info = await bucket.info('${configurationDirectory}latest');
+    final info = await _bucket.info('${configurationDirectory}latest');
     return info.updated;
   }
 
   Future<List<String>> latestResults(String configurationDirectory) async {
     try {
-      final revision = await bucket
+      final revision = await _bucket
           .read('${configurationDirectory}latest')
           .transform(ascii.decoder)
           .transform(LineSplitter())
           .single;
-      final results = await bucket
+      final results = await _bucket
           .read('$configurationDirectory$revision/results.json')
           .transform(utf8.decoder)
           .transform(LineSplitter())

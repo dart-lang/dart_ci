@@ -4,6 +4,8 @@
 
 import 'dart:io';
 
+import 'package:gcloud/storage.dart';
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:grpc/grpc.dart';
 import 'package:pool/pool.dart';
 
@@ -12,21 +14,27 @@ import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
 
-final current = Slice();
-final bucket = ResultsBucket();
-final notifications = BucketNotifications();
-final grpcServer = Server([QueryService(current, notifications, bucket)]);
-
-void main(List<String> args) async {
-  await bucket.initialize();
-  await notifications.initialize();
-  await loadData();
+void main() async {
+  final client = await clientViaApplicationDefaultCredentials(scopes: [
+    'https://www.googleapis.com/auth/devstorage.read_only',
+  ]);
+  final bucket = Storage(client, 'dart-ci').bucket('dart-test-results');
+  final resultsBucket = ResultsBucket(bucket);
   var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
+  await startServer(port, resultsBucket);
+}
+
+Future<void> startServer(int port, ResultsBucket bucket) async {
+  final notifications = BucketNotifications();
+  await notifications.initialize();
+  final current = await loadData(bucket);
+  final grpcServer = Server([QueryService(current, notifications, bucket)]);
   await grpcServer.serve(port: port);
   print('Grpc serving on port ${grpcServer.port}');
 }
 
-Future<void> loadData() async {
+Future<Slice> loadData(ResultsBucket bucket) async {
+  final result = Slice();
   final configurationDirectories = await bucket.configurationDirectories();
   await Pool(10).forEach(configurationDirectories,
       (String configurationDirectory) async {
@@ -35,10 +43,11 @@ Future<void> loadData() async {
           await bucket.latestResultsDate(configurationDirectory);
       if (DateTime.now().difference(resultsDate) <= maximumAge) {
         final results = await bucket.latestResults(configurationDirectory);
-        current.add(results);
+        result.add(results);
       }
     } catch (e, stack) {
       print('Error loading configuration $configurationDirectory: $e\n$stack');
     }
   }).drain();
+  return result;
 }
