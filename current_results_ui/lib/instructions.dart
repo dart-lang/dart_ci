@@ -15,8 +15,8 @@ class Instructions extends StatelessWidget {
           style: TextStyle(fontSize: 24.0),
         ),
         paragraph('Enter query terms that are prefixes of configuration '
-            'or test names. Multiple terms can be entered at once, separated '
-            'by commas.'),
+            'or test names, or filter for experiments with "experiment:<name>".'
+            ' Multiple terms can be entered at once, separated by commas.'),
         paragraph('Some example queries are:'),
         for (final example in [
           {
@@ -32,6 +32,11 @@ class Instructions extends StatelessWidget {
             'description':
                 'all tests on dart2js strong null-safe configuration',
             'terms': 'dart2js-hostasserts-strong'
+          },
+          {
+            'description':
+                'all tests that were run with experiment "triple-shift"',
+            'terms': 'experiment:triple-shift'
           },
           {'description': 'null-safe language tests', 'terms': 'language/'},
         ]) ...[
