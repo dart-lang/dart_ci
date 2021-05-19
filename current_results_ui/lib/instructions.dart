@@ -35,8 +35,8 @@ class Instructions extends StatelessWidget {
           },
           {
             'description':
-                'all tests that were run with experiment "triple-shift"',
-            'terms': 'experiment:triple-shift'
+                'all tests that were run with experiment "test-experiment"',
+            'terms': 'experiment:test-experiment'
           },
           {'description': 'null-safe language tests', 'terms': 'language/'},
         ]) ...[
