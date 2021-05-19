@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_ci/src/get_log.dart';
+import 'package:dart_ci/src/test_source.dart' show computeTestSource;
 
 void main() async {
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
@@ -17,10 +18,14 @@ void main() async {
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
-    if (request.uri.path.startsWith('/log/')) {
-      return await serveLog(request);
+    final path = request.uri.path;
+    if (path.startsWith('/log/')) {
+      await serveLog(request);
+    } else if (path.startsWith('/test/')) {
+      await redirectToTest(request);
+    } else {
+      await serveFrontPage(request);
     }
-    return await serveFrontPage(request);
   } on UserVisibleFailure catch (e) {
     print(e);
     showError(request, e);
@@ -50,6 +55,19 @@ void serveFrontPage(HttpRequest request) async {
    <li>/logs/[builder]/*/latest/[test name]
    </ul>
    and all combinations of these except /logs/any/*/... .
+    <h1>Dart Test Sources</h1>
+    <p>URL format: /test/[gob/]&lt;revision&gt;/&lt;test-name&gt;</p>
+    <p>When using gob/, the test name will be resolved on googlesource.com
+    instead of github.com, which also works for Gerrit revisions.</p>
+    <p>Examples:
+    <ul>
+    <li><a href="test/master/corelib/apply2_test">
+      test/master/corelib/apply2_test</a>
+    <li><a href="test/gob/master/corelib/apply2_test">
+      test/gob/master/corelib/apply2_test</a>
+    <li><a href="test/master/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none">
+      test/master/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none
+    </p>
   </body>
 </html>
 """);
@@ -80,6 +98,27 @@ Future<void> serveLog(HttpRequest request) async {
   response.headers.expires = DateTime.now().add(const Duration(days: 30));
   response.write(log);
   return response.close();
+}
+
+Future<void> redirectToTest(HttpRequest request) async {
+  Iterable<String> parts = request.uri.pathSegments.skip(1);
+  var useGob = false;
+  if (parts.first == 'gob') {
+    useGob = true;
+    parts = parts.skip(1);
+  }
+  final revision = parts.first;
+  final testName = parts.skip(1).join('/');
+  try {
+    final source = await computeTestSource(revision, testName, useGob);
+    if (source != null) {
+      return redirectTemporary(request, source.toString());
+    } else {
+      return notFound(request);
+    }
+  } catch (e) {
+    throw UserVisibleFailure(e.toString());
+  }
 }
 
 Future<void> redirectTemporary(HttpRequest request, String newPath) {
