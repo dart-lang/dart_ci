@@ -5,7 +5,7 @@
 /// Resolves the source of a test for a given revision of the SDK.
 
 import 'dart:async' show Future;
-import 'dart:convert' show base64Decode;
+import 'dart:convert' show base64Decode, jsonDecode;
 import 'package:http/http.dart' as http;
 import 'dart:io' show HttpStatus;
 
@@ -136,6 +136,23 @@ Future<String> findDepsRevision(String revision, String package) async {
   final body = String.fromCharCodes(base64Decode(response.body));
   final match = RegExp('"${package}_rev": "(.*)",').firstMatch(body);
   return match?.group(1);
+}
+
+const gerritDataHeader = ")]}'";
+
+Future<String> getPatchsetRevision(int review, int patchset) async {
+  final url = 'https://dart-review.googlesource.com/'
+      'changes/$review/revisions/$patchset/commit';
+  final response = await http.get(url);
+  if (response.statusCode != HttpStatus.ok) {
+    throw Exception("Can't find revision for cl/$review/$patchset");
+  }
+  final body = response.body;
+  if (!body.startsWith(gerritDataHeader)) {
+    throw Exception('Got invalid response for cl/$review/$patchset');
+  }
+  final data = jsonDecode(body.substring(gerritDataHeader.length));
+  return data['commit'];
 }
 
 Future<Uri> computeTestSource(

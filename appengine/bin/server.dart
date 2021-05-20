@@ -8,7 +8,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_ci/src/get_log.dart';
-import 'package:dart_ci/src/test_source.dart' show computeTestSource;
+import 'package:dart_ci/src/test_source.dart'
+    show computeTestSource, getPatchsetRevision;
 
 void main() async {
   final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
@@ -56,17 +57,23 @@ void serveFrontPage(HttpRequest request) async {
    </ul>
    and all combinations of these except /logs/any/*/... .
     <h1>Dart Test Sources</h1>
-    <p>URL format: /test/[gob/]&lt;revision&gt;/&lt;test-name&gt;</p>
-    <p>When using gob/, the test name will be resolved on googlesource.com
-    instead of github.com, which also works for Gerrit revisions.</p>
+    Redirects to the source of the test given by name and either SDK revision or CL/patchset
+    reference.
+    <p>URL formats:
+    <ul>
+    <li>/test/&lt;revision&gt;/&lt;test-name&gt;
+    <li>/test/cl/&lt;review-id&gt;/&lt;patchset-id&gt;/&lt;test-name&gt;
+    </ul>
+    </p>
     <p>Examples:
     <ul>
     <li><a href="test/master/corelib/apply2_test">
       test/master/corelib/apply2_test</a>
-    <li><a href="test/gob/master/corelib/apply2_test">
-      test/gob/master/corelib/apply2_test</a>
-    <li><a href="test/master/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none">
-      test/master/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none
+    <li><a href="test/9094f7/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none">
+      test/9094f7/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none
+    <li><a href="test/cl/199421/3/pkg/test_runner/test/experiment_test">
+      test/cl/199421/3/pkg/test_runner/test/experiment_test</a>
+    </ul>
     </p>
   </body>
 </html>
@@ -101,16 +108,19 @@ Future<void> serveLog(HttpRequest request) async {
 }
 
 Future<void> redirectToTest(HttpRequest request) async {
-  Iterable<String> parts = request.uri.pathSegments.skip(1);
-  var useGob = false;
-  if (parts.first == 'gob') {
-    useGob = true;
-    parts = parts.skip(1);
+  final parts = request.uri.pathSegments.skip(1).toList();
+  final isCl = parts.first == 'cl';
+  var revision;
+  if (isCl) {
+    final review = int.parse(parts[1]);
+    final patchset = int.parse(parts[2]);
+    revision = await getPatchsetRevision(review, patchset);
+  } else {
+    revision = parts.first;
   }
-  final revision = parts.first;
-  final testName = parts.skip(1).join('/');
+  final testName = parts.skip(isCl ? 3 : 1).join('/');
   try {
-    final source = await computeTestSource(revision, testName, useGob);
+    final source = await computeTestSource(revision, testName, isCl);
     if (source != null) {
       return redirectTemporary(request, source.toString());
     } else {
