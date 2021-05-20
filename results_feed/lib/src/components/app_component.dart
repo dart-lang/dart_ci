@@ -88,7 +88,7 @@ class AppComponent implements OnInit, CanReuse {
       List entries, IntersectionObserver observer) async {
     infiniteScrollVisibleRatio = entries[0].intersectionRatio;
     // The event stream will write to infiniteScrollVisible, stopping the loop.
-    while (infiniteScrollVisibleRatio > 0) {
+    while (infiniteScrollVisibleRatio > 0 && infiniteScrollEnabled) {
       await fetchData();
       await Future.delayed(Duration(seconds: 2));
     }

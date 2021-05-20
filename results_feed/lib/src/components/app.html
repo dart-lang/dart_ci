@@ -24,7 +24,8 @@
   <div style="text-align: center">
     <span *ngIf="fetchDate != null">
       Fetched results back to {{formattedFetchDate}}<br></span>
-    <span *ngIf="infiniteScrollEnabled" #infiniteScroll>
+    <span #infiniteScroll></span>
+    <span *ngIf="infiniteScrollEnabled">
       fetching results ...</span>
     <material-button raised *ngIf="!infiniteScrollEnabled" (trigger)="fetchData()">
       Fetch more results
