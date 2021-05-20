@@ -66,12 +66,13 @@ const Result$json = const {
     const {'1': 'flaky', '3': 5, '4': 1, '5': 8, '10': 'flaky'},
     const {'1': 'time_ms', '3': 6, '4': 1, '5': 5, '10': 'timeMs'},
     const {'1': 'experiments', '3': 7, '4': 3, '5': 9, '10': 'experiments'},
+    const {'1': 'revision', '3': 8, '4': 1, '5': 9, '10': 'revision'},
   ],
 };
 
 /// Descriptor for `Result`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List resultDescriptor = $convert.base64Decode(
-    'CgZSZXN1bHQSEgoEbmFtZRgBIAEoCVIEbmFtZRIkCg1jb25maWd1cmF0aW9uGAIgASgJUg1jb25maWd1cmF0aW9uEhYKBnJlc3VsdBgDIAEoCVIGcmVzdWx0EhoKCGV4cGVjdGVkGAQgASgJUghleHBlY3RlZBIUCgVmbGFreRgFIAEoCFIFZmxha3kSFwoHdGltZV9tcxgGIAEoBVIGdGltZU1zEiAKC2V4cGVyaW1lbnRzGAcgAygJUgtleHBlcmltZW50cw==');
+    'CgZSZXN1bHQSEgoEbmFtZRgBIAEoCVIEbmFtZRIkCg1jb25maWd1cmF0aW9uGAIgASgJUg1jb25maWd1cmF0aW9uEhYKBnJlc3VsdBgDIAEoCVIGcmVzdWx0EhoKCGV4cGVjdGVkGAQgASgJUghleHBlY3RlZBIUCgVmbGFreRgFIAEoCFIFZmxha3kSFwoHdGltZV9tcxgGIAEoBVIGdGltZU1zEiAKC2V4cGVyaW1lbnRzGAcgAygJUgtleHBlcmltZW50cxIaCghyZXZpc2lvbhgIIAEoCVIIcmV2aXNpb24=');
 @$core.Deprecated('Use listTestsRequestDescriptor instead')
 const ListTestsRequest$json = const {
   '1': 'ListTestsRequest',

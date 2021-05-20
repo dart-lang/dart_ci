@@ -268,6 +268,7 @@ class Result extends $pb.GeneratedMessage {
     ..aOB(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flaky')
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeMs', $pb.PbFieldType.O3)
     ..pPS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'experiments')
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'revision')
     ..hasRequiredFields = false;
 
   Result._() : super();
@@ -279,6 +280,7 @@ class Result extends $pb.GeneratedMessage {
     $core.bool? flaky,
     $core.int? timeMs,
     $core.Iterable<$core.String>? experiments,
+    $core.String? revision,
   }) {
     final _result = create();
     if (name != null) {
@@ -301,6 +303,9 @@ class Result extends $pb.GeneratedMessage {
     }
     if (experiments != null) {
       _result.experiments.addAll(experiments);
+    }
+    if (revision != null) {
+      _result.revision = revision;
     }
     return _result;
   }
@@ -404,6 +409,18 @@ class Result extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.List<$core.String> get experiments => $_getList(6);
+
+  @$pb.TagNumber(8)
+  $core.String get revision => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set revision($core.String v) {
+    $_setString(7, v);
+  }
+
+  @$pb.TagNumber(8)
+  $core.bool hasRevision() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearRevision() => clearField(8);
 }
 
 class ListTestsRequest extends $pb.GeneratedMessage {

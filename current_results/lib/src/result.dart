@@ -47,7 +47,8 @@ class Result {
     ..timeMs = time.inMilliseconds
     ..expected = expected
     ..flaky = flaky
-    ..experiments.addAll(experiments);
+    ..experiments.addAll(experiments)
+    ..revision = commitHash;
 
   static query_api.Result toApi(Result result) => result.toQueryResult();
 
