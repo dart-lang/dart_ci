@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
@@ -60,16 +61,20 @@ class ExpandableResult extends StatefulWidget {
 }
 
 class CountItem {
-  String text;
-  Color color;
+  final String text;
+  final Color color;
 
-  CountItem(int count, this.color) {
+  CountItem._(this.text, this.color);
+
+  factory CountItem(int count, Color color) {
+    var text;
     if (count > 0) {
       text = count.toString();
     } else {
       color = Colors.transparent;
       text = '';
     }
+    return CountItem._(text, color);
   }
 }
 
@@ -153,15 +158,14 @@ class _ExpandableResultState extends State<ExpandableResult> {
                             fontSize: 16.0)),
                   ),
                   for (final result in changeGroups[change])
-                    InkWell(
-                        onTap: () {
-                          html.window.open(
-                            'https://dart-ci.appspot.com/log/any/'
-                                '${result.configuration}/latest/$name',
-                            '_blank',
-                          );
-                        },
-                        child: Text(result.configuration)),
+                    Row(children: [
+                      InkWell(
+                          onTap: _openTestLog(result.configuration, name),
+                          child: Text(result.configuration)),
+                      InkWell(
+                          onTap: _openTestSource(result.revision, result.name),
+                          child: Text('   (show test source)')),
+                    ])
                 ],
               ),
             ),
@@ -169,6 +173,22 @@ class _ExpandableResultState extends State<ExpandableResult> {
       ],
     );
   }
+}
+
+Function _openTestSource(String revision, String name) {
+  return () {
+    html.window
+        .open('https://dart-ci.appspot.com/test/$revision/$name', '_blank');
+  };
+}
+
+Function _openTestLog(String configuration, String name) {
+  return () {
+    html.window.open(
+      'https://dart-ci.appspot.com/log/any/$configuration/latest/$name',
+      '_blank',
+    );
+  };
 }
 
 class ResultsSummary extends StatelessWidget {

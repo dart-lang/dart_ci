@@ -14,7 +14,7 @@ import 'filter.dart';
 const String apiHost = 'current-results-qvyo5rktwa-uc.a.run.app';
 // Current endpoints proxy is limited to 1 MB response size,
 // so we limit results fetched to 4000 per page.  Paging is implemented.
-const int fetchLimit = 4000;
+const int fetchLimit = 3000;
 const int maxFetchedResults = 100 * fetchLimit;
 
 class QueryResults extends ChangeNotifier {
@@ -106,7 +106,9 @@ class ChangeInResult {
   final String expected;
   final bool flaky;
   final String text;
+
   bool get matches => result == expected;
+
   String get kind => flaky
       ? 'flaky'
       : matches
@@ -138,10 +140,12 @@ String resultAsCommaSeparated(Result result) => [
       result.result,
       result.expected,
       result.flaky,
-      result.timeMs
+      result.timeMs,
+      result.revision,
     ].join(',');
 
-String resultTextHeader = "name,configuration,result,expected,flaky,timeMs";
+String resultTextHeader =
+    "name,configuration,result,expected,flaky,timeMs,revision";
 
 class Counts {
   int count = 0;
@@ -165,6 +169,7 @@ class TestCounts extends Counts {
   bool currentFailing = false;
   bool currentFlaky = false;
 
+  @override
   void addResult(ChangeInResult change, Result result) {
     if (currentTest != result.name) {
       if (currentTest.compareTo(result.name) > 0) {
