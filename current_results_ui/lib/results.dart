@@ -159,12 +159,16 @@ class _ExpandableResultState extends State<ExpandableResult> {
                   ),
                   for (final result in changeGroups[change])
                     Row(children: [
-                      InkWell(
-                          onTap: _openTestLog(result.configuration, name),
-                          child: Text(result.configuration)),
-                      InkWell(
-                          onTap: _openTestSource(result.revision, result.name),
-                          child: Text('   (show test source)')),
+                      Text(result.configuration),
+                      if (change.kind == 'fail')
+                        Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: _link("log",
+                                _openTestLog(result.configuration, name))),
+                      Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: _link("source",
+                              _openTestSource(result.revision, result.name))),
                     ])
                 ],
               ),
@@ -173,6 +177,13 @@ class _ExpandableResultState extends State<ExpandableResult> {
       ],
     );
   }
+}
+
+Widget _link(String text, Function onClick) {
+  final link = Text(text,
+      style:
+          TextStyle(color: Colors.blue, decoration: TextDecoration.underline));
+  return InkWell(onTap: onClick, child: link);
 }
 
 Function _openTestSource(String revision, String name) {
