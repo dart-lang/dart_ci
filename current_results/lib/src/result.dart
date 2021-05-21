@@ -59,7 +59,7 @@ class Result {
         'result': result,
         'flaky': flaky,
         'expected': expected,
-        'time': time,
+        'timeMs': time.inMilliseconds,
         'experiments': experiments,
       };
 
