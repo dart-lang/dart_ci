@@ -2,6 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// This component renders the normal results list. It is similar to
+// results_selector_panel.dart, which renders the approve/comment workflow view.
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/content/deferred_content.dart';
@@ -11,6 +14,7 @@ import 'package:angular_components/material_chips/material_chips.dart';
 import 'package:angular_components/material_tooltip/material_tooltip.dart';
 import 'package:angular_components/material_tooltip/module.dart' as tooltip;
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
+import 'package:dart_results_feed/src/test_source.dart';
 
 import '../formatting.dart' as formatting;
 import '../model/commit.dart';
@@ -43,6 +47,9 @@ class ResultsPanel {
 
   @Input()
   Changes changes;
+
+  @Input()
+  List<Commit> commits;
 
   /// [range] will be null if these are try results
   @Input()
@@ -83,6 +90,10 @@ class ResultsPanel {
           'on patchset $patchset of this CL');
     }
     return result;
+  }
+
+  String getTestSource(Change change, bool isTryResult) {
+    return getTestSourceUrl(commits, change, isTryResult);
   }
 
   String approvalContent(Change change) =>

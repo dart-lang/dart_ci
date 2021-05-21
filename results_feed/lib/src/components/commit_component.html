@@ -9,6 +9,7 @@
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
         [range]="changeGroup.range"
+        [commits]="changeGroup.commits"
         [filter]="filter"></results-panel>
   </div>
   <div *ngIf="chooseCommit">
@@ -22,6 +23,7 @@
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
         [range]="changeGroup.range"
+        [commits]="changeGroup.commits"
         [filter]="filter"
         [selected]="selected"></results-selector-panel>
   </div>
@@ -35,6 +37,7 @@
         class="commit-panel"
         [changes]="changeGroup.filteredChanges(filter)"
         [range]="changeGroup.range"
+        [commits]="changeGroup.commits"
         [filter]="filter"
         [selected]="selected"
         failuresOnly></results-selector-panel>

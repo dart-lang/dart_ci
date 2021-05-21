@@ -2,6 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// This component renders the results list during the approve/comment workflow.
+// It is similar to results_panel.dart, which renders the normal view.
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/content/deferred_content.dart';
@@ -13,6 +16,7 @@ import 'package:angular_components/material_radio/material_radio.dart';
 import 'package:angular_components/material_tooltip/material_tooltip.dart';
 import 'package:angular_components/material_tooltip/module.dart' as tooltip;
 import 'package:angular_forms/angular_forms.dart' show formDirectives;
+import 'package:dart_results_feed/src/test_source.dart';
 
 import '../formatting.dart' as formatting;
 import '../model/commit.dart';
@@ -79,7 +83,7 @@ class ResultsSelectorPanel {
   }
 
   @Input()
-  ChangeGroup commit;
+  List<Commit> commits;
 
   /// [range] will be null if these are try results
   @Input()
@@ -137,6 +141,10 @@ class ResultsSelectorPanel {
 
   String buildbucketID(int patchset, String configuration) =>
       builds[patchset][builders[configuration]].buildbucketID;
+
+  String getTestSource(Change change, bool isTryResult) {
+    return getTestSourceUrl(commits, change, isTryResult);
+  }
 
   String approvalContent(Change change) =>
       change.approved ? formatting.checkmark : '';

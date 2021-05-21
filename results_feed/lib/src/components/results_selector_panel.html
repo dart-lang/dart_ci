@@ -66,6 +66,7 @@
               *ngFor="let configuration of change.configurations.configurations"
               [configuration]="configuration"
               [index]="range.end"
+              [source]="getTestSource(change, false)"
               [test]="change.name">
           </dart-log>
         </div>
@@ -89,10 +90,11 @@
               history
             </a>
             <a *ngIf="buildbucketID(change.patchset, configuration) != null"
-               target="_blank"
-               href="https://logs.chromium.org/logs/dart/buildbucket/cr-buildbucket.appspot.com/{{buildbucketID(change.patchset, configuration)}}/+/u/test_results/new_test_failures__logs_">
+                target="_blank"
+                href="https://logs.chromium.org/logs/dart/buildbucket/cr-buildbucket.appspot.com/{{buildbucketID(change.patchset, configuration)}}/+/u/test_results/new_test_failures__logs_">
               log
             </a>
+            <a href="{{getTestSource(change, true)}}" target="_blank">source</a>
           </div>
         </div>
       </material-tooltip-card>

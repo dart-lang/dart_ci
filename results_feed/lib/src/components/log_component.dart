@@ -18,7 +18,9 @@ import '../services/build_service.dart';
             target="_blank">history</a>
             <a *ngIf="build != null"
             href="https://dart-ci.appspot.com/log/{{build.builder}}/{{configuration}}/{{build.buildNumber}}/{{test}}"
-            target="_blank">log</a><br>
+            target="_blank">log</a>
+            <a href="{{source}}" target="_blank">source</a>
+            <br>
   ''',
 )
 class LogComponent implements OnInit {
@@ -35,6 +37,9 @@ class LogComponent implements OnInit {
 
   @Input()
   String test;
+
+  @Input()
+  String source;
 
   Build build;
 
