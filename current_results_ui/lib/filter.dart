@@ -93,11 +93,12 @@ class _AddWidgetState extends State<AddWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200.0,
+      width: 300.0,
       height: 36.0,
       child: TextField(
         controller: controller,
-        decoration: InputDecoration(hintText: 'Test or configuration prefix'),
+        decoration: InputDecoration(
+            hintText: 'Test, configuration or experiment prefix'),
         onSubmitted: (value) {
           if (value.trim().isEmpty) return;
           final newTerms = value.split(',').map((s) => s.trim());

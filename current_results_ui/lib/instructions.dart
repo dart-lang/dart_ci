@@ -13,8 +13,8 @@ class Instructions extends StatelessWidget {
           'Enter a query to see current test results',
           style: TextStyle(fontSize: 24.0),
         ),
-        paragraph('Enter query terms that are prefixes of configuration '
-            'or test names, or filter for experiments with "experiment:<name>".'
+        paragraph('Enter query terms that are prefixes of configuration, '
+            'experiment or test names.'
             ' Multiple terms can be entered at once, separated by commas.'),
         paragraph('Some example queries are:'),
         for (final example in [
@@ -35,7 +35,7 @@ class Instructions extends StatelessWidget {
           {
             'description':
                 'all tests that were run with experiment "test-experiment"',
-            'terms': 'experiment:test-experiment'
+            'terms': 'test-experiment'
           },
           {'description': 'null-safe language tests', 'terms': 'language/'},
         ]) ...[
