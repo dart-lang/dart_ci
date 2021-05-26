@@ -58,28 +58,38 @@ class Slice {
   /// A sorted list of all test names seen. Names are not removed from this list.
   List<String> _testNames = [];
 
+  /// All experiment names that have been seen, used to auto-select experiment
+  /// filters.
+  final Set<String> _experimentNames = {};
+
   int _size = 0;
 
   int get size => _size;
 
   void add(List<String> lines) {
     if (lines.isEmpty) return;
-    final results = lines
-        .map((line) => Result.fromApi(api.Result()
-          ..mergeFromProto3Json(json.decode(line),
-              supportNamesWithUnderscores: true)))
-        .toList();
-    final configuration = results.first.configuration;
-    if (results.any((result) => result.configuration != configuration)) {
-      print('Loaded results list with multiple configurations: '
-          'first result: ${results.first}');
-      return;
+    var configuration;
+    final results = <Result>[];
+    for (final line in lines) {
+      final result = Result.fromApi(api.Result()
+        ..mergeFromProto3Json(json.decode(line),
+            supportNamesWithUnderscores: true));
+      if (configuration == null) {
+        configuration = result.configuration;
+      } else if (result.configuration != configuration) {
+        print('Loaded results list with multiple configurations: '
+            'first result ${results.first}');
+        return;
+      }
+      _experimentNames.addAll(result.experiments);
+      results.add(result);
     }
     final sorted = results.toList()..sort(compareNames);
     _size -= _stored[configuration]?.length ?? 0;
     _stored[configuration] = sorted;
     _lastFetched[configuration] = DateTime.now();
     _size += sorted.length;
+
     print('latest results of $configuration: ${sorted.length} results '
         '(total: $_size)');
   }
@@ -134,41 +144,80 @@ class Slice {
         query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
     final filterTerms =
         query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
-    final configurationSet = <String>{};
-    final testPrefixes = <String>[];
-    final experiments = <String>{};
+    final configurationNames = <String>{};
+    var hasConfigurationFilter = false;
+    final experimentNames = <String>{};
+    var hasExperimentFilter = false;
+    final testFilters = <String>[];
+
     for (final term in filterTerms) {
-      const experimentPrefix = 'experiment:';
-      if (term.startsWith(experimentPrefix)) {
-        experiments.add(term.substring(experimentPrefix.length));
+      var filter = term;
+      if (term.contains(':')) {
+        // Match explicit filter syntax.
+        final parts = term.split(':');
+        // TODO(karlklose): report more than two parts as error once we can
+        // reply with query syntax errors.
+        final category = parts.first;
+        filter = parts.last;
+        if (category == 'experiment') {
+          final matches = _experimentNames
+              .where((experiment) => experiment.startsWith(filter));
+          experimentNames.addAll(matches);
+          hasExperimentFilter = true;
+        } else if (category == 'configuration') {
+          final matches = _stored.keys
+              .where((configuration) => configuration.startsWith(filter));
+          configurationNames.addAll(matches);
+          hasConfigurationFilter = true;
+        } else if (category == 'test') {
+          testFilters.add(filter);
+        }
+        // Ignore illegal category, as we do not report errors on the query
+        // syntax.
       } else {
+        // Try to find a matching experiment or configuration, or default
+        // to treating the term as a test prefix.
+        final matchingExperiments = _experimentNames
+            .where((experiment) => experiment.startsWith(filter))
+            .toSet();
         final matchingConfigurations = _stored.keys
-            .where((configuration) => configuration.startsWith(term));
-        if (matchingConfigurations.isEmpty) {
-          testPrefixes.add(term);
+            .where((configuration) => configuration.startsWith(filter))
+            .toSet();
+        if (matchingExperiments.isNotEmpty) {
+          experimentNames.addAll(matchingExperiments);
+          hasExperimentFilter = true;
+        } else if (matchingConfigurations.isNotEmpty) {
+          configurationNames.addAll(matchingConfigurations);
+          hasConfigurationFilter = true;
         } else {
-          configurationSet.addAll(matchingConfigurations);
+          testFilters.add(filter);
         }
       }
     }
-    testPrefixes.sort();
-    for (var i = 0; i < testPrefixes.length; ++i) {
-      while (i + 1 < testPrefixes.length &&
-          testPrefixes[i + 1].startsWith(testPrefixes[i])) {
-        testPrefixes.removeAt(i + 1);
+    testFilters.sort();
+    for (var i = 0; i < testFilters.length; ++i) {
+      while (i + 1 < testFilters.length &&
+          testFilters[i + 1].startsWith(testFilters[i])) {
+        testFilters.removeAt(i + 1);
       }
     }
-    if (testPrefixes.isEmpty) {
-      testPrefixes.add('');
+    if (testFilters.isEmpty) {
+      testFilters.add('');
+    }
+    // If explicit filters for experiments of configurations were provided but
+    // there were no matches, the result should be empty. Return it here since
+    // the code below treats empty sets as matching everything.
+    if (hasConfigurationFilter && configurationNames.isEmpty ||
+        hasExperimentFilter && experimentNames.isEmpty) {
+      return query_api.GetResultsResponse();
     }
     final configurations =
-        (configurationSet.isEmpty ? _stored.keys : configurationSet).toList()
+        (hasConfigurationFilter ? configurationNames : _stored.keys).toList()
           ..sort();
-
     final response = query_api.GetResultsResponse();
-    for (final prefix in testPrefixes) {
+    for (final prefix in testFilters) {
       var sortedResults = getSortedResults(
-          prefix, configurations, experiments, pageStart,
+          prefix, configurations, experimentNames, pageStart,
           needed: limit - response.results.length);
       response.results.addAll(sortedResults.map(Result.toApi));
       if (response.results.length == limit) {
@@ -181,14 +230,15 @@ class Slice {
     return response;
   }
 
-  /// Returns up to [needed] results from the configurations in [configurations],
-  /// with test names that start with [prefix], sorted by test name.
-  /// If [experiments] is not empty, only results with one of the contained
+  /// Returns up to [needed] results from the configurations in
+  /// [configurations], with test names that start with [prefix], sorted by test
+  /// name.
+  /// If [experimentFilters] has values, only results with one of these
   /// experiment names are included.
   /// If [pageStart] is not null, test names before pageStart.name are
   /// filtered out.
   List<Result> getSortedResults(String prefix, List<String> configurations,
-      Set<String> experiments, PageStart pageStart,
+      Set<String> experimentFilters, PageStart pageStart,
       {int needed}) {
     final prefixResult = Result.nameOnly(prefix);
     var startResult;
@@ -204,7 +254,7 @@ class Slice {
 
     for (final configuration in configurations) {
       var configurationRange = getResultRange(
-          _stored[configuration], startResult, prefixResult, experiments);
+          _stored[configuration], startResult, prefixResult, experimentFilters);
 
       if (configurationRange.isEmpty) continue;
       if (pageStart != null &&

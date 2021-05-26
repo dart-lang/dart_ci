@@ -77,6 +77,13 @@ void main() {
   ], {
     'c1': {'tb'}
   });
+  filterTest('explicit test name', {
+    'c1': makeResults(['ta1', 'tb', 'ta2'])
+  }, [
+    'test:tb'
+  ], {
+    'c1': {'tb'}
+  });
   filterTest('test name as prefix', {
     'ca1': makeResults(['ta1', 'tb', 'ta2']),
     'ca2': makeResults(['ta3']),
@@ -87,6 +94,18 @@ void main() {
     'ca1': {'tb'},
     'cb': {'tb2'}
   });
+  filterTest('multiple test names as prefix', {
+    'ca': makeResults(['ta1', 'tb1', 'ta2']),
+    'cb': makeResults(['ta3']),
+    'cc': makeResults(['tc1', 'tb2'])
+  }, [
+    'ta',
+    'tb'
+  ], {
+    'ca': {'ta1', 'tb1', 'ta2'},
+    'cb': {'ta3'},
+    'cc': {'tb2'}
+  });
   filterTest('configuration name', {
     'c1': makeResults(['ta1']),
     'c2': makeResults(['ta2'])
@@ -95,6 +114,29 @@ void main() {
   ], {
     'c2': {'ta2'}
   });
+  filterTest('explicit configuration name', {
+    'c1': makeResults(['ta1']),
+    'c2': makeResults(['ta2'])
+  }, [
+    'configuration:c2'
+  ], {
+    'c2': {'ta2'}
+  });
+  filterTest('invalid explicit configuration name', {
+    'c1': makeResults(['ta1']),
+    'c2': makeResults(['ta2'])
+  }, [
+    'configuration:c2',
+    'configuration:c3'
+  ], {
+    'c2': {'ta2'}
+  });
+  filterTest('only invalid explicit configuration name', {
+    'c1': makeResults(['ta1']),
+    'c2': makeResults(['ta2'])
+  }, [
+    'configuration:c3'
+  ], {});
   filterTest('configuration name as prefix', {
     'ca1': makeResults(['ta1', 'tb', 'ta2']),
     'ca2': makeResults(['ta3']),
@@ -104,6 +146,25 @@ void main() {
   ], {
     'ca1': {'ta1', 'tb', 'ta2'},
     'ca2': {'ta3'}
+  });
+  filterTest('multiple configuration names as prefix', {
+    'ca': makeResults(['ta']),
+    'cb': makeResults(['tb']),
+    'cc': makeResults(['tc'])
+  }, [
+    'ca',
+    'cc'
+  ], {
+    'ca': {'ta'},
+    'cc': {'tc'}
+  });
+  filterTest('configuration is preferred before test', {
+    'a': makeResults(['b']),
+    'b': makeResults(['a'])
+  }, [
+    'a'
+  ], {
+    'a': {'b'}
   });
   filterTest('experiment', {
     'ca1': makeResults(['ta1', 'tb-e1', 'ta2']),
@@ -115,12 +176,51 @@ void main() {
     'ca1': {'tb'},
     'cb': {'tb3'}
   });
-  filterTest('experiment does not work as prefix', {
+  filterTest('experiment as prefix', {
     'ca1': makeResults(['ta1', 'tb-e1', 'ta2']),
     'ca2': makeResults(['ta3']),
     'cb': makeResults(['tb2', 'tb3-e2'])
   }, [
     'experiment:e'
+  ], {
+    'ca1': {'tb'},
+    'cb': {'tb3'}
+  });
+  filterTest('multiple experiments', {
+    'ca1': makeResults(['ta1', 'tb-e2', 'ta2']),
+    'ca2': makeResults(['ta3']),
+    'cb': makeResults(['tb2', 'tb3-e1'])
+  }, [
+    'experiment:e1',
+    'experiment:e2'
+  ], {
+    'ca1': {'tb'},
+    'cb': {'tb3'}
+  });
+  filterTest('invalid experiment', {
+    'ca1': makeResults(['ta1', 'tb-e2', 'ta2']),
+    'ca2': makeResults(['ta3']),
+    'cb': makeResults(['tb2', 'tb3-e1'])
+  }, [
+    'experiment:e1',
+    'experiment:e3'
+  ], {
+    'cb': {'tb3'}
+  });
+  filterTest('invalid experiment with implicit experiment', {
+    'ca1': makeResults(['ta1', 'tb-e2', 'ta2']),
+    'ca2': makeResults(['ta3']),
+    'cb': makeResults(['tb2', 'tb3-e1'])
+  }, [
+    'e1',
+    'experiment:e3'
+  ], {
+    'cb': {'tb3'}
+  });
+  filterTest('only invalid experiment filter', {
+    'ca1': makeResults(['ta1', 'tb-e1', 'ta2']),
+  }, [
+    'experiment:e2'
   ], {});
   filterTest('experiment narrows configuration', {
     'ca1': makeResults(['ta1', 'tb-e1', 'ta2']),
@@ -152,4 +252,25 @@ void main() {
   }, [
     'experiment:ta'
   ], {});
+  filterTest('implicit experiment', {
+    'ca1': makeResults(['ta1', 'tb-e1', 'ta2']),
+    'ca2': makeResults(['ta3']),
+    'cb': makeResults(['tb2', 'tb3-e1'])
+  }, [
+    'e1'
+  ], {
+    'ca1': {'tb'},
+    'cb': {'tb3'}
+  });
+  filterTest('implicit multiple experiments', {
+    'ca1': makeResults(['ta1', 'tb-e2', 'ta2']),
+    'ca2': makeResults(['ta3']),
+    'cb': makeResults(['tb2', 'tb3-e1'])
+  }, [
+    'e2',
+    'e1'
+  ], {
+    'ca1': {'tb'},
+    'cb': {'tb3'}
+  });
 }
