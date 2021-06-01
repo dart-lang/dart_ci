@@ -2,7 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// Serves the log over HTTP for a failing test on a given runner and build
+/// Serves the log over HTTP for a failing test on a given runner and build,
+/// and redirects to the source code of a test for a given revision.
 
 import 'dart:async';
 import 'dart:io';
@@ -43,7 +44,7 @@ void serveFrontPage(HttpRequest request) async {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Dart Test Logs</title>
+    <title>Dart Test Logs and Sources</title>
   </head>
   <body>
     <h1>Dart Test Logs</h1>
@@ -61,8 +62,8 @@ void serveFrontPage(HttpRequest request) async {
     reference.
     <p>URL formats:
     <ul>
-    <li>/test/&lt;revision&gt;/&lt;test-name&gt;
-    <li>/test/cl/&lt;review-id&gt;/&lt;patchset-id&gt;/&lt;test-name&gt;
+    <li>/test/[revision]/[test-name]
+    <li>/test/cl/[review-id]/[patchset-id]/[test-name]
     </ul>
     </p>
     <p>Examples:
