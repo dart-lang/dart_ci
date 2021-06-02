@@ -125,7 +125,10 @@ Future<void> redirectToTest(HttpRequest request) async {
     if (source != null) {
       return redirectTemporary(request, source.toString());
     } else {
-      return notFound(request);
+      return notFound(request,
+          message: "No rules found that match test name '$testName'."
+              " If you think that this test name should work, please send a"
+              " message to dart-engprod@.");
     }
   } catch (e) {
     throw UserVisibleFailure(e.toString());
@@ -138,8 +141,11 @@ Future<void> redirectTemporary(HttpRequest request, String newPath) {
   return request.response.close();
 }
 
-Future<void> notFound(HttpRequest request) {
+Future<void> notFound(HttpRequest request, {String message}) {
   request.response.statusCode = HttpStatus.notFound;
+  if (message != null) {
+    request.response.write(message);
+  }
   return request.response.close();
 }
 

@@ -50,7 +50,7 @@ String findBaseName(String suite, Iterable<String> nameParts) {
   final regExp = (suite == 'co19' || suite == 'co19_2')
       ? RegExp(r"t[0-9]{2,3}$")
       : RegExp(r"_test$");
-  for (var i = 0; i <= 2; i++) {
+  for (var i = 0; i <= 2 && parts.isNotEmpty; i++) {
     if (regExp.hasMatch(parts.last)) {
       return parts.join('/');
     } else {

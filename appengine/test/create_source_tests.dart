@@ -44,7 +44,9 @@ main(List<String> arguments) async {
     testNames.putIfAbsent(key, () => testName);
   }
 
-  var results = {};
+  Map<String, Map<String, String>> results = {
+    'suite/not_a_basename': {"true": null, "false": null},
+  };
   for (var name in testNames.values) {
     results[name] = {};
     for (var gob in [true, false]) {
