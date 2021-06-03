@@ -139,7 +139,7 @@ Labeled ${labelName} by ${senderUser}
 Sent by dart-github-label-notifier.web.app
 ''',
       html: '''
-<p><strong><a href="${issueUrl}">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber.toString())})</strong></p>
+<p>${escape(issueTitle)}&nbsp;(<a href="${issueUrl}">${escape(repositoryName)}#${escape(issueNumber.toString())}</a>)</p>
 <p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
 <p>Labeled <strong>${escape(labelName)}</strong> by <a href="${senderUrl}">${escape(senderUser)}</a></p>
 <hr>
