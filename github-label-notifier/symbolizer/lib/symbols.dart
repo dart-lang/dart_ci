@@ -193,7 +193,7 @@ class SymbolsCache {
 
     await _run('gsutil', [
       'cp',
-      'gs://flutter_infra/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${symbolsFile}',
+      'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${symbolsFile}',
       p.join(tempDir.path, symbolsFile)
     ]);
     await _run('unzip', [symbolsFile], workingDirectory: tempDir.path);
@@ -206,7 +206,7 @@ class SymbolsCache {
     final artifactsFile = 'artifacts.zip';
     await _run('gsutil', [
       'cp',
-      'gs://flutter_infra/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${artifactsFile}',
+      'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${artifactsFile}',
       p.join(tempDir.path, artifactsFile)
     ]);
 
