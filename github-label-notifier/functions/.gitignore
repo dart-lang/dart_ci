@@ -1,6 +1,5 @@
 node_modules/
 .dart_tool/
-pubspec.lock
 .packages
 build/
 deploy/

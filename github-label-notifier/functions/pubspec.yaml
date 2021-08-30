@@ -22,4 +22,4 @@ dev_dependencies:
   # Needed to compile Dart to valid Node.js module.
   build_runner: ^1.0.0
   build_node_compilers: ^0.2.0
-  pedantic: any
+  pedantic: 1.9.2

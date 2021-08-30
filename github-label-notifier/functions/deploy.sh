@@ -27,5 +27,5 @@ cp package.json deploy/
 # Deploy the function.
 gcloud functions deploy githubWebhook --project dart-ci --source deploy --trigger-http \
     --vpc-connector cloud-run-to-gce \
-    --runtime nodejs10 --memory 128MB \
+    --runtime nodejs12 --memory 128MB \
     --set-env-vars GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET
