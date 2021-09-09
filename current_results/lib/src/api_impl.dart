@@ -42,8 +42,7 @@ class QueryService extends QueryServiceBase {
   Future<FetchResponse> fetch(ServiceCall call, Empty _) async {
     final response = FetchResponse();
     final messages = await notifications.getMessages();
-    final latestObjectPattern =
-        RegExp('^(configuration/master/[^/]+/)latest\$');
+    final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
     final configurations = <String>{};
     for (final message in messages) {
       if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
