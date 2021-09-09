@@ -13,11 +13,23 @@ class ResultsBucket {
 
   ResultsBucket(this._bucket);
 
-  Future<List<String>> configurationDirectories() => _bucket
-      .list(prefix: 'configuration/master/')
-      .where((entry) => entry.isDirectory)
-      .map((entry) => entry.name)
-      .toList();
+  Future<List<String>> configurationDirectories() async {
+    final mainDirectories = await _bucket
+        .list(prefix: 'configuration/main/')
+        .where((entry) => entry.isDirectory)
+        .map((entry) => entry.name)
+        .toSet();
+    // Once all builders have run once on the main branch, this search
+    // for results from the master branch can be removed.
+    final masterDirectories = await _bucket
+        .list(prefix: 'configuration/master/')
+        .where((entry) => entry.isDirectory)
+        .map((entry) => entry.name)
+        .where((name) => !mainDirectories.contains(
+            name.replaceFirst('configuration/master/', 'configuration/main/')))
+        .toList();
+    return [...mainDirectories, ...masterDirectories];
+  }
 
   Future<DateTime> latestResultsDate(String configurationDirectory) async {
     final info = await _bucket.info('${configurationDirectory}latest');
