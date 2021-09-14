@@ -5,7 +5,7 @@ results from CI (continuous integration) testing of Dart.
 It uses Firebase and Firestore, and is hosted at
 https://dart-ci.firebaseapp.com/
 
-## Prerequisites
+## Prerequisites (Verified 2021-09-06)
 
 - Dart SDK version 2.10.0-stable
 - webdev 2.5.9 (run `pub global activate webdev 2.5.9`)
@@ -13,7 +13,7 @@ https://dart-ci.firebaseapp.com/
 ## Building
 Build the project with the command
 
-    webdev build
+    webdev build --output=web:build/web
 
 ## Testing
 Run tests (one at a time only) with the commands
