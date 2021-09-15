@@ -22,7 +22,20 @@ class Filter {
       const ListEquality().equals(terms, other.terms);
 }
 
-class FilterUI extends StatelessWidget {
+class FilterUI extends StatefulWidget {
+  @override
+  State<FilterUI> createState() => _FilterUIState();
+}
+
+class _FilterUIState extends State<FilterUI> {
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
@@ -45,12 +58,15 @@ class FilterUI extends StatelessWidget {
                       children: [
                         for (final term in filter.terms)
                           InputChip(
-                            label: Text(term),
-                            onDeleted: () {
-                              pushRoute(context,
-                                  terms: filter.terms.where((t) => t != term));
-                            },
-                          ),
+                              label: Text(term),
+                              onDeleted: () {
+                                pushRoute(context,
+                                    terms:
+                                        filter.terms.where((t) => t != term));
+                              },
+                              onPressed: () {
+                                controller.text = term;
+                              }),
                       ],
                     ),
                   ),
@@ -64,53 +80,32 @@ class FilterUI extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(left: 12.0),
-              child: AddWidget(filter),
+              child: SizedBox(
+                width: 300.0,
+                height: 36.0,
+                child: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                      hintText: 'Test, configuration or experiment prefix'),
+                  onSubmitted: (value) {
+                    if (value.trim().isEmpty) return;
+                    final newTerms = value.split(',').map((s) => s.trim());
+                    bool isNotReplacedByNewTerm(String term) =>
+                        !newTerms.any((newTerm) =>
+                            term.startsWith(newTerm) ||
+                            newTerm.startsWith(term));
+                    controller.text = '';
+                    pushRoute(context,
+                        terms: filter.terms
+                            .where(isNotReplacedByNewTerm)
+                            .followedBy(newTerms));
+                  },
+                ),
+              ),
             ),
           ],
         );
       },
-    );
-  }
-}
-
-class AddWidget extends StatefulWidget {
-  final Filter filter;
-  AddWidget(this.filter);
-
-  @override
-  _AddWidgetState createState() => _AddWidgetState();
-}
-
-class _AddWidgetState extends State<AddWidget> {
-  final controller = TextEditingController();
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300.0,
-      height: 36.0,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-            hintText: 'Test, configuration or experiment prefix'),
-        onSubmitted: (value) {
-          if (value.trim().isEmpty) return;
-          final newTerms = value.split(',').map((s) => s.trim());
-          bool isNotReplacedByNewTerm(String term) => !newTerms.any((newTerm) =>
-              term.startsWith(newTerm) || newTerm.startsWith(term));
-          controller.text = '';
-          pushRoute(context,
-              terms: widget.filter.terms
-                  .where(isNotReplacedByNewTerm)
-                  .followedBy(newTerms));
-        },
-      ),
     );
   }
 }
