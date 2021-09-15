@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 class Instructions extends StatelessWidget {
   Widget build(context) {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           'Enter a query to see current test results',

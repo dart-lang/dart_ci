@@ -35,6 +35,7 @@ class ResultsPanel extends StatelessWidget {
         final filter = [(name) => true, isFailed, isFlaky][tabController.index];
         final filteredNames = queryResults.names.where(filter).toList();
         return ListView.builder(
+          controller: ScrollController(),
           itemCount: filteredNames.length,
           itemBuilder: (BuildContext context, int index) {
             final name = filteredNames[index];
@@ -120,13 +121,10 @@ class _ExpandableResultState extends State<ExpandableResult> {
                 child: Container(
                   padding: EdgeInsets.only(left: 4.0),
                   alignment: Alignment.centerLeft,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    reverse: true,
-                    child: SelectableText(
-                      name,
-                      style: TextStyle(fontSize: 16.0),
-                    ),
+                  child: SelectableText(
+                    name,
+                    style: TextStyle(fontSize: 16.0),
+                    maxLines: 1,
                   ),
                 ),
               ),
