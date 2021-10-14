@@ -1,0 +1,27 @@
+@flutter-symbolizer-bot this flutter#v2.5.1 force ios arm64 engine release
+
+```
+Crashed: dart:io EventHandler
+0  FirebaseCrashlytics            0x1061f8d88 FIRCLSProcessRecordAllThreads + 184
+1  FirebaseCrashlytics            0x1061f9168 FIRCLSProcessRecordAllThreads + 1176
+2  FirebaseCrashlytics            0x1061f1f84 FIRCLSHandler + 48
+3  FirebaseCrashlytics            0x1061ec958 __FIRCLSExceptionRecord_block_invoke + 92
+4  libdispatch.dylib              0x18998381c _dispatch_client_callout + 20
+5  libdispatch.dylib              0x189992910 _dispatch_lane_barrier_sync_invoke_and_complete + 60
+6  FirebaseCrashlytics            0x1061ec114 FIRCLSExceptionRecord + 216
+7  FirebaseCrashlytics            0x1061ebdbc FIRCLSTerminateHandler() + 600
+8  libc++abi.dylib                0x19e980fa0 std::__terminate(void (*)()) + 20
+9  libc++abi.dylib                0x19e983c0c __cxa_get_exception_ptr + 34
+10 libc++abi.dylib                0x19e983bb8 __cxxabiv1::exception_cleanup_func(_Unwind_Reason_Code, _Unwind_Exception*) + 138
+11 libc++.1.dylib                 0x19e95a3f0 std::__1::__throw_system_error(int, char const*) + 100
+12 libc++.1.dylib                 0x19e94eb0c std::__1::mutex::try_lock() + 38
+13 Flutter                        0x106ea2598 (Missing)
+14 Flutter                        0x107095374 (Missing)
+15 Flutter                        0x106f13b70 (Missing)
+16 Flutter                        0x10714e128 (Missing)
+17 Flutter                        0x1071dff64 (Missing)
+18 Flutter                        0x106fef524 (Missing)
+19 Flutter                        0x10701ccc4 (Missing)
+20 libsystem_pthread.dylib        0x1d5b20bfc _pthread_start + 320
+21 libsystem_pthread.dylib        0x1d5b29758 thread_start + 8
+```

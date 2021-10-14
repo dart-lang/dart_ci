@@ -1,0 +1,233 @@
+@flutter-symbolizer-bot this flutter#v2.5.2 ios release arm64
+
+```
+Date/Time:           2021-10-11 18:00:46.1322 +0900
+Launch Time:         2021-10-11 18:00:23.2958 +0900
+OS Version:          iPhone OS 14.7.1 (18G82)
+Release Type:        User
+Baseband Version:    8.80.01
+Report Version:      104
+
+Exception Type:  EXC_CRASH (SIGABRT)
+Exception Codes: 0x0000000000000000, 0x0000000000000000
+Exception Note:  EXC_CORPSE_NOTIFY
+Triggered by Thread:  5
+
+Thread 0 name:
+Thread 0:
+0   SiriTTS                         0x00000001d1afd72c boost::filesystem::directory_iterator::~directory_iterator() + 0 (operations.hpp:909)
+1   libsystem_c.dylib               0x00000001ade69cf8 __cxa_finalize_ranges + 372 (atexit.c:284)
+2   libsystem_c.dylib               0x00000001ade6a008 exit + 24 (exit.c:81)
+3   UIKitCore                       0x00000001a7b0189c -[UIApplication _terminateWithStatus:] + 500 (UIApplication.m:6543)
+4   UIKitCore                       0x00000001a71ccf6c -[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:] + 124 (_UISceneLifecycleMultiplexer.m:831)
+5   UIKitCore                       0x00000001a71ccbf0 -[_UISceneLifecycleMultiplexer forceExitWithTransitionContext:scene:] + 216 (_UISceneLifecycleMultiplexer.m:466)
+6   UIKitCore                       0x00000001a7af77d4 -[UIApplication workspaceShouldExit:withTransitionContext:] + 208 (UIApplication.m:3599)
+7   FrontBoardServices              0x00000001b3d2851c -[FBSUIApplicationWorkspaceShim workspaceShouldExit:withTransitionContext:] + 84 (FBSUIApplicationWorkspace.m:144)
+8   FrontBoardServices              0x00000001b3d52c44 __63-[FBSWorkspaceScenesClient willTerminateWithTransitionContext:]_block_invoke_2 + 76 (FBSWorkspaceScenesClient.m:312)
+9   FrontBoardServices              0x00000001b3d39420 -[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:] + 232 (FBSWorkspace.m:355)
+10  FrontBoardServices              0x00000001b3d52be0 __63-[FBSWorkspaceScenesClient willTerminateWithTransitionContext:]_block_invoke + 104 (FBSWorkspaceScenesClient.m:309)
+11  libdispatch.dylib               0x00000001a4e89298 _dispatch_client_callout + 16 (object.m:559)
+12  libdispatch.dylib               0x00000001a4e2e5b8 _dispatch_block_invoke_direct$VARIANT$mp + 224 (queue.c:468)
+13  FrontBoardServices              0x00000001b3d77e04 __FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__ + 40 (FBSSerialQueue.m:184)
+14  FrontBoardServices              0x00000001b3d77acc -[FBSSerialQueue _targetQueue_performNextIfPossible] + 404 (FBSSerialQueue.m:227)
+15  FrontBoardServices              0x00000001b3d77fa0 -[FBSSerialQueue _performNextFromRunLoopSource] + 28 (FBSSerialQueue.m:258)
+16  CoreFoundation                  0x00000001a51d08a8 __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ + 24 (CFRunLoop.c:1967)
+17  CoreFoundation                  0x00000001a51d07a8 __CFRunLoopDoSource0 + 204 (CFRunLoop.c:2011)
+18  CoreFoundation                  0x00000001a51cfafc __CFRunLoopDoSources0 + 256 (CFRunLoop.c:2048)
+19  CoreFoundation                  0x00000001a51ca018 __CFRunLoopRun + 768 (CFRunLoop.c:2925)
+20  CoreFoundation                  0x00000001a51c97d0 CFRunLoopRunSpecific + 572 (CFRunLoop.c:3242)
+21  GraphicsServices                0x00000001bb90b570 GSEventRunModal + 160 (GSEvent.c:2259)
+22  UIKitCore                       0x00000001a7af62d0 -[UIApplication _run] + 1052 (UIApplication.m:3269)
+23  UIKitCore                       0x00000001a7afb84c UIApplicationMain + 164 (UIApplication.m:4740)
+24  Runner                          0x00000001001d3ed0 0x1001cc000 + 32464
+25  libdyld.dylib                   0x00000001a4ea8140 start + 4
+
+Thread 1:
+0   libsystem_pthread.dylib         0x00000001ecc98864 _pthread_dependency_fulfill_slow + 192 (pthread_dependency.c:57)
+
+Thread 2:
+0   libsystem_pthread.dylib         0x00000001ecc98864 _pthread_dependency_fulfill_slow + 192 (pthread_dependency.c:57)
+
+Thread 3 name:
+Thread 3:
+0   libsystem_kernel.dylib          0x00000001d0a16908 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x00000001d0a15d0c mach_msg + 72 (mach_msg.c:103)
+2   CoreFoundation                  0x00000001a51cfdb8 __CFRunLoopServiceMachPort + 368 (CFRunLoop.c:2641)
+3   CoreFoundation                  0x00000001a51ca1b8 __CFRunLoopRun + 1184 (CFRunLoop.c:2974)
+4   CoreFoundation                  0x00000001a51c97d0 CFRunLoopRunSpecific + 572 (CFRunLoop.c:3242)
+5   Foundation                      0x00000001a6426e64 -[NSRunLoop(NSRunLoop) runMode:beforeDate:] + 228 (NSRunLoop.m:377)
+6   Foundation                      0x00000001a6426d44 -[NSRunLoop(NSRunLoop) runUntilDate:] + 88 (NSRunLoop.m:424)
+7   UIKitCore                       0x00000001a7ba2e10 -[UIEventFetcher threadMain] + 504 (UIEventFetcher.m:929)
+8   Foundation                      0x00000001a6583d90 __NSThread__start__ + 848 (NSThread.m:724)
+9   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+10  libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 4 name:
+Thread 4:
+0   libsystem_kernel.dylib          0x00000001d0a3c250 guarded_pwrite_np + 8
+1   libsqlite3.dylib                0x00000001bddcfe34 seekAndWrite + 116 (sqlite3.c:39615)
+2   libsqlite3.dylib                0x00000001bdd8a75c unixWrite + 176 (sqlite3.c:39739)
+3   libsqlite3.dylib                0x00000001bdd93c44 pager_write_pagelist + 320 (sqlite3.c:23733)
+4   libsqlite3.dylib                0x00000001bdd8a384 sqlite3PagerCommitPhaseOne + 1244 (sqlite3.c:65333)
+5   libsqlite3.dylib                0x00000001bdd75bd4 sqlite3BtreeCommitPhaseOne + 160 (sqlite3.c:75144)
+6   libsqlite3.dylib                0x00000001bdd42688 sqlite3VdbeHalt + 2856 (sqlite3.c:87146)
+7   libsqlite3.dylib                0x00000001bdd6f424 sqlite3VdbeExec + 57536 (sqlite3.c:93570)
+8   libsqlite3.dylib                0x00000001bdd5fcac sqlite3_step + 304 (sqlite3.c:90617)
+9   Runner                          0x000000010025d1cc 0x1001cc000 + 594380
+10  Runner                          0x00000001001f282c 0x1001cc000 + 157740
+11  Runner                          0x00000001002303b8 0x1001cc000 + 410552
+12  Runner                          0x000000010022cacc 0x1001cc000 + 395980
+13  Runner                          0x000000010022c4b4 0x1001cc000 + 394420
+14  libdispatch.dylib               0x00000001a4e882b0 _dispatch_call_block_and_release + 24 (init.c:1466)
+15  libdispatch.dylib               0x00000001a4e89298 _dispatch_client_callout + 16 (object.m:559)
+16  libdispatch.dylib               0x00000001a4e31a40 _dispatch_lane_serial_drain$VARIANT$mp + 612 (inline_internal.h:2557)
+17  libdispatch.dylib               0x00000001a4e32518 _dispatch_lane_invoke$VARIANT$mp + 420 (queue.c:3862)
+18  libdispatch.dylib               0x00000001a4e3bfac _dispatch_workloop_worker_thread + 712 (queue.c:6589)
+19  libsystem_pthread.dylib         0x00000001ecc955bc _pthread_wqthread + 272 (pthread.c:2436)
+20  libsystem_pthread.dylib         0x00000001ecc9886c start_wqthread + 8
+
+Thread 5 name:
+Thread 5 Crashed:
+0   libsystem_kernel.dylib          0x00000001d0a3a7b0 __pthread_kill + 8
+1   libsystem_pthread.dylib         0x00000001ecc949c0 pthread_kill + 212 (pthread.c:1582)
+2   libsystem_c.dylib               0x00000001ade88a38 abort + 120 (abort.c:118)
+3   libc++abi.dylib                 0x00000001b90c0be8 abort_message + 128 (abort_message.cpp:78)
+4   libc++abi.dylib                 0x00000001b90b2cfc demangling_terminate_handler() + 272 (cxa_default_handlers.cpp:62)
+5   libobjc.A.dylib                 0x00000001b8fc69b0 _objc_terminate() + 140 (objc-exception.mm:704)
+6   libc++abi.dylib                 0x00000001b90c0074 std::__terminate(void (*)()) + 16 (cxa_handlers.cpp:59)
+7   libc++abi.dylib                 0x00000001b90c2c18 __cxa_rethrow + 144 (cxa_exception.cpp:616)
+8   libobjc.A.dylib                 0x00000001b8fe65d0 objc_exception_rethrow + 40 (objc-exception.mm:604)
+9   CoreFoundation                  0x00000001a51c98bc CFRunLoopRunSpecific + 808 (CFRunLoop.c:3257)
+10  Flutter                         0x0000000100e24f74 0x100b34000 + 3084148
+11  Flutter                         0x0000000100e24788 0x100b34000 + 3082120
+12  libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+13  libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 6 name:
+Thread 6:
+0   libsystem_kernel.dylib          0x00000001d0a3a5d0 __psynch_mutexwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8e3d8 _pthread_mutex_firstfit_lock_wait + 84 (pthread_mutex.c:1414)
+2   libsystem_pthread.dylib         0x00000001ecc8e328 _pthread_mutex_firstfit_lock_slow$VARIANT$mp + 304 (pthread_mutex.c:1490)
+3   libc++.1.dylib                  0x00000001b908f4b4 std::__1::mutex::lock() + 12 (__threading_support:397)
+4   Flutter                         0x0000000100e21c40 0x100b34000 + 3071040
+5   Flutter                         0x0000000100e25098 0x100b34000 + 3084440
+6   CoreFoundation                  0x00000001a51d10a8 __CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 28 (CFRunLoop.c:1807)
+7   CoreFoundation                  0x00000001a51d0ca8 __CFRunLoopDoTimer + 1016 (CFRunLoop.c:2415)
+8   CoreFoundation                  0x00000001a51d017c __CFRunLoopDoTimers + 324 (CFRunLoop.c:2575)
+9   CoreFoundation                  0x00000001a51ca4b4 __CFRunLoopRun + 1948 (CFRunLoop.c:3090)
+10  CoreFoundation                  0x00000001a51c97d0 CFRunLoopRunSpecific + 572 (CFRunLoop.c:3242)
+11  Flutter                         0x0000000100e24f74 0x100b34000 + 3084148
+12  Flutter                         0x0000000100e24788 0x100b34000 + 3082120
+13  libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+14  libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 7 name:
+Thread 7:
+0   libsystem_kernel.dylib          0x00000001d0a16908 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x00000001d0a15d0c mach_msg + 72 (mach_msg.c:103)
+2   CoreFoundation                  0x00000001a51cfdb8 __CFRunLoopServiceMachPort + 368 (CFRunLoop.c:2641)
+3   CoreFoundation                  0x00000001a51ca1b8 __CFRunLoopRun + 1184 (CFRunLoop.c:2974)
+4   CoreFoundation                  0x00000001a51c97d0 CFRunLoopRunSpecific + 572 (CFRunLoop.c:3242)
+5   Flutter                         0x0000000100e24f74 0x100b34000 + 3084148
+6   Flutter                         0x0000000100e24788 0x100b34000 + 3082120
+7   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+8   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 8 name:
+Thread 8:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d308 _pthread_cond_wait$VARIANT$mp + 1236 (pthread_cond.c:636)
+2   libc++.1.dylib                  0x00000001b9060a20 std::__1::condition_variable::wait(std::__1::unique_lock<std::__1::mutex>&) + 24 (__threading_support:428)
+3   Flutter                         0x0000000100e1fb60 0x100b34000 + 3062624
+4   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+5   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 9 name:
+Thread 9:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d308 _pthread_cond_wait$VARIANT$mp + 1236 (pthread_cond.c:636)
+2   libc++.1.dylib                  0x00000001b9060a20 std::__1::condition_variable::wait(std::__1::unique_lock<std::__1::mutex>&) + 24 (__threading_support:428)
+3   Flutter                         0x0000000100e1fb60 0x100b34000 + 3062624
+4   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+5   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 10 name:
+Thread 10:
+0   libsystem_kernel.dylib          0x00000001d0a3c318 kevent + 8
+1   Flutter                         0x0000000100f6f48c 0x100b34000 + 4437132
+2   Flutter                         0x0000000100f9ccc4 0x100b34000 + 4623556
+3   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+4   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 11 name:
+Thread 11:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d308 _pthread_cond_wait$VARIANT$mp + 1236 (pthread_cond.c:636)
+2   libc++.1.dylib                  0x00000001b9060a20 std::__1::condition_variable::wait(std::__1::unique_lock<std::__1::mutex>&) + 24 (__threading_support:428)
+3   JavaScriptCore                  0x00000001aedb736c void std::__1::condition_variable_any::wait<std::__1::unique_lock<bmalloc::Mutex> >(std::__1::unique_lock<bmalloc::Mutex>&) + 108 (condition_variable:203)
+4   JavaScriptCore                  0x00000001aedbbb98 bmalloc::Scavenger::threadRunLoop() + 252 (condition_variable:212)
+5   JavaScriptCore                  0x00000001aedbb5b4 bmalloc::Scavenger::threadEntryPoint(bmalloc::Scavenger*) + 12 (Scavenger.cpp:395)
+6   JavaScriptCore                  0x00000001aedbcccc void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, void (*)(bmalloc::Scavenger*), bmalloc::Scaveng... + 44 (type_traits:3747)
+7   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+8   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 12:
+0   libsystem_pthread.dylib         0x00000001ecc98864 _pthread_dependency_fulfill_slow + 192 (pthread_dependency.c:57)
+
+Thread 13 name:
+Thread 13:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d334 _pthread_cond_wait$VARIANT$mp + 1280 (pthread_cond.c:640)
+2   Flutter                         0x00000001010cd374 0x100b34000 + 5870452
+3   Flutter                         0x0000000101113214 0x100b34000 + 6156820
+4   Flutter                         0x00000001010ccc9c 0x100b34000 + 5868700
+5   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+6   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 14 name:
+Thread 14:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d334 _pthread_cond_wait$VARIANT$mp + 1280 (pthread_cond.c:640)
+2   Flutter                         0x00000001010cd374 0x100b34000 + 5870452
+3   Flutter                         0x0000000101113214 0x100b34000 + 6156820
+4   Flutter                         0x00000001010ccc9c 0x100b34000 + 5868700
+5   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+6   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 15 name:
+Thread 15:
+0   libsystem_kernel.dylib          0x00000001d0a3a580 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001ecc8d334 _pthread_cond_wait$VARIANT$mp + 1280 (pthread_cond.c:640)
+2   Flutter                         0x00000001010cd374 0x100b34000 + 5870452
+3   Flutter                         0x0000000101113214 0x100b34000 + 6156820
+4   Flutter                         0x00000001010ccc9c 0x100b34000 + 5868700
+5   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+6   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 16:
+0   libsystem_pthread.dylib         0x00000001ecc98864 _pthread_dependency_fulfill_slow + 192 (pthread_dependency.c:57)
+
+Thread 17 name:
+Thread 17:
+0   libsystem_kernel.dylib          0x00000001d0a16908 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x00000001d0a15d0c mach_msg + 72 (mach_msg.c:103)
+2   CoreFoundation                  0x00000001a51cfdb8 __CFRunLoopServiceMachPort + 368 (CFRunLoop.c:2641)
+3   CoreFoundation                  0x00000001a51ca1b8 __CFRunLoopRun + 1184 (CFRunLoop.c:2974)
+4   CoreFoundation                  0x00000001a51c97d0 CFRunLoopRunSpecific + 572 (CFRunLoop.c:3242)
+5   CFNetwork                       0x00000001a5a63ee8 +[__CFN_CoreSchedulingSetRunnable _run:] + 548 (CoreSchedulingSet.mm:1374)
+6   Foundation                      0x00000001a6583d90 __NSThread__start__ + 848 (NSThread.m:724)
+7   libsystem_pthread.dylib         0x00000001ecc93c74 _pthread_start + 288 (pthread.c:887)
+8   libsystem_pthread.dylib         0x00000001ecc98878 thread_start + 8
+
+Thread 5 crashed with ARM Thread State (64-bit):
+    x0: 0x0000000000000000   x1: 0x0000000000000000   x2: 0x0000000000000000   x3: 0x0000000000000000
+    x4: 0x00000001b90c3edc   x5: 0x000000016ff769c0   x6: 0x0000000000000074   x7: 0x00000000000004d0
+    x8: 0x000000016ff77000   x9: 0x4743c93bdaade5d2  x10: 0x0000000000000002  x11: 0x0000000000000023
+   x12: 0x0000000281625f18  x13: 0x0000000000000000  x14: 0x0000000000000010  x15: 0x0000000000000000
+   x16: 0x0000000000000148  x17: 0x0000000000000001  x18: 0x0000000000000000  x19: 0x0000000000000006
+   x20: 0x000000000000a803  x21: 0x000000016ff770e0  x22: 0x0000000000000001  x23: 0x00000002838b8350
+   x24: 0x0000000000000000  x25: 0x0000000000000001  x26: 0x00000002540be400  x27: 0x00000001f5a59000
+   x28: 0x0000000000000001   fp: 0x000000016ff76930   lr: 0x00000001ecc949c0
+    sp: 0x000000016ff76910   pc: 0x00000001d0a3a7b0 cpsr: 0x40000000
+   esr: 0x56000080  Address size fault
+```

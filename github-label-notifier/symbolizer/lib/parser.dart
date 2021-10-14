@@ -387,8 +387,8 @@ class _CrashExtractor {
   static final _androidCrashMarker =
       '*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***';
 
-  static final _iosCrashMarker =
-      RegExp(r'Incident Identifier:\s+([A-F0-9]+-?)+');
+  static final _iosCrashMarker = RegExp(
+      r'(Incident Identifier:\s+([A-F0-9]+-?)+)|(Exception Type:\s+EXC_CRASH)');
 
   static final _dartvmCrashMarker =
       RegExp(r'version=.*on "(?<os>android)_(?<arch>arm|arm64|ia32|x64)"\s*$');

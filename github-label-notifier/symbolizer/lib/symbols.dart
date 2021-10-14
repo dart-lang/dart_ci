@@ -187,15 +187,18 @@ class SymbolsCache {
     }
   }
 
+  Future<String> _copyFromGS(String fromUri, String toDir) {
+    _log.info('gsutil cp $fromUri $toDir');
+    return _run('gsutil', ['cp', fromUri, toDir]);
+  }
+
   Future<void> _downloadSymbols(Directory tempDir, EngineBuild build) async {
     final symbolsFile =
         build.variant.os == 'ios' ? 'Flutter.dSYM.zip' : 'symbols.zip';
 
-    await _run('gsutil', [
-      'cp',
-      'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${symbolsFile}',
-      p.join(tempDir.path, symbolsFile)
-    ]);
+    await _copyFromGS(
+        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${symbolsFile}',
+        p.join(tempDir.path, symbolsFile));
     await _run('unzip', [symbolsFile], workingDirectory: tempDir.path);
 
     // Delete downloaded ZIP file.
@@ -204,24 +207,26 @@ class SymbolsCache {
 
   Future<void> _downloadEngine(Directory tempDir, EngineBuild build) async {
     final artifactsFile = 'artifacts.zip';
-    await _run('gsutil', [
-      'cp',
-      'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${artifactsFile}',
-      p.join(tempDir.path, artifactsFile)
-    ]);
+    await _copyFromGS(
+        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${artifactsFile}',
+        p.join(tempDir.path, artifactsFile));
 
     final nestedZip =
         build.variant.os == 'ios' ? 'Flutter.framework.zip' : 'flutter.jar';
 
+    final contentsList = await _run('unzip', ['-l', artifactsFile],
+        workingDirectory: tempDir.path);
+
     var libraryPath;
-    if (build.variant.os == 'ios' &&
-        !(await _run('unzip', ['-l', artifactsFile],
-                workingDirectory: tempDir.path))
-            .contains(nestedZip)) {
+    if (build.variant.os == 'ios' && !contentsList.contains(nestedZip)) {
       // Newer versions don't contains nested zip inside and instead contain
       // Flutter.xcframework folder.
+      // Futhermore it seems that arch suffix has changed between releases due
+      // to https://github.com/flutter/flutter/issues/60043.
+      final archSuffix =
+          contentsList.contains('armv7_arm64') ? 'armv7_arm64' : 'arm64_armv7';
       libraryPath =
-          'Flutter.xcframework/ios-armv7_arm64/Flutter.framework/Flutter';
+          'Flutter.xcframework/ios-$archSuffix/Flutter.framework/Flutter';
       await _run('unzip', [artifactsFile, libraryPath],
           workingDirectory: tempDir.path);
     } else {
