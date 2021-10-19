@@ -1,0 +1,124 @@
+crash from null symbolized using symbols for `6ac856380fa4f66469552ce986edf59f65f7cd68` `android-arm64-release`
+```
+#00 00000000000ca3dc /vendor/lib64/egl/libGLESv2_mtk.so 
+#01 0000000000130224 /vendor/lib64/egl/libGLESv2_mtk.so 
+#02 000000000012ee10 /vendor/lib64/egl/libGLESv2_mtk.so (glTexImage2D+320)
+#03 0000000000092524 /vendor/lib64/egl/libGLES_meow.so (MEOW::meow_call_ddk_gl_2_glTexImage2D(unsigned int, int, int, int, int, int, unsigned int, unsigned int, void const*)+44)
+#04 00000000004f7be8 <...>/lib/arm64/libflutter.so 
+                                                   GrGLFunction<void (unsigned int, int, int, int, int, int, unsigned int, unsigned int, void const*)>::operator()(unsigned int, int, int, int, int, int, unsigned int, unsigned int, void const*) const
+                                                   third_party/skia/include/gpu/gl/GrGLFunctions.h:291:22
+                                                   GrGLGpu::createTexture(SkISize, GrGLFormat, unsigned int, GrRenderable, GrGLTextureParameters::SamplerOverriddenState*, int)::$_8::operator()() const
+                                                   third_party/skia/src/gpu/gl/GrGLGpu.cpp:1695:29
+                                                   GrGLGpu::createTexture(SkISize, GrGLFormat, unsigned int, GrRenderable, GrGLTextureParameters::SamplerOverriddenState*, int)
+                                                   third_party/skia/src/gpu/gl/GrGLGpu.cpp:1695:29
+#05 00000000004f33a8 <...>/lib/arm64/libflutter.so 
+                                                   GrGLGpu::onCreateTexture(SkISize, GrBackendFormat const&, GrRenderable, int, SkBudgeted, GrProtected, int, unsigned int)
+                                                   third_party/skia/src/gpu/gl/GrGLGpu.cpp:1348:25
+#06 000000000046ed9c <...>/lib/arm64/libflutter.so 
+                                                   GrGpu::createTextureCommon(SkISize, GrBackendFormat const&, GrRenderable, int, SkBudgeted, GrProtected, int, unsigned int)
+                                                   third_party/skia/src/gpu/GrGpu.cpp:125:22
+#07 000000000046f008 <...>/lib/arm64/libflutter.so 
+                                                   GrGpu::createTexture(SkISize, GrBackendFormat const&, GrRenderable, int, SkBudgeted, GrProtected, GrColorType, GrColorType, GrMipLevel const*, int)
+                                                   third_party/skia/src/gpu/GrGpu.cpp:202:22
+#08 000000000047b000 <...>/lib/arm64/libflutter.so 
+                                                   GrResourceProvider::createTexture(SkISize, GrBackendFormat const&, GrColorType, GrRenderable, int, SkBudgeted, GrMipmapped, GrProtected, GrMipLevel const*)
+                                                   third_party/skia/src/gpu/GrResourceProvider.cpp:88:18
+#09 000000000047562c <...>/lib/arm64/libflutter.so 
+                                                   GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1::operator()(GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&) const
+                                                   third_party/skia/src/gpu/GrProxyProvider.cpp:377:61
+                                                   decltype(std::__1::forward<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1&>(fp)(std::__1::forward<GrResourceProvider*>(fp0), std::__1::forward<GrSurfaceProxy::LazySurfaceDesc const&>(fp0))) std::__1::__invoke<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1&, GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&>(GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1&, GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                                                   third_party/libcxx/include/type_traits:3530:1
+                                                   GrSurfaceProxy::LazyCallbackResult std::__1::__invoke_void_return_wrapper<GrSurfaceProxy::LazyCallbackResult>::__call<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1&, GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&>(GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1&, GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                                                   third_party/libcxx/include/__functional_base:317:16
+                                                   std::__1::__function::__alloc_func<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1, std::__1::allocator<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1>, GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                                                   third_party/libcxx/include/functional:1533:16
+                                                   std::__1::__function::__func<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1, std::__1::allocator<GrProxyProvider::createMippedProxyFromBitmap(SkBitmap const&, SkBudgeted)::$_1>, GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                                                   third_party/libcxx/include/functional:1707:12
+#10 0000000000482424 <...>/lib/arm64/libflutter.so 
+                                                   std::__1::__function::__value_func<GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&) const
+                                                   third_party/libcxx/include/functional:1860:16
+                                                   std::__1::function<GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&) const
+                                                   third_party/libcxx/include/functional:2419:12
+                                                   GrSurfaceProxyPriv::doLazyInstantiation(GrResourceProvider*)
+                                                   third_party/skia/src/gpu/GrSurfaceProxy.cpp:417:23
+#11 0000000000475324 <...>/lib/arm64/libflutter.so 
+                                                   GrProxyProvider::createProxyFromBitmap(SkBitmap const&, GrMipmapped, SkBackingFit, SkBudgeted)
+                                                   third_party/skia/src/gpu/GrProxyProvider.cpp:306:28
+#12 00000000004c5418 <...>/lib/arm64/libflutter.so 
+                                                   make_bmp_proxy(GrProxyProvider*, SkBitmap const&, GrColorType, GrMipmapped, SkBackingFit, SkBudgeted)
+                                                   third_party/skia/src/gpu/SkGr.cpp:162:33
+#13 00000000004c559c <...>/lib/arm64/libflutter.so 
+                                                   GrMakeUncachedBitmapProxyView(GrRecordingContext*, SkBitmap const&, GrMipmapped, SkBackingFit, SkBudgeted)
+                                                   third_party/skia/src/gpu/SkGr.cpp:245:22
+#14 00000000004c7410 <...>/lib/arm64/libflutter.so 
+                                                   SkImage::MakeCrossContextFromPixmap(GrDirectContext*, SkPixmap const&, bool, bool)
+                                                   third_party/skia/src/image/SkImage_Gpu.cpp:662:23
+#15 00000000003091c4 <...>/lib/arm64/libflutter.so 
+                                                   flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3::operator()() const
+                                                   flutter/lib/ui/painting/image_decoder.cc:202:44
+                                                   decltype(std::__1::forward<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3&>(fp)()) std::__1::__invoke<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3&>(flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3&)
+                                                   third_party/libcxx/include/type_traits:3530:1
+                                                   void std::__1::__invoke_void_return_wrapper<void>::__call<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3&>(flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3&)
+                                                   third_party/libcxx/include/__functional_base:348:9
+                                                   std::__1::__function::__alloc_func<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3, std::__1::allocator<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3>, void ()>::operator()()
+                                                   third_party/libcxx/include/functional:1533:16
+                                                   std::__1::__function::__func<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3, std::__1::allocator<flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)::$_3>, void ()>::operator()()
+                                                   third_party/libcxx/include/functional:1707:12
+#16 00000000002fe048 <...>/lib/arm64/libflutter.so 
+                                                   fml::SyncSwitch::Execute(fml::SyncSwitch::Handlers const&) const
+                                                   flutter/fml/synchronization/sync_switch.cc:0:0
+#17 0000000000308ecc <...>/lib/arm64/libflutter.so 
+                                                   flutter::UploadRasterImage(sk_sp<SkImage>, fml::WeakPtr<flutter::IOManager>, fml::tracing::TraceFlow const&)
+                                                   flutter/lib/ui/painting/image_decoder.cc:187:45
+                                                   flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()::operator()()
+                                                   flutter/lib/ui/painting/image_decoder.cc:316:15
+                                                   auto fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>::operator()<>() const
+                                                   flutter/fml/make_copyable.h:24:12
+                                                   decltype(std::__1::forward<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>&>(fp)()) std::__1::__invoke<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>&>(fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>&)
+                                                   third_party/libcxx/include/type_traits:3530:1
+                                                   void std::__1::__invoke_void_return_wrapper<void>::__call<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>&>(fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>&)
+                                                   third_party/libcxx/include/__functional_base:348:9
+                                                   std::__1::__function::__alloc_func<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>, std::__1::allocator<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()> >, void ()>::operator()()
+                                                   third_party/libcxx/include/functional:1533:16
+                                                   std::__1::__function::__func<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()>, std::__1::allocator<fml::internal::CopyableLambda<flutter::ImageDecoder::Decode(fml::RefPtr<flutter::ImageDescriptor>, unsigned int, unsigned int, std::__1::function<void (flutter::SkiaGPUObject<SkImage>)> const&)::$_1::operator()()::'lambda'()> >, void ()>::operator()()
+                                                   third_party/libcxx/include/functional:1707:12
+#18 00000000002fd09c <...>/lib/arm64/libflutter.so 
+                                                   std::__1::function<void ()>::operator()() const
+                                                   third_party/libcxx/include/functional:2419:12
+                                                   fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                                                   flutter/fml/message_loop_impl.cc:130:5
+                                                   fml::MessageLoopImpl::RunExpiredTasksNow()
+                                                   flutter/fml/message_loop_impl.cc:143:3
+#19 00000000002fff20 <...>/lib/arm64/libflutter.so 
+                                                   fml::MessageLoopAndroid::OnEventFired()
+                                                   flutter/fml/platform/android/message_loop_android.cc:92:5
+                                                   fml::MessageLoopAndroid::MessageLoopAndroid()::$_0::operator()(int, int, void*) const
+                                                   flutter/fml/platform/android/message_loop_android.cc:42:52
+                                                   fml::MessageLoopAndroid::MessageLoopAndroid()::$_0::__invoke(int, int, void*)
+                                                   flutter/fml/platform/android/message_loop_android.cc:40:40
+#20 000000000001a064 /system/lib64/libutils.so (android::Looper::pollInner(int)+916)
+#21 0000000000019c68 /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+112)
+#22 0000000000012d3c /system/lib64/libandroid.so (ALooper_pollOnce+100)
+#23 0000000000300030 <...>/lib/arm64/libflutter.so 
+                                                   fml::MessageLoopAndroid::Run()
+                                                   flutter/fml/platform/android/message_loop_android.cc:68:18
+#24 00000000002fc950 <...>/lib/arm64/libflutter.so 
+                                                   fml::MessageLoopImpl::DoRun()
+                                                   flutter/fml/message_loop_impl.cc:0:3
+                                                   fml::MessageLoop::Run()
+                                                   flutter/fml/message_loop.cc:49:10
+#25 00000000002fe830 <...>/lib/arm64/libflutter.so 
+                                                   fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const
+                                                   flutter/fml/thread.cc:35:10
+                                                   decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)
+                                                   third_party/libcxx/include/type_traits:3530:1
+                                                   void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)
+                                                   third_party/libcxx/include/thread:341:5
+                                                   void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)
+                                                   third_party/libcxx/include/thread:351:5
+#26 00000000000ed098 /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+64)
+#27 000000000008cb10 /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64)
+
+```
+
+<!-- {"symbolized":[1001]} -->

@@ -1,0 +1,37 @@
+@flutter-symbolizer-bot this arm64 release engine#6ac856380f
+
+```
+Crash Samsung Galaxy A12, Android 11 (SDK 30)
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+pid: 0, tid: 0 >>> com.youcam.videoeditor.reface.makeup <<<
+
+backtrace:
+  #00  pc 00000000000ca3dc  /vendor/lib64/egl/libGLESv2_mtk.so
+  #00  pc 0000000000130224  /vendor/lib64/egl/libGLESv2_mtk.so
+  #00  pc 000000000012ee10  /vendor/lib64/egl/libGLESv2_mtk.so (glTexImage2D+320)
+  #00  pc 0000000000092524  /vendor/lib64/egl/libGLES_meow.so (MEOW::meow_call_ddk_gl_2_glTexImage2D(unsigned int, int, int, int, int, int, unsigned int, unsigned int, void const*)+44)
+  #00  pc 00000000004f7be8  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000004f33a8  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 000000000046ed9c  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 000000000046f008  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 000000000047b000  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 000000000047562c  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 0000000000482424  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 0000000000475324  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000004c5418  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000004c559c  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000004c7410  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000003091c4  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000002fe048  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 0000000000308ecc  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000002fd09c  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000002fff20  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 000000000001a064  /system/lib64/libutils.so (android::Looper::pollInner(int)+916)
+  #00  pc 0000000000019c68  /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+112)
+  #00  pc 0000000000012d3c  /system/lib64/libandroid.so (ALooper_pollOnce+100)
+  #00  pc 0000000000300030  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000002fc950  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000002fe830  /data/app/~~ohSnZG9DPcAaAAL4hXxgZQ==/com.youcam.videoeditor.reface.makeup-Ryc0VmVKG1209nqO_XfCUA==/lib/arm64/libflutter.so
+  #00  pc 00000000000ed098  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+64)
+  #00  pc 000000000008cb10  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64)
+```

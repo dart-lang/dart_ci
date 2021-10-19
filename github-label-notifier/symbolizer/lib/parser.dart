@@ -332,6 +332,10 @@ class _CrashExtractor {
   void endCrash() {
     // We are not interested in crashes where we did not collect any frames.
     if (frames != null && frames.isNotEmpty) {
+      if (os == 'android') {
+        androidMajorVersion ??= guessAndroidVersion();
+      }
+
       crashes.add(Crash(
         engineVariant: EngineVariant(
           os: os,
@@ -362,6 +366,18 @@ class _CrashExtractor {
     } else if (line.contains(_logcatPattern)) {
       logLinePattern = _logcatPattern;
     }
+  }
+
+  int guessAndroidVersion() {
+    // On Android 11 has introduced a change[1] which mangles APK install
+    // locations with a random prefix (and suffix). We can use the presence of
+    // this prefix to detect that we are running on Android 11 or above.
+    //
+    // [1]: https://partner-android.googlesource.com/platform/frameworks/base/+/f56f1c5c587ed5af452ed1b339218dabc12c9f93
+    if (frames.any((f) => f.binary.startsWith('/data/app/~~'))) {
+      return 11;
+    }
+    return null; // Can't guess.
   }
 
   void guessLaunchMode() {
