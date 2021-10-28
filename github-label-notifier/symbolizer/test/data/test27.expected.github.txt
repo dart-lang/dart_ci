@@ -1,0 +1,200 @@
+crash from null symbolized using symbols for `05e680e202af9a92461070cb2d9982acad46c83c` `ios-arm64-release`
+```
+#00 000000019df7fc30 Metal 0x19df6c000 + 80944
+#01 00000001c0e31984 AGXMetalA12 0x1c0dbb000 + 485764
+#02 4c4c7081c1029784 (null) 0x0 + 5497892947703797636
+#03 3b5a8181c105d6b0 (null) 0x0 + 4276873190430856880
+#04 2130978102e458d0 (null) 0x0 + 2391577982488828112
+#05 0000000102e4878c Flutter 0x102bd4000 + 2574220
+                             GrMtlGpu::uploadToTexture(GrMtlTexture*, int, int, int, int, GrColorType, GrMipLevel const*, int)
+                             third_party/skia/src/gpu/mtl/GrMtlGpu.mm:390:71
+                             GrMtlGpu::onWritePixels(GrSurface*, int, int, int, int, GrColorType, GrColorType, GrMipLevel const*, int, bool)
+                             third_party/skia/src/gpu/mtl/GrMtlGpu.mm:1213:0
+#06 0000000102d4eb54 Flutter 0x102bd4000 + 1551188
+                             GrGpu::writePixels(GrSurface*, int, int, int, int, GrColorType, GrColorType, GrMipLevel const*, int, bool)
+                             third_party/skia/src/gpu/GrGpu.cpp:449:15
+#07 0000000102d61950 Flutter 0x102bd4000 + 1628496
+                             GrResourceProvider::writePixels(sk_sp<GrTexture>, GrColorType, SkISize, GrMipLevel const*, int) const
+                             third_party/skia/src/gpu/GrResourceProvider.cpp:682:5
+#08 0000000102d62058 Flutter 0x102bd4000 + 1630296
+                             GrResourceProvider::createTexture(SkISize, GrBackendFormat const&, GrColorType, GrRenderable, int, SkBudgeted, SkBackingFit, GrProtected, GrMipLevel const&)
+                             third_party/skia/src/gpu/GrResourceProvider.cpp:139:22
+#09 0000000102d5ac64 Flutter 0x102bd4000 + 1600612
+                             GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0::operator()(GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&) const
+                             third_party/skia/src/gpu/GrProxyProvider.cpp:328:61
+                             decltype(std::__1::forward<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0&>(fp)(std::__1::forward<GrResourceProvider*>(fp0), std::__1::forward<GrSurfaceProxy::LazySurfaceDesc const&>(fp0))) std::__1::__invoke<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0&, GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&>(GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0&, GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4425:0
+                             GrSurfaceProxy::LazyCallbackResult std::__1::__invoke_void_return_wrapper<GrSurfaceProxy::LazyCallbackResult>::__call<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0&, GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&>(GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0&, GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:317:0
+                             std::__1::__function::__alloc_func<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0, std::__1::allocator<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0>, GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1533:0
+                             std::__1::__function::__func<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0, std::__1::allocator<GrProxyProvider::createNonMippedProxyFromBitmap(SkBitmap const&, SkBackingFit, SkBudgeted)::$_0>, GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1707:0
+#10 0000000102d78588 Flutter 0x102bd4000 + 1721736
+                             std::__1::__function::__value_func<GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*&&, GrSurfaceProxy::LazySurfaceDesc const&) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1860:16
+                             std::__1::function<GrSurfaceProxy::LazyCallbackResult (GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&)>::operator()(GrResourceProvider*, GrSurfaceProxy::LazySurfaceDesc const&) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2419:0
+                             GrSurfaceProxyPriv::doLazyInstantiation(GrResourceProvider*)
+                             third_party/skia/src/gpu/GrSurfaceProxy.cpp:403:0
+#11 0000000102d5a600 Flutter 0x102bd4000 + 1598976
+                             GrProxyProvider::createProxyFromBitmap(SkBitmap const&, GrMipmapped, SkBackingFit, SkBudgeted)
+                             third_party/skia/src/gpu/GrProxyProvider.cpp:305:28
+#12 0000000102d33228 Flutter 0x102bd4000 + 1438248
+                             GrBitmapTextureMaker::refOriginalTextureProxyView(GrMipmapped)
+                             third_party/skia/src/gpu/GrBitmapTextureMaker.cpp:90:36
+#13 0000000102d63d44 Flutter 0x102bd4000 + 1637700
+                             GrTextureProducer::view(GrMipmapped)
+                             third_party/skia/src/gpu/GrTextureProducer.cpp:96:25
+                             GrSWMaskHelper::toTextureView(GrRecordingContext*, SkBackingFit)
+                             third_party/skia/src/gpu/GrSWMaskHelper.cpp:159:0
+#14 0000000102d65324 Flutter 0x102bd4000 + 1643300
+                             GrSoftwarePathRenderer::onDrawPath(GrPathRenderer::DrawPathArgs const&)
+                             third_party/skia/src/gpu/GrSoftwarePathRenderer.cpp:365:27
+#15 0000000102d7146c Flutter 0x102bd4000 + 1692780
+                             GrPathRenderer::drawPath(GrPathRenderer::DrawPathArgs const&)
+                             third_party/skia/src/gpu/GrPathRenderer.cpp:67:18
+                             GrSurfaceDrawContext::drawShapeUsingPathRenderer(GrClip const*, GrPaint&&, GrAA, SkMatrix const&, GrStyledShape const&, bool)
+                             third_party/skia/src/gpu/GrSurfaceDrawContext.cpp:1800:0
+#16 0000000102d71950 Flutter 0x102bd4000 + 1694032
+                             GrSurfaceDrawContext::drawShape(GrClip const*, GrPaint&&, GrAA, SkMatrix const&, GrStyledShape const&)
+                             third_party/skia/src/gpu/GrSurfaceDrawContext.cpp:1619:11
+#17 0000000102d75164 Flutter 0x102bd4000 + 1708388
+                             GrSurfaceDrawContext::drawPath(GrClip const*, GrPaint&&, GrAA, SkMatrix const&, SkPath const&, GrStyle const&)
+                             third_party/skia/src/gpu/GrSurfaceDrawContext.cpp:1562:11
+#18 0000000102df0434 Flutter 0x102bd4000 + 2212916
+                             SkGpuDevice::drawPath(SkPath const&, SkPaint const&, bool)
+                             third_party/skia/src/gpu/SkGpuDevice.cpp:696:30
+#19 0000000102c24360 Flutter 0x102bd4000 + 328544
+                             SkCanvas::onDrawPath(SkPath const&, SkPaint const&)
+                             third_party/skia/src/core/SkCanvas.cpp:2240:24
+#20 0000000102c2b174 Flutter 0x102bd4000 + 356724
+                             SkCanvas::drawPath(SkPath const&, SkPaint const&)
+                             third_party/skia/src/core/SkCanvas.cpp:1854:11
+#21 0000000102cbfc00 Flutter 0x102bd4000 + 965632
+                             decltype(fp0((SkRecords::NoOp)())) SkRecord::visit<SkRecords::Draw&>(int, SkRecords::Draw&) const
+                             third_party/skia/src/core/SkRecord.h:42:28
+                             SkRecordDraw(SkRecord const&, SkCanvas*, SkPicture const* const*, SkDrawable* const*, int, SkBBoxHierarchy const*, SkPicture::AbortCallback*)
+                             third_party/skia/src/core/SkRecordDraw.cpp:54:0
+                             SkBigPicture::playback(SkCanvas*, SkPicture::AbortCallback*) const
+                             third_party/skia/src/core/SkBigPicture.cpp:33:0
+#22 0000000102c25a50 Flutter 0x102bd4000 + 334416
+                             SkCanvas::onDrawPicture(SkPicture const*, SkMatrix const*, SkPaint const*)
+                             third_party/skia/src/core/SkCanvas.cpp:2664:14
+#23 0000000102c2c708 Flutter 0x102bd4000 + 362248
+                             SkCanvas::drawPicture(SkPicture const*, SkMatrix const*, SkPaint const*)
+                             third_party/skia/src/core/SkCanvas.cpp:2653:15
+#24 0000000102cbfb54 Flutter 0x102bd4000 + 965460
+                             decltype(fp0((SkRecords::NoOp)())) SkRecord::visit<SkRecords::Draw&>(int, SkRecords::Draw&) const
+                             third_party/skia/src/core/SkRecord.h:42:28
+                             SkRecordDraw(SkRecord const&, SkCanvas*, SkPicture const* const*, SkDrawable* const*, int, SkBBoxHierarchy const*, SkPicture::AbortCallback*)
+                             third_party/skia/src/core/SkRecordDraw.cpp:42:0
+                             SkBigPicture::playback(SkCanvas*, SkPicture::AbortCallback*) const
+                             third_party/skia/src/core/SkBigPicture.cpp:33:0
+#25 0000000102ef9b98 Flutter 0x102bd4000 + 3300248
+                             flutter::PictureLayer::Paint(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/picture_layer.cc:62:14
+#26 0000000102ef6738 Flutter 0x102bd4000 + 3286840
+                             flutter::ContainerLayer::PaintChildren(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/container_layer.cc:85:14
+#27 0000000102ef8d6c Flutter 0x102bd4000 + 3296620
+                             flutter::PhysicalShapeLayer::Paint(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/physical_shape_layer.cc:87:3
+#28 0000000102ef6738 Flutter 0x102bd4000 + 3286840
+                             flutter::ContainerLayer::PaintChildren(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/container_layer.cc:85:14
+#29 0000000102efa564 Flutter 0x102bd4000 + 3302756
+                             flutter::TransformLayer::Paint(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/transform_layer.cc:78:3
+#30 0000000102ef6738 Flutter 0x102bd4000 + 3286840
+                             flutter::ContainerLayer::PaintChildren(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/container_layer.cc:85:14
+#31 0000000102efa564 Flutter 0x102bd4000 + 3302756
+                             flutter::TransformLayer::Paint(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/transform_layer.cc:78:3
+#32 0000000102ef6738 Flutter 0x102bd4000 + 3286840
+                             flutter::ContainerLayer::PaintChildren(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/container_layer.cc:85:14
+#33 0000000102efa564 Flutter 0x102bd4000 + 3302756
+                             flutter::TransformLayer::Paint(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/transform_layer.cc:78:3
+#34 0000000102ef6738 Flutter 0x102bd4000 + 3286840
+                             flutter::ContainerLayer::PaintChildren(flutter::Layer::PaintContext&) const
+                             flutter/flow/layers/container_layer.cc:85:14
+#35 0000000102ef4b60 Flutter 0x102bd4000 + 3279712
+                             flutter::LayerTree::Paint(flutter::CompositorContext::ScopedFrame&, bool) const
+                             flutter/flow/layers/layer_tree.cc:117:18
+                             flutter::CompositorContext::ScopedFrame::Raster(flutter::LayerTree&, bool)
+                             flutter/flow/compositor_context.cc:100:0
+#36 0000000102f02928 Flutter 0x102bd4000 + 3336488
+                             flutter::Rasterizer::DrawToSurface(flutter::LayerTree&)
+                             flutter/shell/common/rasterizer.cc:464:52
+#37 0000000102f035e4 Flutter 0x102bd4000 + 3339748
+                             flutter::Rasterizer::DoDraw(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)
+                             flutter/shell/common/rasterizer.cc:338:32
+                             flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >) const
+                             flutter/shell/common/rasterizer.cc:172:0
+                             decltype(std::__1::forward<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&>(fp)(std::__1::forward<std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(fp0))) std::__1::__invoke<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4425:0
+                             void std::__1::__invoke_void_return_wrapper<void>::__call<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> > >(flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1&, std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:348:0
+                             std::__1::__function::__alloc_func<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1, std::__1::allocator<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1>, void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1533:0
+                             std::__1::__function::__func<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1, std::__1::allocator<flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)::$_1>, void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1707:0
+#38 0000000102f02d10 Flutter 0x102bd4000 + 3337488
+                             std::__1::__function::__value_func<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >&&) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1860:16
+                             std::__1::function<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)>::operator()(std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >) const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2419:0
+                             flutter::Pipeline<flutter::LayerTree>::Consume(std::__1::function<void (std::__1::unique_ptr<flutter::LayerTree, std::__1::default_delete<flutter::LayerTree> >)> const&)
+                             flutter/shell/common/pipeline.h:161:0
+                             flutter::Rasterizer::Draw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, std::__1::function<bool (flutter::LayerTree&)>)
+                             flutter/shell/common/rasterizer.cc:176:0
+#39 0000000102f09fc4 Flutter 0x102bd4000 + 3366852
+                             flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33::operator()() const
+                             flutter/shell/common/shell.cc:1133:23
+                             decltype(std::__1::forward<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33&>(fp)()) std::__1::__invoke<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33&>(flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4425:0
+                             void std::__1::__invoke_void_return_wrapper<void>::__call<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33&>(flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__functional_base:348:0
+                             std::__1::__function::__alloc_func<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33, std::__1::allocator<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33>, void ()>::operator()()
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1533:0
+                             std::__1::__function::__func<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33, std::__1::allocator<flutter::Shell::OnAnimatorDraw(fml::RefPtr<flutter::Pipeline<flutter::LayerTree> >, fml::TimePoint)::$_33>, void ()>::operator()()
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1707:0
+#40 0000000102ea9d94 Flutter 0x102bd4000 + 2973076
+                             std::__1::__function::__value_func<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:1860:16
+                             std::__1::function<void ()>::operator()() const
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/functional:2419:0
+                             fml::MessageLoopImpl::FlushTasks(fml::FlushType)
+                             flutter/fml/message_loop_impl.cc:130:0
+#41 0000000102eabbf4 Flutter 0x102bd4000 + 2980852
+                             fml::MessageLoopImpl::RunExpiredTasksNow()
+                             flutter/fml/message_loop_impl.cc:143:3
+                             fml::MessageLoopDarwin::OnTimerFire(__CFRunLoopTimer*, fml::MessageLoopDarwin*)
+                             flutter/fml/platform/darwin/message_loop_darwin.mm:75:0
+#42 00000001897ea190 CoreFoundation 0x18973c000 + 713104
+#43 -52e734fe76816158 (null) 0x0
+#44 -1df138fe76816ae4 (null) 0x0
+#45 -7ea9487e7681bd8c (null) 0x0
+#46 -728fa2fe7681c70c (null) 0x0
+#47 5c6c148102eabad0 (null) 0x0 + 6659720493306395344
+#48 0000000102eab4d4 Flutter 0x102bd4000 + 2979028
+                             fml::MessageLoopImpl::DoRun()
+                             flutter/fml/message_loop_impl.cc:96:3
+                             fml::MessageLoop::Run()
+                             flutter/fml/message_loop.cc:49:0
+                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const
+                             flutter/fml/thread.cc:35:0
+                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:4425:0
+                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:341:0
+                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)
+                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:351:0
+#49 00000001895738fc libsystem_pthread.dylib _pthread_start + 168
+
+```
+
+<!-- {"symbolized":[1001]} -->

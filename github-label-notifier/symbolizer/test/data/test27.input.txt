@@ -1,0 +1,307 @@
+@flutter-symbolizer-bot this arm64 release
+
+```
+Incident Identifier: 046B59B6-76C3-49F9-B0A3-5FEB76D00AEE
+CrashReporter Key:   e327bf314df51f64bec4056b759ee8cade4d6543
+Hardware Model:      iPad8,11
+Process:         Runner [5527]
+Path:            /private/var/containers/Bundle/Application/id/Runner.app/Runner
+Identifier:      app.identifier
+Version:         1.0.0 (1)
+Code Type:       ARM-64
+Parent Process:  ? [1]
+
+Date/Time:       2021-10-25 13:06:54.000 +0800
+OS Version:      iOS 13.5.1 (17F80)
+Report Version:  104
+
+Exception Type:  EXC_BAD_ACCESS (SIGBUS)
+Exception Codes: 0x00000000 at 0x00000000000002e0
+Crashed Thread:  3
+
+Thread 0:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0x2f5e6f01897e9314 0x0 + 3413287619985838868
+3   (null) 0x3947b701897e40a0 0x0 + 4127468800737951904
+4   (null) 0x3138d801897e38f4 0x0 + 3546822207667583220
+5   (null) 0x940b678193bfa604 0x0 + 10667733948584404484
+6   (null) 0x1e2f45818d9b7358 0x0 + 2175033567772111704
+7   (null) 0x372051810242f1ac 0x0 + 3972264485871350188
+8   libdyld.dylib                   0x000000018965f2dc 0x18965e000 + 4828
+
+Thread 1 name:  com.apple.uikit.eventfetch-thread
+Thread 1:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0x0a367401897e9314 0x0 + 735903139072217876
+3   (null) 0x43298601897e40a0 0x0 + 4839546615746150560
+4   (null) 0xc801df01897e38f4 0x0 + 14412045480257009908
+5   (null) 0x961c590189b2cb18 0x0 + 10816618268177124120
+6   (null) 0x145c468189b2c9f0 0x0 + 1467125100790860272
+7   (null) 0x3f0832018da5d840 0x0 + 4541935206455957568
+8   (null) 0xc11b050189c66c10 0x0 + 13914720977855867920
+9   (null) 0xcb4a5b81895738fc 0x0 + 14648621349889063164
+
+Thread 2 name:  io.flutter.1.ui
+Thread 2:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0xa1739d01897e9314 0x0 + 11633814892355425044
+3   (null) 0xef1c0b81897e40a0 0x0 + 17229658925398114464
+4   (null) 0x0615c381897e38f4 0x0 + 438471499863439604
+5   (null) 0x2e1b680102eabad0 0x0 + 3322363503669066448
+6   Flutter                         0x0000000102eab4d4 0x102bd4000 + 2979028
+7   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 3 name:  io.flutter.1.raster
+Thread 3 Crashed:
+0   Metal                           0x000000019df7fc30 0x19df6c000 + 80944
+1   AGXMetalA12                     0x00000001c0e31984 0x1c0dbb000 + 485764
+2   (null) 0x4c4c7081c1029784 0x0 + 5497892947703797636
+3   (null) 0x3b5a8181c105d6b0 0x0 + 4276873190430856880
+4   (null) 0x2130978102e458d0 0x0 + 2391577982488828112
+5   Flutter                         0x0000000102e4878c 0x102bd4000 + 2574220
+6   Flutter                         0x0000000102d4eb54 0x102bd4000 + 1551188
+7   Flutter                         0x0000000102d61950 0x102bd4000 + 1628496
+8   Flutter                         0x0000000102d62058 0x102bd4000 + 1630296
+9   Flutter                         0x0000000102d5ac64 0x102bd4000 + 1600612
+10  Flutter                         0x0000000102d78588 0x102bd4000 + 1721736
+11  Flutter                         0x0000000102d5a600 0x102bd4000 + 1598976
+12  Flutter                         0x0000000102d33228 0x102bd4000 + 1438248
+13  Flutter                         0x0000000102d63d44 0x102bd4000 + 1637700
+14  Flutter                         0x0000000102d65324 0x102bd4000 + 1643300
+15  Flutter                         0x0000000102d7146c 0x102bd4000 + 1692780
+16  Flutter                         0x0000000102d71950 0x102bd4000 + 1694032
+17  Flutter                         0x0000000102d75164 0x102bd4000 + 1708388
+18  Flutter                         0x0000000102df0434 0x102bd4000 + 2212916
+19  Flutter                         0x0000000102c24360 0x102bd4000 + 328544
+20  Flutter                         0x0000000102c2b174 0x102bd4000 + 356724
+21  Flutter                         0x0000000102cbfc00 0x102bd4000 + 965632
+22  Flutter                         0x0000000102c25a50 0x102bd4000 + 334416
+23  Flutter                         0x0000000102c2c708 0x102bd4000 + 362248
+24  Flutter                         0x0000000102cbfb54 0x102bd4000 + 965460
+25  Flutter                         0x0000000102ef9b98 0x102bd4000 + 3300248
+26  Flutter                         0x0000000102ef6738 0x102bd4000 + 3286840
+27  Flutter                         0x0000000102ef8d6c 0x102bd4000 + 3296620
+28  Flutter                         0x0000000102ef6738 0x102bd4000 + 3286840
+29  Flutter                         0x0000000102efa564 0x102bd4000 + 3302756
+30  Flutter                         0x0000000102ef6738 0x102bd4000 + 3286840
+31  Flutter                         0x0000000102efa564 0x102bd4000 + 3302756
+32  Flutter                         0x0000000102ef6738 0x102bd4000 + 3286840
+33  Flutter                         0x0000000102efa564 0x102bd4000 + 3302756
+34  Flutter                         0x0000000102ef6738 0x102bd4000 + 3286840
+35  Flutter                         0x0000000102ef4b60 0x102bd4000 + 3279712
+36  Flutter                         0x0000000102f02928 0x102bd4000 + 3336488
+37  Flutter                         0x0000000102f035e4 0x102bd4000 + 3339748
+38  Flutter                         0x0000000102f02d10 0x102bd4000 + 3337488
+39  Flutter                         0x0000000102f09fc4 0x102bd4000 + 3366852
+40  Flutter                         0x0000000102ea9d94 0x102bd4000 + 2973076
+41  Flutter                         0x0000000102eabbf4 0x102bd4000 + 2980852
+42  CoreFoundation                  0x00000001897ea190 0x18973c000 + 713104
+43  (null) 0xad18cb01897e9ea8 0x0 + 12472942375464771240
+44  (null) 0xe20ec701897e951c 0x0 + 16289175711661331740
+45  (null) 0x8156b781897e4274 0x0 + 9319838245875237492
+46  (null) 0x8d705d01897e38f4 0x0 + 10191748217922533620
+47  (null) 0x5c6c148102eabad0 0x0 + 6659720493306395344
+48  Flutter                         0x0000000102eab4d4 0x102bd4000 + 2979028
+49  libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 4 name:  io.flutter.1.io
+Thread 4:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0xce7fa181897e9314 0x0 + 14879789271585035028
+3   (null) 0x425cc581897e40a0 0x0 + 4781914064508829856
+4   (null) 0x9c6d3681897e38f4 0x0 + 11271725372363651316
+5   (null) 0xbf66788102eabad0 0x0 + 13791843404363774672
+6   Flutter                         0x0000000102eab4d4 0x102bd4000 + 2979028
+7   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 5 name:  io.flutter.worker.1
+Thread 5:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0xb25a5b01896a8ca8 0x0 + 12851684548813687976
+3   (null) 0x9e25fe8102ea6bdc 0x0 + 11395794262184061916
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 6 name:  io.flutter.worker.2
+Thread 6:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0xc44c8981896a8ca8 0x0 + 14144831719113133224
+3   (null) 0xf535d38102ea6bdc 0x0 + 17669261264111168476
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 7 name:  io.flutter.worker.3
+Thread 7:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0x715a8281896a8ca8 0x0 + 8167984367057669288
+3   (null) 0x1d211d0102ea6bdc 0x0 + 2098990791512452060
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 8 name:  io.flutter.worker.4
+Thread 8:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0xff409b81896a8ca8 0x0 + 18392871858839653544
+3   (null) 0x3b674e0102ea6bdc 0x0 + 4280475737089797084
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 9 name:  io.flutter.worker.5
+Thread 9:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0x44543101896a8ca8 0x0 + 4923614175292984488
+3   (null) 0x4c2b0a0102ea6bdc 0x0 + 5488491570341243868
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 10 name:  io.flutter.worker.6
+Thread 10:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0xf564fb81896a8ca8 0x0 + 17682534570738224296
+3   (null) 0xde23438102ea6bdc 0x0 + 16006711721983634396
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 11 name:  io.flutter.worker.7
+Thread 11:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0x3a377081896a8ca8 0x0 + 4194945279577459880
+3   (null) 0xd752e30102ea6bdc 0x0 + 15515713259728169948
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 12 name:  io.flutter.worker.8
+Thread 12:
+0   libsystem_kernel.dylib          0x0000000189654bc0 __psynch_cvwait + 8
+1   libsystem_pthread.dylib         0x00000001895771e4 0x189572000 + 20964
+2   (null) 0x323d6781896a8ca8 0x0 + 3620163481529650344
+3   (null) 0x591d1c0102ea6bdc 0x0 + 6421319434369657820
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 13 name:  dart:io EventHandler
+Thread 13:
+0   libsystem_kernel.dylib          0x00000001896568d0 kevent + 8
+1   Flutter                         0x0000000102fe1e88 0x102bd4000 + 4251272
+2   Flutter                         0x000000010300ee1c 0x102bd4000 + 4435484
+3   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 14 name:  com.google.firebase.crashlytics.MachExceptionServer
+Thread 14:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0x266d5801026f3e1c 0x0 + 2768966107261779484
+3   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 15 name:  AVAudioSession Notify Thread
+Thread 15:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0x404d2b01897e9314 0x0 + 4633406877235843860
+3   (null) 0x7444cf01897e40a0 0x0 + 8378048812324634784
+4   (null) 0x0176e901897e38f4 0x0 + 105527834100775156
+5   (null) 0x4f21e3019692b950 0x0 + 5702088199188429136
+6   (null) 0x3f5ede019697cc2c 0x0 + 4566331170603125804
+7   (null) 0xd86ec081895738fc 0x0 + 15595614222218115324
+
+Thread 16:
+0   libsystem_kernel.dylib          0x000000018965516c __semwait_signal + 8
+1   libsystem_c.dylib               0x00000001894ff800 nanosleep + 224
+2   (null) 0xbd611a81894ff5e8 0x0 + 13646217489566135784
+3   (null) 0x744dd201024ae054 0x0 + 8380585383381622868
+4   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 17 name:  KSCrash Exception Handler (Secondary)
+Thread 17:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0xad011301024b9000 0x0 + 12466266138592645120
+3   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 18 name:  KSCrash Exception Handler (Primary)
+Thread 18:
+
+Thread 19 name:  com.apple.NSURLConnectionLoader
+Thread 19:
+0   libsystem_kernel.dylib          0x0000000189632784 mach_msg_trap + 8
+1   libsystem_kernel.dylib          0x0000000189631ba8 mach_msg + 76
+2   (null) 0xd01f6001897e9314 0x0 + 14996810843885048596
+3   (null) 0x1e631981897e40a0 0x0 + 2189621887980421280
+4   (null) 0x2f38ab81897e38f4 0x0 + 3402658091324291316
+5   (null) 0x2a5266818cb06214 0x0 + 3049612604280431124
+6   (null) 0x670a988189c66c10 0x0 + 7424914617803369488
+7   (null) 0x0d538581895738fc 0x0 + 960257936961517820
+
+Thread 20 name:  DartWorker
+Thread 20:
+0   Flutter                         0x000000010318270c 0x102bd4000 + 5957388
+1   Flutter                         0x00000001031826b4 0x102bd4000 + 5957300
+2   Flutter                         0x0000000103182314 0x102bd4000 + 5956372
+3   Flutter                         0x00000001031820a8 0x102bd4000 + 5955752
+4   Flutter                         0x000000010317885c 0x102bd4000 + 5916764
+5   Flutter                         0x000000010312ff50 0x102bd4000 + 5619536
+6   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 21:
+0   libsystem_kernel.dylib          0x00000001896559a8 __workq_kernreturn + 8
+1   libsystem_pthread.dylib         0x0000000189575760 _pthread_wqthread + 352
+
+Thread 22 name:  DartWorker
+Thread 22:
+0   Flutter                         0x000000010318270c 0x102bd4000 + 5957388
+1   Flutter                         0x00000001031826b4 0x102bd4000 + 5957300
+2   Flutter                         0x0000000103182314 0x102bd4000 + 5956372
+3   Flutter                         0x00000001031820a8 0x102bd4000 + 5955752
+4   Flutter                         0x000000010317885c 0x102bd4000 + 5916764
+5   Flutter                         0x000000010312ff50 0x102bd4000 + 5619536
+6   libsystem_pthread.dylib         0x00000001895738fc _pthread_start + 168
+
+Thread 23:
+0   libsystem_pthread.dylib         0x000000018957b9c0 pthread_dependency_wait_np + 180
+
+Thread 24:
+0   libsystem_kernel.dylib          0x00000001896559a8 __workq_kernreturn + 8
+1   libsystem_pthread.dylib         0x0000000189575760 _pthread_wqthread + 352
+
+Thread 3 crashed with ARM-64 Thread State:
+  cpsr: 0x0000000060000000     fp: 0x000000016deba060     lr: 0x00000001c0e31984     pc: 0x000000019df7fc30
+    sp: 0x000000016deba000     x0: 0x0000000132aaac70     x1: 0x00000001c55ae312    x10: 0x000000012f813000
+   x11: 0x003f00012f813000    x12: 0x000000013fa1d4ea    x13: 0x000021a1d57a06dd    x14: 0x0000000000080000
+   x15: 0x0000000000007a35    x16: 0x00000001d57a06d8    x17: 0x945f80819df7fc24    x18: 0x0000000000000000
+   x19: 0x00000002bfb7e3d0     x2: 0x0000000283f62ee0    x20: 0x0000000132aaac70    x21: 0x0000000283f62ee0
+   x22: 0x00000001c4c17adb    x23: 0x0000001a0000002a    x24: 0x0000000000000001    x25: 0x000000012d87a620
+   x26: 0x0000000000000000    x27: 0x0000000000000000    x28: 0x0000000000000001    x29: 0x000000016deba060
+    x3: 0x00000002bfb7e770     x4: 0x00000002bfb7e440     x5: 0x0000000000000000     x6: 0x0000000000000000
+    x7: 0x0000000000000000     x8: 0x0000000000000000     x9: 0x00000001c55ae312
+
+Extra Information:
+
+Stack Dump (0x000000016deb9fb0-0x000000016deba0a0):
+
+1A00000000000000D803000000000000010000000000000000C060030100000000A0EB6D0100000044D5548901AE673C1A0000000000000000802CD301000000D803000000000000010000000000000040A0EB6D0100000030A211D601000000000000C00000000058A2E0C001000000F015ACD2010000003882822E0100000001000000000000002A0000001A0000001A00000000000000010000000000000070ACAA3201000000E02EF68302000000A0A0EB6D01000000849702C181704C4CE02EF68302000000D8017AD5010000001A000000000000000100000000000000C8A3EB6D0100000070ACAA3201000000
+
+Application Stats:
+{
+    "active_time_since_last_crash": 0,
+    "active_time_since_launch": 0,
+    "application_active": false,
+    "application_in_foreground": true,
+    "background_time_since_last_crash": 0,
+    "background_time_since_launch": 0,
+    "launches_since_last_crash": 8,
+    "sessions_since_last_crash": 8,
+    "sessions_since_launch": 1
+}
+
+CrashDoctor Diagnosis: Attempted to dereference garbage pointer 0x2e0.
+```
+
+```
+Flutter 2.0.6 • channel unknown • unknown source
+Framework • revision 1d9032c7e1 (6 months ago) • 2021-04-29 17:37:58 -0700
+Engine • revision 05e680e202
+Tools • Dart 2.12.3
+```

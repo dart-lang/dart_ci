@@ -48,7 +48,7 @@ class SymbolsCache {
   SymbolsCache({
     @required Ndk ndk,
     @required String path,
-    int sizeThreshold = 20,
+    int sizeThreshold = 50,
     Duration evictionThreshold = const Duration(minutes: 5),
   })  : _ndk = ndk,
         _path = path,

@@ -142,7 +142,11 @@ class _CrashExtractor {
     String symbol;
     int offset;
     if (offsetMatch != null) {
-      offset = int.parse(offsetMatch.namedGroup('offset'));
+      // In some rare cases offset would be computed against load base of 0
+      // in which case int.parse would refuse to parse it (because it is
+      // a decimal integer outside of range for signed 64-bit integer).
+      // Ignore such cases.
+      offset = int.tryParse(offsetMatch.namedGroup('offset'));
       symbol = offsetMatch.namedGroup('symbol').trim();
     } else {
       symbol = rest.trim();
