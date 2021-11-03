@@ -68,6 +68,8 @@ dynamic getValue(Value value) {
     return value.arrayValue.values.map(getValue).toList();
   } else if (value.timestampValue != null) {
     return DateTime.parse(value.timestampValue);
+  } else if (value.nullValue != null) {
+    return null;
   }
   throw Exception('unsupported value ${value.toJson()}');
 }
@@ -281,7 +283,7 @@ class FirestoreService {
   Future<bool> isStaging() => Future.value(project == 'dart-ci-staging');
 
   Future<bool> hasPatchset(String review, String patchset) {
-    return documentExists('$documents/$review/patchsets/$patchset');
+    return documentExists('$documents/reviews/$review/patchsets/$patchset');
   }
 
   Commit _commit(Document document) {
@@ -688,11 +690,14 @@ class FirestoreService {
     return results.map((RunQueryResponse result) => result.document).toList();
   }
 
-  Future storeReview(String review, Map<String, dynamic> data) {
-    final fields = {'fields': taggedJsonMap(data)};
-    final document = Document.fromJson(fields);
+  Future<bool> hasReview(String review) async {
+    return documentExists('$documents/reviews/$review');
+  }
+
+  Future<void> storeReview(String review, Map<String, Value> data) async {
+    final document = Document()..fields = data;
     documentsWritten++;
-    return firestore.projects.databases.documents
+    await firestore.projects.databases.documents
         .createDocument(document, documents, 'reviews', documentId: '$review');
   }
 
@@ -735,6 +740,8 @@ class FirestoreService {
     await firestore.projects.databases.documents.createDocument(
         document, '$documents/reviews/$review', 'patchsets',
         documentId: '$patchset');
+    log('Stored patchset: $documents/reviews/$review/$patchset\n'
+        '${untagMap(document.fields)}');
   }
 
   /// Returns true if a review record in the database has a landed_index field,

@@ -210,6 +210,14 @@ Future<void> deleteFakeReviewAndResults() async {
         from: 'try_builds', where: fieldEquals('builder', builder)));
   }
 
+  final patchsets =
+      await firestore.query(from: 'patchsets', parent: 'reviews/$fakeReview/');
+  for (final doc in patchsets) {
+    if (doc.document != null) {
+      await firestore.deleteDocument(doc.document.name);
+    }
+  }
+
   await firestore.deleteDocument(firestore.documents + '/reviews/$fakeReview');
 }
 

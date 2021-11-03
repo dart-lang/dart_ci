@@ -43,11 +43,12 @@ class GerritInfo {
     final reviewInfo = jsonDecode(protectedJson.substring(prefix.length))
         as Map<String, dynamic>;
     final reverted = revert(reviewInfo);
-    await firestore.storeReview(review, {
-      'subject': taggedValue(reviewInfo['subject']),
-      if (reverted != null) 'revert_of': taggedValue(reverted)
-    });
-
+    if (!(await firestore.hasReview(review))) {
+      await firestore.storeReview(review, {
+        'subject': taggedValue(reviewInfo['subject']),
+        if (reverted != null) 'revert_of': taggedValue(reverted)
+      });
+    }
     // Add the patchset information to the patchsets subcollection.
     final revisions = reviewInfo['revisions'].values.toList()
       ..sort((a, b) => (a['_number'] as int).compareTo(b['_number']));

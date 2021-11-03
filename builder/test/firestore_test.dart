@@ -54,10 +54,8 @@ void main() async {
           await firestore.deleteDocument(doc.document.name);
         }
       }
-      snapshot =
-          // await firestore.collection('reviews/$testReview/patchsets').get();
-          await firestore.query(
-              from: 'patchsets', parent: 'reviews/$testReview/');
+      snapshot = await firestore.query(
+          from: 'patchsets', parent: 'reviews/$testReview/');
       for (final doc in snapshot) {
         if (doc.document != null) {
           await firestore.deleteDocument(doc.document.name);
@@ -67,9 +65,11 @@ void main() async {
     });
 
     test('approved try result fetching', () async {
-      await firestore.storeReview(testReview.toString(), {
-        'subject': 'test review: approved try result fetching',
-      });
+      await firestore.storeReview(
+          testReview.toString(),
+          taggedMap({
+            'subject': 'test review: approved try result fetching',
+          }));
       await firestore.storePatchset(
         testReview.toString(),
         1,
