@@ -5,10 +5,35 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
-// Field names of Result document fields
+import 'dart:convert' show jsonEncode;
 
 import 'package:googleapis/firestore/v1.dart' show Value;
 
+class ResultRecord {
+  final Map<String, Value> fields;
+
+  ResultRecord(this.fields);
+
+  bool get approved => fields['approved'].booleanValue;
+
+  @override
+  String toString() => jsonEncode(fields);
+
+  int get blamelistEndIndex {
+    return int.parse(fields['blamelist_end_index'].integerValue);
+  }
+
+  bool containsActiveConfiguration(String configuration) {
+    for (final value in fields['active_configurations'].arrayValue.values) {
+      if (value.stringValue != null && value.stringValue == configuration) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+// Field names of Result document fields
 const fName = 'name';
 const fResult = 'result';
 const fPreviousResult = 'previous_result';
