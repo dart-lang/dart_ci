@@ -82,8 +82,8 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   @override
   Future<String> findResult(
       Map<String, dynamic> change, int startIndex, int endIndex) {
-    var resultId;
-    var resultEndIndex;
+    String resultId;
+    int resultEndIndex;
     for (final entry in results.entries) {
       final result = entry.value;
       if (result[fName] == change[fName] &&
@@ -110,7 +110,8 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
         if (results[id][fName] == name &&
             results[id][fActiveConfigurations] != null &&
             results[id][fActiveConfigurations].contains(configuration))
-          Document.fromJson({'fields': taggedJsonMap(Map.from(results[id]))})
+          Document()
+            ..fields = taggedMap(Map.from(results[id]))
             ..name = id
     ];
   }

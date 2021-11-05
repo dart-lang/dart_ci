@@ -173,7 +173,7 @@ void main() async {
 
 void addFakeReplies(HttpClientMock client) {
   when(client.get(any))
-      .thenAnswer((_) => Future(() => ResponseFake(FakeReviewGerritLog)));
+      .thenAnswer((_) => Future(() => ResponseFake(fakeReviewGerritLog)));
 }
 
 Future<void> addFakeResultsToLandedReviews() async {
@@ -193,7 +193,7 @@ Future<void> addFakeResultsToLandedReviews() async {
 }
 
 Future<void> deleteFakeReviewAndResults() async {
-  Future<void> deleteDocuments(List<RunQueryResponse> response) async {
+  Future<void> deleteDocuments(RunQueryResponse response) async {
     for (final document in response.map((r) => r.document)) {
       await firestore.deleteDocument(document.name);
     }
@@ -278,7 +278,7 @@ Map<String, dynamic> overridingUnmatchingLandedChange =
         'build_number': tryBuildForCommit69191,
       });
 
-String FakeReviewGerritLog = '''
+String fakeReviewGerritLog = '''
 )]}'
 {
   "id": "sdk~master~Ie212fae88bc1977e34e4d791c644b77783a8deb1",

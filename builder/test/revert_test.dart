@@ -156,71 +156,71 @@ Map<String, dynamic> relandCommit = Map.unmodifiable({
 // This change is an unchanged passing result, used as the first result in
 // a chunk with no changed results.
 const Map<String, dynamic> revertUnchangedChange = {
-  "name": "dart2js_extra/local_function_signatures_strong_test/none",
-  "configuration": "dart2js-new-rti-linux-x64-d8",
-  "suite": "dart2js_extra",
-  "test_name": "local_function_signatures_strong_test/none",
-  "time_ms": 2384,
-  "result": "Pass",
-  "expected": "Pass",
-  "matches": false,
-  "bot_name": "luci-dart-try-xenial-70-8fkh",
-  "commit_hash": revertCommitHash,
-  "previous_commit_hash": landedCommitHash,
-  "commit_time": 1563576771,
-  "build_number": "401",
-  "previous_build_number": "400",
-  "changed": false,
+  'name': 'dart2js_extra/local_function_signatures_strong_test/none',
+  'configuration': 'dart2js-new-rti-linux-x64-d8',
+  'suite': 'dart2js_extra',
+  'test_name': 'local_function_signatures_strong_test/none',
+  'time_ms': 2384,
+  'result': 'Pass',
+  'expected': 'Pass',
+  'matches': false,
+  'bot_name': 'luci-dart-try-xenial-70-8fkh',
+  'commit_hash': revertCommitHash,
+  'previous_commit_hash': landedCommitHash,
+  'commit_time': 1563576771,
+  'build_number': '401',
+  'previous_build_number': '400',
+  'changed': false,
 };
 
 Map<String, dynamic> relandUnchangedChange = Map.from(revertUnchangedChange)
-  ..["commit_hash"] = relandCommitHash
-  ..["previous_commit_hash"] = revertCommitHash;
+  ..['commit_hash'] = relandCommitHash
+  ..['previous_commit_hash'] = revertCommitHash;
 
 const Map<String, dynamic> revertChange = {
-  "name": "test_suite/fixed_broken_test",
-  "configuration": "a_different_configuration",
-  "suite": "test_suite",
-  "test_name": "fixed_broken_test",
-  "time_ms": 2384,
-  "result": "RuntimeError",
-  "expected": "Pass",
-  "matches": false,
-  "bot_name": "a_ci_bot",
-  "commit_hash": revertCommitHash,
-  "commit_time": 1563576771,
-  "build_number": "314",
-  "builder_name": "dart2js-rti-linux-x64-d8",
-  "flaky": false,
-  "previous_flaky": false,
-  "previous_result": "Pass",
-  "previous_commit_hash": existingCommitHash,
-  "previous_commit_time": 1563576211,
-  "previous_build_number": "313",
-  "changed": true,
+  'name': 'test_suite/fixed_broken_test',
+  'configuration': 'a_different_configuration',
+  'suite': 'test_suite',
+  'test_name': 'fixed_broken_test',
+  'time_ms': 2384,
+  'result': 'RuntimeError',
+  'expected': 'Pass',
+  'matches': false,
+  'bot_name': 'a_ci_bot',
+  'commit_hash': revertCommitHash,
+  'commit_time': 1563576771,
+  'build_number': '314',
+  'builder_name': 'dart2js-rti-linux-x64-d8',
+  'flaky': false,
+  'previous_flaky': false,
+  'previous_result': 'Pass',
+  'previous_commit_hash': existingCommitHash,
+  'previous_commit_time': 1563576211,
+  'previous_build_number': '313',
+  'changed': true,
 };
 
 const Map<String, dynamic> revertedChange = {
-  "name": "test_suite/fixed_broken_test",
-  "configuration": "a_configuration",
-  "suite": "test_suite",
-  "test_name": "fixed_broken_test",
-  "time_ms": 2384,
-  "result": "Pass",
-  "expected": "Pass",
-  "matches": true,
-  "bot_name": "a_ci_bot",
-  "commit_hash": revertedCommitHash,
-  "commit_time": 1563576771,
-  "build_number": "308",
-  "builder_name": "dart2js-rti-linux-x64-d8",
-  "flaky": false,
-  "previous_flaky": false,
-  "previous_result": "RuntimeError",
-  "previous_commit_hash": "a nonexistent hash",
-  "previous_commit_time": 1563576211,
-  "previous_build_number": "306",
-  "changed": true
+  'name': 'test_suite/fixed_broken_test',
+  'configuration': 'a_configuration',
+  'suite': 'test_suite',
+  'test_name': 'fixed_broken_test',
+  'time_ms': 2384,
+  'result': 'Pass',
+  'expected': 'Pass',
+  'matches': true,
+  'bot_name': 'a_ci_bot',
+  'commit_hash': revertedCommitHash,
+  'commit_time': 1563576771,
+  'build_number': '308',
+  'builder_name': 'dart2js-rti-linux-x64-d8',
+  'flaky': false,
+  'previous_flaky': false,
+  'previous_result': 'RuntimeError',
+  'previous_commit_hash': 'a nonexistent hash',
+  'previous_commit_time': 1563576211,
+  'previous_build_number': '306',
+  'changed': true
 };
 
 Map<String, dynamic> commit56Change = Map.from(revertChange)
@@ -236,27 +236,27 @@ Map<String, dynamic> commit56DifferentNameChange = Map.from(commit56Change)
 
 // Results
 const Map<String, dynamic> revertResult = {
-  "configurations": ["a_different_configuration"],
-  "active": true,
-  "active_configurations": ["a_different_configuration"],
-  "name": "test_suite/fixed_broken_test",
-  "result": "RuntimeError",
-  "expected": "Pass",
-  "previous_result": "Pass",
-  "blamelist_start_index": commit53Index,
-  "blamelist_end_index": revertIndex,
-  "pinned_index": revertIndex,
-  "approved": true,
+  'configurations': ['a_different_configuration'],
+  'active': true,
+  'active_configurations': ['a_different_configuration'],
+  'name': 'test_suite/fixed_broken_test',
+  'result': 'RuntimeError',
+  'expected': 'Pass',
+  'previous_result': 'Pass',
+  'blamelist_start_index': commit53Index,
+  'blamelist_end_index': revertIndex,
+  'pinned_index': revertIndex,
+  'approved': true,
 };
 
 const Map<String, dynamic> revertedResult = {
-  "configurations": ["a_configuration"],
-  "name": "test_suite/fixed_broken_test",
-  "result": "Pass",
-  "expected": "Pass",
-  "previous_result": "RuntimeError",
-  "blamelist_start_index": revertedIndex,
-  "blamelist_end_index": revertedIndex,
+  'configurations': ['a_configuration'],
+  'name': 'test_suite/fixed_broken_test',
+  'result': 'Pass',
+  'expected': 'Pass',
+  'previous_result': 'RuntimeError',
+  'blamelist_start_index': revertedIndex,
+  'blamelist_end_index': revertedIndex,
 };
 
 // Git logs
@@ -317,6 +317,6 @@ String relandCommitJson(String relandLine) => '''
     }
 ''';
 
-String relandAsRevert = "This reverts commit $revertCommitHash.";
+String relandAsRevert = 'This reverts commit $revertCommitHash.';
 
-String relandAsReland = "This is a reland of $revertedCommitHash";
+String relandAsReland = 'This is a reland of $revertedCommitHash';

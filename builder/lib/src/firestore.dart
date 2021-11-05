@@ -49,7 +49,7 @@ class FirestoreService {
     }
   }
 
-  Future<List<RunQueryResponse>> query(
+  Future<RunQueryResponse> query(
       {String from,
       Filter where,
       Order orderBy,
@@ -72,7 +72,7 @@ class FirestoreService {
     // The REST API will respond with a single `null` result in case the query
     // did not match any documents.
     if (responses.length == 1 && responses.single.document == null) {
-      return [];
+      responses.length = 0;
     }
     return responses;
   }
@@ -100,24 +100,10 @@ class FirestoreService {
   String get database => 'projects/$project/databases/(default)';
   String get documents => '$database/documents';
 
-  Future<List<RunQueryResponse>> runQuery(StructuredQuery query,
-      {String parent}) async {
-    // This is a workaround for a bug in googleapis' generated runQuery implementation
-    // (https://github.com/google/googleapis.dart/issues/25).
+  Future<RunQueryResponse> runQuery(StructuredQuery query, {String parent}) {
     final request = RunQueryRequest()..structuredQuery = query;
-    final parentPath = parent == null ? '' : '/$parent';
-    final queryString = '$databaseUri/documents$parentPath:runQuery';
-    final requestBody = jsonEncode(request.toJson());
-    final response =
-        await client.post(Uri.parse(queryString), body: requestBody);
-    if (response.statusCode == HttpStatus.ok) {
-      final results = jsonDecode(response.body) as List;
-      return results
-          .map((result) => RunQueryResponse.fromJson(result))
-          .toList();
-    }
-    final message = '${response.statusCode}: ${response.body}';
-    throw Exception('Query error:\nurl=$queryString:\nquery=$query\n$message');
+    final parentPath = parent == null ? documents : '$documents/$parent';
+    return firestore.projects.databases.documents.runQuery(request, parentPath);
   }
 
   Future<void> writeDocument(Document document) async {
@@ -157,7 +143,7 @@ class FirestoreService {
 
   Future<void> addCommit(String id, Map<String, dynamic> data) async {
     try {
-      final document = Document.fromJson({'fields': taggedJsonMap(data)});
+      final document = Document()..fields = taggedMap(data);
       await firestore.projects.databases.documents
           .createDocument(document, documents, 'commits', documentId: id);
       log("Added commit $id -> ${data['index']}");
@@ -174,9 +160,7 @@ class FirestoreService {
     final record = await getDocument('$documents/configurations/$configuration',
         throwOnNotFound: false);
     if (record == null) {
-      final newRecord = Document.fromJson({
-        'fields': taggedJsonMap({'builder': builder})
-      });
+      final newRecord = Document()..fields = taggedMap({'builder': builder});
       await firestore.projects.databases.documents.createDocument(
           newRecord, documents, 'configurations',
           documentId: configuration);
@@ -201,10 +185,9 @@ class FirestoreService {
     final record = await getDocument('$documents/builds/$builder:$index',
         throwOnNotFound: false);
     if (record == null) {
-      final newRecord = Document.fromJson({
-        'fields': taggedJsonMap(
-            {'builder': builder, 'build_number': buildNumber, 'index': index})
-      });
+      final newRecord = Document()
+        ..fields = taggedMap(
+            {'builder': builder, 'build_number': buildNumber, 'index': index});
       await firestore.projects.databases.documents.createDocument(
           newRecord, documents, 'builds',
           documentId: '$builder:$index');
@@ -230,15 +213,14 @@ class FirestoreService {
     final record = await getDocument('$documents/try_builds/$name',
         throwOnNotFound: false);
     if (record == null) {
-      final newRecord = Document.fromJson({
-        'fields': taggedJsonMap({
+      final newRecord = Document()
+        ..fields = taggedMap({
           'builder': builder,
           'build_number': buildNumber,
           if (buildbucketID != null) 'buildbucket_id': buildbucketID,
           'review': review,
           'patchset': patchset,
-        })
-      });
+        });
       log('creating try-build record for $builder $buildNumber $review $patchset:'
           ' $name');
       await firestore.projects.databases.documents
@@ -283,7 +265,7 @@ class FirestoreService {
         ]),
         limit: 5);
 
-    bool blamelistIncludesChange(RunQueryResponse response) {
+    bool blamelistIncludesChange(RunQueryResponseElement response) {
       final document = response.document;
       if (document == null) return false;
       final groupStart =
@@ -300,7 +282,7 @@ class FirestoreService {
   }
 
   Future<void> storeResult(Map<String, dynamic> result) async {
-    final document = Document.fromJson({'fields': taggedJsonMap(result)});
+    final document = Document()..fields = taggedMap(result);
     final createdDocument = await firestore.projects.databases.documents
         .createDocument(document, documents, 'results');
     log('created document ${createdDocument.name}');
@@ -309,7 +291,7 @@ class FirestoreService {
   Future<bool> updateResult(
       String result, String configuration, int startIndex, int endIndex,
       {bool failure}) async {
-    var approved;
+    bool approved;
     await retryCommit(() async {
       final document = await getDocument(result);
       final data = DataWrapper(document);
@@ -430,8 +412,8 @@ class FirestoreService {
       final approved = previous.isNotEmpty &&
           DataWrapper(previous.first.document).getBool('approved') == true;
 
-      final document = Document.fromJson({
-        'fields': taggedJsonMap({
+      final document = Document()
+        ..fields = taggedMap({
           'name': name,
           'result': result,
           'previous_result': previousResult,
@@ -440,8 +422,7 @@ class FirestoreService {
           'patchset': patchset,
           'configurations': <String>[configuration],
           'approved': approved
-        })
-      });
+        });
       await firestore.projects.databases.documents.createDocument(
           document,
           'projects/dart-ci-staging/databases/(default)/documents',
@@ -533,7 +514,9 @@ class FirestoreService {
         ...results
       ].join('\n'));
     }
-    return results.map((RunQueryResponse result) => result.document).toList();
+    return results
+        .map((RunQueryResponseElement result) => result.document)
+        .toList();
   }
 
   Future<bool> hasReview(String review) async {
@@ -544,7 +527,7 @@ class FirestoreService {
     final document = Document()..fields = data;
     documentsWritten++;
     await firestore.projects.databases.documents
-        .createDocument(document, documents, 'reviews', documentId: '$review');
+        .createDocument(document, documents, 'reviews', documentId: review);
   }
 
   Future<void> deleteDocument(String name) async {
@@ -575,14 +558,13 @@ class FirestoreService {
 
   Future<void> storePatchset(String review, int patchset, String kind,
       String description, int patchsetGroup, int number) async {
-    final document = Document.fromJson({
-      'fields': taggedJsonMap({
+    final document = Document()
+      ..fields = taggedMap({
         'kind': kind,
         'description': description,
         'patchset_group': patchsetGroup,
         'number': number
-      })
-    });
+      });
     await firestore.projects.databases.documents.createDocument(
         document, '$documents/reviews/$review', 'patchsets',
         documentId: '$patchset');

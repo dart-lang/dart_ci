@@ -2,4 +2,10 @@
 # details and rationale, see
 # https://github.com/dart-lang/pedantic#enabled-lints.
 
-include: package:pedantic/analysis_options.yaml
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+  - unawaited_futures
+  - prefer_single_quotes
+  - always_declare_return_types

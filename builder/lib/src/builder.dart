@@ -147,7 +147,7 @@ class Build {
     await fetchReviewsAndReverts();
     transformChange(change);
     final failure = isFailure(change);
-    var approved;
+    bool approved;
     var result = await firestore.findResult(change, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
         change['name'], change['configuration']);

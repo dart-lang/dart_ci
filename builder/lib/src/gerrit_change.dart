@@ -34,7 +34,7 @@ class GerritInfo {
   Future<void> update() async {
     if (await firestore.hasPatchset(review, patchset)) return;
     // Get the Gerrit change's commit from the Gerrit API.
-    final url = '$gerritUrl/$review?$gerritQuery';
+    final url = Uri.parse('$gerritUrl/$review?$gerritQuery');
     final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix)) {

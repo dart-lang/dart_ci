@@ -101,9 +101,9 @@ class CommitsCache {
       .then((commit) => _fetchByHash(commit.hash));
 
   /// This function is idempotent, so every call of it should write the
-  /// same info to new Firestore documents.  It is safe to call multiple
-  /// times simultaneously.
-  Future<Null> _getNewCommits() async {
+  /// same info to new Firestore documents. It is safe to call multiple
+  /// times simultaneously. Intentionally returns null, not void.
+  Future<Commit> _getNewCommits() async {
     const prefix = ")]}'\n";
     final lastCommit = await firestore.getLastCommit();
     final lastHash = lastCommit.hash;
@@ -113,7 +113,7 @@ class CommitsCache {
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
     final range = '$lastHash..$branch';
     final parameters = ['format=JSON', 'topo-order', 'first-parent', 'n=1000'];
-    final url = '$logUrl$range?${parameters.join('&')}';
+    final url = Uri.parse('$logUrl$range?${parameters.join('&')}');
     final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix)) {
@@ -124,7 +124,7 @@ class CommitsCache {
         as List<dynamic>;
     if (commits.isEmpty) {
       print('Found no new commits between $lastHash and $branch');
-      return;
+      return null;
     }
     print('Fetched new commits from Gerrit (gitiles): $commits');
     final first = commits.last as Map<String, dynamic>;
@@ -161,6 +161,7 @@ class CommitsCache {
       }
       ++index;
     }
+    return null;
   }
 
   /// This function is idempotent and may be called multiple times
@@ -179,10 +180,11 @@ class TestingCommitsCache extends CommitsCache {
   TestingCommitsCache(firestore, httpClient) : super(firestore, httpClient);
 
   @override
-  Future<Null> _getNewCommits() async {
+  Future<Commit> _getNewCommits() async {
     if ((await firestore.isStaging())) {
       return super._getNewCommits();
     }
+    return null;
   }
 }
 

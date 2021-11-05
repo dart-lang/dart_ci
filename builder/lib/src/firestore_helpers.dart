@@ -45,13 +45,6 @@ dynamic getValue(Value value) {
   throw Exception('unsupported value ${value.toJson()}');
 }
 
-/// Converts a map with normal Dart values to a map where the values are
-/// JSON representation of firestore API values. For example: `{'x': 3}` is
-/// translated to `{'x': {'integerValue': 3}}`.
-Map<String, Object> taggedJsonMap(Map<String, dynamic> fields) {
-  return fields.map((key, value) => MapEntry(key, taggedValue(value).toJson()));
-}
-
 Map<String, dynamic> untagMap(Map<String, Value> map) {
   return map.map((key, value) => MapEntry(key, getValue(value)));
 }
