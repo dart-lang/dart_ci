@@ -7,8 +7,8 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 
-import '../lib/src/firestore.dart' as fs;
-import '../lib/src/commits_cache.dart';
+import 'package:builder/src/firestore.dart' as fs;
+import 'package:builder/src/commits_cache.dart';
 
 // These tests read and write data from the Firestore database.
 // If they are run against the production database, they will not

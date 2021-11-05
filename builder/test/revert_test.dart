@@ -4,7 +4,6 @@
 
 // Tests that check automatic approval of failures on a revert on the CI
 
-import 'package:builder/src/firestore.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 

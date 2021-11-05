@@ -2,11 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// import 'package:firebase_admin_interop/firebase_admin_interop.dart';
-// import 'package:firebase_functions_interop/firebase_functions_interop.dart';
 import 'package:builder/src/firestore.dart';
 import 'package:test/test.dart';
-import 'package:builder/src/tryjob.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis/firestore/v1.dart';
@@ -19,7 +16,6 @@ import 'test_data.dart';
 // to point to a json key to a service account
 // with write access to dart_ci_staging datastore.
 // Set the database with 'firebase use --add dart-ci-staging'
-// The test must be compiled with nodejs, and run using the 'node' command.
 
 void main() async {
   final baseClient = http.Client();

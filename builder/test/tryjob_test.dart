@@ -2,17 +2,16 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:builder/src/commits_cache.dart';
 import 'package:builder/src/firestore.dart';
+import 'package:builder/src/tryjob.dart';
 import 'package:googleapis/firestore/v1.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'package:builder/src/firestore.dart' as fs;
-import 'package:builder/src/commits_cache.dart';
-import 'package:builder/src/tryjob.dart';
 import 'fakes.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart' as http;
 
 // These tests read and write data from the staging Firestore database.
 // They create a fake review, and fake try builds against that review.
@@ -21,9 +20,8 @@ import 'package:http/http.dart' as http;
 // to point to a json key to a service account.
 // To run against the staging database, use a service account.
 // with write access to dart_ci_staging datastore.
-// The test must be compiled with nodejs, and run using the 'node' command.
 
-const fakeReview = 123;
+const fakeReview = 172;
 const buildBaseCommit = 69191;
 const buildBaseCommitHash = 'b681bfd8d275b84b51f37919f0edc0d8563a870f';
 const buildBuildbucketId = 'a fake buildbucket ID';
@@ -55,7 +53,7 @@ void registerChangeForDeletion(Map<String, dynamic> change) {
   fakeTests.add(change['name']);
 }
 
-fs.FirestoreService firestore;
+FirestoreService firestore;
 http.Client client;
 CommitsCache commitsCache;
 
