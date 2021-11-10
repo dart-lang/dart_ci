@@ -29,8 +29,15 @@ void main() async {
         'Error: firestore_test_nodejs.dart is being run on production'));
   }
 
-  const testReviewDocument =
-      'projects/dart-ci-staging/databases/(default)/documents/reviews/$testReview';
+  const testDatabaseName =
+      'projects/dart-ci-staging/databases/(default)/documents';
+  const testReviewDocument = '$testDatabaseName/reviews/$testReview';
+  const removeActiveConfigurationTestName =
+      'firestore_test/Remove_active_configuration';
+  final createdResult = {
+    ...activeFailureResult,
+    'name': removeActiveConfigurationTestName
+  };
 
   tearDownAll(() => baseClient.close());
 
@@ -57,7 +64,44 @@ void main() async {
           await firestore.deleteDocument(doc.document.name);
         }
       }
+      snapshot = await firestore.query(
+          from: 'results',
+          where: fieldEquals('name', removeActiveConfigurationTestName));
+      for (final doc in snapshot) {
+        if (doc.document != null) {
+          await firestore.deleteDocument(doc.document.name);
+        }
+      }
       await firestore.deleteDocument(testReviewDocument);
+    });
+
+    test('Remove active configuration', () async {
+      // Remove the two active configurations from createdResultDocument,
+      // checking that the document is updated correctly at each stage.
+      final createdResultDocument = await firestore.storeResult(createdResult);
+      final name = removeActiveConfigurationTestName;
+
+      var foundActiveResults =
+          await firestore.findActiveResults(name, testConfiguration);
+      var activeResult = foundActiveResults.single;
+      expect(createdResultDocument.name, activeResult.name);
+
+      await firestore.removeActiveConfiguration(
+          activeResult, testConfiguration);
+      foundActiveResults =
+          await firestore.findActiveResults(name, testConfiguration);
+      expect(foundActiveResults, isEmpty);
+      foundActiveResults =
+          await firestore.findActiveResults(name, 'configuration 2');
+      activeResult = foundActiveResults.single;
+
+      expect(activeResult.fields, contains('active'));
+      await firestore.removeActiveConfiguration(
+          activeResult, 'configuration 2');
+      final document = await firestore.getDocument(createdResultDocument.name);
+      expect(document.fields, isNot(contains('active')));
+      expect(document.fields, isNot(contains('active_configurations')));
+      await firestore.deleteDocument(createdResultDocument.name);
     });
 
     test('approved try result fetching', () async {

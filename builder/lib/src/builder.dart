@@ -189,7 +189,8 @@ class Build {
         //     'approved: $approved');
       }
       // Removes the configuration from the list of active configurations.
-      await firestore.updateActiveResult(activeResult, change['configuration']);
+      await firestore.removeActiveConfiguration(
+          activeResult, change['configuration']);
     }
   }
 }

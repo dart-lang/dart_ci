@@ -281,11 +281,12 @@ class FirestoreService {
         ?.name;
   }
 
-  Future<void> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(Map<String, dynamic> result) async {
     final document = Document()..fields = taggedMap(result);
     final createdDocument = await firestore.projects.databases.documents
         .createDocument(document, documents, 'results');
     log('created document ${createdDocument.name}');
+    return createdDocument;
   }
 
   Future<bool> updateResult(
@@ -465,16 +466,14 @@ class FirestoreService {
 
   /// Removes [configuration] from the active configurations and marks the
   /// active result inactive when we remove the last active config.
-  Future<void> updateActiveResult(
+  Future<void> removeActiveConfiguration(
       Document activeResult, String configuration) async {
     final data = DataWrapper(activeResult);
     final configurations = data.getList('active_configurations');
     assert(configurations.contains(configuration));
-    if (configurations.length > 1) {
-      await removeArrayEntry(
-          activeResult, 'active_configurations', taggedValue(configuration));
-      activeResult = await getDocument(activeResult.name);
-    }
+    await removeArrayEntry(
+        activeResult, 'active_configurations', taggedValue(configuration));
+    activeResult = await getDocument(activeResult.name);
     if (DataWrapper(activeResult).getList('active_configurations').isEmpty) {
       activeResult.fields.remove('active_configurations');
       activeResult.fields.remove('active');
@@ -491,6 +490,7 @@ class FirestoreService {
     await _executeWrite([
       Write()
         ..transform = (DocumentTransform()
+          ..document = document.name
           ..fieldTransforms = [
             FieldTransform()
               ..fieldPath = fieldName

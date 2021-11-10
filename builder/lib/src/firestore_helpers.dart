@@ -123,7 +123,9 @@ class DataWrapper {
   }
 
   List<dynamic> getList(String name) {
-    return fields[name]?.arrayValue?.values?.map(getValue)?.toList();
+    final arrayValue = fields[name]?.arrayValue;
+    if (arrayValue == null) return null;
+    return arrayValue.values?.map(getValue)?.toList() ?? [];
   }
 
   bool isNull(String name) {

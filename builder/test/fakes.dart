@@ -117,10 +117,11 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<void> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(Map<String, dynamic> result) async {
     final id = 'resultDocumentID$addedResultIdCounter';
     addedResultIdCounter++;
     results[id] = result;
+    return null;
   }
 
   @override
@@ -152,7 +153,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<void> updateActiveResult(
+  Future<void> removeActiveConfiguration(
       Document activeResult, String configuration) async {
     final result = Map<String, dynamic>.from(results[activeResult.name]);
     result[fActiveConfigurations] = List.from(result[fActiveConfigurations])
