@@ -115,29 +115,41 @@ void main() async {
               // Reply with symbolized crash.
               rs.writeHead(
                   200, 'OK', jsify({'Content-Type': 'application/json'}));
-              rs.write(jsonEncode([
-                SymbolizationResult(
-                    crash: Crash(
-                        engineVariant: EngineVariant(
+              SymbolizationResult result;
+              final requestBody = _bufferToString(Buffer.concat(body));
+              console.log(requestBody);
+              if (requestBody.contains('TRIGGER_SYMBOLIZATION_ERROR')) {
+                result = SymbolizationResult.error(
+                  error: SymbolizationNote(
+                      kind: SymbolizationNoteKind.exceptionWhileParsing,
+                      message: 'some detailed error'),
+                );
+              } else {
+                result = SymbolizationResult.ok(results: [
+                  CrashSymbolizationResult(
+                      crash: Crash(
+                          engineVariant: EngineVariant(
+                              arch: 'arm', os: 'ios', mode: 'debug'),
+                          format: 'native',
+                          frames: [
+                            CrashFrame.ios(
+                              no: '00',
+                              binary: 'BINARY',
+                              pc: 0x10042,
+                              symbol: '0x',
+                              offset: 42,
+                              location: '',
+                            )
+                          ]),
+                      engineBuild: EngineBuild(
+                        engineHash: 'aaabbb',
+                        variant: EngineVariant(
                             arch: 'arm', os: 'ios', mode: 'debug'),
-                        format: 'native',
-                        frames: [
-                          CrashFrame.ios(
-                            no: '00',
-                            binary: 'BINARY',
-                            pc: 0x10042,
-                            symbol: '0x',
-                            offset: 42,
-                            location: '',
-                          )
-                        ]),
-                    engineBuild: EngineBuild(
-                      engineHash: 'aaabbb',
-                      variant:
-                          EngineVariant(arch: 'arm', os: 'ios', mode: 'debug'),
-                    ),
-                    symbolized: 'SYMBOLIZED_STACK_HERE')
-              ]));
+                      ),
+                      symbolized: 'SYMBOLIZED_STACK_HERE')
+                ]);
+              }
+              rs.write(jsonEncode(result));
               rs.end();
               break;
             case '/command':
@@ -472,6 +484,19 @@ Much information
         .firstWhere((c) => c['type'] == 'text/plain')['value'];
     expect(plainTextBody, contains('engine aaabbb ios-arm-debug crash'));
     expect(plainTextBody, contains('SYMBOLIZED_STACK_HERE'));
+  });
+
+  test('ok - issue opened - crash - error during symbolization', () async {
+    final rs = await sendEvent(body: makeIssueOpenedEvent(body: '''
+I had Flutter engine c_r_a_s_h on me with the following message
+
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+Such c_r_a_s_h
+Much information
+TRIGGER_SYMBOLIZATION_ERROR
+'''));
+    expect(rs.statusCode, equals(HttpStatus.ok));
+    expect(sendgridRequests.length, equals(0));
   });
 
   test('ok - issue comment - forward bot command', () async {

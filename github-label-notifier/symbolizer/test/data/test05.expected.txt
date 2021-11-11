@@ -1,41 +1,44 @@
-[
-  {
-    "crash": {
-      "engineVariant": {
-        "os": "android",
-        "arch": "arm64",
-        "mode": "debug"
-      },
-      "frames": [
-        {
-          "no": "00",
-          "pc": 6503868,
-          "binary": "/data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so",
-          "rest": " (offset 0x1240000)",
-          "buildId": null,
-          "runtimeType": "android"
+{
+  "results": [
+    {
+      "crash": {
+        "engineVariant": {
+          "os": "android",
+          "arch": "arm64",
+          "mode": "debug"
         },
-        {
-          "no": "01",
-          "pc": 5360800,
-          "binary": "/data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so",
-          "rest": " (offset 0x1240000)",
-          "buildId": null,
-          "runtimeType": "android"
+        "frames": [
+          {
+            "no": "00",
+            "pc": 6503868,
+            "binary": "/data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so",
+            "rest": " (offset 0x1240000)",
+            "buildId": null,
+            "runtimeType": "android"
+          },
+          {
+            "no": "01",
+            "pc": 5360800,
+            "binary": "/data/app/com.example.app-2OHRSaHLPfIforBPzoBjfQ==/lib/arm64/libflutter.so",
+            "rest": " (offset 0x1240000)",
+            "buildId": null,
+            "runtimeType": "android"
+          }
+        ],
+        "format": "native",
+        "androidMajorVersion": null
+      },
+      "engineBuild": {
+        "engineHash": "d1bc06f032f9d6c148ea6b96b48261d6f545004f",
+        "variant": {
+          "os": "android",
+          "arch": "arm64",
+          "mode": "debug"
         }
-      ],
-      "format": "native",
-      "androidMajorVersion": null
-    },
-    "engineBuild": {
-      "engineHash": "d1bc06f032f9d6c148ea6b96b48261d6f545004f",
-      "variant": {
-        "os": "android",
-        "arch": "arm64",
-        "mode": "debug"
-      }
-    },
-    "symbolized": "#00 0000000000633dbc <...>/lib/arm64/libflutter.so (offset 0x1240000)\n                                                   dart::KernelProgramInfo::string_offsets() const\n                                                   third_party/dart/runtime/vm/object.h:5091:48\n                                                   dart::kernel::TranslationHelper::InitFromKernelProgramInfo(dart::KernelProgramInfo const&)\n                                                   third_party/dart/runtime/vm/compiler/frontend/kernel_translation_helper.cc:79:46\n#01 000000000051cca0 <...>/lib/arm64/libflutter.so (offset 0x1240000)\n                                                   dart::DartCompilationPipeline::BuildFlowGraph(dart::Zone*, dart::ParsedFunction*, dart::ZoneGrowableArray<dart::ICData const*>*, long, bool)\n                                                   third_party/dart/runtime/vm/compiler/jit/compiler.cc:138:28\n",
-    "notes": []
-  }
-]
+      },
+      "symbolized": "#00 0000000000633dbc <...>/lib/arm64/libflutter.so (offset 0x1240000)\n                                                   dart::KernelProgramInfo::string_offsets() const\n                                                   third_party/dart/runtime/vm/object.h:5091:48\n                                                   dart::kernel::TranslationHelper::InitFromKernelProgramInfo(dart::KernelProgramInfo const&)\n                                                   third_party/dart/runtime/vm/compiler/frontend/kernel_translation_helper.cc:79:46\n#01 000000000051cca0 <...>/lib/arm64/libflutter.so (offset 0x1240000)\n                                                   dart::DartCompilationPipeline::BuildFlowGraph(dart::Zone*, dart::ParsedFunction*, dart::ZoneGrowableArray<dart::ICData const*>*, long, bool)\n                                                   third_party/dart/runtime/vm/compiler/jit/compiler.cc:138:28\n",
+      "notes": []
+    }
+  ],
+  "runtimeType": "ok"
+}

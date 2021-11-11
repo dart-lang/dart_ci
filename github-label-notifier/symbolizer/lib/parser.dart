@@ -15,9 +15,13 @@ bool containsCrash(String text) {
       text.contains(_CrashExtractor._iosCrashMarker);
 }
 
-/// Extract all crashes from the given [text] using [overrides].
-List<Crash> extractCrashes(String text, {SymbolizationOverrides overrides}) =>
-    _CrashExtractor(text: text, overrides: overrides).crashes;
+class CrashExtractor {
+  const CrashExtractor();
+
+  /// Extract all crashes from the given [text] using [overrides].
+  List<Crash> extractCrashes(String text, {SymbolizationOverrides overrides}) =>
+      _CrashExtractor(text: text, overrides: overrides).crashes;
+}
 
 class _CrashExtractor {
   final List<String> lines;

@@ -1,6 +1,6 @@
 
 <details>
-<summary>There were failures symbolizing some of the crashes I found</summary>
+<summary>There were failures processing the request</summary>
 
 When processing null I found crash
 

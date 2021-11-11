@@ -25,17 +25,32 @@ class Symbolizer {
   final SymbolsCache symbols;
   final Ndk ndk;
   final GitHub github;
+  final CrashExtractor crashExtractor;
 
   Symbolizer({
     @required this.symbols,
     @required this.ndk,
     @required this.github,
+    this.crashExtractor = const CrashExtractor(),
   });
 
-  /// Process the given [text] to find all crashes and symbolize them.
-  Future<List<SymbolizationResult>> symbolize(String text,
+  Future<SymbolizationResult> symbolize(String text,
       {SymbolizationOverrides overrides}) async {
-    final crashes = extractCrashes(text, overrides: overrides);
+    try {
+      return SymbolizationResult.ok(
+          results: await _symbolizeImpl(text, overrides: overrides));
+    } catch (e, st) {
+      return SymbolizationResult.error(
+          error: SymbolizationNote(
+              kind: SymbolizationNoteKind.exceptionWhileParsing,
+              message: '$e\n$st'));
+    }
+  }
+
+  /// Process the given [text] to find all crashes and symbolize them.
+  Future<List<CrashSymbolizationResult>> _symbolizeImpl(String text,
+      {SymbolizationOverrides overrides}) async {
+    final crashes = crashExtractor.extractCrashes(text, overrides: overrides);
     if (crashes.isEmpty) {
       return [];
     }
@@ -54,8 +69,17 @@ class Symbolizer {
           crashes, SymbolizationNoteKind.unknownEngineHash);
     }
 
-    return await Future.wait(
-        crashes.map((crash) => _symbolizeCrash(crash, engineHash, overrides)));
+    final result = <CrashSymbolizationResult>[];
+    for (var crash in crashes) {
+      try {
+        result.add(await _symbolizeCrash(crash, engineHash, overrides));
+      } catch (e, st) {
+        result.add(_failedToSymbolize(
+            crash, SymbolizationNoteKind.exceptionWhileSymbolizing,
+            error: '$e\n$st'));
+      }
+    }
+    return result;
   }
 
   Future<String> _guessEngineHash(
@@ -94,7 +118,7 @@ class Symbolizer {
     return null;
   }
 
-  Future<SymbolizationResult> _symbolizeCrashWith(
+  Future<CrashSymbolizationResult> _symbolizeCrashWith(
       Crash crash, EngineBuild engineBuild) async {
     try {
       final symbolsDir = await symbols.get(engineBuild);
@@ -107,7 +131,7 @@ class Symbolizer {
     }
   }
 
-  Future<SymbolizationResult> _symbolizeCrash(
+  Future<CrashSymbolizationResult> _symbolizeCrash(
       Crash crash, String engineHash, SymbolizationOverrides overrides) async {
     // Apply overrides
     if (crash.engineVariant.arch == null) {
@@ -187,10 +211,10 @@ class Symbolizer {
           orElse: () => null)
       ?.buildId;
 
-  Future<SymbolizationResult> _symbolizeCrashWithGivenSymbols(
+  Future<CrashSymbolizationResult> _symbolizeCrashWithGivenSymbols(
       Crash crash, String symbolsDir, EngineBuild build) {
-    final result =
-        SymbolizationResult(engineBuild: build, crash: crash, symbolized: null);
+    final result = CrashSymbolizationResult(
+        engineBuild: build, crash: crash, symbolized: null);
     if (crash.format == 'dartvm') {
       return _symbolizeDartvmFrames(
         result,
@@ -225,8 +249,9 @@ class Symbolizer {
     }
   }
 
-  Future<SymbolizationResult> _symbolizeGeneric<FrameType extends CrashFrame>({
-    @required SymbolizationResult result,
+  Future<CrashSymbolizationResult>
+      _symbolizeGeneric<FrameType extends CrashFrame>({
+    @required CrashSymbolizationResult result,
     @required List<FrameType> frames,
     @required String arch,
     @required String object,
@@ -287,8 +312,8 @@ class Symbolizer {
     return result.copyWith(symbolized: buf.toString());
   }
 
-  Future<SymbolizationResult> _symbolizeAndroidFrames(
-    SymbolizationResult result,
+  Future<CrashSymbolizationResult> _symbolizeAndroidFrames(
+    CrashSymbolizationResult result,
     List<AndroidCrashFrame> frames,
     String arch,
     String symbolsDir,
@@ -328,8 +353,11 @@ class Symbolizer {
     );
   }
 
-  Future<SymbolizationResult> _symbolizeDartvmFrames(SymbolizationResult result,
-      List<DartvmCrashFrame> frames, String arch, String symbolsDir) async {
+  Future<CrashSymbolizationResult> _symbolizeDartvmFrames(
+      CrashSymbolizationResult result,
+      List<DartvmCrashFrame> frames,
+      String arch,
+      String symbolsDir) async {
     final flutterSo = p.join(symbolsDir, 'libflutter.so');
     return _symbolizeGeneric(
       result: result,
@@ -495,8 +523,8 @@ class Symbolizer {
     return null;
   }
 
-  Future<SymbolizationResult> _symbolizeIosFrames(
-      SymbolizationResult result,
+  Future<CrashSymbolizationResult> _symbolizeIosFrames(
+      CrashSymbolizationResult result,
       List<IosCrashFrame> frames,
       String arch,
       EngineBuild build,
@@ -564,8 +592,8 @@ class Symbolizer {
     );
   }
 
-  Future<SymbolizationResult> _symbolizeCustomFrames(
-      SymbolizationResult result,
+  Future<CrashSymbolizationResult> _symbolizeCustomFrames(
+      CrashSymbolizationResult result,
       List<CustomCrashFrame> frames,
       String arch,
       EngineBuild build,
@@ -662,15 +690,16 @@ String _addrHex(int v, int pointerSize) =>
 
 String _asHex(int v) => '0x${v.toRadixString(16)}';
 
-List<SymbolizationResult> _failedToSymbolizeAll(
+List<CrashSymbolizationResult> _failedToSymbolizeAll(
         List<Crash> crashes, SymbolizationNoteKind note, {Object error}) =>
     crashes
         .map((crash) => _failedToSymbolize(crash, note, error: error))
         .toList();
 
-SymbolizationResult _failedToSymbolize(Crash crash, SymbolizationNoteKind note,
+CrashSymbolizationResult _failedToSymbolize(
+        Crash crash, SymbolizationNoteKind note,
         {Object error}) =>
-    SymbolizationResult(
+    CrashSymbolizationResult(
       crash: crash,
       engineBuild: null,
       symbolized: null,

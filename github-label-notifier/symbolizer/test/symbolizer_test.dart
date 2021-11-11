@@ -12,6 +12,7 @@ import 'package:symbolizer/bot.dart';
 import 'package:symbolizer/config.dart';
 import 'package:symbolizer/model.dart';
 import 'package:symbolizer/ndk.dart';
+import 'package:symbolizer/parser.dart';
 import 'package:symbolizer/symbols.dart';
 import 'package:test/test.dart';
 
@@ -27,6 +28,15 @@ class MockRepositoriesService extends Mock implements RepositoriesService {}
 
 class MockRepositoryCommit extends Mock implements RepositoryCommit {}
 
+class AlwaysFailingCrashExtractor implements CrashExtractor {
+  const AlwaysFailingCrashExtractor();
+
+  @override
+  List<Crash> extractCrashes(String text, {SymbolizationOverrides overrides}) {
+    throw UnimplementedError('This method always fails');
+  }
+}
+
 final regenerateExpectations =
     bool.fromEnvironment('REGENERATE_EXPECTATIONS') ||
         Platform.environment['REGENERATE_EXPECTATIONS'] == 'true';
@@ -40,7 +50,8 @@ void main() {
 
     setUpAll(() {
       final ndk = Ndk();
-      final symbols = SymbolsCache(path: 'symbols-cache', ndk: ndk);
+      final symbols =
+          SymbolsCache(path: 'symbols-cache', ndk: ndk, sizeThreshold: 100);
       final github = GitHub(auth: Authentication.withToken(config.githubToken));
       symbolizer = Symbolizer(symbols: symbols, ndk: ndk, github: github);
     });
@@ -54,19 +65,15 @@ void main() {
         final input = await inputFile.readAsString();
         final overrides = Bot.parseCommand(0, input)?.overrides;
         final result = await symbolizer.symbolize(input, overrides: overrides);
-        final roundTrip = (jsonDecode(jsonEncode(result)) as List)
-            .cast<Map<String, dynamic>>()
-            .map($SymbolizationResult.fromJson);
+        final roundTrip =
+            SymbolizationResult.fromJson(jsonDecode(jsonEncode(result)));
         expect(result, equals(roundTrip));
         if (regenerateExpectations) {
           await expectationFile.writeAsString(
               const JsonEncoder.withIndent('  ').convert(result));
         } else {
-          final expected =
-              (jsonDecode(await expectationFile.readAsString()) as List)
-                  .map((e) => SymbolizationResult.fromJson(e))
-                  .toList();
-
+          final expected = SymbolizationResult.fromJson(
+              jsonDecode(await expectationFile.readAsString()));
           expect(result, equals(expected));
         }
       });
@@ -83,10 +90,28 @@ void main() {
     final github = MockGitHub();
     final symbolizer = Symbolizer(github: github, ndk: ndk, symbols: symbols);
 
-    expect(
-        await symbolizer
-            .symbolize('''This is test which does not contain anything'''),
-        isEmpty);
+    final result = await symbolizer
+        .symbolize('''This is test which does not contain anything''');
+    expect(result, isA<SymbolizationResultOk>());
+    final results = (result as SymbolizationResultOk).results;
+    expect(results, isEmpty);
+  });
+
+  test('exception when extracting crashes', () async {
+    final symbols = MockSymbolsCache();
+    final ndk = MockNdk();
+    final github = MockGitHub();
+    final symbolizer = Symbolizer(
+        github: github,
+        ndk: ndk,
+        symbols: symbols,
+        crashExtractor: const AlwaysFailingCrashExtractor());
+
+    final result = await symbolizer
+        .symbolize('''This is test which does not contain anything''');
+    expect(result, isA<SymbolizationResultError>());
+    expect((result as SymbolizationResultError).error.message,
+        contains('This method always fails'));
   });
 
   group('android crash', () {
@@ -96,12 +121,15 @@ void main() {
       final github = MockGitHub();
       final symbolizer = Symbolizer(github: github, ndk: ndk, symbols: symbols);
 
-      final results = await symbolizer.symbolize('''
+      final result = await symbolizer.symbolize('''
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 backtrace:
       #00 pc 0000000000111111  libflutter.so (BuildId: aaaabbbbccccddddaaaabbbbccccdddd)
       #01 pc 0000000000222222  else-else
 ''');
+      expect(result, isA<SymbolizationResultOk>());
+      final results = (result as SymbolizationResultOk).results;
+
       expect(results.length, equals(1));
       expect(results.first.crash.engineVariant,
           equals(EngineVariant(os: 'android', arch: null, mode: null)));
@@ -124,7 +152,7 @@ backtrace:
           .thenAnswer((_) async => commit);
       when(github.repositories).thenReturn(repositories);
 
-      final results = await symbolizer.symbolize('''
+      final result = await symbolizer.symbolize('''
 • Engine revision abcdef
 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
@@ -132,6 +160,9 @@ backtrace:
       #00 pc 0000000000111111  libflutter.so (BuildId: aaaabbbbccccddddaaaabbbbccccdddd)
       #01 pc 0000000000222222  else-else
 ''');
+      expect(result, isA<SymbolizationResultOk>());
+      final results = (result as SymbolizationResultOk).results;
+
       expect(results.length, equals(1));
       expect(results.first.crash.engineVariant,
           equals(EngineVariant(os: 'android', arch: null, mode: null)));
@@ -154,7 +185,7 @@ backtrace:
           .thenAnswer((_) async => commit);
       when(github.repositories).thenReturn(repositories);
 
-      final results = await symbolizer.symbolize('''
+      final result = await symbolizer.symbolize('''
 • Engine revision abcdef
 
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
@@ -163,6 +194,10 @@ backtrace:
       #00 pc 0000000000111111  libflutter.so (BuildId: aaaabbbbccccddddaaaabbbbccccdddd)
       #01 pc 0000000000222222  else-else
 ''');
+
+      expect(result, isA<SymbolizationResultOk>());
+      final results = (result as SymbolizationResultOk).results;
+
       expect(results.length, equals(1));
       expect(results.first.crash.engineVariant,
           equals(EngineVariant(os: 'android', arch: null, mode: null)));
@@ -225,11 +260,13 @@ backtrace:
           ])).thenAnswer(
           (_) async => ['some-function\nthird_party/something/else.cc']);
 
-      final results = await symbolizer.symbolize('''
+      final result = await symbolizer.symbolize('''
 • Engine revision abcdef
 
 $backtrace
 ''');
+      expect(result, isA<SymbolizationResultOk>());
+      final results = (result as SymbolizationResultOk).results;
 
       expect(results.length, equals(1));
       expect(results.first.crash.engineVariant,

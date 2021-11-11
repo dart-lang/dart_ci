@@ -1614,7 +1614,15 @@ abstract class _Crash implements Crash {
 }
 
 SymbolizationResult _$SymbolizationResultFromJson(Map<String, dynamic> json) {
-  return _SymbolizationResult.fromJson(json);
+  switch (json['runtimeType'] as String) {
+    case 'ok':
+      return SymbolizationResultOk.fromJson(json);
+    case 'error':
+      return SymbolizationResultError.fromJson(json);
+
+    default:
+      throw FallThroughError();
+  }
 }
 
 /// @nodoc
@@ -1622,16 +1630,16 @@ class _$SymbolizationResultTearOff {
   const _$SymbolizationResultTearOff();
 
 // ignore: unused_element
-  _SymbolizationResult call(
-      {@required Crash crash,
-      @required @nullable EngineBuild engineBuild,
-      @required @nullable String symbolized,
-      List<SymbolizationNote> notes = const []}) {
-    return _SymbolizationResult(
-      crash: crash,
-      engineBuild: engineBuild,
-      symbolized: symbolized,
-      notes: notes,
+  SymbolizationResultOk ok({@required List<CrashSymbolizationResult> results}) {
+    return SymbolizationResultOk(
+      results: results,
+    );
+  }
+
+// ignore: unused_element
+  SymbolizationResultError error({@required SymbolizationNote error}) {
+    return SymbolizationResultError(
+      error: error,
     );
   }
 
@@ -1647,6 +1655,359 @@ const $SymbolizationResult = _$SymbolizationResultTearOff();
 
 /// @nodoc
 mixin _$SymbolizationResult {
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result ok(List<CrashSymbolizationResult> results),
+    @required Result error(SymbolizationNote error),
+  });
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result ok(List<CrashSymbolizationResult> results),
+    Result error(SymbolizationNote error),
+    @required Result orElse(),
+  });
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result ok(SymbolizationResultOk value),
+    @required Result error(SymbolizationResultError value),
+  });
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result ok(SymbolizationResultOk value),
+    Result error(SymbolizationResultError value),
+    @required Result orElse(),
+  });
+  Map<String, dynamic> toJson();
+}
+
+/// @nodoc
+abstract class $SymbolizationResultCopyWith<$Res> {
+  factory $SymbolizationResultCopyWith(
+          SymbolizationResult value, $Res Function(SymbolizationResult) then) =
+      _$SymbolizationResultCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class _$SymbolizationResultCopyWithImpl<$Res>
+    implements $SymbolizationResultCopyWith<$Res> {
+  _$SymbolizationResultCopyWithImpl(this._value, this._then);
+
+  final SymbolizationResult _value;
+  // ignore: unused_field
+  final $Res Function(SymbolizationResult) _then;
+}
+
+/// @nodoc
+abstract class $SymbolizationResultOkCopyWith<$Res> {
+  factory $SymbolizationResultOkCopyWith(SymbolizationResultOk value,
+          $Res Function(SymbolizationResultOk) then) =
+      _$SymbolizationResultOkCopyWithImpl<$Res>;
+  $Res call({List<CrashSymbolizationResult> results});
+}
+
+/// @nodoc
+class _$SymbolizationResultOkCopyWithImpl<$Res>
+    extends _$SymbolizationResultCopyWithImpl<$Res>
+    implements $SymbolizationResultOkCopyWith<$Res> {
+  _$SymbolizationResultOkCopyWithImpl(
+      SymbolizationResultOk _value, $Res Function(SymbolizationResultOk) _then)
+      : super(_value, (v) => _then(v as SymbolizationResultOk));
+
+  @override
+  SymbolizationResultOk get _value => super._value as SymbolizationResultOk;
+
+  @override
+  $Res call({
+    Object results = freezed,
+  }) {
+    return _then(SymbolizationResultOk(
+      results: results == freezed
+          ? _value.results
+          : results as List<CrashSymbolizationResult>,
+    ));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+
+/// @nodoc
+class _$SymbolizationResultOk implements SymbolizationResultOk {
+  _$SymbolizationResultOk({@required this.results}) : assert(results != null);
+
+  factory _$SymbolizationResultOk.fromJson(Map<String, dynamic> json) =>
+      _$_$SymbolizationResultOkFromJson(json);
+
+  @override
+  final List<CrashSymbolizationResult> results;
+
+  @override
+  String toString() {
+    return 'SymbolizationResult.ok(results: $results)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is SymbolizationResultOk &&
+            (identical(other.results, results) ||
+                const DeepCollectionEquality().equals(other.results, results)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(results);
+
+  @override
+  $SymbolizationResultOkCopyWith<SymbolizationResultOk> get copyWith =>
+      _$SymbolizationResultOkCopyWithImpl<SymbolizationResultOk>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result ok(List<CrashSymbolizationResult> results),
+    @required Result error(SymbolizationNote error),
+  }) {
+    assert(ok != null);
+    assert(error != null);
+    return ok(results);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result ok(List<CrashSymbolizationResult> results),
+    Result error(SymbolizationNote error),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (ok != null) {
+      return ok(results);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result ok(SymbolizationResultOk value),
+    @required Result error(SymbolizationResultError value),
+  }) {
+    assert(ok != null);
+    assert(error != null);
+    return ok(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result ok(SymbolizationResultOk value),
+    Result error(SymbolizationResultError value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (ok != null) {
+      return ok(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$_$SymbolizationResultOkToJson(this)..['runtimeType'] = 'ok';
+  }
+}
+
+abstract class SymbolizationResultOk implements SymbolizationResult {
+  factory SymbolizationResultOk(
+          {@required List<CrashSymbolizationResult> results}) =
+      _$SymbolizationResultOk;
+
+  factory SymbolizationResultOk.fromJson(Map<String, dynamic> json) =
+      _$SymbolizationResultOk.fromJson;
+
+  List<CrashSymbolizationResult> get results;
+  $SymbolizationResultOkCopyWith<SymbolizationResultOk> get copyWith;
+}
+
+/// @nodoc
+abstract class $SymbolizationResultErrorCopyWith<$Res> {
+  factory $SymbolizationResultErrorCopyWith(SymbolizationResultError value,
+          $Res Function(SymbolizationResultError) then) =
+      _$SymbolizationResultErrorCopyWithImpl<$Res>;
+  $Res call({SymbolizationNote error});
+
+  $SymbolizationNoteCopyWith<$Res> get error;
+}
+
+/// @nodoc
+class _$SymbolizationResultErrorCopyWithImpl<$Res>
+    extends _$SymbolizationResultCopyWithImpl<$Res>
+    implements $SymbolizationResultErrorCopyWith<$Res> {
+  _$SymbolizationResultErrorCopyWithImpl(SymbolizationResultError _value,
+      $Res Function(SymbolizationResultError) _then)
+      : super(_value, (v) => _then(v as SymbolizationResultError));
+
+  @override
+  SymbolizationResultError get _value =>
+      super._value as SymbolizationResultError;
+
+  @override
+  $Res call({
+    Object error = freezed,
+  }) {
+    return _then(SymbolizationResultError(
+      error: error == freezed ? _value.error : error as SymbolizationNote,
+    ));
+  }
+
+  @override
+  $SymbolizationNoteCopyWith<$Res> get error {
+    if (_value.error == null) {
+      return null;
+    }
+    return $SymbolizationNoteCopyWith<$Res>(_value.error, (value) {
+      return _then(_value.copyWith(error: value));
+    });
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+
+/// @nodoc
+class _$SymbolizationResultError implements SymbolizationResultError {
+  _$SymbolizationResultError({@required this.error}) : assert(error != null);
+
+  factory _$SymbolizationResultError.fromJson(Map<String, dynamic> json) =>
+      _$_$SymbolizationResultErrorFromJson(json);
+
+  @override
+  final SymbolizationNote error;
+
+  @override
+  String toString() {
+    return 'SymbolizationResult.error(error: $error)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is SymbolizationResultError &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
+
+  @override
+  $SymbolizationResultErrorCopyWith<SymbolizationResultError> get copyWith =>
+      _$SymbolizationResultErrorCopyWithImpl<SymbolizationResultError>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>({
+    @required Result ok(List<CrashSymbolizationResult> results),
+    @required Result error(SymbolizationNote error),
+  }) {
+    assert(ok != null);
+    assert(error != null);
+    return error(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>({
+    Result ok(List<CrashSymbolizationResult> results),
+    Result error(SymbolizationNote error),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (error != null) {
+      return error(this.error);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>({
+    @required Result ok(SymbolizationResultOk value),
+    @required Result error(SymbolizationResultError value),
+  }) {
+    assert(ok != null);
+    assert(error != null);
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>({
+    Result ok(SymbolizationResultOk value),
+    Result error(SymbolizationResultError value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$_$SymbolizationResultErrorToJson(this)..['runtimeType'] = 'error';
+  }
+}
+
+abstract class SymbolizationResultError implements SymbolizationResult {
+  factory SymbolizationResultError({@required SymbolizationNote error}) =
+      _$SymbolizationResultError;
+
+  factory SymbolizationResultError.fromJson(Map<String, dynamic> json) =
+      _$SymbolizationResultError.fromJson;
+
+  SymbolizationNote get error;
+  $SymbolizationResultErrorCopyWith<SymbolizationResultError> get copyWith;
+}
+
+CrashSymbolizationResult _$CrashSymbolizationResultFromJson(
+    Map<String, dynamic> json) {
+  return _CrashSymbolizationResult.fromJson(json);
+}
+
+/// @nodoc
+class _$CrashSymbolizationResultTearOff {
+  const _$CrashSymbolizationResultTearOff();
+
+// ignore: unused_element
+  _CrashSymbolizationResult call(
+      {@required Crash crash,
+      @required @nullable EngineBuild engineBuild,
+      @required @nullable String symbolized,
+      List<SymbolizationNote> notes = const []}) {
+    return _CrashSymbolizationResult(
+      crash: crash,
+      engineBuild: engineBuild,
+      symbolized: symbolized,
+      notes: notes,
+    );
+  }
+
+// ignore: unused_element
+  CrashSymbolizationResult fromJson(Map<String, Object> json) {
+    return CrashSymbolizationResult.fromJson(json);
+  }
+}
+
+/// @nodoc
+// ignore: unused_element
+const $CrashSymbolizationResult = _$CrashSymbolizationResultTearOff();
+
+/// @nodoc
+mixin _$CrashSymbolizationResult {
   Crash get crash;
   @nullable
   EngineBuild get engineBuild;
@@ -1657,14 +2018,14 @@ mixin _$SymbolizationResult {
   List<SymbolizationNote> get notes;
 
   Map<String, dynamic> toJson();
-  $SymbolizationResultCopyWith<SymbolizationResult> get copyWith;
+  $CrashSymbolizationResultCopyWith<CrashSymbolizationResult> get copyWith;
 }
 
 /// @nodoc
-abstract class $SymbolizationResultCopyWith<$Res> {
-  factory $SymbolizationResultCopyWith(
-          SymbolizationResult value, $Res Function(SymbolizationResult) then) =
-      _$SymbolizationResultCopyWithImpl<$Res>;
+abstract class $CrashSymbolizationResultCopyWith<$Res> {
+  factory $CrashSymbolizationResultCopyWith(CrashSymbolizationResult value,
+          $Res Function(CrashSymbolizationResult) then) =
+      _$CrashSymbolizationResultCopyWithImpl<$Res>;
   $Res call(
       {Crash crash,
       @nullable EngineBuild engineBuild,
@@ -1676,13 +2037,13 @@ abstract class $SymbolizationResultCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SymbolizationResultCopyWithImpl<$Res>
-    implements $SymbolizationResultCopyWith<$Res> {
-  _$SymbolizationResultCopyWithImpl(this._value, this._then);
+class _$CrashSymbolizationResultCopyWithImpl<$Res>
+    implements $CrashSymbolizationResultCopyWith<$Res> {
+  _$CrashSymbolizationResultCopyWithImpl(this._value, this._then);
 
-  final SymbolizationResult _value;
+  final CrashSymbolizationResult _value;
   // ignore: unused_field
-  final $Res Function(SymbolizationResult) _then;
+  final $Res Function(CrashSymbolizationResult) _then;
 
   @override
   $Res call({
@@ -1724,11 +2085,11 @@ class _$SymbolizationResultCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$SymbolizationResultCopyWith<$Res>
-    implements $SymbolizationResultCopyWith<$Res> {
-  factory _$SymbolizationResultCopyWith(_SymbolizationResult value,
-          $Res Function(_SymbolizationResult) then) =
-      __$SymbolizationResultCopyWithImpl<$Res>;
+abstract class _$CrashSymbolizationResultCopyWith<$Res>
+    implements $CrashSymbolizationResultCopyWith<$Res> {
+  factory _$CrashSymbolizationResultCopyWith(_CrashSymbolizationResult value,
+          $Res Function(_CrashSymbolizationResult) then) =
+      __$CrashSymbolizationResultCopyWithImpl<$Res>;
   @override
   $Res call(
       {Crash crash,
@@ -1743,15 +2104,16 @@ abstract class _$SymbolizationResultCopyWith<$Res>
 }
 
 /// @nodoc
-class __$SymbolizationResultCopyWithImpl<$Res>
-    extends _$SymbolizationResultCopyWithImpl<$Res>
-    implements _$SymbolizationResultCopyWith<$Res> {
-  __$SymbolizationResultCopyWithImpl(
-      _SymbolizationResult _value, $Res Function(_SymbolizationResult) _then)
-      : super(_value, (v) => _then(v as _SymbolizationResult));
+class __$CrashSymbolizationResultCopyWithImpl<$Res>
+    extends _$CrashSymbolizationResultCopyWithImpl<$Res>
+    implements _$CrashSymbolizationResultCopyWith<$Res> {
+  __$CrashSymbolizationResultCopyWithImpl(_CrashSymbolizationResult _value,
+      $Res Function(_CrashSymbolizationResult) _then)
+      : super(_value, (v) => _then(v as _CrashSymbolizationResult));
 
   @override
-  _SymbolizationResult get _value => super._value as _SymbolizationResult;
+  _CrashSymbolizationResult get _value =>
+      super._value as _CrashSymbolizationResult;
 
   @override
   $Res call({
@@ -1760,7 +2122,7 @@ class __$SymbolizationResultCopyWithImpl<$Res>
     Object symbolized = freezed,
     Object notes = freezed,
   }) {
-    return _then(_SymbolizationResult(
+    return _then(_CrashSymbolizationResult(
       crash: crash == freezed ? _value.crash : crash as Crash,
       engineBuild: engineBuild == freezed
           ? _value.engineBuild
@@ -1775,8 +2137,8 @@ class __$SymbolizationResultCopyWithImpl<$Res>
 @JsonSerializable(explicitToJson: true)
 
 /// @nodoc
-class _$_SymbolizationResult implements _SymbolizationResult {
-  _$_SymbolizationResult(
+class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
+  _$_CrashSymbolizationResult(
       {@required this.crash,
       @required @nullable this.engineBuild,
       @required @nullable this.symbolized,
@@ -1784,8 +2146,8 @@ class _$_SymbolizationResult implements _SymbolizationResult {
       : assert(crash != null),
         assert(notes != null);
 
-  factory _$_SymbolizationResult.fromJson(Map<String, dynamic> json) =>
-      _$_$_SymbolizationResultFromJson(json);
+  factory _$_CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =>
+      _$_$_CrashSymbolizationResultFromJson(json);
 
   @override
   final Crash crash;
@@ -1803,13 +2165,13 @@ class _$_SymbolizationResult implements _SymbolizationResult {
 
   @override
   String toString() {
-    return 'SymbolizationResult(crash: $crash, engineBuild: $engineBuild, symbolized: $symbolized, notes: $notes)';
+    return 'CrashSymbolizationResult(crash: $crash, engineBuild: $engineBuild, symbolized: $symbolized, notes: $notes)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _SymbolizationResult &&
+        (other is _CrashSymbolizationResult &&
             (identical(other.crash, crash) ||
                 const DeepCollectionEquality().equals(other.crash, crash)) &&
             (identical(other.engineBuild, engineBuild) ||
@@ -1831,25 +2193,25 @@ class _$_SymbolizationResult implements _SymbolizationResult {
       const DeepCollectionEquality().hash(notes);
 
   @override
-  _$SymbolizationResultCopyWith<_SymbolizationResult> get copyWith =>
-      __$SymbolizationResultCopyWithImpl<_SymbolizationResult>(
+  _$CrashSymbolizationResultCopyWith<_CrashSymbolizationResult> get copyWith =>
+      __$CrashSymbolizationResultCopyWithImpl<_CrashSymbolizationResult>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_SymbolizationResultToJson(this);
+    return _$_$_CrashSymbolizationResultToJson(this);
   }
 }
 
-abstract class _SymbolizationResult implements SymbolizationResult {
-  factory _SymbolizationResult(
+abstract class _CrashSymbolizationResult implements CrashSymbolizationResult {
+  factory _CrashSymbolizationResult(
       {@required Crash crash,
       @required @nullable EngineBuild engineBuild,
       @required @nullable String symbolized,
-      List<SymbolizationNote> notes}) = _$_SymbolizationResult;
+      List<SymbolizationNote> notes}) = _$_CrashSymbolizationResult;
 
-  factory _SymbolizationResult.fromJson(Map<String, dynamic> json) =
-      _$_SymbolizationResult.fromJson;
+  factory _CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =
+      _$_CrashSymbolizationResult.fromJson;
 
   @override
   Crash get crash;
@@ -1864,7 +2226,7 @@ abstract class _SymbolizationResult implements SymbolizationResult {
   @override
   List<SymbolizationNote> get notes;
   @override
-  _$SymbolizationResultCopyWith<_SymbolizationResult> get copyWith;
+  _$CrashSymbolizationResultCopyWith<_CrashSymbolizationResult> get copyWith;
 }
 
 SymbolizationNote _$SymbolizationNoteFromJson(Map<String, dynamic> json) {

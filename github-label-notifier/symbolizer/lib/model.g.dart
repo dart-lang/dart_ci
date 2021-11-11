@@ -134,9 +134,41 @@ Map<String, dynamic> _$_$_CrashToJson(_$_Crash instance) => <String, dynamic>{
       'androidMajorVersion': instance.androidMajorVersion,
     };
 
-_$_SymbolizationResult _$_$_SymbolizationResultFromJson(
+_$SymbolizationResultOk _$_$SymbolizationResultOkFromJson(
     Map<String, dynamic> json) {
-  return _$_SymbolizationResult(
+  return _$SymbolizationResultOk(
+    results: (json['results'] as List)
+        ?.map((e) => e == null
+            ? null
+            : CrashSymbolizationResult.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$_$SymbolizationResultOkToJson(
+        _$SymbolizationResultOk instance) =>
+    <String, dynamic>{
+      'results': instance.results?.map((e) => e?.toJson())?.toList(),
+    };
+
+_$SymbolizationResultError _$_$SymbolizationResultErrorFromJson(
+    Map<String, dynamic> json) {
+  return _$SymbolizationResultError(
+    error: json['error'] == null
+        ? null
+        : SymbolizationNote.fromJson(json['error'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$_$SymbolizationResultErrorToJson(
+        _$SymbolizationResultError instance) =>
+    <String, dynamic>{
+      'error': instance.error?.toJson(),
+    };
+
+_$_CrashSymbolizationResult _$_$_CrashSymbolizationResultFromJson(
+    Map<String, dynamic> json) {
+  return _$_CrashSymbolizationResult(
     crash: json['crash'] == null
         ? null
         : Crash.fromJson(json['crash'] as Map<String, dynamic>),
@@ -153,8 +185,8 @@ _$_SymbolizationResult _$_$_SymbolizationResultFromJson(
   );
 }
 
-Map<String, dynamic> _$_$_SymbolizationResultToJson(
-        _$_SymbolizationResult instance) =>
+Map<String, dynamic> _$_$_CrashSymbolizationResultToJson(
+        _$_CrashSymbolizationResult instance) =>
     <String, dynamic>{
       'crash': instance.crash?.toJson(),
       'engineBuild': instance.engineBuild?.toJson(),
@@ -221,6 +253,7 @@ const _$SymbolizationNoteKindEnumMap = {
   SymbolizationNoteKind.noSymbolsAvailableOnIos: 'noSymbolsAvailableOnIos',
   SymbolizationNoteKind.buildIdMismatch: 'buildIdMismatch',
   SymbolizationNoteKind.loadBaseDetected: 'loadBaseDetected',
+  SymbolizationNoteKind.exceptionWhileParsing: 'exceptionWhileParsing',
 };
 
 _$_ServerConfig _$_$_ServerConfigFromJson(Map<String, dynamic> json) {

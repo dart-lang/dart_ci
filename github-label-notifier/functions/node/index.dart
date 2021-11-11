@@ -153,7 +153,7 @@ Sent by dart-github-label-notifier.web.app
 /// The handler will search the body of the open issue for specific keywords
 /// and send emails to all subscribers to a specific label.
 Future<void> onIssueOpened(Map<String, dynamic> event) async {
-  final symbolizedCrashes = <SymbolizationResult>[];
+  SymbolizationResult symbolizedCrashes;
 
   final repositoryName = event['repository']['full_name'];
   final subscription = await db.lookupKeywordSubscription(repositoryName);
@@ -161,10 +161,11 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
   if (subscription != null &&
       subscription.keywords.contains('crash') &&
       containsCrash(event['issue']['body'])) {
-    symbolizedCrashes.addAll(await _trySymbolize(event['issue']));
+    symbolizedCrashes = await _trySymbolize(event['issue']);
   }
 
-  final match = symbolizedCrashes.isNotEmpty
+  final match = (symbolizedCrashes is SymbolizationResultOk &&
+          symbolizedCrashes.results.isNotEmpty)
       ? 'crash'
       : subscription?.match(event['issue']['body']);
   if (match == null) {
@@ -184,39 +185,50 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
 
   final escape = htmlEscape.convert;
 
-  var symbolizedCrashesText = '', symbolizedCrashesHtml = '';
-  if (symbolizedCrashes.isNotEmpty) {
-    symbolizedCrashesText = [
-      '',
-      ...symbolizedCrashes.expand((r) => [
-            if (r.symbolized != null)
-              '# engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash'
-            else
-              '# engine crash',
-            for (var note in r.notes)
-              if (note.message != null)
-                '# ${noteMessage[note.kind]}: ${note.message}'
-              else
-                '# ${noteMessage[note.kind]}',
-            r.symbolized ?? r.crash.frames.toString(),
-          ]),
-      ''
-    ].join('\n');
-    symbolizedCrashesHtml = symbolizedCrashes
-        .expand((r) => [
-              if (r.symbolized != null)
-                '<p>engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash</p>'
-              else
-                '<p>engine crash</p>',
-              for (var note in r.notes)
-                if (note.message != null)
-                  '<em>${noteMessage[note.kind]}: <pre>${escape(note.message)}</pre></em>'
-                else
-                  '<em>${noteMessage[note.kind]}</em>',
-              '<pre>${escape(r.symbolized ?? r.crash.frames.toString())}</pre>',
-            ])
-        .join('');
-  }
+  final symbolizedCrashesText = symbolizedCrashes
+          ?.when(
+              ok: (results) {
+                return [
+                  '',
+                  ...results.expand((r) => [
+                        if (r.symbolized != null)
+                          '# engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash'
+                        else
+                          '# engine crash',
+                        for (var note in r.notes)
+                          if (note.message != null)
+                            '# ${noteMessage[note.kind]}: ${note.message}'
+                          else
+                            '# ${noteMessage[note.kind]}',
+                        r.symbolized ?? r.crash.frames.toString(),
+                      ]),
+                  ''
+                ];
+              },
+              error: (note) => null)
+          ?.join('\n') ??
+      '';
+
+  final symbolizedCrashesHtml = symbolizedCrashes
+          ?.when(
+            ok: (results) {
+              return results.expand((r) => [
+                    if (r.symbolized != null)
+                      '<p>engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash</p>'
+                    else
+                      '<p>engine crash</p>',
+                    for (var note in r.notes)
+                      if (note.message != null)
+                        '<em>${noteMessage[note.kind]}: <pre>${escape(note.message)}</pre></em>'
+                      else
+                        '<em>${noteMessage[note.kind]}</em>',
+                    '<pre>${escape(r.symbolized ?? r.crash.frames.toString())}</pre>',
+                  ]);
+            },
+            error: (note) => null,
+          )
+          ?.join('') ??
+      '';
 
   await sendgrid.sendMultiple(
       from: 'noreply@dart.dev',
@@ -277,8 +289,7 @@ String getRequiredHeaderValue(ExpressHttpRequest request, String header) {
           HttpStatus.badRequest, 'Missing ${header} header value.'));
 }
 
-Future<List<SymbolizationResult>> _trySymbolize(
-    Map<String, dynamic> body) async {
+Future<SymbolizationResult> _trySymbolize(Map<String, dynamic> body) async {
   try {
     final response = await http
         .post(
@@ -286,12 +297,11 @@ Future<List<SymbolizationResult>> _trySymbolize(
           body: jsonEncode(body),
         )
         .timeout(const Duration(seconds: 20));
-    return [
-      for (var crash in (jsonDecode(response.body) as List))
-        SymbolizationResult.fromJson(crash)
-    ];
+    return SymbolizationResult.fromJson(jsonDecode(response.body));
   } catch (e, st) {
-    console.error('Symbolizer failed with $e: $st');
-    return [];
+    return SymbolizationResult.error(
+        error: SymbolizationNote(
+            kind: SymbolizationNoteKind.exceptionWhileSymbolizing,
+            message: '$e\n$st'));
   }
 }

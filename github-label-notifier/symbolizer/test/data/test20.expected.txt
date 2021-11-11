@@ -1,412 +1,415 @@
-[
-  {
-    "crash": {
-      "engineVariant": {
-        "os": "ios",
-        "arch": "arm64",
-        "mode": "release"
+{
+  "results": [
+    {
+      "crash": {
+        "engineVariant": {
+          "os": "ios",
+          "arch": "arm64",
+          "mode": "release"
+        },
+        "frames": [
+          {
+            "no": "0",
+            "binary": "libsystem_kernel.dylib",
+            "pc": 8040073004,
+            "symbol": "__psynch_cvwait",
+            "offset": 8,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "1",
+            "binary": "libsystem_pthread.dylib",
+            "pc": 8488760112,
+            "symbol": "_pthread_cond_wait$VARIANT$mp",
+            "offset": 1180,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "2",
+            "binary": "libc++.1.dylib",
+            "pc": 7659646476,
+            "symbol": "std::__1::condition_variable::wait+ 52748 (std::__1::unique_lock<std::__1::mutex>&)",
+            "offset": 24,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "3",
+            "binary": "Flutter",
+            "pc": 4313139220,
+            "symbol": "0x101118000",
+            "offset": 247828,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "4",
+            "binary": "Flutter",
+            "pc": 4316064380,
+            "symbol": "0x101118000",
+            "offset": 3172988,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "5",
+            "binary": "Flutter",
+            "pc": 4313032308,
+            "symbol": "0x101118000",
+            "offset": 140916,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "6",
+            "binary": "Flutter",
+            "pc": 4313034752,
+            "symbol": "0x101118000",
+            "offset": 143360,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "7",
+            "binary": "CoreFoundation",
+            "pc": 7330566296,
+            "symbol": "__CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__",
+            "offset": 20,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "8",
+            "binary": "CoreFoundation",
+            "pc": 7330566232,
+            "symbol": "___CFXRegistrationPost_block_invoke",
+            "offset": 48,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "9",
+            "binary": "CoreFoundation",
+            "pc": 7330563664,
+            "symbol": "_CFXRegistrationPost",
+            "offset": 400,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "10",
+            "binary": "CoreFoundation",
+            "pc": 7330562120,
+            "symbol": "_CFXNotificationPost",
+            "offset": 696,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "11",
+            "binary": "Foundation",
+            "pc": 7349582624,
+            "symbol": "-[NSNotificationCenter postNotificationName:object:userInfo:]",
+            "offset": 60,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "12",
+            "binary": "UIKitCore",
+            "pc": 7373403964,
+            "symbol": "-[UIApplication _deactivateForReason:notify:]",
+            "offset": 1540,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "13",
+            "binary": "UIKitCore",
+            "pc": 7363865612,
+            "symbol": "-[_UISceneLifecycleMultiplexer _performBlock:withApplicationOfDeactivationReasons:fromReasons:]",
+            "offset": 260,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "14",
+            "binary": "UIKitCore",
+            "pc": 7363866628,
+            "symbol": "-[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:]",
+            "offset": 740,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "15",
+            "binary": "UIKitCore",
+            "pc": 7363864768,
+            "symbol": "-[_UISceneLifecycleMultiplexer uiScene:transitionedFromState:withTransitionContext:]",
+            "offset": 336,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "16",
+            "binary": "UIKitCore",
+            "pc": 7363896416,
+            "symbol": "__186-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]_block_invoke",
+            "offset": 188,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "17",
+            "binary": "UIKitCore",
+            "pc": 7368307624,
+            "symbol": "+[BSAnimationSettings+ 6554536 (UIKit) tryAnimatingWithSettings:actions:completion:]",
+            "offset": 812,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "18",
+            "binary": "UIKitCore",
+            "pc": 7369348184,
+            "symbol": "_UISceneSettingsDiffActionPerformChangesWithTransitionContext",
+            "offset": 244,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "19",
+            "binary": "UIKitCore",
+            "pc": 7363895800,
+            "symbol": "-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]",
+            "offset": 348,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "20",
+            "binary": "UIKitCore",
+            "pc": 7362069392,
+            "symbol": "__64-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]_block_invoke",
+            "offset": 772,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "21",
+            "binary": "UIKitCore",
+            "pc": 7362063920,
+            "symbol": "-[UIScene _emitSceneSettingsUpdateResponseForCompletion:afterSceneUpdateWork:]",
+            "offset": 248,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "22",
+            "binary": "UIKitCore",
+            "pc": 7362068444,
+            "symbol": "-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]",
+            "offset": 220,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "23",
+            "binary": "UIKitCore",
+            "pc": 7368466572,
+            "symbol": "-[UIApplicationSceneClientAgent scene:handleEvent:withCompletion:]",
+            "offset": 464,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "24",
+            "binary": "FrontBoardServices",
+            "pc": 7575229600,
+            "symbol": "-[FBSScene updater:didUpdateSettings:withDiff:transitionContext:completion:]",
+            "offset": 456,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "25",
+            "binary": "FrontBoardServices",
+            "pc": 7575395548,
+            "symbol": "__94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke_2",
+            "offset": 124,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "26",
+            "binary": "FrontBoardServices",
+            "pc": 7575282688,
+            "symbol": "-[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:]",
+            "offset": 232,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "27",
+            "binary": "FrontBoardServices",
+            "pc": 7575395368,
+            "symbol": "__94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke",
+            "offset": 368,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "28",
+            "binary": "libdispatch.dylib",
+            "pc": 7327249024,
+            "symbol": "_dispatch_client_callout",
+            "offset": 16,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "29",
+            "binary": "libdispatch.dylib",
+            "pc": 7326878476,
+            "symbol": "_dispatch_block_invoke_direct$VARIANT$mp",
+            "offset": 224,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "30",
+            "binary": "FrontBoardServices",
+            "pc": 7575540904,
+            "symbol": "__FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__",
+            "offset": 40,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "31",
+            "binary": "FrontBoardServices",
+            "pc": 7575540080,
+            "symbol": "-[FBSSerialQueue _targetQueue_performNextIfPossible]",
+            "offset": 404,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "32",
+            "binary": "FrontBoardServices",
+            "pc": 7575541316,
+            "symbol": "-[FBSSerialQueue _performNextFromRunLoopSource]",
+            "offset": 28,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "33",
+            "binary": "CoreFoundation",
+            "pc": 7330685504,
+            "symbol": "__CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__",
+            "offset": 24,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "34",
+            "binary": "CoreFoundation",
+            "pc": 7330685248,
+            "symbol": "__CFRunLoopDoSource0",
+            "offset": 204,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "35",
+            "binary": "CoreFoundation",
+            "pc": 7330681992,
+            "symbol": "__CFRunLoopDoSources0",
+            "offset": 256,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "36",
+            "binary": "CoreFoundation",
+            "pc": 7330658880,
+            "symbol": "__CFRunLoopRun",
+            "offset": 776,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "37",
+            "binary": "CoreFoundation",
+            "pc": 7330656768,
+            "symbol": "CFRunLoopRunSpecific",
+            "offset": 572,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "38",
+            "binary": "GraphicsServices",
+            "pc": 7701317016,
+            "symbol": "GSEventRunModal",
+            "offset": 160,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "39",
+            "binary": "UIKitCore",
+            "pc": 7373425612,
+            "symbol": "-[UIApplication _run]",
+            "offset": 1052,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "40",
+            "binary": "UIKitCore",
+            "pc": 7373447584,
+            "symbol": "UIApplicationMain",
+            "offset": 164,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "41",
+            "binary": "Runner",
+            "pc": 4308983428,
+            "symbol": "main",
+            "offset": 24196,
+            "location": "AppDelegate.swift:",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "42",
+            "binary": "libdyld.dylib",
+            "pc": 7327376776,
+            "symbol": "start",
+            "offset": 4,
+            "location": "",
+            "runtimeType": "ios"
+          }
+        ],
+        "format": "native",
+        "androidMajorVersion": null
       },
-      "frames": [
-        {
-          "no": "0",
-          "binary": "libsystem_kernel.dylib",
-          "pc": 8040073004,
-          "symbol": "__psynch_cvwait",
-          "offset": 8,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "1",
-          "binary": "libsystem_pthread.dylib",
-          "pc": 8488760112,
-          "symbol": "_pthread_cond_wait$VARIANT$mp",
-          "offset": 1180,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "2",
-          "binary": "libc++.1.dylib",
-          "pc": 7659646476,
-          "symbol": "std::__1::condition_variable::wait+ 52748 (std::__1::unique_lock<std::__1::mutex>&)",
-          "offset": 24,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "3",
-          "binary": "Flutter",
-          "pc": 4313139220,
-          "symbol": "0x101118000",
-          "offset": 247828,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "4",
-          "binary": "Flutter",
-          "pc": 4316064380,
-          "symbol": "0x101118000",
-          "offset": 3172988,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "5",
-          "binary": "Flutter",
-          "pc": 4313032308,
-          "symbol": "0x101118000",
-          "offset": 140916,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "6",
-          "binary": "Flutter",
-          "pc": 4313034752,
-          "symbol": "0x101118000",
-          "offset": 143360,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "7",
-          "binary": "CoreFoundation",
-          "pc": 7330566296,
-          "symbol": "__CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__",
-          "offset": 20,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "8",
-          "binary": "CoreFoundation",
-          "pc": 7330566232,
-          "symbol": "___CFXRegistrationPost_block_invoke",
-          "offset": 48,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "9",
-          "binary": "CoreFoundation",
-          "pc": 7330563664,
-          "symbol": "_CFXRegistrationPost",
-          "offset": 400,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "10",
-          "binary": "CoreFoundation",
-          "pc": 7330562120,
-          "symbol": "_CFXNotificationPost",
-          "offset": 696,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "11",
-          "binary": "Foundation",
-          "pc": 7349582624,
-          "symbol": "-[NSNotificationCenter postNotificationName:object:userInfo:]",
-          "offset": 60,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "12",
-          "binary": "UIKitCore",
-          "pc": 7373403964,
-          "symbol": "-[UIApplication _deactivateForReason:notify:]",
-          "offset": 1540,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "13",
-          "binary": "UIKitCore",
-          "pc": 7363865612,
-          "symbol": "-[_UISceneLifecycleMultiplexer _performBlock:withApplicationOfDeactivationReasons:fromReasons:]",
-          "offset": 260,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "14",
-          "binary": "UIKitCore",
-          "pc": 7363866628,
-          "symbol": "-[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:]",
-          "offset": 740,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "15",
-          "binary": "UIKitCore",
-          "pc": 7363864768,
-          "symbol": "-[_UISceneLifecycleMultiplexer uiScene:transitionedFromState:withTransitionContext:]",
-          "offset": 336,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "16",
-          "binary": "UIKitCore",
-          "pc": 7363896416,
-          "symbol": "__186-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]_block_invoke",
-          "offset": 188,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "17",
-          "binary": "UIKitCore",
-          "pc": 7368307624,
-          "symbol": "+[BSAnimationSettings+ 6554536 (UIKit) tryAnimatingWithSettings:actions:completion:]",
-          "offset": 812,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "18",
-          "binary": "UIKitCore",
-          "pc": 7369348184,
-          "symbol": "_UISceneSettingsDiffActionPerformChangesWithTransitionContext",
-          "offset": 244,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "19",
-          "binary": "UIKitCore",
-          "pc": 7363895800,
-          "symbol": "-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]",
-          "offset": 348,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "20",
-          "binary": "UIKitCore",
-          "pc": 7362069392,
-          "symbol": "__64-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]_block_invoke",
-          "offset": 772,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "21",
-          "binary": "UIKitCore",
-          "pc": 7362063920,
-          "symbol": "-[UIScene _emitSceneSettingsUpdateResponseForCompletion:afterSceneUpdateWork:]",
-          "offset": 248,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "22",
-          "binary": "UIKitCore",
-          "pc": 7362068444,
-          "symbol": "-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]",
-          "offset": 220,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "23",
-          "binary": "UIKitCore",
-          "pc": 7368466572,
-          "symbol": "-[UIApplicationSceneClientAgent scene:handleEvent:withCompletion:]",
-          "offset": 464,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "24",
-          "binary": "FrontBoardServices",
-          "pc": 7575229600,
-          "symbol": "-[FBSScene updater:didUpdateSettings:withDiff:transitionContext:completion:]",
-          "offset": 456,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "25",
-          "binary": "FrontBoardServices",
-          "pc": 7575395548,
-          "symbol": "__94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke_2",
-          "offset": 124,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "26",
-          "binary": "FrontBoardServices",
-          "pc": 7575282688,
-          "symbol": "-[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:]",
-          "offset": 232,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "27",
-          "binary": "FrontBoardServices",
-          "pc": 7575395368,
-          "symbol": "__94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke",
-          "offset": 368,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "28",
-          "binary": "libdispatch.dylib",
-          "pc": 7327249024,
-          "symbol": "_dispatch_client_callout",
-          "offset": 16,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "29",
-          "binary": "libdispatch.dylib",
-          "pc": 7326878476,
-          "symbol": "_dispatch_block_invoke_direct$VARIANT$mp",
-          "offset": 224,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "30",
-          "binary": "FrontBoardServices",
-          "pc": 7575540904,
-          "symbol": "__FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__",
-          "offset": 40,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "31",
-          "binary": "FrontBoardServices",
-          "pc": 7575540080,
-          "symbol": "-[FBSSerialQueue _targetQueue_performNextIfPossible]",
-          "offset": 404,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "32",
-          "binary": "FrontBoardServices",
-          "pc": 7575541316,
-          "symbol": "-[FBSSerialQueue _performNextFromRunLoopSource]",
-          "offset": 28,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "33",
-          "binary": "CoreFoundation",
-          "pc": 7330685504,
-          "symbol": "__CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__",
-          "offset": 24,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "34",
-          "binary": "CoreFoundation",
-          "pc": 7330685248,
-          "symbol": "__CFRunLoopDoSource0",
-          "offset": 204,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "35",
-          "binary": "CoreFoundation",
-          "pc": 7330681992,
-          "symbol": "__CFRunLoopDoSources0",
-          "offset": 256,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "36",
-          "binary": "CoreFoundation",
-          "pc": 7330658880,
-          "symbol": "__CFRunLoopRun",
-          "offset": 776,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "37",
-          "binary": "CoreFoundation",
-          "pc": 7330656768,
-          "symbol": "CFRunLoopRunSpecific",
-          "offset": 572,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "38",
-          "binary": "GraphicsServices",
-          "pc": 7701317016,
-          "symbol": "GSEventRunModal",
-          "offset": 160,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "39",
-          "binary": "UIKitCore",
-          "pc": 7373425612,
-          "symbol": "-[UIApplication _run]",
-          "offset": 1052,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "40",
-          "binary": "UIKitCore",
-          "pc": 7373447584,
-          "symbol": "UIApplicationMain",
-          "offset": 164,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "41",
-          "binary": "Runner",
-          "pc": 4308983428,
-          "symbol": "main",
-          "offset": 24196,
-          "location": "AppDelegate.swift:",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "42",
-          "binary": "libdyld.dylib",
-          "pc": 7327376776,
-          "symbol": "start",
-          "offset": 4,
-          "location": "",
-          "runtimeType": "ios"
+      "engineBuild": {
+        "engineHash": "a1440ca392ca23e874a105c5f3248b495bd0e247",
+        "variant": {
+          "os": "ios",
+          "arch": "arm64",
+          "mode": "release"
         }
-      ],
-      "format": "native",
-      "androidMajorVersion": null
-    },
-    "engineBuild": {
-      "engineHash": "a1440ca392ca23e874a105c5f3248b495bd0e247",
-      "variant": {
-        "os": "ios",
-        "arch": "arm64",
-        "mode": "release"
-      }
-    },
-    "symbolized": "#00 00000001df39c72c libsystem_kernel.dylib __psynch_cvwait + 8\n#01 00000001f9f83330 libsystem_pthread.dylib _pthread_cond_wait$VARIANT$mp + 1180\n#02 00000001c88cee0c libc++.1.dylib std::__1::condition_variable::wait+ 52748 (std::__1::unique_lock<std::__1::mutex>&) + 24\n#03 0000000101154814 Flutter 0x101118000 + 247828\n                             fml::AutoResetWaitableEvent::Wait()\n                             flutter/fml/synchronization/waitable_event.cc:75:9\n#04 000000010141ea7c Flutter 0x101118000 + 3172988\n                             flutter::Shell::OnPlatformViewDestroyed()\n                             flutter/shell/common/shell.cc:804:9\n#05 000000010113a674 Flutter 0x101118000 + 140916\n                             -[FlutterViewController surfaceUpdated:]\n                             flutter/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm:581:35\n#06 000000010113b000 Flutter 0x101118000 + 143360\n                             -[FlutterViewController applicationWillResignActive:]\n                             flutter/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm:701:3\n#07 00000001b4ef9098 CoreFoundation __CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__ + 20\n#08 00000001b4ef9058 CoreFoundation ___CFXRegistrationPost_block_invoke + 48\n#09 00000001b4ef8650 CoreFoundation _CFXRegistrationPost + 400\n#10 00000001b4ef8048 CoreFoundation _CFXNotificationPost + 696\n#11 00000001b611bb20 Foundation -[NSNotificationCenter postNotificationName:object:userInfo:] + 60\n#12 00000001b77d373c UIKitCore -[UIApplication _deactivateForReason:notify:] + 1540\n#13 00000001b6ebac0c UIKitCore -[_UISceneLifecycleMultiplexer _performBlock:withApplicationOfDeactivationReasons:fromReasons:] + 260\n#14 00000001b6ebb004 UIKitCore -[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:] + 740\n#15 00000001b6eba8c0 UIKitCore -[_UISceneLifecycleMultiplexer uiScene:transitionedFromState:withTransitionContext:] + 336\n#16 00000001b6ec2460 UIKitCore __186-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]_block_invoke + 188\n#17 00000001b72f73a8 UIKitCore +[BSAnimationSettings+ 6554536 (UIKit) tryAnimatingWithSettings:actions:completion:] + 812\n#18 00000001b73f5458 UIKitCore _UISceneSettingsDiffActionPerformChangesWithTransitionContext + 244\n#19 00000001b6ec21f8 UIKitCore -[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:] + 348\n#20 00000001b6d04390 UIKitCore __64-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]_block_invoke + 772\n#21 00000001b6d02e30 UIKitCore -[UIScene _emitSceneSettingsUpdateResponseForCompletion:afterSceneUpdateWork:] + 248\n#22 00000001b6d03fdc UIKitCore -[UIScene scene:didUpdateWithDiff:transitionContext:completion:] + 220\n#23 00000001b731e08c UIKitCore -[UIApplicationSceneClientAgent scene:handleEvent:withCompletion:] + 464\n#24 00000001c384d4a0 FrontBoardServices -[FBSScene updater:didUpdateSettings:withDiff:transitionContext:completion:] + 456\n#25 00000001c3875cdc FrontBoardServices __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke_2 + 124\n#26 00000001c385a400 FrontBoardServices -[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:] + 232\n#27 00000001c3875c28 FrontBoardServices __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke + 368\n#28 00000001b4bcf280 libdispatch.dylib _dispatch_client_callout + 16\n#29 00000001b4b74b0c libdispatch.dylib _dispatch_block_invoke_direct$VARIANT$mp + 224\n#30 00000001c38994a8 FrontBoardServices __FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__ + 40\n#31 00000001c3899170 FrontBoardServices -[FBSSerialQueue _targetQueue_performNextIfPossible] + 404\n#32 00000001c3899644 FrontBoardServices -[FBSSerialQueue _performNextFromRunLoopSource] + 28\n#33 00000001b4f16240 CoreFoundation __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ + 24\n#34 00000001b4f16140 CoreFoundation __CFRunLoopDoSource0 + 204\n#35 00000001b4f15488 CoreFoundation __CFRunLoopDoSources0 + 256\n#36 00000001b4f0fa40 CoreFoundation __CFRunLoopRun + 776\n#37 00000001b4f0f200 CoreFoundation CFRunLoopRunSpecific + 572\n#38 00000001cb08c598 GraphicsServices GSEventRunModal + 160\n#39 00000001b77d8bcc UIKitCore -[UIApplication _run] + 1052\n#40 00000001b77de1a0 UIKitCore UIApplicationMain + 164\n#41 0000000100d5de84 Runner main + 24196 (AppDelegate.swift:)\n#42 00000001b4bee588 libdyld.dylib start + 4\n",
-    "notes": []
-  }
-]
+      },
+      "symbolized": "#00 00000001df39c72c libsystem_kernel.dylib __psynch_cvwait + 8\n#01 00000001f9f83330 libsystem_pthread.dylib _pthread_cond_wait$VARIANT$mp + 1180\n#02 00000001c88cee0c libc++.1.dylib std::__1::condition_variable::wait+ 52748 (std::__1::unique_lock<std::__1::mutex>&) + 24\n#03 0000000101154814 Flutter 0x101118000 + 247828\n                             fml::AutoResetWaitableEvent::Wait()\n                             flutter/fml/synchronization/waitable_event.cc:75:9\n#04 000000010141ea7c Flutter 0x101118000 + 3172988\n                             flutter::Shell::OnPlatformViewDestroyed()\n                             flutter/shell/common/shell.cc:804:9\n#05 000000010113a674 Flutter 0x101118000 + 140916\n                             -[FlutterViewController surfaceUpdated:]\n                             flutter/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm:581:35\n#06 000000010113b000 Flutter 0x101118000 + 143360\n                             -[FlutterViewController applicationWillResignActive:]\n                             flutter/shell/platform/darwin/ios/framework/Source/FlutterViewController.mm:701:3\n#07 00000001b4ef9098 CoreFoundation __CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__ + 20\n#08 00000001b4ef9058 CoreFoundation ___CFXRegistrationPost_block_invoke + 48\n#09 00000001b4ef8650 CoreFoundation _CFXRegistrationPost + 400\n#10 00000001b4ef8048 CoreFoundation _CFXNotificationPost + 696\n#11 00000001b611bb20 Foundation -[NSNotificationCenter postNotificationName:object:userInfo:] + 60\n#12 00000001b77d373c UIKitCore -[UIApplication _deactivateForReason:notify:] + 1540\n#13 00000001b6ebac0c UIKitCore -[_UISceneLifecycleMultiplexer _performBlock:withApplicationOfDeactivationReasons:fromReasons:] + 260\n#14 00000001b6ebb004 UIKitCore -[_UISceneLifecycleMultiplexer _evalTransitionToSettings:fromSettings:forceExit:withTransitionStore:] + 740\n#15 00000001b6eba8c0 UIKitCore -[_UISceneLifecycleMultiplexer uiScene:transitionedFromState:withTransitionContext:] + 336\n#16 00000001b6ec2460 UIKitCore __186-[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:]_block_invoke + 188\n#17 00000001b72f73a8 UIKitCore +[BSAnimationSettings+ 6554536 (UIKit) tryAnimatingWithSettings:actions:completion:] + 812\n#18 00000001b73f5458 UIKitCore _UISceneSettingsDiffActionPerformChangesWithTransitionContext + 244\n#19 00000001b6ec21f8 UIKitCore -[_UIWindowSceneFBSSceneTransitionContextDrivenLifecycleSettingsDiffAction _performActionsForUIScene:withUpdatedFBSScene:settingsDiff:fromSettings:transitionContext:lifecycleActionType:] + 348\n#20 00000001b6d04390 UIKitCore __64-[UIScene scene:didUpdateWithDiff:transitionContext:completion:]_block_invoke + 772\n#21 00000001b6d02e30 UIKitCore -[UIScene _emitSceneSettingsUpdateResponseForCompletion:afterSceneUpdateWork:] + 248\n#22 00000001b6d03fdc UIKitCore -[UIScene scene:didUpdateWithDiff:transitionContext:completion:] + 220\n#23 00000001b731e08c UIKitCore -[UIApplicationSceneClientAgent scene:handleEvent:withCompletion:] + 464\n#24 00000001c384d4a0 FrontBoardServices -[FBSScene updater:didUpdateSettings:withDiff:transitionContext:completion:] + 456\n#25 00000001c3875cdc FrontBoardServices __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke_2 + 124\n#26 00000001c385a400 FrontBoardServices -[FBSWorkspace _calloutQueue_executeCalloutFromSource:withBlock:] + 232\n#27 00000001c3875c28 FrontBoardServices __94-[FBSWorkspaceScenesClient _queue_updateScene:withSettings:diff:transitionContext:completion:]_block_invoke + 368\n#28 00000001b4bcf280 libdispatch.dylib _dispatch_client_callout + 16\n#29 00000001b4b74b0c libdispatch.dylib _dispatch_block_invoke_direct$VARIANT$mp + 224\n#30 00000001c38994a8 FrontBoardServices __FBSSERIALQUEUE_IS_CALLING_OUT_TO_A_BLOCK__ + 40\n#31 00000001c3899170 FrontBoardServices -[FBSSerialQueue _targetQueue_performNextIfPossible] + 404\n#32 00000001c3899644 FrontBoardServices -[FBSSerialQueue _performNextFromRunLoopSource] + 28\n#33 00000001b4f16240 CoreFoundation __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ + 24\n#34 00000001b4f16140 CoreFoundation __CFRunLoopDoSource0 + 204\n#35 00000001b4f15488 CoreFoundation __CFRunLoopDoSources0 + 256\n#36 00000001b4f0fa40 CoreFoundation __CFRunLoopRun + 776\n#37 00000001b4f0f200 CoreFoundation CFRunLoopRunSpecific + 572\n#38 00000001cb08c598 GraphicsServices GSEventRunModal + 160\n#39 00000001b77d8bcc UIKitCore -[UIApplication _run] + 1052\n#40 00000001b77de1a0 UIKitCore UIApplicationMain + 164\n#41 0000000100d5de84 Runner main + 24196 (AppDelegate.swift:)\n#42 00000001b4bee588 libdyld.dylib start + 4\n",
+      "notes": []
+    }
+  ],
+  "runtimeType": "ok"
+}

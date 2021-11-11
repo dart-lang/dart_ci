@@ -243,11 +243,12 @@ Check your privacy settings as described [here](https://docs.github.com/en/free-
     _log.info('Symbolizing ${worklist.keys} with overrides {$overrides}');
 
     // Symbolize all collected comments.
-    final symbolized = <int, List<SymbolizationResult>>{};
+    final symbolized = <int, SymbolizationResult>{};
     for (var comment in worklist.values) {
       final result =
           await symbolizer.symbolize(comment.body, overrides: overrides);
-      if (result.isNotEmpty) {
+      if (result is SymbolizationResultError ||
+          (result is SymbolizationResultOk && result.results.isNotEmpty)) {
         symbolized[comment.id] = result;
       }
     }
@@ -283,17 +284,17 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
       RepositorySlug repo,
       Issue issue,
       Map<int, _Comment> comments,
-      Map<int, List<SymbolizationResult>> symbolized) async {
+      Map<int, SymbolizationResult> symbolized) async {
     if (symbolized.isEmpty) {
       return;
     }
 
-    final successes = symbolized.whereResult((r) => r.symbolized != null);
-    final failures = symbolized.whereResult((r) => r.symbolized == null);
+    final successes = symbolized.onlySuccesses;
+    final failures = symbolized.onlyFailures;
 
     final buf = StringBuffer();
     for (var entry in successes.entries) {
-      for (var result in entry.value) {
+      for (var result in entry.value.results) {
         buf.write('''
 crash from ${comments[entry.key].url} symbolized using symbols for `${result.engineBuild.engineHash}` `${result.engineBuild.variant.os}-${result.engineBuild.variant.arch}-${result.engineBuild.variant.mode}`
 ```
@@ -318,12 +319,30 @@ ${result.symbolized}
       // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details
       buf.writeln('''
 <details>
-<summary>There were failures symbolizing some of the crashes I found</summary>
+<summary>There were failures processing the request</summary>
 ''');
 
+      void appendNote(SymbolizationNote note) {
+        buf.write('* ${noteMessage[note.kind]}');
+        if (note.message != null && note.message.isNotEmpty) {
+          if (note.message.contains('\n')) {
+            buf.writeln(':');
+            buf.write('''
+```
+${note.message}
+```'''
+                .indentBy('    '));
+          } else {
+            buf.writeln(': `${note.message}`');
+          }
+        }
+        buf.writeln('');
+      }
+
       for (var entry in failures.entries) {
-        for (var result in entry.value) {
-          buf.writeln('''
+        entry.value.when(ok: (results) {
+          for (var result in results) {
+            buf.writeln('''
 When processing ${comments[entry.key].url} I found crash
 
 ```
@@ -332,23 +351,14 @@ ${result.crash}
 
 but failed to symbolize it with the following notes:
 ''');
-          for (var note in result.notes) {
-            buf.write('* ${noteMessage[note.kind]}');
-            if (note.message != null && note.message.isNotEmpty) {
-              if (note.message.contains('\n')) {
-                buf.writeln(':');
-                buf.write('''
-```
-${note.message}
-```'''
-                    .indentBy('    '));
-              } else {
-                buf.writeln(': `${note.message}`');
-              }
-            }
-            buf.writeln('');
+            result.notes.forEach(appendNote);
           }
-        }
+        }, error: (note) {
+          buf.writeln('''
+When processing ${comments[entry.key].url} I encountered the following error:
+''');
+          appendNote(note);
+        });
       }
 
       buf.writeln('''
@@ -375,12 +385,12 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
       RepositorySlug repo,
       Issue issue,
       Map<int, _Comment> comments,
-      Map<int, List<SymbolizationResult>> symbolized) async {
+      Map<int, SymbolizationResult> symbolized) async {
     if (failuresEmail == null) {
       return;
     }
 
-    final failures = symbolized.whereResult((r) => r.symbolized == null);
+    final failures = symbolized.onlyFailures;
     if (failures.isEmpty) {
       return;
     }
@@ -392,17 +402,25 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
 <p>I was asked to symbolize crashes from <a href="${issue.htmlUrl}">issue ${issue.number}</a>, but failed.</p>
 ''');
     for (var entry in failures.entries) {
-      for (var result in entry.value) {
-        buf.writeln('''
+      entry.value.when(ok: (results) {
+        for (var result in results) {
+          buf.writeln('''
 <p>When processing <a href="${comments[entry.key].url}">comment</a>, I found crash</p>
 <pre>${escape(result.crash.toString())}</pre>
 <p>but failed with the following notes:</p>
 ''');
-        for (var note in result.notes) {
-          buf.writeln(
-              '${noteMessage[note.kind]} <pre>${escape(note.message ?? '')}');
+          for (var note in result.notes) {
+            buf.writeln(
+                '${noteMessage[note.kind]} <pre>${escape(note.message ?? '')}');
+          }
         }
-      }
+      }, error: (note) {
+        buf.writeln('''
+<p>When processing <a href="${comments[entry.key].url}">comment</a>, I failed with the following error:</p>
+''');
+        buf.writeln(
+            '${noteMessage[note.kind]} <pre>${escape(note.message ?? '')}');
+      });
     }
 
     if (dryRun) {
@@ -456,13 +474,37 @@ extension on Issue {
   String get commentLikeHtmlUrl => '$htmlUrl#issue-$id';
 }
 
-extension on Map<int, List<SymbolizationResult>> {
-  /// Filter multimap of symbolization results using the given predicate.
-  Map<int, List<SymbolizationResult>> whereResult(
-          bool Function(SymbolizationResult) predicate) =>
-      Map.fromEntries(entries
-          .map((e) => MapEntry(e.key, e.value.where(predicate).toList()))
-          .where((e) => e.value.isNotEmpty));
+extension on Map<int, SymbolizationResult> {
+  /// Filter multimap of symbolization results to get all successes.
+  Map<int, SymbolizationResultOk> get onlySuccesses {
+    return Map.fromEntries(entries
+        .where((e) => e.value is SymbolizationResultOk)
+        .map((e) => MapEntry(
+            e.key,
+            applyFilter(
+                e.value as SymbolizationResultOk, (r) => r.symbolized != null)))
+        .where((e) => e.value.results.isNotEmpty));
+  }
+
+  /// Filter multimap of symbolization results to get all failures.
+  Map<int, SymbolizationResult> get onlyFailures {
+    return Map.fromEntries(entries.map((e) {
+      final result = e.value;
+      return MapEntry(
+          e.key,
+          result is SymbolizationResultOk
+              ? applyFilter(result, (r) => r.symbolized == null)
+              : result);
+    }).where((e) =>
+        e.value is SymbolizationResultError ||
+        (e.value as SymbolizationResultOk).results.isNotEmpty));
+  }
+
+  static SymbolizationResultOk applyFilter(SymbolizationResultOk result,
+      bool Function(CrashSymbolizationResult) predicate) {
+    return SymbolizationResultOk(
+        results: result.results.where(predicate).toList());
+  }
 }
 
 extension on String {

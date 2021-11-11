@@ -1,151 +1,154 @@
-[
-  {
-    "crash": {
-      "engineVariant": {
-        "os": "ios",
-        "arch": "arm64",
-        "mode": "release"
+{
+  "results": [
+    {
+      "crash": {
+        "engineVariant": {
+          "os": "ios",
+          "arch": "arm64",
+          "mode": "release"
+        },
+        "frames": [
+          {
+            "no": "0",
+            "binary": "libsystem_kernel.dylib",
+            "pc": 7795353520,
+            "symbol": "__pthread_kill",
+            "offset": 8,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "1",
+            "binary": "libsystem_pthread.dylib",
+            "pc": 8267581888,
+            "symbol": "pthread_kill",
+            "offset": 212,
+            "location": "pthread.c:158",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "2",
+            "binary": "libsystem_c.dylib",
+            "pc": 7212665400,
+            "symbol": "abort",
+            "offset": 120,
+            "location": "abort.c:11",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "3",
+            "binary": "libc++abi.dylib",
+            "pc": 7399541736,
+            "symbol": "abort_message",
+            "offset": 128,
+            "location": "abort_message.cpp:7",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "4",
+            "binary": "libc++abi.dylib",
+            "pc": 7399484668,
+            "symbol": "demangling_terminate_handler()",
+            "offset": 272,
+            "location": "cxa_default_handlers.cpp:6",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "5",
+            "binary": "libobjc.A.dylib",
+            "pc": 7398517168,
+            "symbol": "_objc_terminate()",
+            "offset": 140,
+            "location": "objc-exception.mm:70",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "6",
+            "binary": "libc++abi.dylib",
+            "pc": 7399538804,
+            "symbol": "std::__terminate(void (*)())",
+            "offset": 16,
+            "location": "cxa_handlers.cpp:5",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "7",
+            "binary": "libc++abi.dylib",
+            "pc": 7399549976,
+            "symbol": "__cxa_rethrow",
+            "offset": 144,
+            "location": "cxa_exception.cpp:61",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "8",
+            "binary": "libobjc.A.dylib",
+            "pc": 7398647248,
+            "symbol": "objc_exception_rethrow",
+            "offset": 40,
+            "location": "objc-exception.mm:60",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "9",
+            "binary": "CoreFoundation",
+            "pc": 7065082044,
+            "symbol": "CFRunLoopRunSpecific",
+            "offset": 808,
+            "location": "CFRunLoop.c:325",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "10",
+            "binary": "Flutter",
+            "pc": 4309798772,
+            "symbol": "0x100b34000",
+            "offset": 3084148,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "11",
+            "binary": "Flutter",
+            "pc": 4309796744,
+            "symbol": "0x100b34000",
+            "offset": 3082120,
+            "location": "",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "12",
+            "binary": "libsystem_pthread.dylib",
+            "pc": 8267578484,
+            "symbol": "_pthread_start",
+            "offset": 288,
+            "location": "pthread.c:88",
+            "runtimeType": "ios"
+          },
+          {
+            "no": "13",
+            "binary": "libsystem_pthread.dylib",
+            "pc": 8267597944,
+            "symbol": "thread_start",
+            "offset": 8,
+            "location": "",
+            "runtimeType": "ios"
+          }
+        ],
+        "format": "native",
+        "androidMajorVersion": null
       },
-      "frames": [
-        {
-          "no": "0",
-          "binary": "libsystem_kernel.dylib",
-          "pc": 7795353520,
-          "symbol": "__pthread_kill",
-          "offset": 8,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "1",
-          "binary": "libsystem_pthread.dylib",
-          "pc": 8267581888,
-          "symbol": "pthread_kill",
-          "offset": 212,
-          "location": "pthread.c:158",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "2",
-          "binary": "libsystem_c.dylib",
-          "pc": 7212665400,
-          "symbol": "abort",
-          "offset": 120,
-          "location": "abort.c:11",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "3",
-          "binary": "libc++abi.dylib",
-          "pc": 7399541736,
-          "symbol": "abort_message",
-          "offset": 128,
-          "location": "abort_message.cpp:7",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "4",
-          "binary": "libc++abi.dylib",
-          "pc": 7399484668,
-          "symbol": "demangling_terminate_handler()",
-          "offset": 272,
-          "location": "cxa_default_handlers.cpp:6",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "5",
-          "binary": "libobjc.A.dylib",
-          "pc": 7398517168,
-          "symbol": "_objc_terminate()",
-          "offset": 140,
-          "location": "objc-exception.mm:70",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "6",
-          "binary": "libc++abi.dylib",
-          "pc": 7399538804,
-          "symbol": "std::__terminate(void (*)())",
-          "offset": 16,
-          "location": "cxa_handlers.cpp:5",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "7",
-          "binary": "libc++abi.dylib",
-          "pc": 7399549976,
-          "symbol": "__cxa_rethrow",
-          "offset": 144,
-          "location": "cxa_exception.cpp:61",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "8",
-          "binary": "libobjc.A.dylib",
-          "pc": 7398647248,
-          "symbol": "objc_exception_rethrow",
-          "offset": 40,
-          "location": "objc-exception.mm:60",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "9",
-          "binary": "CoreFoundation",
-          "pc": 7065082044,
-          "symbol": "CFRunLoopRunSpecific",
-          "offset": 808,
-          "location": "CFRunLoop.c:325",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "10",
-          "binary": "Flutter",
-          "pc": 4309798772,
-          "symbol": "0x100b34000",
-          "offset": 3084148,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "11",
-          "binary": "Flutter",
-          "pc": 4309796744,
-          "symbol": "0x100b34000",
-          "offset": 3082120,
-          "location": "",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "12",
-          "binary": "libsystem_pthread.dylib",
-          "pc": 8267578484,
-          "symbol": "_pthread_start",
-          "offset": 288,
-          "location": "pthread.c:88",
-          "runtimeType": "ios"
-        },
-        {
-          "no": "13",
-          "binary": "libsystem_pthread.dylib",
-          "pc": 8267597944,
-          "symbol": "thread_start",
-          "offset": 8,
-          "location": "",
-          "runtimeType": "ios"
+      "engineBuild": {
+        "engineHash": "6ac856380fa4f66469552ce986edf59f65f7cd68",
+        "variant": {
+          "os": "ios",
+          "arch": "arm64",
+          "mode": "release"
         }
-      ],
-      "format": "native",
-      "androidMajorVersion": null
-    },
-    "engineBuild": {
-      "engineHash": "6ac856380fa4f66469552ce986edf59f65f7cd68",
-      "variant": {
-        "os": "ios",
-        "arch": "arm64",
-        "mode": "release"
-      }
-    },
-    "symbolized": "#00 00000001d0a3a7b0 libsystem_kernel.dylib __pthread_kill + 8\n#01 00000001ecc949c0 libsystem_pthread.dylib pthread_kill + 212 (pthread.c:158)\n#02 00000001ade88a38 libsystem_c.dylib abort + 120 (abort.c:11)\n#03 00000001b90c0be8 libc++abi.dylib abort_message + 128 (abort_message.cpp:7)\n#04 00000001b90b2cfc libc++abi.dylib demangling_terminate_handler() + 272 (cxa_default_handlers.cpp:6)\n#05 00000001b8fc69b0 libobjc.A.dylib _objc_terminate() + 140 (objc-exception.mm:70)\n#06 00000001b90c0074 libc++abi.dylib std::__terminate(void (*)()) + 16 (cxa_handlers.cpp:5)\n#07 00000001b90c2c18 libc++abi.dylib __cxa_rethrow + 144 (cxa_exception.cpp:61)\n#08 00000001b8fe65d0 libobjc.A.dylib objc_exception_rethrow + 40 (objc-exception.mm:60)\n#09 00000001a51c98bc CoreFoundation CFRunLoopRunSpecific + 808 (CFRunLoop.c:325)\n#10 0000000100e24f74 Flutter 0x100b34000 + 3084148\n                             fml::MessageLoopDarwin::Run()\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20\n#11 0000000100e24788 Flutter 0x100b34000 + 3082120\n                             fml::MessageLoopImpl::DoRun()\n                             flutter/fml/message_loop_impl.cc:96:3\n                             fml::MessageLoop::Run()\n                             flutter/fml/message_loop.cc:49:10\n                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const\n                             flutter/fml/thread.cc:35:10\n                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:3545:1\n                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:273:5\n                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:284:5\n#12 00000001ecc93c74 libsystem_pthread.dylib _pthread_start + 288 (pthread.c:88)\n#13 00000001ecc98878 libsystem_pthread.dylib thread_start + 8\n",
-    "notes": []
-  }
-]
+      },
+      "symbolized": "#00 00000001d0a3a7b0 libsystem_kernel.dylib __pthread_kill + 8\n#01 00000001ecc949c0 libsystem_pthread.dylib pthread_kill + 212 (pthread.c:158)\n#02 00000001ade88a38 libsystem_c.dylib abort + 120 (abort.c:11)\n#03 00000001b90c0be8 libc++abi.dylib abort_message + 128 (abort_message.cpp:7)\n#04 00000001b90b2cfc libc++abi.dylib demangling_terminate_handler() + 272 (cxa_default_handlers.cpp:6)\n#05 00000001b8fc69b0 libobjc.A.dylib _objc_terminate() + 140 (objc-exception.mm:70)\n#06 00000001b90c0074 libc++abi.dylib std::__terminate(void (*)()) + 16 (cxa_handlers.cpp:5)\n#07 00000001b90c2c18 libc++abi.dylib __cxa_rethrow + 144 (cxa_exception.cpp:61)\n#08 00000001b8fe65d0 libobjc.A.dylib objc_exception_rethrow + 40 (objc-exception.mm:60)\n#09 00000001a51c98bc CoreFoundation CFRunLoopRunSpecific + 808 (CFRunLoop.c:325)\n#10 0000000100e24f74 Flutter 0x100b34000 + 3084148\n                             fml::MessageLoopDarwin::Run()\n                             flutter/fml/platform/darwin/message_loop_darwin.mm:46:20\n#11 0000000100e24788 Flutter 0x100b34000 + 3082120\n                             fml::MessageLoopImpl::DoRun()\n                             flutter/fml/message_loop_impl.cc:96:3\n                             fml::MessageLoop::Run()\n                             flutter/fml/message_loop.cc:49:10\n                             fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0::operator()() const\n                             flutter/fml/thread.cc:35:10\n                             decltype(std::__1::forward<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fp)()) std::__1::__invoke<fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0&&)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/type_traits:3545:1\n                             void std::__1::__thread_execute<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>(std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0>&, std::__1::__tuple_indices<>)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:273:5\n                             void* std::__1::__thread_proxy<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct> >, fml::Thread::Thread(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)::$_0> >(void*)\n                             /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/thread:284:5\n#12 00000001ecc93c74 libsystem_pthread.dylib _pthread_start + 288 (pthread.c:88)\n#13 00000001ecc98878 libsystem_pthread.dylib thread_start + 8\n",
+      "notes": []
+    }
+  ],
+  "runtimeType": "ok"
+}

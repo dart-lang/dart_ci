@@ -130,6 +130,7 @@ enum SymbolizationNoteKind {
   noSymbolsAvailableOnIos,
   buildIdMismatch,
   loadBaseDetected,
+  exceptionWhileParsing,
 }
 
 const noteMessage = <SymbolizationNoteKind, String>{
@@ -148,27 +149,46 @@ const noteMessage = <SymbolizationNoteKind, String>{
   SymbolizationNoteKind.buildIdMismatch: 'Build-ID mismatch',
   SymbolizationNoteKind.loadBaseDetected:
       'Load address missing from the report, detected heuristically',
+  SymbolizationNoteKind.exceptionWhileParsing:
+      'Exception occured while parsing',
 };
 
-/// Result of symbolizing an engine crash.
 @freezed
 abstract class SymbolizationResult with _$SymbolizationResult {
   @JsonSerializable(explicitToJson: true)
-  factory SymbolizationResult({
+  factory SymbolizationResult.ok({
+    @required List<CrashSymbolizationResult> results,
+  }) = SymbolizationResultOk;
+
+  @JsonSerializable(explicitToJson: true)
+  factory SymbolizationResult.error({
+    @required SymbolizationNote error,
+  }) = SymbolizationResultError;
+
+  factory SymbolizationResult.fromJson(Map<String, dynamic> json) =>
+      _$SymbolizationResultFromJson(json);
+}
+
+/// Result of symbolizing an engine crash.
+@freezed
+abstract class CrashSymbolizationResult with _$CrashSymbolizationResult {
+  @JsonSerializable(explicitToJson: true)
+  factory CrashSymbolizationResult({
     @required Crash crash,
     @required @nullable EngineBuild engineBuild,
 
     /// Symbolization result - not null if symbolization succeeded.
     @required @nullable String symbolized,
     @Default([]) List<SymbolizationNote> notes,
-  }) = _SymbolizationResult;
+  }) = _CrashSymbolizationResult;
 
-  factory SymbolizationResult.fromJson(Map<String, dynamic> json) =>
-      _$SymbolizationResultFromJson(json);
+  factory CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =>
+      _$CrashSymbolizationResultFromJson(json);
 }
 
-extension WithNote on SymbolizationResult {
-  SymbolizationResult withNote(SymbolizationNoteKind kind, [String message]) {
+extension WithNote on CrashSymbolizationResult {
+  CrashSymbolizationResult withNote(SymbolizationNoteKind kind,
+      [String message]) {
     return copyWith(
       notes: [
         ...?notes,

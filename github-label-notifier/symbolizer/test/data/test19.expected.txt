@@ -1,49 +1,52 @@
-[
-  {
-    "crash": {
-      "engineVariant": {
-        "os": "android",
-        "arch": "arm",
-        "mode": "profile"
+{
+  "results": [
+    {
+      "crash": {
+        "engineVariant": {
+          "os": "android",
+          "arch": "arm",
+          "mode": "profile"
+        },
+        "frames": [
+          {
+            "no": "00",
+            "pc": 419384,
+            "binary": "/system/lib/libc.so",
+            "rest": " (ifree+219)",
+            "buildId": null,
+            "runtimeType": "android"
+          },
+          {
+            "no": "01",
+            "pc": 420327,
+            "binary": "/system/lib/libc.so",
+            "rest": " (je_free+74)",
+            "buildId": null,
+            "runtimeType": "android"
+          },
+          {
+            "no": "02",
+            "pc": 3800135,
+            "binary": "/data/app/com.example.macrobenchmarks-1/lib/arm/libflutter.so",
+            "rest": " (offset 0x508000)",
+            "buildId": null,
+            "runtimeType": "android"
+          }
+        ],
+        "format": "native",
+        "androidMajorVersion": 7
       },
-      "frames": [
-        {
-          "no": "00",
-          "pc": 419384,
-          "binary": "/system/lib/libc.so",
-          "rest": " (ifree+219)",
-          "buildId": null,
-          "runtimeType": "android"
-        },
-        {
-          "no": "01",
-          "pc": 420327,
-          "binary": "/system/lib/libc.so",
-          "rest": " (je_free+74)",
-          "buildId": null,
-          "runtimeType": "android"
-        },
-        {
-          "no": "02",
-          "pc": 3800135,
-          "binary": "/data/app/com.example.macrobenchmarks-1/lib/arm/libflutter.so",
-          "rest": " (offset 0x508000)",
-          "buildId": null,
-          "runtimeType": "android"
+      "engineBuild": {
+        "engineHash": "014da89eb01520ab7bbeba9971f852488ee80eaf",
+        "variant": {
+          "os": "android",
+          "arch": "arm",
+          "mode": "profile"
         }
-      ],
-      "format": "native",
-      "androidMajorVersion": 7
-    },
-    "engineBuild": {
-      "engineHash": "014da89eb01520ab7bbeba9971f852488ee80eaf",
-      "variant": {
-        "os": "android",
-        "arch": "arm",
-        "mode": "profile"
-      }
-    },
-    "symbolized": "#00 00066638 /system/lib/libc.so (ifree+219)\n#01 000669e7 /system/lib/libc.so (je_free+74)\n#02 0039fc47 <...>/lib/arm/libflutter.so (offset 0x508000)\n                                         dart::TimelineEventArguments::Free()\n                                         third_party/dart/runtime/vm/timeline.cc:386:3\n                                         dart::TimelineEvent::Init(dart::TimelineEvent::EventType, char const*)\n                                         third_party/dart/runtime/vm/timeline.cc:581:14\n",
-    "notes": []
-  }
-]
+      },
+      "symbolized": "#00 00066638 /system/lib/libc.so (ifree+219)\n#01 000669e7 /system/lib/libc.so (je_free+74)\n#02 0039fc47 <...>/lib/arm/libflutter.so (offset 0x508000)\n                                         dart::TimelineEventArguments::Free()\n                                         third_party/dart/runtime/vm/timeline.cc:386:3\n                                         dart::TimelineEvent::Init(dart::TimelineEvent::EventType, char const*)\n                                         third_party/dart/runtime/vm/timeline.cc:581:14\n",
+      "notes": []
+    }
+  ],
+  "runtimeType": "ok"
+}
