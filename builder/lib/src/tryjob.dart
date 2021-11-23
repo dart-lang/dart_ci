@@ -51,8 +51,8 @@ class ChangeCounter {
           'Only $maxReportedFailures new failures stored',
         if (unapprovedFailures > 0)
           '$unapprovedFailures unapproved failing tests found',
-        if (failures > 0) '$failures unapproved failing tests found',
-        if (passes > 0) '$passes unapproved failing tests found',
+        if (failures > 0) '$failures failing tests found',
+        if (passes > 0) '$passes passing tests found',
         if (newFlakes > 0) '$newFlakes new flaky tests found',
       ];
 }
@@ -87,21 +87,16 @@ class Tryjob {
     await GerritInfo(review, patchset, firestore, httpClient).update();
   }
 
-  bool isNotLandedResult(Map<String, dynamic> change) =>
-      !lastLandedResultByName.containsKey(change[fName]) ||
-      change[fResult] != lastLandedResultByName[change[fName]][fResult];
+  bool isNotLandedResult(Map<String, dynamic> change) {
+    return !lastLandedResultByName.containsKey(change[fName]) ||
+        change[fResult] !=
+            lastLandedResultByName[change[fName]][fResult].stringValue;
+  }
 
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
     builderName = results.first['builder_name'];
     buildNumber = int.parse(results.first['build_number']);
-
-    if (!await firestore.updateTryBuildInfo(
-        builderName, buildNumber, buildbucketID, review, patchset, success)) {
-      // This build's results have already been recorded.
-      log('build up-to-date, exiting');
-      return;
-    }
 
     baseResultsHash = results.first['previous_commit_hash'];
     final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
@@ -129,9 +124,8 @@ class Tryjob {
       success = false;
     }
     log('complete builder record');
-    await firestore.completeTryBuilderRecord(
-        builderName, review, patchset, success, counter.hasTruncatedChanges);
-
+    await firestore.recordTryBuild(builderName, buildNumber, buildbucketID,
+        review, patchset, success, counter.hasTruncatedChanges);
     final report = [
       'Processed ${results.length} results from $builderName build $buildNumber',
       'Tryjob on CL $review patchset $patchset',

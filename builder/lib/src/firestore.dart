@@ -74,6 +74,7 @@ class FirestoreService {
     if (responses.length == 1 && responses.single.document == null) {
       responses.length = 0;
     }
+    documentsFetched += responses.length;
     return responses;
   }
 
@@ -146,6 +147,7 @@ class FirestoreService {
       final document = Document()..fields = taggedMap(data);
       await firestore.projects.databases.documents
           .createDocument(document, documents, 'commits', documentId: id);
+      documentsWritten++;
       log("Added commit $id -> ${data['index']}");
     } on DetailedApiRequestError catch (e) {
       if (e.status != 409) {
@@ -157,6 +159,7 @@ class FirestoreService {
   }
 
   Future<void> updateConfiguration(String configuration, String builder) async {
+    documentsWritten++;
     final record = await getDocument('$documents/configurations/$configuration',
         throwOnNotFound: false);
     if (record == null) {
@@ -191,6 +194,7 @@ class FirestoreService {
       await firestore.projects.databases.documents.createDocument(
           newRecord, documents, 'builds',
           documentId: '$builder:$index');
+      documentsWritten++;
       return true;
     } else {
       final data = DataWrapper(record);
@@ -207,45 +211,31 @@ class FirestoreService {
   ///
   /// Returns `true` if and only if there is no completed record
   /// for this build.
-  Future<bool> updateTryBuildInfo(String builder, int buildNumber,
-      String buildbucketID, int review, int patchset, bool success) async {
-    final name = '$builder:$review:$patchset';
-    final record = await getDocument('$documents/try_builds/$name',
-        throwOnNotFound: false);
-    if (record == null) {
-      final newRecord = Document()
-        ..fields = taggedMap({
-          'builder': builder,
-          'build_number': buildNumber,
-          if (buildbucketID != null) 'buildbucket_id': buildbucketID,
-          'review': review,
-          'patchset': patchset,
-        });
-      log('creating try-build record for $builder $buildNumber $review $patchset:'
-          ' $name');
-      await firestore.projects.databases.documents
-          .createDocument(newRecord, documents, 'try_builds', documentId: name);
-      return true;
-    } else {
-      final data = DataWrapper(record);
-      final existingBuildNumber = data.getInt('build_number');
-      if (existingBuildNumber > buildNumber) {
-        throw 'Received chunk from previous build $buildNumber'
-            ' after chunk from a later build ($existingBuildNumber)';
-      }
-      if (existingBuildNumber < buildNumber) {
-        record.fields = taggedMap({
-          'builder': builder,
-          'build_number': buildNumber,
-          if (buildbucketID != null) 'buildbucket_id': buildbucketID,
-          'review': review,
-          'patchset': patchset,
-        });
-        await _executeWrite([Write()..update = record]);
-        return true;
-      }
-      return data.getBool('completed') != true;
-    }
+  Future<void> recordTryBuild(
+      String builder,
+      int buildNumber,
+      String buildbucketID,
+      int review,
+      int patchset,
+      bool success,
+      bool truncated) async {
+    final newRecord = Document()
+      ..fields = taggedMap({
+        'builder': builder,
+        'build_number': buildNumber,
+        if (buildbucketID != null) 'buildbucket_id': buildbucketID,
+        'review': review,
+        'patchset': patchset,
+        'success': success,
+        'completed': true,
+        if (truncated) 'truncated': true,
+      });
+    log('creating try-build record for '
+        '$builder $buildNumber $review $patchset');
+    await firestore.projects.databases.documents
+        .createDocument(newRecord, documents, 'try_builds');
+    documentsWritten++;
+    return true;
   }
 
   Future<String> findResult(
@@ -286,6 +276,7 @@ class FirestoreService {
     final createdDocument = await firestore.projects.databases.documents
         .createDocument(document, documents, 'results');
     log('created document ${createdDocument.name}');
+    documentsWritten++;
     return createdDocument;
   }
 
@@ -328,7 +319,7 @@ class FirestoreService {
               ..fieldPath = 'active_configurations'
               ..appendMissingElements = addConfiguration
         ];
-
+      documentsWritten++;
       return write;
     });
     return approved;
@@ -438,6 +429,7 @@ class FirestoreService {
             'configurations',
             'approved'
           ]);
+      documentsWritten++;
       return approved;
     } else {
       final document = responses.first.document;
@@ -544,7 +536,7 @@ class FirestoreService {
     if (debug) {
       log('WriteRequest: ${request.toJson()}');
     }
-    documentsWritten++;
+    documentsWritten += writes.length;
     return firestore.projects.databases.documents.batchWrite(request, database);
   }
 
@@ -570,6 +562,7 @@ class FirestoreService {
         documentId: '$patchset');
     log('Stored patchset: $documents/reviews/$review/$patchset\n'
         '${untagMap(document.fields)}');
+    documentsWritten++;
   }
 
   /// Returns true if a review record in the database has a landed_index field,
@@ -658,15 +651,7 @@ class FirestoreService {
     await _completeBuilderRecord(document, success);
   }
 
-  Future<void> completeTryBuilderRecord(String builder, int review,
-      int patchset, bool success, bool truncated) async {
-    final path = '$documents/try_builds/$builder:$review:$patchset';
-    final document = await getDocument(path);
-    await _completeBuilderRecord(document, success, truncated: truncated);
-  }
-
-  Future<void> _completeBuilderRecord(Document document, bool success,
-      {bool truncated = false}) async {
+  Future<void> _completeBuilderRecord(Document document, bool success) async {
     await retryCommit(() async {
       final data = DataWrapper(document);
       // TODO: Legacy support, remove if not needed anymore.
@@ -675,9 +660,6 @@ class FirestoreService {
       document.fields['success'] =
           taggedValue((data.getBool('success') ?? true) && success);
       document.fields['completed'] = taggedValue(true);
-      if (truncated) {
-        document.fields['truncated'] = taggedValue(true);
-      }
 
       final write = Write()
         ..update = document
@@ -687,7 +669,6 @@ class FirestoreService {
             'num_chunks',
             'success',
             'completed',
-            if (truncated) 'truncated',
           ])
         ..currentDocument = (Precondition()..updateTime = document.updateTime);
       return write;

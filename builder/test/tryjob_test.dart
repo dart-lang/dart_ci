@@ -2,65 +2,179 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:builder/src/commits_cache.dart';
 import 'package:builder/src/firestore.dart';
 import 'package:builder/src/tryjob.dart';
 import 'package:googleapis/firestore/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'fakes.dart';
-
 // These tests read and write data from the staging Firestore database.
-// They create a fake review, and fake try builds against that review.
-// They attempt to remove these records in the cleanup, even if tests fail.
+// They use existing commits and reviews, and add new results from
+// a new fake builder for new tests, where the builder and test names are unique
+// to this test code and the records for them are removed afterward.
+// The test cleanup function removes these records, even if tests fail.
 // Requires the environment variable GOOGLE_APPLICATION_CREDENTIALS
 // to point to a json key to a service account.
 // To run against the staging database, use a service account.
 // with write access to dart_ci_staging datastore.
 
-const fakeReview = 172;
-const buildBaseCommit = 69191;
-const buildBaseCommitHash = 'b681bfd8d275b84b51f37919f0edc0d8563a870f';
-const buildBuildbucketId = 'a fake buildbucket ID';
-const ciResultsCommitIndex = 69188;
-const ciResultsCommitHash = '7b6adc6083c9918c826f5b82d25fdf6da9d90499';
-const reviewForCommit69190 = 138293;
-const patchsetForCommit69190 = 2;
-const tryBuildForCommit69190 = '99998';
-const reviewForCommit69191 = 138500;
-const patchsetForCommit69191 = 7;
-const tryBuildForCommit69191 = '99999';
-const earlierTryBuildsBaseCommit = '8ae984c54ab36a05422af6f250dbaa7da70fc461';
-const earlierTryBuildsResultsCommit = earlierTryBuildsBaseCommit;
-
-const fakeSuite = 'fake_test_suite';
-const fakeTestName = 'subdir/a_dart_test';
-const otherFakeTestName = 'another_dart_test';
-const fakeTest = '$fakeSuite/$fakeTestName';
-const otherFakeTest = '$fakeSuite/$otherFakeTestName';
-const fakeConfiguration = 'a configuration';
-const otherConfiguration = 'another configuration';
-const fakeBuilderName = 'fake_builder-try';
-
-Set<String> fakeBuilders = {fakeBuilderName};
-Set<String> fakeTests = {fakeTest, otherFakeTest};
-
-void registerChangeForDeletion(Map<String, dynamic> change) {
-  fakeBuilders.add(change['builder_name']);
-  fakeTests.add(change['name']);
-}
-
 FirestoreService firestore;
 http.Client client;
 CommitsCache commitsCache;
+// The real commits and reviews we will test on, fetched from Firestore
+const testCommitsStart = 80836;
+Map<String, String> data;
+
+final buildersToRemove = <String>{};
+final testsToRemove = <String>{};
+
+void registerChangeForDeletion(Map<String, dynamic> change) {
+  buildersToRemove.add(change['builder_name']);
+  testsToRemove.add(change['name']);
+}
+
+Future<void> removeTryBuildersAndResults() async {
+  Future<void> deleteDocuments(RunQueryResponse response) async {
+    for (final document in response.map((r) => r.document)) {
+      await firestore.deleteDocument(document.name);
+    }
+  }
+
+  for (final test in testsToRemove) {
+    await deleteDocuments(await firestore.query(
+        from: 'try_results', where: fieldEquals('name', test)));
+  }
+  for (final builder in buildersToRemove) {
+    await deleteDocuments(await firestore.query(
+        from: 'try_builds', where: fieldEquals('builder', builder)));
+  }
+}
+
+Future<Map<String, String>> loadTestCommits(int startIndex) async {
+  // Get review data for the last two landed CLs before or at startIndex.
+  final reviews = await firestore.query(
+      from: 'reviews',
+      orderBy: orderBy('landed_index', false),
+      where: fieldLessThanOrEqual('landed_index', startIndex),
+      limit: 2);
+  final firstReview = reviews.first.document;
+  final String index = firstReview.fields['landed_index'].integerValue;
+  final String review = firstReview.name.split('/').last;
+  final secondReview = reviews.last.document;
+  final String landedIndex = secondReview.fields['landed_index'].integerValue;
+  final String landedReview = secondReview.name.split('/').last;
+  // expect(int.parse(index), greaterThan(int.parse(landedIndex)));
+  final String baseIndex = (int.parse(landedIndex) - 1).toString();
+
+  final patchsets = await firestore.query(
+    from: 'patchsets',
+    parent: 'reviews/$review',
+    orderBy: orderBy('number', true),
+  );
+  final patchset = patchsets.last.document.fields['number'].integerValue;
+  final previousPatchset = '1';
+  final landedPatchsets = await firestore.query(
+    from: 'patchsets',
+    parent: 'reviews/$landedReview',
+    orderBy: orderBy('number', true),
+  );
+  final landedPatchset =
+      landedPatchsets.last.document.fields['number'].integerValue;
+
+  // Get commit hashes for the landed reviews, and for a commit before them
+  var commits = {
+    for (final index in [index, landedIndex, baseIndex])
+      index: (await firestore.query(
+              from: 'commits',
+              where: fieldEquals('index', int.parse(index)),
+              limit: 1))
+          .first
+          .document
+          .name
+          .split('/')
+          .last
+  };
+  return {
+    'index': index,
+    'commit': commits[index],
+    'review': review,
+    'patchset': patchset,
+    'patchsetRef': 'refs/changes/$review/$patchset',
+    'previousPatchset': previousPatchset,
+    'landedIndex': landedIndex,
+    'landedCommit': commits[landedIndex],
+    'landedReview': landedReview,
+    'landedPatchset': landedPatchset,
+    'landedPatchsetRef': 'refs/changes/$landedReview/$landedPatchset',
+    'baseIndex': baseIndex,
+    'baseCommit': commits[baseIndex]
+  };
+}
+
+Tryjob makeTryjob(String name) => Tryjob(data['patchsetRef'], 'bbID_$name',
+    data['landedCommit'], commitsCache, firestore, client);
+
+Tryjob makeLandedTryjob(String name) => Tryjob(data['landedPatchsetRef'],
+    'bbID_$name', data['baseCommit'], commitsCache, firestore, client);
+
+Map<String, dynamic> makeChange(String name, String result,
+    {bool flaky = false}) {
+  final results = result.split('/');
+  final previous = results[0];
+  final current = results[1];
+  final expected = results[2];
+  final change = {
+    'name': '${name}_test',
+    'configuration': '${name}_configuration',
+    'suite': 'unused_field',
+    'test_name': 'unused_field',
+    'time_ms': 2384,
+    'result': current,
+    'previous_result': previous,
+    'expected': expected,
+    'matches': current == expected,
+    'changed': current != previous,
+    'commit_hash': data['patchsetRef'],
+    'commit_time': 1583906489,
+    'build_number': '99997',
+    'builder_name': 'builder_$name',
+    'flaky': flaky,
+    'previous_flaky': false,
+    'previous_commit_hash': data['baseCommit'],
+    'previous_commit_time': 1583906489,
+    'bot_name': 'fake_bot_name',
+    'previous_build_number': '306',
+  };
+  registerChangeForDeletion(change);
+  return change;
+}
+
+Map<String, dynamic> makeLandedChange(String name, String result) {
+  return makeChange(name, result)..['commit_hash'] = data['landedPatchsetRef'];
+}
+
+Future<void> checkTryBuild(String name, {bool success, bool truncated}) async {
+  final buildbucketId = 'bbID_$name';
+  final buildDocuments = await firestore.query(
+      from: 'try_builds', where: fieldEquals('buildbucket_id', buildbucketId));
+  expect(buildDocuments.length, 1);
+  expect(
+      buildDocuments.single.document.fields['success'].booleanValue, success);
+  if (truncated != null) {
+    expect(buildDocuments.single.document.fields['truncated'].booleanValue,
+        truncated);
+  } else {
+    expect(buildDocuments.single.document.fields.containsKey('truncated'),
+        isFalse);
+  }
+}
 
 void main() async {
   final baseClient = http.Client();
-  final mockClient = HttpClientMock();
-  addFakeReplies(mockClient);
   client = await clientViaApplicationDefaultCredentials(
       scopes: ['https://www.googleapis.com/auth/cloud-platform'],
       baseClient: baseClient);
@@ -69,311 +183,111 @@ void main() async {
   if (!await firestore.isStaging()) {
     throw (TestFailure('Error: test is being run on production'));
   }
-  commitsCache = CommitsCache(firestore, mockClient);
-  setUpAll(addFakeResultsToLandedReviews);
+  commitsCache = CommitsCache(firestore, client);
+  data = await loadTestCommits(testCommitsStart);
+
   tearDownAll(() async {
-    await deleteFakeReviewAndResults();
+    await removeTryBuildersAndResults();
     baseClient.close();
   });
 
-  test('create fake review', () async {
-    registerChangeForDeletion(unchangedChange);
-    final tryjob = Tryjob('refs/changes/$fakeReview/2', buildBuildbucketId,
-        buildBaseCommitHash, commitsCache, firestore, mockClient);
+  test('unchanged', () async {
+    final unchangedChange = makeChange('unchanged', 'Pass/Pass/Pass');
+    final tryjob = makeTryjob('unchanged');
     await tryjob.process([unchangedChange]);
-    expect(tryjob.success, true);
+    await checkTryBuild('unchanged', success: true);
+    expect(tryjob.counter.changes, 0);
   });
 
-  test('failure coming from a landed CL not in base', () async {
-    registerChangeForDeletion(changeMatchingLandedCL);
-    final tryjob = Tryjob('refs/changes/$fakeReview/2', buildBuildbucketId,
-        buildBaseCommitHash, commitsCache, firestore, mockClient);
-    await tryjob.process([changeMatchingLandedCL]);
-    expect(tryjob.success, true);
-  });
-
-  // TODO(karlklose): These tests do not apply to the new model of processing a
-  // build in one step.
-
-  // test('process result on different configuration', () async {
-  //   final changeOnDifferentConfiguration = Map<String, dynamic>.from(baseChange)
-  //     ..['configuration'] = otherConfiguration;
-
-  //   registerChangeForDeletion(changeOnDifferentConfiguration);
-  //   final tryjob = Tryjob('refs/changes/$fakeReview/2', buildBuildbucketId,
-  //       buildBaseCommitHash, commitsCache, firestore, mockClient);
-  //   await tryjob.process([changeOnDifferentConfiguration]);
-  //   expect(tryjob.success, false);
-  // });
-
-  // test('process result where different result landed last', () async {
-  //   final otherNameChange = Map<String, dynamic>.from(baseChange)
-  //     ..['name'] = otherFakeTest;
-  //   registerChangeForDeletion(otherNameChange);
-  //   final tryjob = Tryjob('refs/changes/$fakeReview/2', buildBuildbucketId,
-  //       buildBaseCommitHash, commitsCache, firestore, mockClient);
-  //   await tryjob.process([otherNameChange]);
-  //   expect(tryjob.success, false);
-  // });
-
-  test('test becomes flaky', () async {
-    final flakyTest = <String, dynamic>{
-      'name': 'flaky_test',
-      'result': 'RuntimeError',
-      'flaky': true,
-      'matches': false,
-      'changed': true,
-      'build_number': '99995',
-      'builder_name': 'flaky_test_builder-try',
+  test('failure', () async {
+    final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
+    final tryjob = makeTryjob('failure');
+    await tryjob.process([failingChange]);
+    await checkTryBuild('failure', success: false);
+    // Add a second failing configuration for the test.
+    final otherConfigurationChange = {
+      ...failingChange,
+      'configuration': 'other_configuration',
+      'builder': 'other_builder',
     };
+    registerChangeForDeletion(otherConfigurationChange);
+    final otherTryjob = makeTryjob('other_configuration');
+    await otherTryjob.process([otherConfigurationChange]);
+    await checkTryBuild('other_configuration', success: false);
+    final result = await firestore.query(
+        from: 'try_results', where: fieldEquals('name', 'failure_test'));
+    expect(result.length, 1);
+    expect(
+        result
+            .single.document.fields['configurations'].arrayValue.values.length,
+        2);
+  });
 
-    final flakyChange = Map<String, dynamic>.from(baseChange)
-      ..addAll(flakyTest);
-    final flakyTestBuildbucketId = 'flaky_buildbucket_ID';
-    registerChangeForDeletion(flakyChange);
-    final tryjob = Tryjob('refs/changes/$fakeReview/2', flakyTestBuildbucketId,
-        buildBaseCommitHash, commitsCache, firestore, mockClient);
+  test('landedFailure', () async {
+    final landedChange =
+        makeLandedChange('landedFailure', 'Pass/RuntimeError/Pass');
+    final landedTryjob = makeLandedTryjob('landedFailure');
+    await landedTryjob.process([landedChange]);
+    // This change has a base revision containing the landed failure, but
+    // CI results that don't contain it. The failure is seen in the landed
+    // try results, and ignored.
+    final failingChange = makeChange('landedFailure', 'Pass/RuntimeError/Pass');
+    final tryjob = makeTryjob('landedFailure2');
+    await tryjob.process([failingChange]);
+    await checkTryBuild('landedFailure2', success: true);
+  });
+
+  test('flaky', () async {
+    final flakyChange =
+        makeChange('flaky', 'Pass/RuntimeError/Pass', flaky: true);
+    final tryjob = makeTryjob('flaky');
     await tryjob.process([flakyChange]);
+    await checkTryBuild('flaky', success: true);
     expect(tryjob.success, true);
     expect(tryjob.counter.newFlakes, 1);
     expect(tryjob.counter.unapprovedFailures, 0);
   });
 
-  test('new failure', () async {
-    final failingTest = <String, dynamic>{
-      'name': 'failing_test',
-      'result': 'RuntimeError',
-      'matches': false,
-      'changed': true,
-      'build_number': '99994',
-      'builder_name': 'failing_test_builder-try',
-    };
-
-    final failingChange = Map<String, dynamic>.from(baseChange)
-      ..addAll(failingTest);
-    final failingTestBuildbucketId = 'failing_buildbucket_ID';
+  test('truncatedPass', () async {
+    final passingChange = makeChange('truncatedPass', 'RuntimeError/Pass/Pass');
+    final tryjob = makeTryjob('truncatedPass');
+    final failingChange = makeChange('truncatedPass', 'Pass/RuntimeError/Pass')
+      ..['name'] = 'truncated_pass_2_test';
     registerChangeForDeletion(failingChange);
-    final tryjob = Tryjob(
-        'refs/changes/$fakeReview/2',
-        failingTestBuildbucketId,
-        buildBaseCommitHash,
-        commitsCache,
-        firestore,
-        mockClient);
-    await tryjob.process([failingChange]);
-    expect(tryjob.success, false);
-    expect(tryjob.counter.newFlakes, 0);
+    tryjob.counter.passes = ChangeCounter.maxReportedSuccesses;
+    await tryjob.process([passingChange, failingChange]);
+    await checkTryBuild('truncatedPass', success: false, truncated: true);
+    expect(tryjob.counter.passes, ChangeCounter.maxReportedSuccesses + 1);
     expect(tryjob.counter.unapprovedFailures, 1);
-  });
-}
-
-void addFakeReplies(HttpClientMock client) {
-  when(client.get(any))
-      .thenAnswer((_) => Future(() => ResponseFake(fakeReviewGerritLog)));
-}
-
-Future<void> addFakeResultsToLandedReviews() async {
-  var tryjob = Tryjob(matchingLandedChange['commit_hash'], buildBuildbucketId,
-      earlierTryBuildsBaseCommit, commitsCache, firestore, client);
-  await tryjob.process([matchingLandedChange, overriddenMatchingLandedChange]);
-  expect(tryjob.success, false);
-  tryjob = Tryjob(
-      overridingUnmatchingLandedChange['commit_hash'],
-      buildBuildbucketId,
-      earlierTryBuildsBaseCommit,
-      commitsCache,
-      firestore,
-      client);
-  await tryjob.process([overridingUnmatchingLandedChange]);
-  expect(tryjob.success, false);
-}
-
-Future<void> deleteFakeReviewAndResults() async {
-  Future<void> deleteDocuments(RunQueryResponse response) async {
-    for (final document in response.map((r) => r.document)) {
-      await firestore.deleteDocument(document.name);
-    }
-  }
-
-  for (final test in fakeTests) {
-    await deleteDocuments(await firestore.query(
-        from: 'try_results', where: fieldEquals('name', test)));
-  }
-  for (final builder in fakeBuilders) {
-    await deleteDocuments(await firestore.query(
-        from: 'try_builds', where: fieldEquals('builder', builder)));
-  }
-
-  final patchsets =
-      await firestore.query(from: 'patchsets', parent: 'reviews/$fakeReview/');
-  for (final doc in patchsets) {
-    if (doc.document != null) {
-      await firestore.deleteDocument(doc.document.name);
-    }
-  }
-
-  await firestore.deleteDocument(firestore.documents + '/reviews/$fakeReview');
-}
-
-Map<String, dynamic> baseChange = {
-  'name': fakeTest,
-  'configuration': fakeConfiguration,
-  'suite': fakeSuite,
-  'test_name': fakeTestName,
-  'time_ms': 2384,
-  'result': 'RuntimeError',
-  'previous_result': 'Pass',
-  'expected': 'Pass',
-  'matches': false,
-  'changed': true,
-  'commit_hash': 'refs/changes/$fakeReview/2',
-  'commit_time': 1583906489,
-  'build_number': '99997',
-  'builder_name': fakeBuilderName,
-  'flaky': false,
-  'previous_flaky': false,
-  'previous_commit_hash': ciResultsCommitHash,
-  'previous_commit_time': 1583906489,
-  'bot_name': 'luci-dart-try-xenial-70-8fkh',
-  'previous_build_number': '306',
-};
-
-Map<String, dynamic> changeMatchingLandedCL = Map.from(baseChange);
-
-Map<String, dynamic> unchangedChange = Map.from(baseChange)
-  ..addAll({
-    'name': otherFakeTest,
-    'test_name': otherFakeTestName,
-    'result': 'Pass',
-    'matches': true,
-    'changed': false,
-    'configuration': otherConfiguration,
-    'build_number': '99997'
+    expect(tryjob.counter.failures, 1);
+    expect(tryjob.counter.hasTooManyPassingChanges, isTrue);
+    expect(tryjob.counter.hasTooManyFailingChanges, isFalse);
+    expect(tryjob.counter.hasTruncatedChanges, isTrue);
+    final existingResult = await firestore.query(
+        from: 'try_results',
+        where: fieldEquals('name', 'truncated_pass_2_test'));
+    expect(existingResult.length, 1);
+    final truncatedResult = await firestore.query(
+        from: 'try_results', where: fieldEquals('name', 'truncatedPass_test'));
+    expect(truncatedResult, isEmpty);
   });
 
-Map<String, dynamic> matchingLandedChange = Map.from(baseChange)
-  ..addAll({
-    'commit_hash': 'refs/changes/$reviewForCommit69190/$patchsetForCommit69190',
-    'build_number': tryBuildForCommit69190,
-    'previous_commit_hash': earlierTryBuildsResultsCommit,
+  test('truncated', () async {
+    final failingChange = makeChange('truncated', 'Pass/RuntimeError/Pass');
+    final tryjob = makeTryjob('truncated');
+    final truncatedChange = {...failingChange, 'name': 'truncated_2_test'};
+    registerChangeForDeletion(truncatedChange);
+    tryjob.counter.failures = ChangeCounter.maxReportedFailures - 1;
+    await tryjob.process([failingChange, truncatedChange]);
+    await checkTryBuild('truncated', success: false, truncated: true);
+    expect(tryjob.counter.failures, ChangeCounter.maxReportedFailures + 1);
+    expect(tryjob.counter.hasTooManyFailingChanges, isTrue);
+    expect(tryjob.counter.hasTruncatedChanges, isTrue);
+    final existingResult = await firestore.query(
+        from: 'try_results', where: fieldEquals('name', 'truncated_test'));
+    expect(existingResult.length, 1);
+    final truncatedResult = await firestore.query(
+        from: 'try_results', where: fieldEquals('name', 'truncated_2_test'));
+    expect(truncatedResult, isEmpty);
   });
-
-Map<String, dynamic> overriddenMatchingLandedChange =
-    Map.from(matchingLandedChange)
-      ..addAll({
-        'name': otherFakeTest,
-        'test_name': otherFakeTestName,
-      });
-
-Map<String, dynamic> overridingUnmatchingLandedChange =
-    Map.from(overriddenMatchingLandedChange)
-      ..addAll({
-        'commit_hash':
-            'refs/changes/$reviewForCommit69191/$patchsetForCommit69191',
-        'result': 'CompileTimeError',
-        'build_number': tryBuildForCommit69191,
-      });
-
-String fakeReviewGerritLog = '''
-)]}'
-{
-  "id": "sdk~master~Ie212fae88bc1977e34e4d791c644b77783a8deb1",
-  "project": "sdk",
-  "branch": "master",
-  "hashtags": [],
-  "change_id": "Ie212fae88bc1977e34e4d791c644b77783a8deb1",
-  "subject": "A fake review",
-  "status": "MERGED",
-  "created": "2020-03-17 12:17:05.000000000",
-  "updated": "2020-03-17 12:17:25.000000000",
-  "submitted": "2020-03-17 12:17:25.000000000",
-  "submitter": {
-    "_account_id": 5260,
-    "name": "commit-bot@chromium.org",
-    "email": "commit-bot@chromium.org"
-  },
-  "insertions": 61,
-  "deletions": 155,
-  "total_comment_count": 0,
-  "unresolved_comment_count": 0,
-  "has_review_started": true,
-  "submission_id": "$fakeReview",
-  "_number": $fakeReview,
-  "owner": {
-  },
-  "current_revision": "82f3f81fc82d06c575b0137ddbe71408826d8b46",
-  "revisions": {
-    "82f3f81fc82d06c575b0137ddbe71408826d8b46": {
-      "kind": "REWORK",
-      "_number": 2,
-      "created": "2020-02-17 12:17:25.000000000",
-      "uploader": {
-        "_account_id": 5260,
-        "name": "commit-bot@chromium.org",
-        "email": "commit-bot@chromium.org"
-      },
-      "ref": "refs/changes/23/$fakeReview/2",
-      "fetch": {
-        "rpc": {
-          "url": "rpc://dart/sdk",
-          "ref": "refs/changes/23/$fakeReview/2"
-        },
-        "http": {
-          "url": "https://dart.googlesource.com/sdk",
-          "ref": "refs/changes/23/$fakeReview/2"
-        },
-        "sso": {
-          "url": "sso://dart/sdk",
-          "ref": "refs/changes/23/$fakeReview/2"
-        }
-      },
-      "commit": {
-        "parents": [
-          {
-            "commit": "d2d00ff357bd64a002697b3c96c92a0fec83328c",
-            "subject": "[cfe] Allow unassigned late local variables"
-          }
-        ],
-        "author": {
-          "name": "gerrit_user",
-          "email": "gerrit_user@example.com",
-          "date": "2020-02-17 12:17:25.000000000",
-          "tz": 0
-        },
-        "committer": {
-          "name": "commit-bot@chromium.org",
-          "email": "commit-bot@chromium.org",
-          "date": "2020-02-17 12:17:25.000000000",
-          "tz": 0
-        },
-        "subject": "A fake review",
-        "message": "A fake review\\n\\nReviewed-by: XXX\\nCommit-Queue: XXXXXX\\n"
-      },
-      "description": "Rebase"
-    },
-    "8bae95c4001a0815e89ebc4c89dc5ad42337a01b": {
-      "kind": "REWORK",
-      "_number": 1,
-      "created": "2020-02-17 12:17:05.000000000",
-      "uploader": {
-      },
-      "ref": "refs/changes/23/$fakeReview/1",
-      "fetch": {
-        "rpc": {
-          "url": "rpc://dart/sdk",
-          "ref": "refs/changes/23/$fakeReview/1"
-        },
-        "http": {
-          "url": "https://dart.googlesource.com/sdk",
-          "ref": "refs/changes/23/$fakeReview/1"
-        },
-        "sso": {
-          "url": "sso://dart/sdk",
-          "ref": "refs/changes/23/$fakeReview/1"
-        }
-      }
-    }
-  },
-  "requirements": []
 }
-''';
