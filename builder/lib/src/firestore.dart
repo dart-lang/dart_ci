@@ -658,14 +658,15 @@ class FirestoreService {
     await _completeBuilderRecord(document, success);
   }
 
-  Future<void> completeTryBuilderRecord(
-      String builder, int review, int patchset, bool success) async {
+  Future<void> completeTryBuilderRecord(String builder, int review,
+      int patchset, bool success, bool truncated) async {
     final path = '$documents/try_builds/$builder:$review:$patchset';
     final document = await getDocument(path);
-    await _completeBuilderRecord(document, success);
+    await _completeBuilderRecord(document, success, truncated: truncated);
   }
 
-  Future<void> _completeBuilderRecord(Document document, bool success) async {
+  Future<void> _completeBuilderRecord(Document document, bool success,
+      {bool truncated = false}) async {
     await retryCommit(() async {
       final data = DataWrapper(document);
       // TODO: Legacy support, remove if not needed anymore.
@@ -674,6 +675,9 @@ class FirestoreService {
       document.fields['success'] =
           taggedValue((data.getBool('success') ?? true) && success);
       document.fields['completed'] = taggedValue(true);
+      if (truncated) {
+        document.fields['truncated'] = taggedValue(true);
+      }
 
       final write = Write()
         ..update = document
@@ -682,7 +686,8 @@ class FirestoreService {
             'processed_chunks',
             'num_chunks',
             'success',
-            'completed'
+            'completed',
+            if (truncated) 'truncated',
           ])
         ..currentDocument = (Precondition()..updateTime = document.updateTime);
       return write;

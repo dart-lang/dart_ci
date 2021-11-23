@@ -69,10 +69,6 @@ void main() async {
   if (!await firestore.isStaging()) {
     throw (TestFailure('Error: test is being run on production'));
   }
-
-  if (!await firestore.isStaging()) {
-    throw 'Test cannot be run on production database';
-  }
   commitsCache = CommitsCache(firestore, mockClient);
   setUpAll(addFakeResultsToLandedReviews);
   tearDownAll(() async {
@@ -139,8 +135,8 @@ void main() async {
         buildBaseCommitHash, commitsCache, firestore, mockClient);
     await tryjob.process([flakyChange]);
     expect(tryjob.success, true);
-    expect(tryjob.countNewFlakes, 1);
-    expect(tryjob.countUnapproved, 0);
+    expect(tryjob.counter.newFlakes, 1);
+    expect(tryjob.counter.unapprovedFailures, 0);
   });
 
   test('new failure', () async {
@@ -166,8 +162,8 @@ void main() async {
         mockClient);
     await tryjob.process([failingChange]);
     expect(tryjob.success, false);
-    expect(tryjob.countNewFlakes, 0);
-    expect(tryjob.countUnapproved, 1);
+    expect(tryjob.counter.newFlakes, 0);
+    expect(tryjob.counter.unapprovedFailures, 1);
   });
 }
 

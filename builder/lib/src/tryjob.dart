@@ -12,11 +12,57 @@ import 'firestore.dart';
 import 'gerrit_change.dart';
 import 'result.dart';
 
+class ChangeCounter {
+  static const maxReportedSuccesses = 1000;
+  static const maxReportedFailures = 1000;
+
+  int changes = 0;
+  int passes = 0;
+  int failures = 0;
+  int unapprovedFailures = 0;
+  int newFlakes = 0;
+  bool hasTruncatedChanges = false;
+
+  bool get hasTooManyFlakes => newFlakes >= 10;
+  bool get hasTooManyPassingChanges => passes > maxReportedSuccesses;
+  bool get hasTooManyFailingChanges => failures > maxReportedFailures;
+
+  void count(Map<String, dynamic> change) {
+    ++changes;
+    change[fMatches] ? ++passes : ++failures;
+    if (change[fFlaky] && !change[fPreviousFlaky]) ++newFlakes;
+  }
+
+  bool isNotReported(Map<String, dynamic> change) {
+    if (change[fMatches] && hasTooManyPassingChanges ||
+        !change[fMatches] && hasTooManyFailingChanges) {
+      hasTruncatedChanges = true;
+      return true;
+    }
+    return false;
+  }
+
+  List<String> report() => [
+        if (changes > 0) 'Stored $changes changes',
+        if (hasTruncatedChanges) 'Did not store all results. Truncating.',
+        if (hasTooManyPassingChanges)
+          'Only $maxReportedSuccesses new passes stored',
+        if (hasTooManyFailingChanges)
+          'Only $maxReportedFailures new failures stored',
+        if (unapprovedFailures > 0)
+          '$unapprovedFailures unapproved failing tests found',
+        if (failures > 0) '$failures unapproved failing tests found',
+        if (passes > 0) '$passes unapproved failing tests found',
+        if (newFlakes > 0) '$newFlakes new flaky tests found',
+      ];
+}
+
 class Tryjob {
   static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   final http.BaseClient httpClient;
   final FirestoreService firestore;
   final CommitsCache commits;
+  final counter = ChangeCounter();
   String builderName;
   String baseRevision;
   String baseResultsHash;
@@ -27,9 +73,6 @@ class Tryjob {
   List<Map<String, Value>> landedResults;
   Map<String, Map<String, Value>> lastLandedResultByName = {};
   final String buildbucketID;
-  int countChanges = 0;
-  int countUnapproved = 0;
-  int countNewFlakes = 0;
 
   Tryjob(String changeRef, this.buildbucketID, this.baseRevision, this.commits,
       this.firestore, this.httpClient) {
@@ -82,17 +125,18 @@ class Tryjob {
           .drain();
     }
 
+    if (counter.hasTooManyFlakes) {
+      success = false;
+    }
     log('complete builder record');
     await firestore.completeTryBuilderRecord(
-        builderName, review, patchset, success);
+        builderName, review, patchset, success, counter.hasTruncatedChanges);
 
     final report = [
       'Processed ${results.length} results from $builderName build $buildNumber',
       'Tryjob on CL $review patchset $patchset',
-      if (countChanges > 0) 'Stored $countChanges changes',
       if (!success) 'Found unapproved new failures',
-      if (countUnapproved > 0) '$countUnapproved unapproved tests found',
-      if (countNewFlakes > 0) '$countNewFlakes new flaky tests found',
+      ...counter.report(),
       '${firestore.documentsFetched} documents fetched',
       '${firestore.documentsWritten} documents written',
     ];
@@ -100,17 +144,13 @@ class Tryjob {
   }
 
   Future<void> storeChange(Map<String, dynamic> change) async {
-    countChanges++;
     transformChange(change);
+    counter.count(change);
+    if (counter.isNotReported(change)) return;
     final approved = await firestore.storeTryChange(change, review, patchset);
     if (!approved && isFailure(change)) {
-      countUnapproved++;
+      counter.unapprovedFailures++;
       success = false;
-    }
-    if (change[fFlaky] && !change[fPreviousFlaky]) {
-      if (++countNewFlakes >= 10) {
-        success = false;
-      }
     }
   }
 
