@@ -551,16 +551,15 @@ class FirestoreService {
   Future<void> storePatchset(String review, int patchset, String kind,
       String description, int patchsetGroup, int number) async {
     final document = Document()
+      ..name = '$documents/reviews/$review/patchsets/$patchset'
       ..fields = taggedMap({
         'kind': kind,
         'description': description,
         'patchset_group': patchsetGroup,
         'number': number
       });
-    await firestore.projects.databases.documents.createDocument(
-        document, '$documents/reviews/$review', 'patchsets',
-        documentId: '$patchset');
-    log('Stored patchset: $documents/reviews/$review/$patchset\n'
+    await _executeWrite([Write()..update = document]);
+    log('Stored patchset: $documents/reviews/$review/patchsets/$patchset\n'
         '${untagMap(document.fields)}');
     documentsWritten++;
   }

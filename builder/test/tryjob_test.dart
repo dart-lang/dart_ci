@@ -290,4 +290,35 @@ void main() async {
         from: 'try_results', where: fieldEquals('name', 'truncated_2_test'));
     expect(truncatedResult, isEmpty);
   });
+
+  test('patchsets', () async {
+    final document = await firestore.getDocument(
+        '${firestore.documents}/reviews/${data['review']}/patchsets/${data['patchset']}');
+    final fields = untagMap(document.fields);
+    expect(fields['number'].toString(), data['patchset']);
+    await firestore.storePatchset(
+        data['review'],
+        fields['number'],
+        fields['kind'],
+        fields['description'],
+        fields['patchset_group'],
+        fields['number']);
+    final document1 = await firestore.getDocument(document.name);
+    expect(untagMap(document1.fields), equals(fields));
+    fields['number'] += 1;
+    fields['description'] = 'test description';
+    await firestore.storePatchset(
+        data['review'],
+        fields['number'],
+        fields['kind'],
+        fields['description'],
+        fields['patchset_group'],
+        fields['number']);
+    final name =
+        '${firestore.documents}/reviews/${data['review']}/patchsets/${fields['number']}';
+    final document2 = await firestore.getDocument(name);
+    final fields2 = untagMap(document2.fields);
+    expect(fields2, equals(fields));
+    await firestore.deleteDocument(name);
+  });
 }
