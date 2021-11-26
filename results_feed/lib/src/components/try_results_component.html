@@ -4,6 +4,9 @@
        target="_blank">{{reviewInfo.title}}</a>
   </h2>
   <h2 *ngIf="waitingForData">Fetching results&hellip;</h2>
+  <h2 *ngIf="hasTruncatedResults" style="color:red">
+    Tryjob results are truncated because there are more than
+    1000 new failures or passes.</h2>
   <h2 *ngIf="noChanges">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"

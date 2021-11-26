@@ -56,6 +56,7 @@ class TryResultsComponent implements OnActivate {
   Map<String, String> builders;
   final IntRange emptyRange = IntRange(1, 0);
   Filter filter = Filter.defaultFilter.copy(showLatestFailures: false);
+  bool hasTruncatedResults = false;
   bool updating = false;
   bool updatePending = false;
   bool _approving = false;
@@ -72,6 +73,14 @@ class TryResultsComponent implements OnActivate {
       changeGroup.changes.flat.any((change) => change.failed);
 
   bool get approving => _approving;
+
+  bool patchsetHasTruncatedResults(int patchset) {
+    if (reviewInfo == null) return false;
+    final patchsetGroup = reviewInfo.patchsets[patchset - 1].patchsetGroup;
+    return reviewInfo.patchsets.any((patchset) =>
+        patchset.patchsetGroup == patchsetGroup &&
+        builds[patchset.number].values.any((tryBuild) => tryBuild.truncated));
+  }
 
   set approving(bool approve) {
     if (approve) {
@@ -120,12 +129,6 @@ class TryResultsComponent implements OnActivate {
     if (review == null) return;
     if (reviewInfo == null || review != reviewInfo.review) {
       reviewInfo = await _tryDataService.fetchReviewInfo(review);
-    }
-    if (review != cachedReview || patchset != cachedPatchset) {
-      changeGroup = waitingForDataChangeGroup;
-      comments = [];
-      changes = await _tryDataService.changes(reviewInfo, patchset);
-      comments = await _tryDataService.comments(reviewInfo.review);
       builds = {
         for (final patchset in reviewInfo.patchsets) patchset.number: {}
       };
@@ -133,7 +136,14 @@ class TryResultsComponent implements OnActivate {
         builds[build.patchset][build.builder] = build;
       }
       builders = await _tryDataService.builders();
+    }
+    if (review != cachedReview || patchset != cachedPatchset) {
+      changeGroup = waitingForDataChangeGroup;
+      comments = [];
+      changes = await _tryDataService.changes(reviewInfo, patchset);
+      comments = await _tryDataService.comments(reviewInfo.review);
       comments..sort();
+      hasTruncatedResults = patchsetHasTruncatedResults(patchset);
       cachedReview = review;
       cachedPatchset = patchset;
       changeGroup =

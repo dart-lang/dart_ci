@@ -119,6 +119,7 @@ class TryBuild {
   String buildbucketID;
   bool completed;
   bool success;
+  bool truncated;
   int review;
   int patchset;
 
@@ -129,6 +130,7 @@ class TryBuild {
     buildbucketID = data['buildbucket_id'];
     completed = data['completed'];
     success = data['success'];
+    truncated = data['truncated'] ?? false;
     review = data['review'];
     patchset = data['patchset'];
   }
