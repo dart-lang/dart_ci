@@ -13,7 +13,7 @@ import 'test_data.dart';
 
 void main() async {
   test('fetch commit that is a revert', () async {
-    final builderTest = BuilderTest(revertCommitHash, revertUnchangedChange);
+    final builderTest = BuilderTest(revertUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
     when(builderTest.client.get(any))
         .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
@@ -27,7 +27,7 @@ void main() async {
   });
 
   test('fetch commit that is a reland (as a reland)', () async {
-    final builderTest = BuilderTest(relandCommitHash, relandUnchangedChange);
+    final builderTest = BuilderTest(relandUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
     when(builderTest.client.get(any)).thenAnswer(
         (_) => Future(() => ResponseFake(revertAndRelandGitilesLog)));
@@ -48,8 +48,7 @@ void main() async {
   });
 
   test('fetch commit that is a reland (as a revert)', () async {
-    final builderTest =
-        RevertBuilderTest(relandCommitHash, relandUnchangedChange);
+    final builderTest = RevertBuilderTest(relandUnchangedChange);
     when(builderTest.client.get(any))
         .thenAnswer((_) => Future(() => ResponseFake(relandGitilesLog)));
     await builderTest.storeBuildCommitsInfo();
@@ -62,7 +61,7 @@ void main() async {
   });
 
   test('Automatically approve expected failure on revert', () async {
-    final builderTest = RevertBuilderTest(revertCommitHash, revertChange);
+    final builderTest = RevertBuilderTest(revertChange);
     await builderTest.update();
     await builderTest.storeChange(revertChange);
     expect(
@@ -73,8 +72,7 @@ void main() async {
   });
 
   test('Revert in blamelist, doesn\'t match new failure', () async {
-    final builderTest =
-        RevertBuilderTest(commit56Hash, commit56UnmatchingChange);
+    final builderTest = RevertBuilderTest(commit56UnmatchingChange);
     await builderTest.update();
     await builderTest.storeChange(commit56UnmatchingChange);
     await builderTest.storeChange(commit56DifferentNameChange);
@@ -93,8 +91,7 @@ void main() async {
 }
 
 class RevertBuilderTest extends BuilderTest {
-  RevertBuilderTest(String commitHash, Map<String, dynamic> firstChange)
-      : super(commitHash, firstChange) {
+  RevertBuilderTest(Map<String, dynamic> firstChange) : super(firstChange) {
     expect(revertedCommit[fIndex] + 1, fakeFirestoreCommitsFirstIndex);
     expect(revertCommit[fIndex] - 1, fakeFirestoreCommitsLastIndex);
     firestore.commits

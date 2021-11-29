@@ -58,33 +58,25 @@ class ChangeCounter {
 }
 
 class Tryjob {
-  static final changeRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
   final http.BaseClient httpClient;
   final FirestoreService firestore;
   final CommitsCache commits;
   final counter = ChangeCounter();
-  String builderName;
+  TryBuildInfo info;
   String baseRevision;
-  String baseResultsHash;
-  int buildNumber;
-  int review;
-  int patchset;
   bool success = true;
   List<Map<String, Value>> landedResults;
   Map<String, Map<String, Value>> lastLandedResultByName = {};
   final String buildbucketID;
 
-  Tryjob(String changeRef, this.buildbucketID, this.baseRevision, this.commits,
-      this.firestore, this.httpClient) {
-    final match = changeRefRegExp.matchAsPrefix(changeRef);
-    review = int.parse(match[1]);
-    patchset = int.parse(match[2]);
-  }
+  Tryjob(this.info, this.buildbucketID, this.baseRevision, this.commits,
+      this.firestore, this.httpClient);
 
   void log(String string) => firestore.log(string);
 
   Future<void> update() async {
-    await GerritInfo(review, patchset, firestore, httpClient).update();
+    await GerritInfo(info.review, info.patchset, firestore, httpClient)
+        .update();
   }
 
   bool isNotLandedResult(Map<String, dynamic> change) {
@@ -95,16 +87,13 @@ class Tryjob {
 
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
-    builderName = results.first['builder_name'];
-    buildNumber = int.parse(results.first['build_number']);
 
-    baseResultsHash = results.first['previous_commit_hash'];
     final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
         results.where(isChangedResult), (result) => result['configuration']);
 
     for (final configuration in resultsByConfiguration.keys) {
       log('Fetching landed results for configuration $configuration');
-      if (baseRevision != null && baseResultsHash != null) {
+      if (baseRevision != null && info.previousCommitHash != null) {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
@@ -124,11 +113,11 @@ class Tryjob {
       success = false;
     }
     log('complete builder record');
-    await firestore.recordTryBuild(builderName, buildNumber, buildbucketID,
-        review, patchset, success, counter.hasTruncatedChanges);
+    await firestore.recordTryBuild(
+        info, buildbucketID, success, counter.hasTruncatedChanges);
     final report = [
-      'Processed ${results.length} results from $builderName build $buildNumber',
-      'Tryjob on CL $review patchset $patchset',
+      'Processed ${results.length} results from ${info.builderName} build ${info.buildNumber}',
+      'Tryjob on CL ${info.review} patchset ${info.patchset}',
       if (!success) 'Found unapproved new failures',
       ...counter.report(),
       '${firestore.documentsFetched} documents fetched',
@@ -141,7 +130,8 @@ class Tryjob {
     transformChange(change);
     counter.count(change);
     if (counter.isNotReported(change)) return;
-    final approved = await firestore.storeTryChange(change, review, patchset);
+    final approved =
+        await firestore.storeTryChange(change, info.review, info.patchset);
     if (!approved && isFailure(change)) {
       counter.unapprovedFailures++;
       success = false;
@@ -150,12 +140,12 @@ class Tryjob {
 
   Future<List<Map<String, Value>>> fetchLandedResults(
       String configuration) async {
-    final resultsBase = await commits.getCommit(baseResultsHash);
+    final resultsBase = await commits.getCommit(info.previousCommitHash);
     final rebaseBase = await commits.getCommit(baseRevision);
     final results = <Map<String, Value>>[];
     if (resultsBase.index > rebaseBase.index) {
       print('Try build is rebased on $baseRevision, which is before '
-          'the commit $baseResultsHash with CI comparison results');
+          'the commit ${info.previousCommitHash} with CI comparison results');
       return results;
     }
     final reviews = <int>[];

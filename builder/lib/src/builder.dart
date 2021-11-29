@@ -17,10 +17,7 @@ import 'tryjob.dart' show Tryjob;
 class Build {
   final FirestoreService firestore;
   final CommitsCache commitsCache;
-  final String commitHash;
-  final Map<String, dynamic> firstResult;
-  String builderName;
-  int buildNumber;
+  final BuildInfo info;
   int startIndex;
   int endIndex;
   Commit endCommit;
@@ -34,27 +31,25 @@ class Build {
   List<String> approvalMessages = [];
   int countApprovalsCopied = 0;
 
-  Build(this.commitHash, this.firstResult, this.commitsCache, this.firestore)
-      : builderName = firstResult['builder_name'],
-        buildNumber = int.parse(firstResult['build_number']);
+  Build(this.info, this.commitsCache, this.firestore);
 
   void log(String string) => firestore.log(string);
 
-  Future<void> process(List<Map<String, dynamic>> results) async {
+  Future<void> process(List<Map<String, dynamic>> changes) async {
     log('store build commits info');
     await storeBuildCommitsInfo();
     log('update build info');
-    if (!await firestore.updateBuildInfo(builderName, buildNumber, endIndex)) {
+    if (!await firestore.updateBuildInfo(
+        info.builderName, info.buildNumber, endIndex)) {
       // This build's results have already been recorded.
       log('build up-to-date, exiting');
       // TODO(karlklose): add a flag to overwrite builder results.
       return;
     }
     final configurations =
-        results.map((change) => change['configuration'] as String).toSet();
+        changes.map((change) => change['configuration'] as String).toSet();
     log('updating configurations');
     await update(configurations);
-    final changes = results.where(isChangedResult);
     log('storing ${changes.length} change(s)');
     var count = 0;
     await Pool(30).forEach(changes, (change) async {
@@ -64,10 +59,11 @@ class Build {
       }
     }).drain();
     log('complete builder record');
-    await firestore.completeBuilderRecord(builderName, endIndex, success);
+    await firestore.completeBuilderRecord(info.builderName, endIndex, success);
 
     final report = [
-      'Processed ${results.length} results from $builderName build $buildNumber',
+      'Processed ${changes.length} results from ${info.builderName}'
+          ' build ${info.buildNumber}',
       if (countChanges > 0) 'Stored $countChanges changes',
       if (commitsFetched != null) 'Fetched $commitsFetched new commits',
       '${firestore.documentsFetched} documents fetched',
@@ -91,22 +87,21 @@ class Build {
   /// Saves the commit indices of the start and end of the blamelist.
   Future<void> storeBuildCommitsInfo() async {
     // Get indices of change.  Range includes startIndex and endIndex.
-    endCommit = await commitsCache.getCommit(commitHash);
+    endCommit = await commitsCache.getCommit(info.commitRef);
     if (endCommit == null) {
-      throw 'Result received with unknown commit hash $commitHash';
+      throw 'Result received with unknown commit hash ${info.commitRef}';
     }
     endIndex = endCommit.index;
     // If this is a new builder, use the current commit as a trivial blamelist.
-    if (firstResult['previous_commit_hash'] == null) {
+    if (info.previousCommitHash == null) {
       startIndex = endIndex;
     } else {
-      final startCommit =
-          await commitsCache.getCommit(firstResult['previous_commit_hash']);
+      final startCommit = await commitsCache.getCommit(info.previousCommitHash);
       startIndex = startCommit.index + 1;
       if (startIndex > endIndex) {
         throw ArgumentError('Results received with empty blamelist\n'
-            'previous commit: ${firstResult['previous_commit_hash']}\n'
-            'built commit: $commitHash');
+            'previous commit: ${info.previousCommitHash}\n'
+            'built commit: ${info.commitRef}');
       }
     }
   }
@@ -138,7 +133,7 @@ class Build {
 
   Future<void> storeConfigurationsInfo(Iterable<String> configurations) async {
     for (final configuration in configurations) {
-      await firestore.updateConfiguration(configuration, builderName);
+      await firestore.updateConfiguration(configuration, info.builderName);
     }
   }
 

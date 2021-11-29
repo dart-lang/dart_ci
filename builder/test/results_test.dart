@@ -12,19 +12,19 @@ import 'test_data.dart';
 
 void main() async {
   test('Base builder test', () async {
-    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    final builderTest = BuilderTest(landedCommitChange);
     await builderTest.update();
   });
 
   test('Get info for already saved commit', () async {
-    final builderTest = BuilderTest(existingCommitHash, existingCommitChange);
+    final builderTest = BuilderTest(existingCommitChange);
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, existingCommitIndex);
     expect(builderTest.builder.startIndex, previousCommitIndex + 1);
   });
 
   test('Link landed commit to review', () async {
-    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    final builderTest = BuilderTest(landedCommitChange);
     builderTest.firestore.commits
         .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
     when(builderTest.client.get(any))
@@ -42,7 +42,7 @@ void main() async {
   });
 
   test('update previous active result', () async {
-    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    final builderTest = BuilderTest(landedCommitChange);
     await builderTest.storeBuildCommitsInfo();
     await builderTest.storeChange(landedCommitChange);
     expect(builderTest.builder.success, true);
@@ -71,7 +71,7 @@ void main() async {
   });
 
   test('mark active result flaky', () async {
-    final builderTest = BuilderTest(landedCommitHash, landedCommitChange);
+    final builderTest = BuilderTest(landedCommitChange);
     await builderTest.storeBuildCommitsInfo();
     final flakyChange = Map<String, dynamic>.from(landedCommitChange)
       ..[fPreviousResult] = 'RuntimeError'

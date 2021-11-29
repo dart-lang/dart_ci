@@ -19,12 +19,11 @@ class BuilderTest {
   final firestore = FirestoreServiceFake();
   CommitsCache commitsCache;
   Build builder;
-  String commitHash;
   Map<String, dynamic> firstChange;
 
-  BuilderTest(this.commitHash, this.firstChange) {
+  BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
-    builder = Build(commitHash, firstChange, commitsCache, firestore);
+    builder = Build(BuildInfo.fromResult(firstChange), commitsCache, firestore);
   }
 
   Future<void> update() async {

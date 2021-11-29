@@ -87,7 +87,7 @@ Future<void> removeBuildersAndResults() async {
   }
 }
 
-Future<Map<String, String>> loadTestCommits(int startIndex) async {
+Future<void> loadTestCommits(int startIndex) async {
   // Get review data for the last two landed CLs before or at startIndex.
   final reviews = await firestore.query(
       from: 'reviews',
@@ -142,9 +142,10 @@ Future<Map<String, String>> loadTestCommits(int startIndex) async {
   commit4 = commits[index4];
 }
 
-Tryjob makeTryjob(String name, {String baseCommit, String patchsetRef}) =>
-    Tryjob(patchsetRef ?? lastPatchsetRef, 'bbID_$name', baseCommit ?? commit4,
-        commitsCache, firestore, client);
+Tryjob makeTryjob(String name, Map<String, dynamic> firstChange,
+        {String baseCommit}) =>
+    Tryjob(BuildInfo.fromResult(firstChange), 'bbID_$name',
+        baseCommit ?? commit4, commitsCache, firestore, client);
 
 const newFailure = 'Pass/RuntimeError/Pass';
 Map<String, dynamic> makeTryChange(
@@ -192,7 +193,7 @@ Map<String, dynamic> makeChange(
 }
 
 Build makeBuild(String commit, Map<String, dynamic> change) {
-  return Build(commit, change, commitsCache, firestore);
+  return Build(BuildInfo.fromResult(change), commitsCache, firestore);
 }
 
 void main() async {
@@ -228,37 +229,36 @@ void main() async {
 
   test('approvals', () async {
     // Test that approvals are copied from approved try results in the
-    // blamelist range of a CI build.
-    await makeTryjob('approvals')
-        .process([makeTryChange('approvals', newFailure, lastPatchsetRef)]);
+    // blamelist range of a CI build
+    final change1 = makeTryChange('approvals', newFailure, lastPatchsetRef);
+    await makeTryjob('approvals', change1).process([change1]);
     var documents = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'approvals_test'));
     await firestore.approveResult(documents.single.document);
-    await makeTryjob('approvals', patchsetRef: patchsetGroupRef).process([
-      makeTryChange('approvals', newFailure, patchsetGroupRef,
-          testName: 'approvals_2')
-    ]);
+    final change2 = makeTryChange('approvals', newFailure, patchsetGroupRef,
+        testName: 'approvals_2');
+    await makeTryjob('approvals', change2).process([change2]);
     documents = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'approvals_2_test'));
     await firestore.approveResult(documents.single.document);
 
-    final change = makeChange('approvals', newFailure, commit1, commit4);
-    final change2 = makeChange('approvals', newFailure, commit1, commit4,
+    final change3 = makeChange('approvals', newFailure, commit1, commit4);
+    final change4 = makeChange('approvals', newFailure, commit1, commit4,
         testName: 'approvals_2');
-    await makeBuild(commit1, change).process([change, change2]);
-    await checkBuild(change['builder_name'], index1, success: true);
-    await checkResult(change, index3, index1, {
+    await makeBuild(commit1, change3).process([change3, change4]);
+    await checkBuild(change3['builder_name'], index1, success: true);
+    await checkResult(change3, index3, index1, {
       'approved': true,
     });
     // Add a second configuration to an existing test failure, narrowing
     // the blamelist
-    final change3 = makeChange('approvals_3', newFailure, commit1, commit3,
+    final change5 = makeChange('approvals_3', newFailure, commit1, commit3,
         testName: 'approvals');
-    await makeBuild(commit1, change3).process([change3]);
-    await checkBuild(change3['builder_name'], index1, success: true);
-    await checkResult(change3, index2, index1, {
+    await makeBuild(commit1, change5).process([change5]);
+    await checkBuild(change5['builder_name'], index1, success: true);
+    await checkResult(change5, index2, index1, {
       'approved': true,
-      'configurations': [change['configuration'], change3['configuration']],
+      'configurations': [change3['configuration'], change5['configuration']],
     });
   });
 

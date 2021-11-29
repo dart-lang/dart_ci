@@ -2,10 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:builder/src/commits_cache.dart';
 import 'package:builder/src/firestore.dart';
+import 'package:builder/src/result.dart';
 import 'package:builder/src/tryjob.dart';
 import 'package:googleapis/firestore/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -115,11 +114,17 @@ Future<Map<String, String>> loadTestCommits(int startIndex) async {
   };
 }
 
-Tryjob makeTryjob(String name) => Tryjob(data['patchsetRef'], 'bbID_$name',
-    data['landedCommit'], commitsCache, firestore, client);
+Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
+    BuildInfo.fromResult(firstChange),
+    'bbID_$name',
+    data['landedCommit'],
+    commitsCache,
+    firestore,
+    client);
 
-Tryjob makeLandedTryjob(String name) => Tryjob(data['landedPatchsetRef'],
-    'bbID_$name', data['baseCommit'], commitsCache, firestore, client);
+Tryjob makeLandedTryjob(String name, Map<String, dynamic> firstChange) =>
+    Tryjob(BuildInfo.fromResult(firstChange), 'bbID_$name', data['baseCommit'],
+        commitsCache, firestore, client);
 
 Map<String, dynamic> makeChange(String name, String result,
     {bool flaky = false}) {
@@ -193,7 +198,7 @@ void main() async {
 
   test('unchanged', () async {
     final unchangedChange = makeChange('unchanged', 'Pass/Pass/Pass');
-    final tryjob = makeTryjob('unchanged');
+    final tryjob = makeTryjob('unchanged', unchangedChange);
     await tryjob.process([unchangedChange]);
     await checkTryBuild('unchanged', success: true);
     expect(tryjob.counter.changes, 0);
@@ -201,7 +206,7 @@ void main() async {
 
   test('failure', () async {
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
-    final tryjob = makeTryjob('failure');
+    final tryjob = makeTryjob('failure', failingChange);
     await tryjob.process([failingChange]);
     await checkTryBuild('failure', success: false);
     // Add a second failing configuration for the test.
@@ -211,7 +216,8 @@ void main() async {
       'builder': 'other_builder',
     };
     registerChangeForDeletion(otherConfigurationChange);
-    final otherTryjob = makeTryjob('other_configuration');
+    final otherTryjob =
+        makeTryjob('other_configuration', otherConfigurationChange);
     await otherTryjob.process([otherConfigurationChange]);
     await checkTryBuild('other_configuration', success: false);
     final result = await firestore.query(
@@ -226,13 +232,13 @@ void main() async {
   test('landedFailure', () async {
     final landedChange =
         makeLandedChange('landedFailure', 'Pass/RuntimeError/Pass');
-    final landedTryjob = makeLandedTryjob('landedFailure');
+    final landedTryjob = makeLandedTryjob('landedFailure', landedChange);
     await landedTryjob.process([landedChange]);
     // This change has a base revision containing the landed failure, but
     // CI results that don't contain it. The failure is seen in the landed
     // try results, and ignored.
     final failingChange = makeChange('landedFailure', 'Pass/RuntimeError/Pass');
-    final tryjob = makeTryjob('landedFailure2');
+    final tryjob = makeTryjob('landedFailure2', failingChange);
     await tryjob.process([failingChange]);
     await checkTryBuild('landedFailure2', success: true);
   });
@@ -240,7 +246,7 @@ void main() async {
   test('flaky', () async {
     final flakyChange =
         makeChange('flaky', 'Pass/RuntimeError/Pass', flaky: true);
-    final tryjob = makeTryjob('flaky');
+    final tryjob = makeTryjob('flaky', flakyChange);
     await tryjob.process([flakyChange]);
     await checkTryBuild('flaky', success: true);
     expect(tryjob.success, true);
@@ -250,7 +256,7 @@ void main() async {
 
   test('truncatedPass', () async {
     final passingChange = makeChange('truncatedPass', 'RuntimeError/Pass/Pass');
-    final tryjob = makeTryjob('truncatedPass');
+    final tryjob = makeTryjob('truncatedPass', passingChange);
     final failingChange = makeChange('truncatedPass', 'Pass/RuntimeError/Pass')
       ..['name'] = 'truncated_pass_2_test';
     registerChangeForDeletion(failingChange);
@@ -274,7 +280,7 @@ void main() async {
 
   test('truncated', () async {
     final failingChange = makeChange('truncated', 'Pass/RuntimeError/Pass');
-    final tryjob = makeTryjob('truncated');
+    final tryjob = makeTryjob('truncated', failingChange);
     final truncatedChange = {...failingChange, 'name': 'truncated_2_test'};
     registerChangeForDeletion(truncatedChange);
     tryjob.counter.failures = ChangeCounter.maxReportedFailures - 1;

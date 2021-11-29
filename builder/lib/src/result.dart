@@ -90,3 +90,37 @@ const fTitle = 'title';
 const fReview = 'review';
 const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
+
+/// The information about a builder, taken from a Result object,
+/// that is needed to process the results
+class BuildInfo {
+  static final commitRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
+
+  final String builderName;
+  final int buildNumber;
+  final String commitRef;
+  final String previousCommitHash;
+
+  BuildInfo(Map<String, dynamic> result)
+      : builderName = result['builder_name'],
+        buildNumber = int.parse(result['build_number']),
+        commitRef = result['commit_hash'],
+        previousCommitHash = result['previous_commit_hash'];
+
+  factory BuildInfo.fromResult(Map<String, dynamic> result) {
+    final commitRef = result['commit_hash'];
+    final match = commitRefRegExp.matchAsPrefix(commitRef);
+    if (match == null) {
+      return BuildInfo(result);
+    } else {
+      return TryBuildInfo(result, int.parse(match[1]), int.parse(match[2]));
+    }
+  }
+}
+
+class TryBuildInfo extends BuildInfo {
+  final int review;
+  final int patchset;
+
+  TryBuildInfo(result, this.review, this.patchset) : super(result);
+}

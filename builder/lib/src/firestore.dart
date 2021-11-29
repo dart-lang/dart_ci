@@ -211,27 +211,21 @@ class FirestoreService {
   ///
   /// Returns `true` if and only if there is no completed record
   /// for this build.
-  Future<void> recordTryBuild(
-      String builder,
-      int buildNumber,
-      String buildbucketID,
-      int review,
-      int patchset,
-      bool success,
-      bool truncated) async {
+  Future<void> recordTryBuild(TryBuildInfo info, String buildbucketID,
+      bool success, bool truncated) async {
     final newRecord = Document()
       ..fields = taggedMap({
-        'builder': builder,
-        'build_number': buildNumber,
+        'builder': info.builderName,
+        'build_number': info.buildNumber,
         if (buildbucketID != null) 'buildbucket_id': buildbucketID,
-        'review': review,
-        'patchset': patchset,
+        'review': info.review,
+        'patchset': info.patchset,
         'success': success,
         'completed': true,
         if (truncated) 'truncated': true,
       });
     log('creating try-build record for '
-        '$builder $buildNumber $review $patchset');
+        '${info.builderName} ${info.buildNumber} ${info.review} ${info.patchset}');
     await firestore.projects.databases.documents
         .createDocument(newRecord, documents, 'try_builds');
     documentsWritten++;
