@@ -409,20 +409,17 @@ class FirestoreService {
           'configurations': <String>[configuration],
           'approved': approved
         });
-      await firestore.projects.databases.documents.createDocument(
-          document,
-          'projects/dart-ci-staging/databases/(default)/documents',
-          'try_results',
-          mask_fieldPaths: [
-            'name',
-            'result',
-            'previous_result',
-            'expected',
-            'review',
-            'patchset',
-            'configurations',
-            'approved'
-          ]);
+      await firestore.projects.databases.documents
+          .createDocument(document, documents, 'try_results', mask_fieldPaths: [
+        'name',
+        'result',
+        'previous_result',
+        'expected',
+        'review',
+        'patchset',
+        'configurations',
+        'approved'
+      ]);
       documentsWritten++;
       return approved;
     } else {
