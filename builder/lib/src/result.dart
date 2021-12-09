@@ -124,3 +124,23 @@ class TryBuildInfo extends BuildInfo {
 
   TryBuildInfo(result, this.review, this.patchset) : super(result);
 }
+
+class TestNameLock {
+  final locks = <String, Future<void>>{};
+
+  Future<void> guardedCall(Future<void> Function(Map<String, dynamic> change) f,
+      Map<String, dynamic> change) async {
+    final name = change[fName];
+    while (locks.containsKey(name)) {
+      await locks[name];
+    }
+    return locks[name] = () async {
+      try {
+        await f(change);
+      } finally {
+        // ignore: unawaited_futures
+        locks.remove(name);
+      }
+    }();
+  }
+}

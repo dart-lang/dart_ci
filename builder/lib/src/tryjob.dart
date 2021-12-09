@@ -63,6 +63,7 @@ class Tryjob {
   final CommitsCache commits;
   final counter = ChangeCounter();
   TryBuildInfo info;
+  final TestNameLock testNameLock = TestNameLock();
   String baseRevision;
   bool success = true;
   List<Map<String, Value>> landedResults;
@@ -87,12 +88,11 @@ class Tryjob {
 
   Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
-
+    log('storing ${results.length} change(s)');
     final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
-        results.where(isChangedResult), (result) => result['configuration']);
+        results, (result) => result['configuration']);
 
     for (final configuration in resultsByConfiguration.keys) {
-      log('Fetching landed results for configuration $configuration');
       if (baseRevision != null && info.previousCommitHash != null) {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
@@ -101,18 +101,14 @@ class Tryjob {
             getValue(result[fName]) as String: result
         };
       }
-      log('Processing results');
-      await Pool(30)
-          .forEach(
-              resultsByConfiguration[configuration].where(isNotLandedResult),
-              storeChange)
-          .drain();
+      final changes =
+          resultsByConfiguration[configuration].where(isNotLandedResult);
+      await Pool(30).forEach(changes, guardedStoreChange).drain();
     }
 
     if (counter.hasTooManyFlakes) {
       success = false;
     }
-    log('complete builder record');
     await firestore.recordTryBuild(
         info, buildbucketID, success, counter.hasTruncatedChanges);
     final report = [
@@ -125,6 +121,9 @@ class Tryjob {
     ];
     log(report.join('\n'));
   }
+
+  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+      testNameLock.guardedCall(storeChange, change);
 
   Future<void> storeChange(Map<String, dynamic> change) async {
     transformChange(change);

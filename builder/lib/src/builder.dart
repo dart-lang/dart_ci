@@ -18,6 +18,7 @@ class Build {
   final FirestoreService firestore;
   final CommitsCache commitsCache;
   final BuildInfo info;
+  final TestNameLock testNameLock = TestNameLock();
   int startIndex;
   int endIndex;
   Commit endCommit;
@@ -48,16 +49,9 @@ class Build {
     }
     final configurations =
         changes.map((change) => change['configuration'] as String).toSet();
-    log('updating configurations');
     await update(configurations);
     log('storing ${changes.length} change(s)');
-    var count = 0;
-    await Pool(30).forEach(changes, (change) async {
-      await storeChange(change);
-      if (++count % 50 == 0) {
-        log('Processed $count changes...');
-      }
-    }).drain();
+    await Pool(30).forEach(changes, guardedStoreChange).drain();
     log('complete builder record');
     await firestore.completeBuilderRecord(info.builderName, endIndex, success);
 
@@ -136,6 +130,9 @@ class Build {
       await firestore.updateConfiguration(configuration, info.builderName);
     }
   }
+
+  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+      testNameLock.guardedCall(storeChange, change);
 
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;

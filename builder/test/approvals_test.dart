@@ -243,9 +243,11 @@ void main() async {
     await firestore.approveResult(documents.single.document);
 
     final change3 = makeChange('approvals', newFailure, commit1, commit4);
+    final change3a = makeChange('approvals', newFailure, commit1, commit4)
+      ..['configuration'] = 'second_approvals_configuration';
     final change4 = makeChange('approvals', newFailure, commit1, commit4,
         testName: 'approvals_2');
-    await makeBuild(commit1, change3).process([change3, change4]);
+    await makeBuild(commit1, change3).process([change3, change3a, change4]);
     await checkBuild(change3['builder_name'], index1, success: true);
     await checkResult(change3, index3, index1, {
       'approved': true,
@@ -258,7 +260,11 @@ void main() async {
     await checkBuild(change5['builder_name'], index1, success: true);
     await checkResult(change5, index2, index1, {
       'approved': true,
-      'configurations': [change3['configuration'], change5['configuration']],
+      'configurations': [
+        change3['configuration'],
+        change3a['configuration'],
+        change5['configuration']
+      ],
     });
   });
 

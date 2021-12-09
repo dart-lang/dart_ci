@@ -196,14 +196,6 @@ void main() async {
     baseClient.close();
   });
 
-  test('unchanged', () async {
-    final unchangedChange = makeChange('unchanged', 'Pass/Pass/Pass');
-    final tryjob = makeTryjob('unchanged', unchangedChange);
-    await tryjob.process([unchangedChange]);
-    await checkTryBuild('unchanged', success: true);
-    expect(tryjob.counter.changes, 0);
-  });
-
   test('failure', () async {
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('failure', failingChange);
