@@ -56,19 +56,11 @@ class FirestoreService {
       Order? orderBy,
       int? limit,
       String? parent}) async {
-    final query = StructuredQuery();
-    if (from != null) {
-      query.from = inCollection(from);
-    }
-    if (where != null) {
-      query.where = where;
-    }
-    if (orderBy != null) {
-      query.orderBy = [orderBy];
-    }
-    if (limit != null) {
-      query.limit = limit;
-    }
+    final query = StructuredQuery()
+      ..from = inCollection(from)
+      ..where = where
+      ..orderBy = orderBy != null ? [orderBy] : null
+      ..limit = limit;
     return runQuery(query, parent: parent);
   }
 
@@ -229,7 +221,7 @@ class FirestoreService {
       ..fields = taggedMap({
         'builder': info.builderName,
         'build_number': info.buildNumber,
-        if (buildbucketID != null) 'buildbucket_id': buildbucketID,
+        'buildbucket_id': buildbucketID,
         'review': info.review,
         'patchset': info.patchset,
         'success': success,
@@ -284,7 +276,7 @@ class FirestoreService {
     late bool approved;
     await retryCommit(() async {
       final document = await getDocument(result);
-      final data = SafeDocument(document!);
+      final data = SafeDocument(document);
       // Allow missing 'approved' field during transition period.
       approved = data.getBool('approved') ?? false;
       // Add the new configuration and narrow the blamelist.
@@ -458,7 +450,7 @@ class FirestoreService {
     await removeArrayEntry(
         activeResult, 'active_configurations', taggedValue(configuration));
     final document = await getDocument(activeResult.name);
-    activeResult = SafeDocument(document!);
+    activeResult = SafeDocument(document);
     if (activeResult.getList('active_configurations')?.isEmpty == true) {
       activeResult.fields.remove('active_configurations');
       activeResult.fields.remove('active');
@@ -634,7 +626,7 @@ class FirestoreService {
       String builder, int index, bool success) async {
     final path = '$documents/builds/$builder:$index';
     final document = await getDocument(path);
-    await _completeBuilderRecord(document!, success);
+    await _completeBuilderRecord(document, success);
   }
 
   Future<void> _completeBuilderRecord(Document document, bool success) async {

@@ -83,9 +83,6 @@ class Build {
   Future<void> storeBuildCommitsInfo() async {
     // Get indices of change.  Range includes startIndex and endIndex.
     final commit = await commitsCache.getCommit(info.commitRef);
-    if (commit == null) {
-      throw 'Result received with unknown commit hash ${info.commitRef}';
-    }
     endCommit = commit;
     endIndex = endCommit.index;
     // If this is a new builder, use the current commit as a trivial blamelist.
@@ -94,7 +91,7 @@ class Build {
     } else {
       final startCommit =
           await commitsCache.getCommit(info.previousCommitHash!);
-      startIndex = startCommit!.index + 1;
+      startIndex = startCommit.index + 1;
       if (startIndex > endIndex) {
         throw ArgumentError('Results received with empty blamelist\n'
             'previous commit: ${info.previousCommitHash}\n'
@@ -112,7 +109,7 @@ class Build {
       endCommit
     ];
     for (final commit in commits) {
-      final index = commit!.index;
+      final index = commit.index;
       final review = commit.review;
       final reverted = commit.revertOf;
       if (review != null) {

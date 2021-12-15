@@ -5,7 +5,6 @@
 import 'dart:math';
 
 import 'package:googleapis/firestore/v1.dart';
-import 'package:mockito/mockito.dart';
 import 'package:http/http.dart';
 
 import 'package:builder/src/builder.dart';
@@ -40,7 +39,7 @@ class BuilderTest {
   }
 }
 
-class FirestoreServiceFake extends Fake implements FirestoreService {
+class FirestoreServiceFake implements FirestoreService {
   Map<String, Map<String, dynamic>> commits = Map.from(fakeFirestoreCommits);
   Map<String, Map<String, dynamic>> results = Map.from(fakeFirestoreResults);
   List<Map<String, dynamic>> fakeTryResults =
@@ -49,6 +48,10 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<bool> isStaging() async => false;
+
+  @override
+  void noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError(invocation.memberName.toString());
 
   @override
   Future<Commit?> getCommit(String hash) async {
@@ -71,7 +74,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<Commit> getLastCommit() => getCommitByIndex(
-      commits.values.map<int?>((commit) => commit[fIndex]).reduce(max));
+      commits.values.map<int>((commit) => commit[fIndex]).reduce(max));
 
   @override
   Future<void> addCommit(String id, Map<String, dynamic> data) async {
@@ -79,7 +82,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<String> findResult(
+  Future<String?> findResult(
       Map<String, dynamic> change, int startIndex, int endIndex) {
     String? resultId;
     int? resultEndIndex;
@@ -116,11 +119,13 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<Document?> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(Map<String, dynamic> result) async {
     final id = 'resultDocumentID$addedResultIdCounter';
     addedResultIdCounter++;
     results[id] = result;
-    return null;
+    return Document()
+      ..fields = taggedMap(result)
+      ..name = id;
   }
 
   @override
@@ -206,10 +211,20 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
       Future.value(commits.values.any((commit) => commit[fReview] == review));
 }
 
-class HttpClientMock extends Mock implements BaseClient {}
+class HttpClientMock extends BaseClient {
+  String body = '';
 
-class ResponseFake extends Fake implements Response {
+  void addDefaultResponse(String response) {
+    body = response;
+  }
+
   @override
-  String body;
-  ResponseFake(this.body);
+  Future<StreamedResponse> send(BaseRequest request) async {
+    return StreamedResponse(Stream.fromIterable([]), 200);
+  }
+
+  @override
+  Future<Response> get(Uri uri, {Map<String, String>? headers}) async {
+    return Response(body, 200);
+  }
 }

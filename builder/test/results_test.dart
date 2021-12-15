@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:builder/src/firestore.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:builder/src/result.dart';
@@ -27,8 +26,7 @@ void main() async {
     final builderTest = BuilderTest(landedCommitChange);
     builderTest.firestore.commits
         .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
-    when(builderTest.client.get(any!))
-        .thenAnswer((_) => Future(() => ResponseFake(gitilesLog)));
+    builderTest.client.addDefaultResponse(gitilesLog);
     await builderTest.storeBuildCommitsInfo();
     await builderTest.builder.fetchReviewsAndReverts();
     expect(builderTest.builder.endIndex, landedCommitIndex);

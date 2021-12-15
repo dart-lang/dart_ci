@@ -32,7 +32,7 @@ class SafeDocument {
   List<dynamic>? getList(String name) {
     final arrayValue = fields[name]?.arrayValue;
     if (arrayValue == null) return null;
-    return arrayValue.values?.map(getValue)?.toList() ?? [];
+    return arrayValue.values?.map(getValue).toList() ?? [];
   }
 
   bool isNull(String name) {

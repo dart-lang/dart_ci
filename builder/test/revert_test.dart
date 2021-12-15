@@ -4,7 +4,6 @@
 
 // Tests that check automatic approval of failures on a revert on the CI
 
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:builder/src/result.dart';
@@ -15,8 +14,8 @@ void main() async {
   test('fetch commit that is a revert', () async {
     final builderTest = BuilderTest(revertUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
-    when(builderTest.client.get(any!))
-        .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
+    builderTest.client.addDefaultResponse(revertGitilesLog);
+
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, revertCommit['index']);
     expect(builderTest.builder.startIndex, landedCommit['index'] + 1);
@@ -29,8 +28,7 @@ void main() async {
   test('fetch commit that is a reland (as a reland)', () async {
     final builderTest = BuilderTest(relandUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
-    when(builderTest.client.get(any!)).thenAnswer(
-        (_) => Future(() => ResponseFake(revertAndRelandGitilesLog)));
+    builderTest.client.addDefaultResponse(revertAndRelandGitilesLog);
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
@@ -49,8 +47,7 @@ void main() async {
 
   test('fetch commit that is a reland (as a revert)', () async {
     final builderTest = RevertBuilderTest(relandUnchangedChange);
-    when(builderTest.client.get(any!))
-        .thenAnswer((_) => Future(() => ResponseFake(relandGitilesLog)));
+    builderTest.client.addDefaultResponse(relandGitilesLog);
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
@@ -166,6 +163,7 @@ const Map<String, dynamic> revertUnchangedChange = {
   'previous_commit_hash': landedCommitHash,
   'commit_time': 1563576771,
   'build_number': '401',
+  'builder_name': 'dart2js-rti-linux-x64-d8',
   'previous_build_number': '400',
   'changed': false,
 };

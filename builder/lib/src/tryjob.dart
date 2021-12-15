@@ -92,7 +92,7 @@ class Tryjob {
         results, (result) => result['configuration']);
 
     for (final configuration in resultsByConfiguration.keys) {
-      if (baseRevision != null && info.previousCommitHash != null) {
+      if (info.previousCommitHash != null) {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
@@ -138,7 +138,7 @@ class Tryjob {
   Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
     final resultsBase = await commits.getCommit(info.previousCommitHash!);
     final rebaseBase = await commits.getCommit(baseRevision);
-    if (resultsBase!.index > rebaseBase!.index) {
+    if (resultsBase.index > rebaseBase.index) {
       print('Try build is rebased on $baseRevision, which is before '
           'the commit ${info.previousCommitHash} with CI comparison results');
       return [];
@@ -147,7 +147,7 @@ class Tryjob {
       for (var index = resultsBase.index + 1;
           index <= rebaseBase.index;
           ++index)
-        (await commits.getCommitByIndex(index))?.review
+        (await commits.getCommitByIndex(index)).review
     ];
     return [
       for (final landedReview in reviews)
