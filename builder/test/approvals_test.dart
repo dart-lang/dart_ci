@@ -22,40 +22,41 @@ import 'package:test/test.dart';
 // To run against the staging database, use a service account.
 // with write access to dart_ci_staging datastore.
 
-FirestoreService firestore;
-http.Client client;
-CommitsCache commitsCache;
+/*late final*/ FirestoreService /*!*/ firestore;
+/*late final*/ http.Client /*!*/ client;
+/*late final*/ CommitsCache /*!*/ commitsCache;
 // The real commits and reviews we will test on, fetched from Firestore.
 // These globals are populated by loadTestCommits().
 const testCommitsStart = 80801;
 const reviewWithComments = '215021';
-String index1; // Index of the final commit in the test range
-String commit1; // Hash of that commit
-String review; // CL number of that commit's Gerrit review
-String lastPatchset; // Final patchset in that review
-String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
-String patchsetGroup; // First patchset in the final patchset group
-String patchsetGroupRef;
-String earlyPatchset; // Patchset not in the final patchset group
-String earlyPatchsetRef;
+/*late final*/ String /*!*/ index1; // Index of the final commit in the test range
+/*late final*/ String /*!*/ commit1; // Hash of that commit
+/*late final*/ String review; // CL number of that commit's Gerrit review
+/*late final*/ String /*!*/ lastPatchset; // Final patchset in that review
+/*late final*/ String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
+/*late final*/ String /*!*/
+    patchsetGroup; // First patchset in the final patchset group
+/*late final*/ String patchsetGroupRef;
+/*late final*/ String earlyPatchset; // Patchset not in the final patchset group
+/*late final*/ String earlyPatchsetRef;
 // Earlier commit with a review
-String index2;
-String commit2;
-String review2;
-String patchset2;
-String patchset2Ref;
+/*late final*/ String /*!*/ index2;
+/*late final*/ String /*!*/ commit2;
+/*late final*/ String review2;
+/*late final*/ String /*!*/ patchset2;
+/*late final*/ String patchset2Ref;
 // Commits before commit2
-String index3;
-String commit3;
-String index4;
-String commit4;
+/*late final*/ String index3;
+/*late final*/ String /*!*/ commit3;
+/*late final*/ String index4;
+/*late final*/ String /*!*/ commit4;
 
-final buildersToRemove = <String>{};
-final testsToRemove = <String>{};
+final buildersToRemove = <String /*!*/ >{};
+final testsToRemove = <String /*!*/ >{};
 
 void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name']);
-  testsToRemove.add(change['name']);
+  buildersToRemove.add(change['builder_name'] as String /*!*/);
+  testsToRemove.add(change['name'] as String /*!*/);
 }
 
 Future<void> removeBuildersAndResults() async {
@@ -341,7 +342,7 @@ Future<void> checkResult(Map<String, dynamic> change, String startIndex,
   final resultName = await firestore.findResult(
       change, int.parse(startIndex), int.parse(endIndex));
   expect(resultName, isNotNull);
-  final resultDocument = await firestore.getDocument(resultName);
+  final resultDocument = await firestore.getDocument(resultName /*!*/);
   final data = untagMap(resultDocument.fields);
   expect(data[fName], change[fName]);
   expect(data[fBlamelistStartIndex], int.parse(startIndex));

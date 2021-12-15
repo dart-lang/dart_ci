@@ -138,9 +138,3 @@ Filter compositeFilter(List<Filter> filters) {
       ..filters = filters
       ..op = 'AND');
 }
-
-class DataWrapper {
-  final Map<String, Value> fields;
-  DataWrapper(Document document) : fields = document.fields;
-  DataWrapper.fields(this.fields);
-}

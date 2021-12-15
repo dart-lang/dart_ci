@@ -17,7 +17,7 @@ BuildInfo buildInfo;
 
 Future<List<Map<String, dynamic>>> readChangedResults(File resultsFile) async {
   final lines = (await resultsFile.readAsLines())
-      .map((line) => jsonDecode(line) as Map<String, dynamic>);
+      .map((line) => jsonDecode(line) /*!*/ as Map<String, dynamic>);
   if (lines.isEmpty) {
     print('Empty input results.json file');
     exit(1);

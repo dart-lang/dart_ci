@@ -16,39 +16,47 @@ import 'result.dart';
 /// The class fetches commits from Firestore if they are present,
 /// and fetches them from gitiles if not, and saves them to Firestore.
 class CommitsCache {
-  FirestoreService firestore;
-  final http.Client httpClient;
-  Map<String, Commit> byHash = {};
+  FirestoreService /*!*/ firestore;
+  final http.Client /*!*/ httpClient;
+  Map<String /*!*/, Commit> byHash = {};
   Map<int, Commit> byIndex = {};
   int startIndex;
   int endIndex;
 
   CommitsCache(this.firestore, this.httpClient);
 
-  Future<Commit> getCommit(String hash) async {
-    return byHash[hash] ??
-        await _fetchByHash(hash) ??
-        await _getNewCommits() ??
-        await _fetchByHash(hash) ??
-        _reportError('getCommit($hash)');
+  Future<Commit /*!*/ > getCommit(String /*!*/ hash) async {
+    var commit = byHash[hash] ?? await _fetchByHash(hash);
+    if (commit == null) {
+      await _getNewCommits();
+      commit = await _fetchByHash(hash);
+    }
+    if (commit == null) {
+      throw _makeError('getCommit($hash)');
+    }
+    return commit;
   }
 
-  Future<Commit> getCommitByIndex(int index) async {
-    return byIndex[index] ??
-        await _fetchByIndex(index) ??
-        await _getNewCommits() ??
-        await _fetchByIndex(index) ??
-        _reportError('getCommitByIndex($index)');
+  Future<Commit /*!*/ > getCommitByIndex(int /*!*/ index) async {
+    var commit = byIndex[index] ?? await _fetchByIndex(index);
+    if (commit == null) {
+      await _getNewCommits();
+      commit = await _fetchByIndex(index);
+    }
+    if (commit == null) {
+      throw _makeError('getCommitByIndex($index)');
+    }
+    return commit;
   }
 
-  Commit _reportError(String message) {
+  String _makeError(String message) {
     final error = 'Failed to fetch commit: $message\n'
         'Commit cache holds:\n'
-        '  $startIndex: ${byIndex[startIndex]}\n'
+        '  $startIndex: ${byIndex[startIndex ?? -1]}\n'
         '  ...\n'
-        '  $endIndex: ${byIndex[endIndex]}';
+        '  $endIndex: ${byIndex[endIndex ?? -1]}';
     print(error);
-    throw error;
+    return error;
   }
 
   /// Add a commit to the cache. The cache must be empty, or the commit
@@ -68,7 +76,7 @@ class CommitsCache {
     byIndex[index] = commit;
   }
 
-  Future<Commit> _fetchByHash(String hash) async {
+  Future<Commit> _fetchByHash(String /*!*/ hash) async {
     final commit = await firestore.getCommit(hash);
     if (commit == null) return null;
     final index = commit.index;
@@ -96,14 +104,14 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit> _fetchByIndex(int index) => firestore
+  Future<Commit> _fetchByIndex(int /*!*/ index) => firestore
       .getCommitByIndex(index)
       .then((commit) => _fetchByHash(commit.hash));
 
   /// This function is idempotent, so every call of it should write the
   /// same info to new Firestore documents. It is safe to call multiple
   /// times simultaneously. Intentionally returns null, not void.
-  Future<Commit> _getNewCommits() async {
+  Future<void> _getNewCommits() async {
     const prefix = ")]}'\n";
     final lastCommit = await firestore.getLastCommit();
     final lastHash = lastCommit.hash;
@@ -120,20 +128,19 @@ class CommitsCache {
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson.'
           'Requested URL: $url');
     }
-    final commits = jsonDecode(protectedJson.substring(prefix.length))['log']
-        as List<dynamic>;
+    final commits = List.castFrom<dynamic, Map<String, dynamic>>(
+        jsonDecode(protectedJson.substring(prefix.length))['log']);
     if (commits.isEmpty) {
       print('Found no new commits between $lastHash and $branch');
-      return null;
     }
     print('Fetched new commits from Gerrit (gitiles): $commits');
-    final first = commits.last as Map<String, dynamic>;
+    final first = commits.last;
     if (first['parents'].first != lastHash) {
       throw 'First new commit ${first['commit']} is not'
           ' a child of last known commit $lastHash when fetching new commits';
     }
     var index = lastIndex + 1;
-    for (Map<String, dynamic> commit in commits.reversed) {
+    for (final commit in commits.reversed) {
       final review = _review(commit);
       var reverted = _revert(commit);
       var relanded = _reland(commit);
@@ -161,7 +168,6 @@ class CommitsCache {
       }
       ++index;
     }
-    return null;
   }
 
   /// This function is idempotent and may be called multiple times
@@ -180,11 +186,10 @@ class TestingCommitsCache extends CommitsCache {
   TestingCommitsCache(firestore, httpClient) : super(firestore, httpClient);
 
   @override
-  Future<Commit> _getNewCommits() async {
+  Future<void> _getNewCommits() async {
     if ((await firestore.isStaging())) {
       return super._getNewCommits();
     }
-    return null;
   }
 }
 

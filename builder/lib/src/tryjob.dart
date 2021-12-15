@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:http/http.dart' as http show BaseClient;
+import 'package:http/http.dart' as http show Client;
 import 'package:pool/pool.dart';
 
 import 'commits_cache.dart';
@@ -57,17 +57,17 @@ class ChangeCounter {
 }
 
 class Tryjob {
-  final http.BaseClient httpClient;
-  final FirestoreService firestore;
-  final CommitsCache commits;
+  final http.Client /*!*/ httpClient;
+  final FirestoreService /*!*/ firestore;
+  final CommitsCache /*!*/ commits;
   final counter = ChangeCounter();
-  TryBuildInfo info;
+  TryBuildInfo /*!*/ info;
   final TestNameLock testNameLock = TestNameLock();
-  String baseRevision;
+  String /*!*/ baseRevision;
   bool success = true;
-  List<SafeDocument> landedResults;
-  Map<String, SafeDocument> lastLandedResultByName = {};
-  final String buildbucketID;
+  List<SafeDocument /*!*/ > landedResults;
+  Map<String /*!*/, SafeDocument /*!*/ > lastLandedResultByName = {};
+  final String /*!*/ buildbucketID;
 
   Tryjob(this.info, this.buildbucketID, this.baseRevision, this.commits,
       this.firestore, this.httpClient);
@@ -79,17 +79,18 @@ class Tryjob {
         .update();
   }
 
-  bool isNotLandedResult(Map<String, dynamic> change) {
+  bool isNotLandedResult(Map<String, dynamic> /*!*/ change) {
     return !lastLandedResultByName.containsKey(change[fName]) ||
         change[fResult] !=
             lastLandedResultByName[change[fName]].getString(fResult);
   }
 
-  Future<void> process(List<Map<String, dynamic>> results) async {
+  Future<void> process(List<Map<String, dynamic> /*!*/ > results) async {
     await update();
     log('storing ${results.length} change(s)');
-    final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
-        results, (result) => result['configuration']);
+    final resultsByConfiguration =
+        groupBy<Map<String, dynamic> /*!*/, String /*!*/ >(
+            results, (result) => result['configuration']);
 
     for (final configuration in resultsByConfiguration.keys) {
       if (baseRevision != null && info.previousCommitHash != null) {
@@ -120,7 +121,7 @@ class Tryjob {
     log(report.join('\n'));
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+  Future<void> guardedStoreChange(Map<String, dynamic> /*!*/ change) =>
       testNameLock.guardedCall(storeChange, change);
 
   Future<void> storeChange(Map<String, dynamic> change) async {
@@ -135,26 +136,25 @@ class Tryjob {
     }
   }
 
-  Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
+  Future<List<SafeDocument /*!*/ >> fetchLandedResults(
+      String configuration) async {
     final resultsBase = await commits.getCommit(info.previousCommitHash);
     final rebaseBase = await commits.getCommit(baseRevision);
-    if (resultsBase.index > rebaseBase.index) {
+    if (resultsBase /*!*/ .index > rebaseBase /*!*/ .index) {
       print('Try build is rebased on $baseRevision, which is before '
           'the commit ${info.previousCommitHash} with CI comparison results');
       return [];
     }
-    final reviews = <int>[];
-    for (var index = resultsBase.index + 1;
-        index <= rebaseBase.index;
-        ++index) {
-      final commit = await commits.getCommitByIndex(index);
-      if (commit.review != null) {
-        reviews.add(commit.review);
-      }
-    }
+    final reviews = [
+      for (var index = resultsBase.index + 1;
+          index <= rebaseBase.index;
+          ++index)
+        (await commits.getCommitByIndex(index))?.review
+    ];
     return [
       for (final landedReview in reviews)
-        ...await firestore.tryResults(landedReview, configuration)
+        if (landedReview != null)
+          ...await firestore.tryResults(landedReview, configuration)
     ];
   }
 }

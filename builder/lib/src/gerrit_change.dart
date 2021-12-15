@@ -19,15 +19,14 @@ class GerritInfo {
   };
   static const prefix = ")]}'\n";
 
-  http.BaseClient httpClient;
-  FirestoreService firestore;
-  String review;
-  String patchset;
+  final http.Client httpClient;
+  final FirestoreService firestore;
+  final String /*!*/ review;
+  final String patchset;
 
-  GerritInfo(int review, int patchset, this.firestore, this.httpClient) {
-    this.review = review.toString();
-    this.patchset = patchset.toString();
-  }
+  GerritInfo(int review, int patchset, this.firestore, this.httpClient)
+      : review = review.toString(),
+        patchset = patchset.toString();
 
   /// Fetches the owner, changeId, message, and date of a Gerrit change and
   /// stores them in the databases.
@@ -52,9 +51,9 @@ class GerritInfo {
     // Add the patchset information to the patchsets subcollection.
     final revisions = reviewInfo['revisions'].values.toList()
       ..sort((a, b) => (a['_number'] as int).compareTo(b['_number']));
-    int patchsetGroupFirst;
+    int patchsetGroupFirst = 1;
     for (Map<String, dynamic> revision in revisions) {
-      int number = revision['_number'];
+      int number = revision['_number'] /*!*/;
       if (!trivialKinds.contains(revision['kind'])) {
         patchsetGroupFirst = number;
       }

@@ -23,8 +23,8 @@ Future<RevertedChanges> getRevertedChanges(
 class RevertedChanges {
   final int index;
   final int revertIndex;
-  final List<Map<String, Value>> changes;
-  final Map<String, List<Map<String, Value>>> changesForTest;
+  final List<Map<String, Value> /*!*/ > changes;
+  final Map<String /*!*/, List<Map<String, Value> /*!*/ >> changesForTest;
 
   RevertedChanges(
       this.index, this.revertIndex, this.changes, this.changesForTest);
