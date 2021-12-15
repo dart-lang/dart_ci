@@ -21,7 +21,7 @@ class GerritInfo {
 
   final http.Client httpClient;
   final FirestoreService firestore;
-  final String /*!*/ review;
+  final String review;
   final String patchset;
 
   GerritInfo(int review, int patchset, this.firestore, this.httpClient)
@@ -53,7 +53,7 @@ class GerritInfo {
       ..sort((a, b) => (a['_number'] as int).compareTo(b['_number']));
     int patchsetGroupFirst = 1;
     for (Map<String, dynamic> revision in revisions) {
-      int number = revision['_number'] /*!*/;
+      int number = revision['_number']!;
       if (!trivialKinds.contains(revision['kind'])) {
         patchsetGroupFirst = number;
       }
@@ -62,7 +62,7 @@ class GerritInfo {
     }
   }
 
-  static String revert(Map<String, dynamic> reviewInfo) {
+  static String? revert(Map<String, dynamic> reviewInfo) {
     final current = reviewInfo['current_revision'];
     final commit = reviewInfo['revisions'][current]['commit'];
     final regExp =

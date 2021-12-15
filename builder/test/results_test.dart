@@ -27,7 +27,7 @@ void main() async {
     final builderTest = BuilderTest(landedCommitChange);
     builderTest.firestore.commits
         .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
-    when(builderTest.client.get(any))
+    when(builderTest.client.get(any!))
         .thenAnswer((_) => Future(() => ResponseFake(gitilesLog)));
     await builderTest.storeBuildCommitsInfo();
     await builderTest.builder.fetchReviewsAndReverts();
@@ -35,9 +35,9 @@ void main() async {
     expect(builderTest.builder.startIndex, existingCommitIndex + 1);
     expect(builderTest.builder.tryApprovals,
         {testResult(review44445Result): 54, testResult(review77779Result): 53});
-    expect((await builderTest.firestore.getCommit(commit53Hash)).toJson(),
+    expect((await builderTest.firestore.getCommit(commit53Hash))!.toJson(),
         commit53);
-    expect((await builderTest.firestore.getCommit(landedCommitHash)).toJson(),
+    expect((await builderTest.firestore.getCommit(landedCommitHash))!.toJson(),
         landedCommit);
   });
 
@@ -56,8 +56,11 @@ void main() async {
           ..['configuration'] = 'another configuration';
     await builderTest.storeChange(changeAnotherConfiguration);
     expect(builderTest.builder.success, true);
-    expect(builderTest.firestore.results['activeResultID'],
-        Map.from(activeResult)..remove(fActiveConfigurations)..remove(fActive));
+    expect(
+        builderTest.firestore.results['activeResultID'],
+        Map.from(activeResult)
+          ..remove(fActiveConfigurations)
+          ..remove(fActive));
     expect(builderTest.builder.countApprovalsCopied, 1);
     expect(builderTest.builder.countChanges, 2);
     expect(

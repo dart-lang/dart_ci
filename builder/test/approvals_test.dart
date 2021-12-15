@@ -22,41 +22,40 @@ import 'package:test/test.dart';
 // To run against the staging database, use a service account.
 // with write access to dart_ci_staging datastore.
 
-/*late final*/ FirestoreService /*!*/ firestore;
-/*late final*/ http.Client /*!*/ client;
-/*late final*/ CommitsCache /*!*/ commitsCache;
+late final FirestoreService firestore;
+late final http.Client client;
+late final CommitsCache commitsCache;
 // The real commits and reviews we will test on, fetched from Firestore.
 // These globals are populated by loadTestCommits().
 const testCommitsStart = 80801;
 const reviewWithComments = '215021';
-/*late final*/ String /*!*/ index1; // Index of the final commit in the test range
-/*late final*/ String /*!*/ commit1; // Hash of that commit
-/*late final*/ String review; // CL number of that commit's Gerrit review
-/*late final*/ String /*!*/ lastPatchset; // Final patchset in that review
-/*late final*/ String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
-/*late final*/ String /*!*/
-    patchsetGroup; // First patchset in the final patchset group
-/*late final*/ String patchsetGroupRef;
-/*late final*/ String earlyPatchset; // Patchset not in the final patchset group
-/*late final*/ String earlyPatchsetRef;
+late final String index1; // Index of the final commit in the test range
+late final String commit1; // Hash of that commit
+late final String review; // CL number of that commit's Gerrit review
+late final String lastPatchset; // Final patchset in that review
+late final String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
+late final String patchsetGroup; // First patchset in the final patchset group
+late final String patchsetGroupRef;
+late final String earlyPatchset; // Patchset not in the final patchset group
+late final String earlyPatchsetRef;
 // Earlier commit with a review
-/*late final*/ String /*!*/ index2;
-/*late final*/ String /*!*/ commit2;
-/*late final*/ String review2;
-/*late final*/ String /*!*/ patchset2;
-/*late final*/ String patchset2Ref;
+late final String index2;
+late final String commit2;
+late final String review2;
+late final String patchset2;
+late final String patchset2Ref;
 // Commits before commit2
-/*late final*/ String index3;
-/*late final*/ String /*!*/ commit3;
-/*late final*/ String index4;
-/*late final*/ String /*!*/ commit4;
+late final String index3;
+late final String commit3;
+late final String index4;
+late final String commit4;
 
-final buildersToRemove = <String /*!*/ >{};
-final testsToRemove = <String /*!*/ >{};
+final buildersToRemove = <String>{};
+final testsToRemove = <String>{};
 
 void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name'] as String /*!*/);
-  testsToRemove.add(change['name'] as String /*!*/);
+  buildersToRemove.add(change['builder_name'] as String);
+  testsToRemove.add(change['name'] as String);
 }
 
 Future<void> removeBuildersAndResults() async {
@@ -96,10 +95,10 @@ Future<void> loadTestCommits(int startIndex) async {
       where: fieldLessThanOrEqual('landed_index', startIndex),
       limit: 2);
   final firstReview = reviews.first;
-  index1 = firstReview.fields['landed_index'].integerValue;
+  index1 = firstReview.fields['landed_index']!.integerValue!;
   review = firstReview.name.split('/').last;
   final secondReview = reviews.last;
-  index2 = secondReview.fields['landed_index'].integerValue;
+  index2 = secondReview.fields['landed_index']!.integerValue!;
   review2 = secondReview.name.split('/').last;
   index3 = (int.parse(index2) - 1).toString();
   index4 = (int.parse(index2) - 2).toString();
@@ -110,9 +109,9 @@ Future<void> loadTestCommits(int startIndex) async {
     orderBy: orderBy('number', true),
   );
   final patchsetFields = patchsets.last.fields;
-  lastPatchset = patchsetFields['number'].integerValue;
+  lastPatchset = patchsetFields['number']!.integerValue!;
   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';
-  patchsetGroup = patchsetFields['patchset_group'].integerValue;
+  patchsetGroup = patchsetFields['patchset_group']!.integerValue!;
   patchsetGroupRef = 'refs/changes/$review/$patchsetGroup';
   earlyPatchset = '1';
   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';
@@ -121,7 +120,7 @@ Future<void> loadTestCommits(int startIndex) async {
     parent: 'reviews/$review2',
     orderBy: orderBy('number', true),
   );
-  patchset2 = patchsets2.last.fields['number'].integerValue;
+  patchset2 = patchsets2.last.fields['number']!.integerValue!;
   patchset2Ref = 'refs/changes/$review/$patchset2';
 
   // Get commit hashes for the landed reviews, and for a commit before them
@@ -136,21 +135,21 @@ Future<void> loadTestCommits(int startIndex) async {
           .split('/')
           .last
   };
-  commit1 = commits[index1];
-  commit2 = commits[index2];
-  commit3 = commits[index3];
-  commit4 = commits[index4];
+  commit1 = commits[index1]!;
+  commit2 = commits[index2]!;
+  commit3 = commits[index3]!;
+  commit4 = commits[index4]!;
 }
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange,
-        {String baseCommit}) =>
-    Tryjob(BuildInfo.fromResult(firstChange), 'bbID_$name',
+        {String? baseCommit}) =>
+    Tryjob(BuildInfo.fromResult(firstChange) as TryBuildInfo, 'bbID_$name',
         baseCommit ?? commit4, commitsCache, firestore, client);
 
 const newFailure = 'Pass/RuntimeError/Pass';
 Map<String, dynamic> makeTryChange(
     String name, String result, String patchsetRef,
-    {String testName}) {
+    {String? testName}) {
   final results = result.split('/');
   final previous = results[0];
   final current = results[1];
@@ -183,7 +182,7 @@ Map<String, dynamic> makeTryChange(
 
 Map<String, dynamic> makeChange(
     String name, String result, String commit, String previousCommit,
-    {String testName}) {
+    {String? testName}) {
   final change = {
     ...makeTryChange(name, result, '', testName: testName),
     'commit_hash': commit,
@@ -280,12 +279,12 @@ void main() async {
         from: 'comments',
         where: fieldEquals('review', int.parse(reviewWithComments)));
     final landedIndex =
-        commentsQuery.first.fields[fBlamelistStartIndex].integerValue;
+        commentsQuery.first.fields[fBlamelistStartIndex]!.integerValue!;
     for (final item in commentsQuery) {
       final fields = item.fields;
-      expect(fields[fBlamelistStartIndex].integerValue, landedIndex);
-      expect(fields[fBlamelistEndIndex].integerValue, landedIndex);
-      expect(fields[fReview].integerValue, reviewWithComments);
+      expect(fields[fBlamelistStartIndex]!.integerValue, landedIndex);
+      expect(fields[fBlamelistEndIndex]!.integerValue, landedIndex);
+      expect(fields[fReview]!.integerValue, reviewWithComments);
       fields.remove(fBlamelistStartIndex);
       fields.remove(fBlamelistEndIndex);
       await firestore.updateFields(
@@ -293,8 +292,8 @@ void main() async {
     }
     var reviewDocument = await firestore
         .getDocument('${firestore.documents}/reviews/$reviewWithComments');
-    expect(reviewDocument.fields['landed_index'].integerValue, landedIndex);
-    reviewDocument.fields.remove('landed_index');
+    expect(reviewDocument.fields!['landed_index']!.integerValue, landedIndex);
+    reviewDocument.fields!.remove('landed_index');
     await firestore.updateFields(reviewDocument, ['landed_index']);
 
     await firestore.linkReviewToCommit(
@@ -306,17 +305,18 @@ void main() async {
         where: fieldEquals('review', int.parse(reviewWithComments)));
     for (final item in commentsQuery) {
       final fields = item.fields;
-      expect(fields[fBlamelistStartIndex].integerValue, landedIndex);
-      expect(fields[fBlamelistEndIndex].integerValue, landedIndex);
-      expect(fields[fReview].integerValue, reviewWithComments);
+      expect(fields[fBlamelistStartIndex]!.integerValue, landedIndex);
+      expect(fields[fBlamelistEndIndex]!.integerValue, landedIndex);
+      expect(fields[fReview]!.integerValue, reviewWithComments);
     }
     reviewDocument = await firestore
         .getDocument('${firestore.documents}/reviews/$reviewWithComments');
-    expect(reviewDocument.fields['landed_index'].integerValue, landedIndex);
+    expect(reviewDocument.fields!['landed_index']!.integerValue, landedIndex);
   });
 }
 
-Future<void> checkTryBuild(String name, {bool success, bool truncated}) async {
+Future<void> checkTryBuild(String name,
+    {bool? success, bool? truncated}) async {
   final buildbucketId = 'bbID_$name';
   final buildDocuments = await firestore.query(
       from: 'try_builds', where: fieldEquals('buildbucket_id', buildbucketId));
@@ -330,10 +330,10 @@ Future<void> checkTryBuild(String name, {bool success, bool truncated}) async {
   }
 }
 
-Future<void> checkBuild(String builder, String index, {bool success}) async {
+Future<void> checkBuild(String? builder, String index, {bool? success}) async {
   final document = await firestore
       .getDocument('${firestore.documents}/builds/$builder:$index');
-  expect(document.fields['success'].booleanValue, success);
+  expect(document.fields!['success']!.booleanValue, success);
 }
 
 Future<void> checkResult(Map<String, dynamic> change, String startIndex,
@@ -342,8 +342,8 @@ Future<void> checkResult(Map<String, dynamic> change, String startIndex,
   final resultName = await firestore.findResult(
       change, int.parse(startIndex), int.parse(endIndex));
   expect(resultName, isNotNull);
-  final resultDocument = await firestore.getDocument(resultName /*!*/);
-  final data = untagMap(resultDocument.fields);
+  final resultDocument = await firestore.getDocument(resultName!);
+  final data = untagMap(resultDocument.fields!);
   expect(data[fName], change[fName]);
   expect(data[fBlamelistStartIndex], int.parse(startIndex));
   expect(data[fBlamelistEndIndex], int.parse(endIndex));

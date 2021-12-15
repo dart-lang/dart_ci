@@ -16,16 +16,16 @@ import 'result.dart';
 /// The class fetches commits from Firestore if they are present,
 /// and fetches them from gitiles if not, and saves them to Firestore.
 class CommitsCache {
-  FirestoreService /*!*/ firestore;
-  final http.Client /*!*/ httpClient;
-  Map<String /*!*/, Commit> byHash = {};
+  FirestoreService firestore;
+  final http.Client httpClient;
+  Map<String, Commit> byHash = {};
   Map<int, Commit> byIndex = {};
-  int startIndex;
-  int endIndex;
+  int? startIndex;
+  int? endIndex;
 
   CommitsCache(this.firestore, this.httpClient);
 
-  Future<Commit /*!*/ > getCommit(String /*!*/ hash) async {
+  Future<Commit> getCommit(String hash) async {
     var commit = byHash[hash] ?? await _fetchByHash(hash);
     if (commit == null) {
       await _getNewCommits();
@@ -37,7 +37,7 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit /*!*/ > getCommitByIndex(int /*!*/ index) async {
+  Future<Commit> getCommitByIndex(int index) async {
     var commit = byIndex[index] ?? await _fetchByIndex(index);
     if (commit == null) {
       await _getNewCommits();
@@ -67,7 +67,7 @@ class CommitsCache {
     if (startIndex == null || startIndex == index + 1) {
       startIndex = index;
       endIndex ??= index;
-    } else if (endIndex + 1 == index) {
+    } else if (endIndex! + 1 == index) {
       endIndex = index;
     } else {
       return;
@@ -76,25 +76,25 @@ class CommitsCache {
     byIndex[index] = commit;
   }
 
-  Future<Commit> _fetchByHash(String /*!*/ hash) async {
+  Future<Commit?> _fetchByHash(String hash) async {
     final commit = await firestore.getCommit(hash);
     if (commit == null) return null;
     final index = commit.index;
     if (startIndex == null) {
       _cacheCommit(commit);
-    } else if (index < startIndex) {
-      for (var fetchIndex = startIndex - 1; fetchIndex > index; --fetchIndex) {
+    } else if (index < startIndex!) {
+      for (var fetchIndex = startIndex! - 1; fetchIndex > index; --fetchIndex) {
         // Other invocations may be fetching simultaneously.
-        if (fetchIndex < startIndex) {
+        if (fetchIndex < startIndex!) {
           final infillCommit = await firestore.getCommitByIndex(fetchIndex);
           _cacheCommit(infillCommit);
         }
       }
       _cacheCommit(commit);
-    } else if (index > endIndex) {
-      for (var fetchIndex = endIndex + 1; fetchIndex < index; ++fetchIndex) {
+    } else if (index > endIndex!) {
+      for (var fetchIndex = endIndex! + 1; fetchIndex < index; ++fetchIndex) {
         // Other invocations may be fetching simultaneously.
-        if (fetchIndex > endIndex) {
+        if (fetchIndex > endIndex!) {
           final infillCommit = await firestore.getCommitByIndex(fetchIndex);
           _cacheCommit(infillCommit);
         }
@@ -104,7 +104,7 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit> _fetchByIndex(int /*!*/ index) => firestore
+  Future<Commit?> _fetchByIndex(int index) => firestore
       .getCommitByIndex(index)
       .then((commit) => _fetchByHash(commit.hash));
 
@@ -173,7 +173,7 @@ class CommitsCache {
   /// This function is idempotent and may be called multiple times
   /// concurrently.
   Future<void> landReview(Map<String, dynamic> commit, int index) async {
-    final review = _review(commit);
+    final review = _review(commit)!;
     // Optimization to avoid duplicate work: if another instance has linked
     // the review to its landed commit, do nothing.
     if (await firestore.reviewIsLanded(review)) return;
@@ -220,20 +220,20 @@ final reviewRegExp = RegExp(
     '^Reviewed-on: https://dart-review.googlesource.com/c/sdk/\\+/(\\d+)\$',
     multiLine: true);
 
-int _review(Map<String, dynamic> commit) {
+int? _review(Map<String, dynamic> commit) {
   final match = reviewRegExp.firstMatch(commit['message']);
-  if (match != null) return int.parse(match.group(1));
+  if (match != null) return int.parse(match.group(1)!);
   return null;
 }
 
 final revertRegExp =
     RegExp('^This reverts commit ([\\da-f]+)\\.\$', multiLine: true);
 
-String _revert(Map<String, dynamic> commit) =>
+String? _revert(Map<String, dynamic> commit) =>
     revertRegExp.firstMatch(commit['message'])?.group(1);
 
 final relandRegExp =
     RegExp('^This is a reland of ([\\da-f]+)\\.?\$', multiLine: true);
 
-String _reland(Map<String, dynamic> commit) =>
+String? _reland(Map<String, dynamic> commit) =>
     relandRegExp.firstMatch(commit['message'])?.group(1);

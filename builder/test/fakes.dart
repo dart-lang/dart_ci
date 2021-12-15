@@ -17,8 +17,8 @@ import 'test_data.dart';
 class BuilderTest {
   final client = HttpClientMock();
   final firestore = FirestoreServiceFake();
-  CommitsCache commitsCache;
-  Build builder;
+  late CommitsCache commitsCache;
+  late Build builder;
   Map<String, dynamic> firstChange;
 
   BuilderTest(this.firstChange) {
@@ -51,16 +51,16 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   Future<bool> isStaging() async => false;
 
   @override
-  Future<Commit> getCommit(String hash) async {
+  Future<Commit?> getCommit(String hash) async {
     final commit = commits[hash];
     if (commit == null) {
       return null;
     }
-    return Commit.fromJson(hash, commits[hash]);
+    return Commit.fromJson(hash, commits[hash]!);
   }
 
   @override
-  Future<Commit> getCommitByIndex(int index) {
+  Future<Commit> getCommitByIndex(int? index) {
     for (final entry in commits.entries) {
       if (entry.value[fIndex] == index) {
         return Future.value(Commit.fromJson(entry.key, entry.value));
@@ -71,7 +71,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<Commit> getLastCommit() => getCommitByIndex(
-      commits.values.map<int>((commit) => commit[fIndex]).reduce(max));
+      commits.values.map<int?>((commit) => commit[fIndex]).reduce(max));
 
   @override
   Future<void> addCommit(String id, Map<String, dynamic> data) async {
@@ -81,8 +81,8 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   @override
   Future<String> findResult(
       Map<String, dynamic> change, int startIndex, int endIndex) {
-    String resultId;
-    int resultEndIndex;
+    String? resultId;
+    int? resultEndIndex;
     for (final entry in results.entries) {
       final result = entry.value;
       if (result[fName] == change[fName] &&
@@ -103,20 +103,20 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<List<SafeDocument>> findActiveResults(
-      String name, String configuration) async {
+      String? name, String? configuration) async {
     return [
       for (final id in results.keys)
-        if (results[id][fName] == name &&
-            results[id][fActiveConfigurations] != null &&
-            results[id][fActiveConfigurations].contains(configuration))
+        if (results[id]![fName] == name &&
+            results[id]![fActiveConfigurations] != null &&
+            results[id]![fActiveConfigurations].contains(configuration))
           SafeDocument(Document()
-            ..fields = taggedMap(Map.from(results[id]))
+            ..fields = taggedMap(Map.from(results[id]!))
             ..name = id)
     ];
   }
 
   @override
-  Future<Document> storeResult(Map<String, dynamic> result) async {
+  Future<Document?> storeResult(Map<String, dynamic> result) async {
     final id = 'resultDocumentID$addedResultIdCounter';
     addedResultIdCounter++;
     results[id] = result;
@@ -125,16 +125,16 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<bool> updateResult(
-      String resultId, String configuration, int startIndex, int endIndex,
-      {bool failure}) {
-    final result = Map<String, dynamic>.from(results[resultId]);
+      String resultId, String? configuration, int startIndex, int endIndex,
+      {required bool failure}) {
+    final result = Map<String, dynamic>.from(results[resultId]!);
 
     result[fBlamelistStartIndex] =
         max<int>(startIndex, result[fBlamelistStartIndex]);
 
     result[fBlamelistEndIndex] = min<int>(endIndex, result[fBlamelistEndIndex]);
     if (!result[fConfigurations].contains(configuration)) {
-      result[fConfigurations] = List<String>.from(result[fConfigurations])
+      result[fConfigurations] = List<String?>.from(result[fConfigurations])
         ..add(configuration)
         ..sort();
     }
@@ -142,7 +142,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
       result[fActive] = true;
       if (!result[fActiveConfigurations].contains(configuration)) {
         result[fActiveConfigurations] =
-            List<String>.from(result[fActiveConfigurations])
+            List<String?>.from(result[fActiveConfigurations])
               ..add(configuration)
               ..sort();
       }
@@ -153,8 +153,8 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<void> removeActiveConfiguration(
-      SafeDocument activeResult, String configuration) async {
-    final result = Map<String, dynamic>.from(results[activeResult.name]);
+      SafeDocument activeResult, String? configuration) async {
+    final result = Map<String, dynamic>.from(results[activeResult.name]!);
     result[fActiveConfigurations] = List.from(result[fActiveConfigurations])
       ..remove(configuration);
     if (result[fActiveConfigurations].isEmpty) {

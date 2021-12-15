@@ -1,5 +1,3 @@
-// @dart = 2.9
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,11 +11,11 @@ import 'package:googleapis/firestore/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 
-BuildInfo buildInfo;
+late BuildInfo buildInfo;
 
 Future<List<Map<String, dynamic>>> readChangedResults(File resultsFile) async {
   final lines = (await resultsFile.readAsLines())
-      .map((line) => jsonDecode(line) /*!*/ as Map<String, dynamic>);
+      .map((line) => jsonDecode(line)! as Map<String, dynamic>);
   if (lines.isEmpty) {
     print('Empty input results.json file');
     exit(1);
@@ -43,12 +41,12 @@ File fileOption(options, String name) {
 Future<void> processResults(options, client, firestore) async {
   final inputFile = fileOption(options, 'results');
   final results = await readChangedResults(inputFile);
-  final String buildbucketID = options['buildbucket_id'];
-  final String baseRevision = options['base_revision'];
+  final String? buildbucketID = options['buildbucket_id'];
+  final String? baseRevision = options['base_revision'];
   final commitCache = CommitsCache(firestore, client);
   if (buildInfo is TryBuildInfo) {
-    await Tryjob(buildInfo, buildbucketID, baseRevision, commitCache, firestore,
-            client)
+    await Tryjob(buildInfo as TryBuildInfo, buildbucketID!, baseRevision!,
+            commitCache, firestore, client)
         .process(results);
   } else {
     await Build(buildInfo, commitCache, firestore).process(results);

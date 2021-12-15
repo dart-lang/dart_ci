@@ -5,15 +5,15 @@
 import 'package:googleapis/firestore/v1.dart';
 
 class SafeDocument {
-  final String /*!*/ name;
-  final Map<String, Value> /*!*/ fields;
+  final String name;
+  final Map<String, Value> fields;
 
   SafeDocument(Document document)
-      : name = document.name /*!*/,
-        fields = document.fields /*!*/;
+      : name = document.name!,
+        fields = document.fields!;
 
   Document toDocument() => Document(name: name, fields: fields);
-  int getInt(String name) {
+  int? getInt(String name) {
     final value = fields[name]?.integerValue;
     if (value == null) {
       return null;
@@ -21,15 +21,15 @@ class SafeDocument {
     return int.parse(value);
   }
 
-  String getString(String name) {
+  String? getString(String name) {
     return fields[name]?.stringValue;
   }
 
-  bool getBool(String name) {
+  bool? getBool(String name) {
     return fields[name]?.booleanValue;
   }
 
-  List<dynamic> getList(String name) {
+  List<dynamic>? getList(String name) {
     final arrayValue = fields[name]?.arrayValue;
     if (arrayValue == null) return null;
     return arrayValue.values?.map(getValue)?.toList() ?? [];
@@ -37,7 +37,7 @@ class SafeDocument {
 
   bool isNull(String name) {
     return !fields.containsKey(name) ||
-        fields['name'].nullValue == 'NULL_VALUE';
+        fields['name']!.nullValue == 'NULL_VALUE';
   }
 }
 
@@ -67,15 +67,15 @@ Value taggedValue(dynamic value) {
 
 dynamic getValue(Value value) {
   if (value.integerValue != null) {
-    return int.parse(value.integerValue);
+    return int.parse(value.integerValue!);
   } else if (value.stringValue != null) {
     return value.stringValue;
   } else if (value.booleanValue != null) {
     return value.booleanValue;
   } else if (value.arrayValue != null) {
-    return value.arrayValue.values.map(getValue).toList();
+    return value.arrayValue!.values!.map(getValue).toList();
   } else if (value.timestampValue != null) {
-    return DateTime.parse(value.timestampValue);
+    return DateTime.parse(value.timestampValue!);
   } else if (value.nullValue != null) {
     return null;
   }

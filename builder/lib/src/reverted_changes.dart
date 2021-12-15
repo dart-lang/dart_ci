@@ -17,14 +17,14 @@ Future<RevertedChanges> getRevertedChanges(
   final index = revertedCommit.index;
   final changes = await firestore.findRevertedChanges(index);
   return RevertedChanges(index, revertIndex, changes,
-      groupBy(changes, (change) => getValue(change[fName])));
+      groupBy(changes, (change) => getValue(change[fName]!)));
 }
 
 class RevertedChanges {
   final int index;
   final int revertIndex;
-  final List<Map<String, Value> /*!*/ > changes;
-  final Map<String /*!*/, List<Map<String, Value> /*!*/ >> changesForTest;
+  final List<Map<String, Value>> changes;
+  final Map<String, List<Map<String, Value>>> changesForTest;
 
   RevertedChanges(
       this.index, this.revertIndex, this.changes, this.changesForTest);
@@ -34,6 +34,6 @@ class RevertedChanges {
     return isFailure(revert) &&
         reverted != null &&
         reverted.any(
-            (change) => revert[fResult] == getValue(change[fPreviousResult]));
+            (change) => revert[fResult] == getValue(change[fPreviousResult]!));
   }
 }

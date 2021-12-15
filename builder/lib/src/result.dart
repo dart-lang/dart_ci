@@ -10,21 +10,21 @@ import 'dart:convert' show jsonEncode;
 import 'package:googleapis/firestore/v1.dart' show Value;
 
 class ResultRecord {
-  final Map<String, Value> /*!*/ fields;
+  final Map<String, Value> fields;
 
   ResultRecord(this.fields);
 
-  bool /*!*/ get approved => fields['approved'].booleanValue;
+  bool get approved => fields['approved']!.booleanValue!;
 
   @override
   String toString() => jsonEncode(fields);
 
   int get blamelistEndIndex {
-    return int.parse(fields['blamelist_end_index'].integerValue);
+    return int.parse(fields['blamelist_end_index']!.integerValue!);
   }
 
-  bool containsActiveConfiguration(String /*!*/ configuration) {
-    for (final value in fields['active_configurations'].arrayValue.values) {
+  bool containsActiveConfiguration(String configuration) {
+    for (final value in fields['active_configurations']!.arrayValue!.values!) {
       if (value.stringValue != null && value.stringValue == configuration) {
         return true;
       }
@@ -50,7 +50,7 @@ const fActive = 'active';
 const fConfigurations = 'configurations';
 const fActiveConfigurations = 'active_configurations';
 
-bool isChangedResult(Map<String, dynamic> /*!*/ change) =>
+bool isChangedResult(Map<String, dynamic> change) =>
     change[fChanged] && (!change[fFlaky] || !change[fPreviousFlaky]);
 
 /// Whether the change will be marked as an active failure.
@@ -70,7 +70,7 @@ void transformChange(Map<String, dynamic> change) {
   }
 }
 
-String fromStringOrValue(dynamic value) {
+String? fromStringOrValue(dynamic value) {
   return value is Value ? value.stringValue : value;
 }
 
@@ -96,10 +96,10 @@ const fRelandOf = 'reland_of';
 class BuildInfo {
   static final commitRefRegExp = RegExp(r'refs/changes/(\d*)/(\d*)');
 
-  final String /*!*/ builderName;
+  final String builderName;
   final int buildNumber;
-  final String /*!*/ commitRef;
-  final String previousCommitHash;
+  final String commitRef;
+  final String? previousCommitHash;
 
   BuildInfo(Map<String, dynamic> result)
       : builderName = result['builder_name'],
@@ -113,7 +113,7 @@ class BuildInfo {
     if (match == null) {
       return BuildInfo(result);
     } else {
-      return TryBuildInfo(result, int.parse(match[1]), int.parse(match[2]));
+      return TryBuildInfo(result, int.parse(match[1]!), int.parse(match[2]!));
     }
   }
 }
@@ -126,11 +126,11 @@ class TryBuildInfo extends BuildInfo {
 }
 
 class TestNameLock {
-  final locks = <String /*!*/, Future<void>>{};
+  final locks = <String, Future<void>>{};
 
   Future<void> guardedCall(Future<void> Function(Map<String, dynamic> change) f,
-      Map<String, dynamic> /*!*/ change) async {
-    final name = change[fName] /*!*/;
+      Map<String, dynamic> change) async {
+    final name = change[fName]!;
     while (locks.containsKey(name)) {
       await locks[name];
     }

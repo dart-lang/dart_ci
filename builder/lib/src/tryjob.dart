@@ -57,17 +57,17 @@ class ChangeCounter {
 }
 
 class Tryjob {
-  final http.Client /*!*/ httpClient;
-  final FirestoreService /*!*/ firestore;
-  final CommitsCache /*!*/ commits;
+  final http.Client httpClient;
+  final FirestoreService firestore;
+  final CommitsCache commits;
   final counter = ChangeCounter();
-  TryBuildInfo /*!*/ info;
+  TryBuildInfo info;
   final TestNameLock testNameLock = TestNameLock();
-  String /*!*/ baseRevision;
+  String baseRevision;
   bool success = true;
-  List<SafeDocument /*!*/ > landedResults;
-  Map<String /*!*/, SafeDocument /*!*/ > lastLandedResultByName = {};
-  final String /*!*/ buildbucketID;
+  late List<SafeDocument> landedResults;
+  Map<String, SafeDocument> lastLandedResultByName = {};
+  final String buildbucketID;
 
   Tryjob(this.info, this.buildbucketID, this.baseRevision, this.commits,
       this.firestore, this.httpClient);
@@ -79,29 +79,28 @@ class Tryjob {
         .update();
   }
 
-  bool isNotLandedResult(Map<String, dynamic> /*!*/ change) {
+  bool isNotLandedResult(Map<String, dynamic> change) {
     return !lastLandedResultByName.containsKey(change[fName]) ||
         change[fResult] !=
-            lastLandedResultByName[change[fName]].getString(fResult);
+            lastLandedResultByName[change[fName]]!.getString(fResult);
   }
 
-  Future<void> process(List<Map<String, dynamic> /*!*/ > results) async {
+  Future<void> process(List<Map<String, dynamic>> results) async {
     await update();
     log('storing ${results.length} change(s)');
-    final resultsByConfiguration =
-        groupBy<Map<String, dynamic> /*!*/, String /*!*/ >(
-            results, (result) => result['configuration']);
+    final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
+        results, (result) => result['configuration']);
 
     for (final configuration in resultsByConfiguration.keys) {
       if (baseRevision != null && info.previousCommitHash != null) {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.getString(fName): result
+          for (final result in landedResults) result.getString(fName)!: result
         };
       }
       final changes =
-          resultsByConfiguration[configuration].where(isNotLandedResult);
+          resultsByConfiguration[configuration]!.where(isNotLandedResult);
       await Pool(30).forEach(changes, guardedStoreChange).drain();
     }
 
@@ -121,7 +120,7 @@ class Tryjob {
     log(report.join('\n'));
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> /*!*/ change) =>
+  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
       testNameLock.guardedCall(storeChange, change);
 
   Future<void> storeChange(Map<String, dynamic> change) async {
@@ -136,11 +135,10 @@ class Tryjob {
     }
   }
 
-  Future<List<SafeDocument /*!*/ >> fetchLandedResults(
-      String configuration) async {
-    final resultsBase = await commits.getCommit(info.previousCommitHash);
+  Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
+    final resultsBase = await commits.getCommit(info.previousCommitHash!);
     final rebaseBase = await commits.getCommit(baseRevision);
-    if (resultsBase /*!*/ .index > rebaseBase /*!*/ .index) {
+    if (resultsBase!.index > rebaseBase!.index) {
       print('Try build is rebased on $baseRevision, which is before '
           'the commit ${info.previousCommitHash} with CI comparison results');
       return [];

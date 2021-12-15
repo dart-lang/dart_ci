@@ -3,7 +3,7 @@ description: Scripts run on Dart CQ/CI builders
 version: 0.1.0
 
 environment:
-  sdk: '^2.10.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   args: ^2.3.0
@@ -12,6 +12,7 @@ dependencies:
   http: ^0.13.0
   pool: ^1.5.0
   retry: 3.1.0
+  collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
   lints: ^1.0.0

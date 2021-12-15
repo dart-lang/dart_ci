@@ -15,13 +15,13 @@ void main() async {
   test('fetch commit that is a revert', () async {
     final builderTest = BuilderTest(revertUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
-    when(builderTest.client.get(any))
+    when(builderTest.client.get(any!))
         .thenAnswer((_) => Future(() => ResponseFake(revertGitilesLog)));
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, revertCommit['index']);
     expect(builderTest.builder.startIndex, landedCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(revertCommitHash))
+        (await builderTest.builder.firestore.getCommit(revertCommitHash))!
             .toJson(),
         revertCommit);
   });
@@ -29,33 +29,33 @@ void main() async {
   test('fetch commit that is a reland (as a reland)', () async {
     final builderTest = BuilderTest(relandUnchangedChange);
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
-    when(builderTest.client.get(any)).thenAnswer(
+    when(builderTest.client.get(any!)).thenAnswer(
         (_) => Future(() => ResponseFake(revertAndRelandGitilesLog)));
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(revertCommitHash))
+        (await builderTest.builder.firestore.getCommit(revertCommitHash))!
             .toJson(),
         revertCommit);
     expect(
-        (await builderTest.builder.firestore.getCommit(commit56Hash)).toJson(),
+        (await builderTest.builder.firestore.getCommit(commit56Hash))!.toJson(),
         commit56);
     expect(
-        (await builderTest.builder.firestore.getCommit(relandCommitHash))
+        (await builderTest.builder.firestore.getCommit(relandCommitHash))!
             .toJson(),
         relandCommit);
   });
 
   test('fetch commit that is a reland (as a revert)', () async {
     final builderTest = RevertBuilderTest(relandUnchangedChange);
-    when(builderTest.client.get(any))
+    when(builderTest.client.get(any!))
         .thenAnswer((_) => Future(() => ResponseFake(relandGitilesLog)));
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(relandCommitHash))
+        (await builderTest.builder.firestore.getCommit(relandCommitHash))!
             .toJson(),
         relandCommit);
   });
@@ -257,7 +257,7 @@ const Map<String, dynamic> revertedResult = {
 };
 
 // Git logs
-String escape(s) => s.replaceAll('"', '\\"');
+String? escape(s) => s.replaceAll('"', '\\"');
 String revertGitilesLog = gitilesLog([revertCommitJson]);
 String relandGitilesLog = gitilesLog([relandCommitJson(relandAsRevert)]);
 String revertAndRelandGitilesLog = gitilesLog(
