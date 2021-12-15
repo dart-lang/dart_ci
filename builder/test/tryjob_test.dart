@@ -37,8 +37,8 @@ void registerChangeForDeletion(Map<String, dynamic> change) {
 }
 
 Future<void> removeTryBuildersAndResults() async {
-  Future<void> deleteDocuments(RunQueryResponse response) async {
-    for (final document in response.map((r) => r.document)) {
+  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+    for (final document in documents) {
       await firestore.deleteDocument(document.name);
     }
   }
@@ -60,10 +60,10 @@ Future<Map<String, String>> loadTestCommits(int startIndex) async {
       orderBy: orderBy('landed_index', false),
       where: fieldLessThanOrEqual('landed_index', startIndex),
       limit: 2);
-  final firstReview = reviews.first.document;
+  final firstReview = reviews.first;
   final String index = firstReview.fields['landed_index'].integerValue;
   final String review = firstReview.name.split('/').last;
-  final secondReview = reviews.last.document;
+  final secondReview = reviews.last;
   final String landedIndex = secondReview.fields['landed_index'].integerValue;
   final String landedReview = secondReview.name.split('/').last;
   // expect(int.parse(index), greaterThan(int.parse(landedIndex)));
@@ -74,15 +74,14 @@ Future<Map<String, String>> loadTestCommits(int startIndex) async {
     parent: 'reviews/$review',
     orderBy: orderBy('number', true),
   );
-  final patchset = patchsets.last.document.fields['number'].integerValue;
+  final patchset = patchsets.last.fields['number'].integerValue;
   final previousPatchset = '1';
   final landedPatchsets = await firestore.query(
     from: 'patchsets',
     parent: 'reviews/$landedReview',
     orderBy: orderBy('number', true),
   );
-  final landedPatchset =
-      landedPatchsets.last.document.fields['number'].integerValue;
+  final landedPatchset = landedPatchsets.last.fields['number'].integerValue;
 
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
@@ -92,7 +91,6 @@ Future<Map<String, String>> loadTestCommits(int startIndex) async {
               where: fieldEquals('index', int.parse(index)),
               limit: 1))
           .first
-          .document
           .name
           .split('/')
           .last
@@ -167,14 +165,11 @@ Future<void> checkTryBuild(String name, {bool success, bool truncated}) async {
   final buildDocuments = await firestore.query(
       from: 'try_builds', where: fieldEquals('buildbucket_id', buildbucketId));
   expect(buildDocuments.length, 1);
-  expect(
-      buildDocuments.single.document.fields['success'].booleanValue, success);
+  expect(buildDocuments.single.fields['success'].booleanValue, success);
   if (truncated != null) {
-    expect(buildDocuments.single.document.fields['truncated'].booleanValue,
-        truncated);
+    expect(buildDocuments.single.fields['truncated'].booleanValue, truncated);
   } else {
-    expect(buildDocuments.single.document.fields.containsKey('truncated'),
-        isFalse);
+    expect(buildDocuments.single.fields.containsKey('truncated'), isFalse);
   }
 }
 
@@ -215,10 +210,7 @@ void main() async {
     final result = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'failure_test'));
     expect(result.length, 1);
-    expect(
-        result
-            .single.document.fields['configurations'].arrayValue.values.length,
-        2);
+    expect(result.single.getList('configurations').length, 2);
   });
 
   test('landedFailure', () async {

@@ -53,24 +53,19 @@ void main() async {
       var snapshot = await firestore.query(
           from: 'try_builds', where: fieldEquals('review', testReview));
       for (final doc in snapshot) {
-        if (doc.document != null) {
-          await firestore.deleteDocument(doc.document.name);
-        }
+        await firestore.deleteDocument(doc.name);
       }
+
       snapshot = await firestore.query(
           from: 'patchsets', parent: 'reviews/$testReview/');
       for (final doc in snapshot) {
-        if (doc.document != null) {
-          await firestore.deleteDocument(doc.document.name);
-        }
+        await firestore.deleteDocument(doc.name);
       }
       snapshot = await firestore.query(
           from: 'results',
           where: fieldEquals('name', removeActiveConfigurationTestName));
       for (final doc in snapshot) {
-        if (doc.document != null) {
-          await firestore.deleteDocument(doc.document.name);
-        }
+        await firestore.deleteDocument(doc.name);
       }
       await firestore.deleteDocument(testReviewDocument);
     });
@@ -161,7 +156,7 @@ void main() async {
             fieldLessThanOrEqual('patchset', 2)
           ]));
       for (final response in snapshot) {
-        await firestore.approveResult(response.document);
+        await firestore.approveResult(response.toDocument());
         //await firestore.updateDocument(response.document.name, {'approved': taggedValue(true)});
       }
 
@@ -172,7 +167,7 @@ void main() async {
       tryResult2['approved'] = true;
       tryResult2.remove('configuration');
       expect(1, approvals.length);
-      final approval = untagMap(approvals.single);
+      final approval = untagMap(approvals.single.fields);
       expect(approval, tryResult2);
     });
   });

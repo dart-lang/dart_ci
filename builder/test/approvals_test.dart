@@ -59,8 +59,8 @@ void registerChangeForDeletion(Map<String, dynamic> change) {
 }
 
 Future<void> removeBuildersAndResults() async {
-  Future<void> deleteDocuments(RunQueryResponse response) async {
-    for (final document in response.map((r) => r.document)) {
+  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+    for (final document in documents) {
       await firestore.deleteDocument(document.name);
     }
   }
@@ -94,10 +94,10 @@ Future<void> loadTestCommits(int startIndex) async {
       orderBy: orderBy('landed_index', false),
       where: fieldLessThanOrEqual('landed_index', startIndex),
       limit: 2);
-  final firstReview = reviews.first.document;
+  final firstReview = reviews.first;
   index1 = firstReview.fields['landed_index'].integerValue;
   review = firstReview.name.split('/').last;
-  final secondReview = reviews.last.document;
+  final secondReview = reviews.last;
   index2 = secondReview.fields['landed_index'].integerValue;
   review2 = secondReview.name.split('/').last;
   index3 = (int.parse(index2) - 1).toString();
@@ -108,7 +108,7 @@ Future<void> loadTestCommits(int startIndex) async {
     parent: 'reviews/$review',
     orderBy: orderBy('number', true),
   );
-  final patchsetFields = patchsets.last.document.fields;
+  final patchsetFields = patchsets.last.fields;
   lastPatchset = patchsetFields['number'].integerValue;
   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';
   patchsetGroup = patchsetFields['patchset_group'].integerValue;
@@ -120,7 +120,7 @@ Future<void> loadTestCommits(int startIndex) async {
     parent: 'reviews/$review2',
     orderBy: orderBy('number', true),
   );
-  patchset2 = patchsets2.last.document.fields['number'].integerValue;
+  patchset2 = patchsets2.last.fields['number'].integerValue;
   patchset2Ref = 'refs/changes/$review/$patchset2';
 
   // Get commit hashes for the landed reviews, and for a commit before them
@@ -131,7 +131,6 @@ Future<void> loadTestCommits(int startIndex) async {
               where: fieldEquals('index', int.parse(index)),
               limit: 1))
           .first
-          .document
           .name
           .split('/')
           .last
@@ -234,13 +233,13 @@ void main() async {
     await makeTryjob('approvals', change1).process([change1]);
     var documents = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'approvals_test'));
-    await firestore.approveResult(documents.single.document);
+    await firestore.approveResult(documents.single.toDocument());
     final change2 = makeTryChange('approvals', newFailure, patchsetGroupRef,
         testName: 'approvals_2');
     await makeTryjob('approvals', change2).process([change2]);
     documents = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'approvals_2_test'));
-    await firestore.approveResult(documents.single.document);
+    await firestore.approveResult(documents.single.toDocument());
 
     final change3 = makeChange('approvals', newFailure, commit1, commit4);
     final change3a = makeChange('approvals', newFailure, commit1, commit4)
@@ -280,16 +279,16 @@ void main() async {
         from: 'comments',
         where: fieldEquals('review', int.parse(reviewWithComments)));
     final landedIndex =
-        commentsQuery.first.document.fields[fBlamelistStartIndex].integerValue;
+        commentsQuery.first.fields[fBlamelistStartIndex].integerValue;
     for (final item in commentsQuery) {
-      final fields = item.document.fields;
+      final fields = item.fields;
       expect(fields[fBlamelistStartIndex].integerValue, landedIndex);
       expect(fields[fBlamelistEndIndex].integerValue, landedIndex);
       expect(fields[fReview].integerValue, reviewWithComments);
       fields.remove(fBlamelistStartIndex);
       fields.remove(fBlamelistEndIndex);
       await firestore.updateFields(
-          item.document, [fBlamelistStartIndex, fBlamelistEndIndex]);
+          item.toDocument(), [fBlamelistStartIndex, fBlamelistEndIndex]);
     }
     var reviewDocument = await firestore
         .getDocument('${firestore.documents}/reviews/$reviewWithComments');
@@ -305,7 +304,7 @@ void main() async {
         from: 'comments',
         where: fieldEquals('review', int.parse(reviewWithComments)));
     for (final item in commentsQuery) {
-      final fields = item.document.fields;
+      final fields = item.fields;
       expect(fields[fBlamelistStartIndex].integerValue, landedIndex);
       expect(fields[fBlamelistEndIndex].integerValue, landedIndex);
       expect(fields[fReview].integerValue, reviewWithComments);
@@ -321,12 +320,12 @@ Future<void> checkTryBuild(String name, {bool success, bool truncated}) async {
   final buildDocuments = await firestore.query(
       from: 'try_builds', where: fieldEquals('buildbucket_id', buildbucketId));
   expect(buildDocuments.length, 1);
-  final data = untagMap(buildDocuments.single.document.fields);
-  expect(data['success'], success);
+  final document = buildDocuments.single;
+  expect(document.getBool('success'), success);
   if (truncated != null) {
-    expect(data['truncated'], truncated);
+    expect(document.getBool('truncated'), truncated);
   } else {
-    expect(data.containsKey('truncated'), isFalse);
+    expect(document.fields.containsKey('truncated'), isFalse);
   }
 }
 

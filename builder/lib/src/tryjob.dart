@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:googleapis/firestore/v1.dart';
 import 'package:http/http.dart' as http show BaseClient;
 import 'package:pool/pool.dart';
 
@@ -66,8 +65,8 @@ class Tryjob {
   final TestNameLock testNameLock = TestNameLock();
   String baseRevision;
   bool success = true;
-  List<Map<String, Value>> landedResults;
-  Map<String, Map<String, Value>> lastLandedResultByName = {};
+  List<SafeDocument> landedResults;
+  Map<String, SafeDocument> lastLandedResultByName = {};
   final String buildbucketID;
 
   Tryjob(this.info, this.buildbucketID, this.baseRevision, this.commits,
@@ -83,7 +82,7 @@ class Tryjob {
   bool isNotLandedResult(Map<String, dynamic> change) {
     return !lastLandedResultByName.containsKey(change[fName]) ||
         change[fResult] !=
-            lastLandedResultByName[change[fName]][fResult].stringValue;
+            lastLandedResultByName[change[fName]].getString(fResult);
   }
 
   Future<void> process(List<Map<String, dynamic>> results) async {
@@ -97,8 +96,7 @@ class Tryjob {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults)
-            getValue(result[fName]) as String: result
+          for (final result in landedResults) result.getString(fName): result
         };
       }
       final changes =
@@ -137,15 +135,13 @@ class Tryjob {
     }
   }
 
-  Future<List<Map<String, Value>>> fetchLandedResults(
-      String configuration) async {
+  Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
     final resultsBase = await commits.getCommit(info.previousCommitHash);
     final rebaseBase = await commits.getCommit(baseRevision);
-    final results = <Map<String, Value>>[];
     if (resultsBase.index > rebaseBase.index) {
       print('Try build is rebased on $baseRevision, which is before '
           'the commit ${info.previousCommitHash} with CI comparison results');
-      return results;
+      return [];
     }
     final reviews = <int>[];
     for (var index = resultsBase.index + 1;
@@ -156,9 +152,9 @@ class Tryjob {
         reviews.add(commit.review);
       }
     }
-    for (final landedReview in reviews) {
-      results.addAll(await firestore.tryResults(landedReview, configuration));
-    }
-    return results;
+    return [
+      for (final landedReview in reviews)
+        ...await firestore.tryResults(landedReview, configuration)
+    ];
   }
 }

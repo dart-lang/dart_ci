@@ -102,16 +102,16 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<List<Document>> findActiveResults(
+  Future<List<SafeDocument>> findActiveResults(
       String name, String configuration) async {
     return [
       for (final id in results.keys)
         if (results[id][fName] == name &&
             results[id][fActiveConfigurations] != null &&
             results[id][fActiveConfigurations].contains(configuration))
-          Document()
+          SafeDocument(Document()
             ..fields = taggedMap(Map.from(results[id]))
-            ..name = id
+            ..name = id)
     ];
   }
 
@@ -153,7 +153,7 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
 
   @override
   Future<void> removeActiveConfiguration(
-      Document activeResult, String configuration) async {
+      SafeDocument activeResult, String configuration) async {
     final result = Map<String, dynamic>.from(results[activeResult.name]);
     result[fActiveConfigurations] = List.from(result[fActiveConfigurations])
       ..remove(configuration);
@@ -176,22 +176,28 @@ class FirestoreServiceFake extends Fake implements FirestoreService {
   }
 
   @override
-  Future<List<Map<String, Value>>> tryApprovals(int review) async {
+  Future<List<SafeDocument>> tryApprovals(int review) async {
     return fakeTryResults
         .where(
             (result) => result[fReview] == review && result[fApproved] == true)
         .map(taggedMap)
+        .map((fields) => SafeDocument(Document()
+          ..fields = fields
+          ..name = ''))
         .toList();
   }
 
   @override
-  Future<List<Map<String, Value>>> tryResults(
+  Future<List<SafeDocument>> tryResults(
       int review, String configuration) async {
     return fakeTryResults
         .where((result) =>
             result[fReview] == review &&
             result[fConfigurations].contains(configuration))
         .map(taggedMap)
+        .map((fields) => SafeDocument(Document()
+          ..fields = fields
+          ..name = ''))
         .toList();
   }
 
