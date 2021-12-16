@@ -11,6 +11,7 @@ class BaselineOptions {
   late final List<String> builders;
   late final Map<String, String> configs;
   late final List<String> channels;
+  late final String target;
 
   BaselineOptions(List<String> arguments) {
     var parser = ArgParser();
@@ -23,10 +24,11 @@ class BaselineOptions {
         abbr: 'm',
         help: 'a comma separated list of configuration mappings in the form:'
             '<old1>:<new1>,<old2>:<new2>');
-    parser.addOption('builder-mapping',
+    parser.addMultiOption('builders',
         abbr: 'b',
-        help:
-            'a mapping from an old to a new builder in the form: <old>:<new>');
+        help: 'a comma separated list of builders to read result data from');
+    parser.addOption('target',
+        abbr: 't', help: 'a the name of the builder to baseline');
     parser.addFlag('dry-run',
         abbr: 'n',
         defaultsTo: false,
@@ -35,11 +37,13 @@ class BaselineOptions {
     parser.addFlag('help',
         abbr: 'h', negatable: false, help: 'prints this message');
     var parsed = parser.parse(arguments);
-    if (parsed['help'] || parsed['builder-mapping'] is! String) {
+    if (parsed['help'] ||
+        parsed['builders'] is! List<String> ||
+        parsed['target'] is! String) {
       print(parser.usage);
-      exit(0);
+      exit(64);
     }
-    builders = (parsed['builder-mapping'] as String).split(':');
+    builders = (parsed['builders'] as List<String>);
     configs = {
       for (var v in ((parsed['config-mapping'] as Iterable<String>)
           .map((c) => c.split(':'))))
@@ -47,5 +51,6 @@ class BaselineOptions {
     };
     dryRun = parsed['dry-run'];
     channels = parsed['channel'];
+    target = parsed['target'];
   }
 }

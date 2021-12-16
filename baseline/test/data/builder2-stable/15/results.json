@@ -1,0 +1,2 @@
+{"build_number":15,"previous_build_number":12,"builder_name":"builder2-stable","configuration":"config3","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":true}
+{"build_number":15,"previous_build_number":12,"builder_name":"builder2-stable","configuration":"config4","test_name":"test2","result":"FAIL","flaky":true,"previous_flaky":false}

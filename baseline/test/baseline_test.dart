@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:baseline/baseline.dart';
@@ -9,10 +10,16 @@ import 'package:baseline/options.dart';
 import 'package:io/io.dart';
 import 'package:test/test.dart';
 
-final String builderResults =
-    File('test/data/builder/42/results.json').readAsStringSync();
-final String builderStableResults =
-    File('test/data/builder-stable/12/results.json').readAsStringSync();
+final builder1Results = _readTestData('test/data/builder/42/results.json');
+final builder2Results = _readTestData('test/data/builder2/36/results.json');
+final builderStableResults =
+    _readTestData('test/data/builder-stable/12/results.json');
+final builder2StableResults =
+    _readTestData('test/data/builder2-stable/15/results.json');
+
+List<String> _readTestData(String path) {
+  return LineSplitter.split(File(path).readAsStringSync()).toList();
+}
 
 main() {
   test('run', () async {
@@ -38,7 +45,8 @@ main() {
     expect(
         baseline(
             BaselineOptions([
-              '--builder-mapping=builder:new-builder',
+              '--builders=builder1,builder2',
+              '--target=new-builder',
               '--channel=main,stable',
               '--config-mapping=config2:new-config2',
               '--dry-run',
@@ -49,47 +57,63 @@ main() {
 
   test('baseline dry-run', () async {
     await baselineTest([
-      '--builder-mapping=builder:new-builder',
+      '--builders=builder,builder2',
+      '--target=new-builder',
       '--channel=main,stable',
-      '--config-mapping=config1:new-config1,config2:new-config2',
+      '--config-mapping=config1:new-config1,config2:new-config2,'
+          'config3:new-config3,config4:new-config4',
       '--dry-run',
     ], {
-      'builder-stable/latest': '12',
+      'builder-stable/latest': ['12'],
       'builder-stable/12/results.json': builderStableResults,
-      'builder/42/results.json': builderResults,
-      'builder/latest': '42',
+      'builder/42/results.json': builder1Results,
+      'builder/latest': ['42'],
+      'builder2-stable/15/results.json': builder2StableResults,
+      'builder2-stable/latest': ['15'],
+      'builder2/36/results.json': builder2Results,
+      'builder2/latest': ['36'],
     });
   });
 
   test('baseline', () async {
-    const newBuilderStableResults = '''
-{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}
-{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}
-''';
-    const newBuilderResults = '''
-{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}
-{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}
-''';
+    final newBuilderStableResults = unorderedEquals([
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config3","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config4","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+    ]);
+    final newBuilderResults = unorderedEquals([
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config4","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+    ]);
 
     await baselineTest([
-      '--builder-mapping=builder:new-builder',
+      '--builders=builder,builder2',
+      '--target=new-builder',
       '--channel=main,stable',
-      '--config-mapping=config1:new-config1,config2:new-config2',
+      '--config-mapping=config1:new-config1,config2:new-config2,'
+          'config3:new-config3,config4:new-config4',
     ], {
-      'builder-stable/latest': '12',
-      'builder-stable/12/results.json': builderStableResults,
       'new-builder-stable/0/results.json': newBuilderStableResults,
-      'new-builder-stable/latest': '0',
+      'new-builder-stable/latest': ['0'],
       'new-builder/0/results.json': newBuilderResults,
-      'new-builder/latest': '0',
-      'builder/42/results.json': builderResults,
-      'builder/latest': '42',
+      'new-builder/latest': ['0'],
+      'builder-stable/latest': ['12'],
+      'builder-stable/12/results.json': builderStableResults,
+      'builder/42/results.json': builder1Results,
+      'builder/latest': ['42'],
+      'builder2-stable/15/results.json': builder2StableResults,
+      'builder2-stable/latest': ['15'],
+      'builder2/36/results.json': builder2Results,
+      'builder2/latest': ['36'],
     });
   });
 }
 
 Future<void> baselineTest(
-    List<String> arguments, Map<String, String> expectedFiles) async {
+    List<String> arguments, Map<String, dynamic> expectedFiles) async {
   var temp = await Directory.systemTemp.createTemp();
   try {
     await copyPath('test/data', temp.path);
@@ -100,8 +124,8 @@ Future<void> baselineTest(
         .map((e) => e.path.substring(temp.path.length + 1));
     expect(files, containsAll(expectedFiles.keys));
     for (var expectedFile in expectedFiles.entries) {
-      var content =
-          await File('${temp.path}/${expectedFile.key}').readAsString();
+      var content = LineSplitter.split(
+          await File('${temp.path}/${expectedFile.key}').readAsString());
       expect(content, expectedFile.value,
           reason: 'File "${expectedFile.key}" mismatch');
     }

@@ -5,7 +5,7 @@
 import 'package:baseline/options.dart';
 import 'package:test/test.dart';
 
-const _builders = '-ba:b';
+const _builders = ['-ba1,a2', '-tb'];
 
 main() {
   for (var channels in [
@@ -13,7 +13,7 @@ main() {
     ['dev', 'beta'],
     ['stable'],
   ]) {
-    var arguments = ['-c${channels.join(',')}', _builders];
+    var arguments = ['-c${channels.join(',')}', ..._builders];
     test('channels: "$arguments"', () {
       var options = BaselineOptions(arguments);
       expect(options.channels, channels);
@@ -21,22 +21,23 @@ main() {
   }
 
   test('builder-mapping', () {
-    var options = BaselineOptions([_builders]);
-    expect(options.builders, ['a', 'b']);
+    var options = BaselineOptions(_builders);
+    expect(options.builders, ['a1', 'a2']);
+    expect(options.target, 'b');
   });
 
   test('config-mapping', () {
-    var options = BaselineOptions(['-mc:d,e:f', _builders]);
+    var options = BaselineOptions(['-mc:d,e:f', ..._builders]);
     expect(options.configs, {'c': 'd', 'e': 'f'});
   });
 
   test('dry-run defaults to false', () {
-    var options = BaselineOptions([_builders]);
+    var options = BaselineOptions(_builders);
     expect(options.dryRun, false);
   });
 
   test('dry-run: true', () {
-    var options = BaselineOptions(['-n', _builders]);
+    var options = BaselineOptions(['-n', ..._builders]);
     expect(options.dryRun, true);
   });
 }

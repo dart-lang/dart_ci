@@ -6,6 +6,8 @@ import 'package:baseline/options.dart';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:pool/pool.dart';
+
 const _resultBase = 'gs://dart-test-results/builders';
 
 /// Baselines a builder with the [options] and copies the results to the
@@ -17,43 +19,46 @@ Future<void> baseline(BaselineOptions options,
     if (channel != 'main') {
       futures.add(baselineBuilder(
           options.builders.map((b) => '$b-$channel').toList(),
+          '${options.target}-$channel',
           options.configs,
           options.dryRun,
           resultBase));
     } else {
-      futures.add(baselineBuilder(
-          options.builders, options.configs, options.dryRun, resultBase));
+      futures.add(baselineBuilder(options.builders, options.target,
+          options.configs, options.dryRun, resultBase));
     }
   }
   await Future.wait(futures);
 }
 
-Future<void> baselineBuilder(List<String> builders, Map<String, String> configs,
-    bool dryRun, String resultBase) async {
-  var from = builders[0];
-  var to = builders[1];
-  var latest = await read('$resultBase/$from/latest');
-  var results = await read('$resultBase/$from/$latest/results.json');
+Future<void> baselineBuilder(List<String> builders, String target,
+    Map<String, String> configs, bool dryRun, String resultBase) async {
+  var resultsStream = Pool(4).forEach(builders, (builder) async {
+    var latest = await read('$resultBase/$builder/latest');
+    return await read('$resultBase/$builder/$latest/results.json');
+  });
   var modifiedResults = StringBuffer();
-  for (var json in LineSplitter.split(results).map(jsonDecode)) {
-    json['build_number'] = 0;
-    json['previous_build_number'] = 0;
-    json['builder_name'] = to;
-    var configuration = configs[json['configuration']];
-    if (configuration == null) {
-      throw Exception(
-          "Missing configuration mapping for ${json['configuration']}");
-    }
-    json['configuration'] = configuration;
-    json['flaky'] = false;
-    json['previous_flaky'] = false;
+  await for (var results in resultsStream) {
+    for (var json in LineSplitter.split(results).map(jsonDecode)) {
+      json['build_number'] = 0;
+      json['previous_build_number'] = 0;
+      json['builder_name'] = target;
+      var configuration = configs[json['configuration']];
+      if (configuration == null) {
+        throw Exception(
+            "Missing configuration mapping for ${json['configuration']}");
+      }
+      json['configuration'] = configuration;
+      json['flaky'] = false;
+      json['previous_flaky'] = false;
 
-    modifiedResults.writeln(jsonEncode(json));
-    if (dryRun) break;
+      modifiedResults.writeln(jsonEncode(json));
+      if (dryRun) break;
+    }
   }
   await write(
-      '$resultBase/$to/0/results.json', modifiedResults.toString(), dryRun);
-  await write('$resultBase/$to/latest', '0', dryRun);
+      '$resultBase/$target/0/results.json', modifiedResults.toString(), dryRun);
+  await write('$resultBase/$target/latest', '0', dryRun);
 }
 
 Future<String> read(String url) {
