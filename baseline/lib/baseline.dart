@@ -14,25 +14,29 @@ const _resultBase = 'gs://dart-test-results/builders';
 /// [resultBase]. [resultBase] can be a URL or a path supported by `gsutil cp`.
 Future<void> baseline(BaselineOptions options,
     [String resultBase = _resultBase]) async {
-  List<Future> futures = [];
-  for (var channel in options.channels) {
-    if (channel != 'main') {
-      futures.add(baselineBuilder(
-          options.builders.map((b) => '$b-$channel').toList(),
-          '${options.target}-$channel',
-          options.configs,
-          options.dryRun,
-          resultBase));
-    } else {
-      futures.add(baselineBuilder(options.builders, options.target,
-          options.configs, options.dryRun, resultBase));
-    }
-  }
-  await Future.wait(futures);
+  await Future.wait([
+    for (final channel in options.channels)
+      if (channel == 'main')
+        baselineBuilder(options.builders, options.target, options.configs,
+            options.dryRun, options.ignoreUnmapped, resultBase)
+      else
+        baselineBuilder(
+            options.builders.map((b) => '$b-$channel').toList(),
+            '${options.target}-$channel',
+            options.configs,
+            options.dryRun,
+            options.ignoreUnmapped,
+            resultBase)
+  ]);
 }
 
-Future<void> baselineBuilder(List<String> builders, String target,
-    Map<String, String> configs, bool dryRun, String resultBase) async {
+Future<void> baselineBuilder(
+    List<String> builders,
+    String target,
+    Map<String, String> configs,
+    bool dryRun,
+    bool ignoreUnmapped,
+    String resultBase) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
     var latest = await read('$resultBase/$builder/latest');
     return await read('$resultBase/$builder/$latest/results.json');
@@ -40,15 +44,18 @@ Future<void> baselineBuilder(List<String> builders, String target,
   var modifiedResults = StringBuffer();
   await for (var results in resultsStream) {
     for (var json in LineSplitter.split(results).map(jsonDecode)) {
-      json['build_number'] = 0;
-      json['previous_build_number'] = 0;
-      json['builder_name'] = target;
       var configuration = configs[json['configuration']];
       if (configuration == null) {
+        if (ignoreUnmapped) {
+          continue;
+        }
         throw Exception(
             "Missing configuration mapping for ${json['configuration']}");
       }
       json['configuration'] = configuration;
+      json['build_number'] = 0;
+      json['previous_build_number'] = 0;
+      json['builder_name'] = target;
       json['flaky'] = false;
       json['previous_flaky'] = false;
 

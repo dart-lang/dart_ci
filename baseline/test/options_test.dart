@@ -31,6 +31,11 @@ main() {
     expect(options.configs, {'c': 'd', 'e': 'f'});
   });
 
+  test('ignore-unmapped', () {
+    var options = BaselineOptions(['-u', '-mc:d,e:f', ..._builders]);
+    expect(options.ignoreUnmapped, true);
+  });
+
   test('dry-run defaults to false', () {
     var options = BaselineOptions(_builders);
     expect(options.dryRun, false);

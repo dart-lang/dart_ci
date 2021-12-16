@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 
 class BaselineOptions {
+  late final bool ignoreUnmapped;
   late final bool dryRun;
   late final List<String> builders;
   late final Map<String, String> configs;
@@ -34,6 +35,11 @@ class BaselineOptions {
         defaultsTo: false,
         help: 'prevents writes and only processes a single result',
         negatable: false);
+    parser.addFlag('ignore-unmapped',
+        abbr: 'u',
+        defaultsTo: false,
+        help: 'ignore tests in unmapped configurations',
+        negatable: false);
     parser.addFlag('help',
         abbr: 'h', negatable: false, help: 'prints this message');
     var parsed = parser.parse(arguments);
@@ -49,6 +55,7 @@ class BaselineOptions {
           .map((c) => c.split(':'))))
         v[0]: v[1]
     };
+    ignoreUnmapped = parsed['ignore-unmapped'];
     dryRun = parsed['dry-run'];
     channels = parsed['channel'];
     target = parsed['target'];

@@ -16,6 +16,16 @@ final builderStableResults =
     _readTestData('test/data/builder-stable/12/results.json');
 final builder2StableResults =
     _readTestData('test/data/builder2-stable/15/results.json');
+final testData = {
+  'builder-stable/latest': ['12'],
+  'builder-stable/12/results.json': builderStableResults,
+  'builder/42/results.json': builder1Results,
+  'builder/latest': ['42'],
+  'builder2-stable/15/results.json': builder2StableResults,
+  'builder2-stable/latest': ['15'],
+  'builder2/36/results.json': builder2Results,
+  'builder2/latest': ['36'],
+};
 
 List<String> _readTestData(String path) {
   return LineSplitter.split(File(path).readAsStringSync()).toList();
@@ -45,7 +55,7 @@ main() {
     expect(
         baseline(
             BaselineOptions([
-              '--builders=builder1,builder2',
+              '--builders=builder,builder2',
               '--target=new-builder',
               '--channel=main,stable',
               '--config-mapping=config2:new-config2',
@@ -53,6 +63,39 @@ main() {
             ]),
             'test/data'),
         throwsException);
+  });
+
+  test('baseline ignored config mapping dry-run', () async {
+    await baselineTest([
+      '--builders=builder,builder2',
+      '--target=new-builder',
+      '--channel=main,stable',
+      '--config-mapping=config2:new-config2',
+      '--dry-run',
+      '--ignore-unmapped',
+    ], testData);
+  });
+
+  test('baseline ignored config mapping', () async {
+    final newBuilderStableResults = unorderedEquals([
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+    ]);
+    final newBuilderResults = unorderedEquals([
+      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+    ]);
+    await baselineTest([
+      '--builders=builder,builder2',
+      '--target=new-builder',
+      '--channel=main,stable',
+      '--config-mapping=config2:new-config2',
+      '--ignore-unmapped',
+    ], {
+      'new-builder-stable/0/results.json': newBuilderStableResults,
+      'new-builder-stable/latest': ['0'],
+      'new-builder/0/results.json': newBuilderResults,
+      'new-builder/latest': ['0'],
+      ...testData,
+    });
   });
 
   test('baseline dry-run', () async {
@@ -63,16 +106,7 @@ main() {
       '--config-mapping=config1:new-config1,config2:new-config2,'
           'config3:new-config3,config4:new-config4',
       '--dry-run',
-    ], {
-      'builder-stable/latest': ['12'],
-      'builder-stable/12/results.json': builderStableResults,
-      'builder/42/results.json': builder1Results,
-      'builder/latest': ['42'],
-      'builder2-stable/15/results.json': builder2StableResults,
-      'builder2-stable/latest': ['15'],
-      'builder2/36/results.json': builder2Results,
-      'builder2/latest': ['36'],
-    });
+    ], testData);
   });
 
   test('baseline', () async {
@@ -100,14 +134,7 @@ main() {
       'new-builder-stable/latest': ['0'],
       'new-builder/0/results.json': newBuilderResults,
       'new-builder/latest': ['0'],
-      'builder-stable/latest': ['12'],
-      'builder-stable/12/results.json': builderStableResults,
-      'builder/42/results.json': builder1Results,
-      'builder/latest': ['42'],
-      'builder2-stable/15/results.json': builder2StableResults,
-      'builder2-stable/latest': ['15'],
-      'builder2/36/results.json': builder2Results,
-      'builder2/latest': ['36'],
+      ...testData,
     });
   });
 }
