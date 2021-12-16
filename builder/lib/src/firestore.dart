@@ -265,7 +265,6 @@ class FirestoreService {
     final document = Document()..fields = taggedMap(result);
     final createdDocument = await firestore.projects.databases.documents
         .createDocument(document, documents, 'results');
-    log('created document ${createdDocument.name}');
     documentsWritten++;
     return createdDocument;
   }
