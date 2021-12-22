@@ -209,6 +209,19 @@ class FirestoreServiceFake implements FirestoreService {
   @override
   Future<bool> reviewIsLanded(int review) =>
       Future.value(commits.values.any((commit) => commit[fReview] == review));
+
+  @override
+  Future<bool> hasPatchset(String review, String patchset) async => false;
+
+  @override
+  Future<bool> hasReview(String review) async => false;
+
+  @override
+  Future<void> storeReview(String review, Map<String, Value> data) async {}
+
+  @override
+  Future<void> storePatchset(String review, int patchset, String kind,
+      String? description, int patchsetGroup, int number) async {}
 }
 
 class HttpClientMock extends BaseClient {

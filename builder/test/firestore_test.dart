@@ -117,7 +117,7 @@ void main() async {
         testReview.toString(),
         2,
         'REWORK',
-        'change',
+        null,
         2,
         2,
       );

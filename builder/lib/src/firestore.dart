@@ -531,7 +531,7 @@ class FirestoreService {
   }
 
   Future<void> storePatchset(String review, int patchset, String kind,
-      String description, int patchsetGroup, int number) async {
+      String? description, int patchsetGroup, int number) async {
     final document = Document()
       ..name = '$documents/reviews/$review/patchsets/$patchset'
       ..fields = taggedMap({
