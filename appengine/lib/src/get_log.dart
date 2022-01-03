@@ -40,19 +40,7 @@ Future<String> getLatestBuildNumber(String builder) =>
     getCloudFile(resultsBucket, "builders/$builder/latest");
 
 Future<String> getLatestConfigurationBuildNumber(String configuration) =>
-    getCloudFile(resultsBucket, 'configuration/master/$configuration/latest');
-
-Future<String> getApproval(String builder) async {
-  try {
-    final bucket = "dart-test-results";
-    String build = await getCloudFile(bucket, "builders/$builder/latest");
-    return await getCloudFile(
-        bucket, "builders/$builder/$build/approved_results.json");
-  } catch (e) {
-    print(e);
-    return null;
-  }
-}
+    getCloudFile(resultsBucket, 'configuration/main/$configuration/latest');
 
 /// Fetches a log or logs and formats them for output.
 Future<String> getLog(
@@ -78,7 +66,7 @@ Future<String> getLog(
   }
 
   final cloudFile = builder == 'any'
-      ? 'configuration/master/$configuration/$build/logs.json'
+      ? 'configuration/main/$configuration/$build/logs.json'
       : 'builders/$builder/$build/logs.json';
   final jsonLogs = await getCloudFile(resultsBucket, cloudFile);
 

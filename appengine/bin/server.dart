@@ -50,13 +50,13 @@ void serveFrontPage(HttpRequest request) async {
     <h1>Dart Test Logs</h1>
    URL formats:
    <ul>
-   <li>/logs/any/[configuration name]/latest/[test name]
-   <li>/logs/any/[configuration name]/[build number]/[test name]
-   <li>/logs/any/[configuration name]/latest/[test name prefix]*
-   <li>/logs/[builder]/[configuration name]/latest/[test name]
-   <li>/logs/[builder]/*/latest/[test name]
+   <li>/log/any/[configuration name]/latest/[test name]
+   <li>/log/any/[configuration name]/[build number]/[test name]
+   <li>/log/any/[configuration name]/latest/[test name prefix]*
+   <li>/log/[builder]/[configuration name]/latest/[test name]
+   <li>/log/[builder]/*/latest/[test name]
    </ul>
-   and all combinations of these except /logs/any/*/... .
+   and all combinations of these except /log/any/*/... .
     <h1>Dart Test Sources</h1>
     Redirects to the source of the test given by name and either SDK revision or CL/patchset
     reference.
@@ -68,8 +68,8 @@ void serveFrontPage(HttpRequest request) async {
     </p>
     <p>Examples:
     <ul>
-    <li><a href="test/master/corelib/apply2_test">
-      test/master/corelib/apply2_test</a>
+    <li><a href="test/main/corelib/apply2_test">
+      test/main/corelib/apply2_test</a>
     <li><a href="test/9094f7/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none">
       test/9094f7/co19/Language/Classes/Class_Member_Conflicts/static_member_and_instance_member_t04/none
     <li><a href="test/cl/199421/3/pkg/test_runner/test/experiment_test">

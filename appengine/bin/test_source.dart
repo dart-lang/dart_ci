@@ -10,11 +10,11 @@ main(List<String> arguments) async {
   if (arguments.isEmpty || arguments.length > 2) {
     print('Finds the source of the given test. If a revision is provided,'
         'returns a link to the source at that revision, otherwise the latest'
-        'revision at master.\n\n'
+        'revision at main.\n\n'
         'Usage: test_source <full test name> [<revision>]');
     exit(1);
   }
   final testName = arguments.first;
-  final revision = arguments.length == 2 ? arguments[1] : 'master';
+  final revision = arguments.length == 2 ? arguments[1] : 'main';
   print(await computeTestSource(revision, testName, true));
 }
