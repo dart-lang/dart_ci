@@ -53,8 +53,8 @@ Future<void> baselineBuilder(
             "Missing configuration mapping for ${json['configuration']}");
       }
       json['configuration'] = configuration;
-      json['build_number'] = 0;
-      json['previous_build_number'] = 0;
+      json['build_number'] = '0';
+      json['previous_build_number'] = '0';
       json['builder_name'] = target;
       json['flaky'] = false;
       json['previous_flaky'] = false;

@@ -78,10 +78,10 @@ main() {
 
   test('baseline ignored config mapping', () async {
     final newBuilderStableResults = unorderedEquals([
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
     ]);
     final newBuilderResults = unorderedEquals([
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
     ]);
     await baselineTest([
       '--builders=builder,builder2',
@@ -111,16 +111,16 @@ main() {
 
   test('baseline', () async {
     final newBuilderStableResults = unorderedEquals([
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config3","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder-stable","configuration":"new-config4","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config3","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config4","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
     ]);
     final newBuilderResults = unorderedEquals([
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":0,"previous_build_number":0,"builder_name":"new-builder","configuration":"new-config4","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config4","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
     ]);
 
     await baselineTest([

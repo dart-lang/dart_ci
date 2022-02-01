@@ -1,2 +1,2 @@
-{"build_number":36,"previous_build_number":34,"builder_name":"builder2","configuration":"config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":true}
-{"build_number":36,"previous_build_number":34,"builder_name":"builder2","configuration":"config4","test_name":"test2","result":"PASS","flaky":true,"previous_flaky":false}
+{"build_number":"36","previous_build_number":"34","builder_name":"builder2","configuration":"config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":true}
+{"build_number":"36","previous_build_number":"34","builder_name":"builder2","configuration":"config4","test_name":"test2","result":"PASS","flaky":true,"previous_flaky":false}
