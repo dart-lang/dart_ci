@@ -28,7 +28,7 @@ void main() async {
         .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
     builderTest.client.addDefaultResponse(gitilesLog);
     await builderTest.storeBuildCommitsInfo();
-    await builderTest.builder.fetchReviewsAndReverts();
+    await builderTest.builder.reviewsFetched;
     expect(builderTest.builder.endIndex, landedCommitIndex);
     expect(builderTest.builder.startIndex, existingCommitIndex + 1);
     expect(builderTest.builder.tryApprovals,

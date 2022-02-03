@@ -24,6 +24,7 @@ class Build {
   late int endIndex;
   late Commit endCommit;
   late List<Commit> commits;
+  late final Future<void> reviewsFetched = _fetchReviewsAndReverts();
   Map<String, int> tryApprovals = {};
   List<RevertedChanges> allRevertedChanges = [];
 
@@ -100,9 +101,9 @@ class Build {
     }
   }
 
-  /// This async function's implementation runs exactly once.
-  /// Later invocations return the same future returned by the first invocation.
-  Future<void> fetchReviewsAndReverts() async {
+  /// This async function is run exactly once, initializing the late final
+  /// field reviewsFetched the first time that field is referenced.
+  Future<void> _fetchReviewsAndReverts() async {
     commits = [
       for (var index = startIndex; index < endIndex; ++index)
         await commitsCache.getCommitByIndex(index),
@@ -136,7 +137,7 @@ class Build {
 
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;
-    await fetchReviewsAndReverts();
+    await reviewsFetched;
     transformChange(change);
     final failure = isFailure(change);
     bool approved;
