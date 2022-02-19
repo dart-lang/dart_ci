@@ -27,8 +27,8 @@ class ResultsPanel extends StatelessWidget {
           return Align(child: Instructions());
         }
         bool isFailed(String name) =>
-            queryResults.counts[name].countFailing > 0;
-        bool isFlaky(String name) => queryResults.counts[name].countFlaky > 0;
+            queryResults.counts[name]!.countFailing > 0;
+        bool isFlaky(String name) => queryResults.counts[name]!.countFlaky > 0;
         final filter = [(name) => true, isFailed, isFlaky][tabController.index];
         final filteredNames = queryResults.names.where(filter).toList();
         return ListView.builder(
@@ -48,8 +48,8 @@ class ResultsPanel extends StatelessWidget {
 
 class ExpandableResult extends StatefulWidget {
   final String name;
-  final Map<ChangeInResult, List<Result>> changeGroups;
-  final Counts counts;
+  final Map<ChangeInResult, List<Result>>? changeGroups;
+  final Counts? counts;
 
   ExpandableResult(this.name, this.changeGroups, this.counts)
       : super(key: Key(name));
@@ -60,11 +60,11 @@ class ExpandableResult extends StatefulWidget {
 
 class CountItem {
   final String text;
-  final Color color;
+  final Color? color;
 
   CountItem._(this.text, this.color);
 
-  factory CountItem(int count, Color color) {
+  factory CountItem(int count, Color? color) {
     String text;
     if (count > 0) {
       text = count.toString();
@@ -102,7 +102,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
                 icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
                 onPressed: () => setState(() => expanded = !expanded),
               ),
-              for (final item in countItems(widget.counts))
+              for (final item in countItems(widget.counts!))
                 Container(
                   width: 24,
                   alignment: Alignment.center,
@@ -139,7 +139,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
           ),
         ),
         if (expanded)
-          for (final change in changeGroups.keys)
+          for (final change in changeGroups!.keys)
             Container(
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.only(left: 48.0),
@@ -149,12 +149,12 @@ class _ExpandableResultState extends State<ExpandableResult> {
                   Container(
                     padding: const EdgeInsets.only(top: 12.0),
                     child: Text(
-                        '$change (${changeGroups[change].length} configurations)',
+                        '$change (${changeGroups[change]!.length} configurations)',
                         style: TextStyle(
                             backgroundColor: resultColors[change.kind],
                             fontSize: 16.0)),
                   ),
-                  for (final result in changeGroups[change])
+                  for (final result in changeGroups[change]!)
                     Row(children: [
                       Text(result.configuration),
                       if (change.kind == 'fail')
@@ -180,7 +180,7 @@ Widget _link(String text, Function onClick) {
   final link = Text(text,
       style:
           const TextStyle(color: Colors.blue, decoration: TextDecoration.underline));
-  return InkWell(onTap: onClick, child: link);
+  return InkWell(onTap: onClick as void Function()?, child: link);
 }
 
 Function _openTestSource(String revision, String name) {
@@ -250,7 +250,7 @@ class Summary extends StatelessWidget {
 }
 
 class Pill extends StatelessWidget {
-  final Color color;
+  final Color? color;
   final int count;
   final String tooltip;
 

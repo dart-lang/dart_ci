@@ -16,7 +16,7 @@ void main() {
 }
 
 class CurrentResultsApp extends StatelessWidget {
-  const CurrentResultsApp({Key key}) : super(key: key);
+  const CurrentResultsApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class CurrentResultsApp extends StatelessWidget {
       ),
       initialRoute: '/',
       onGenerateRoute: (RouteSettings settings) {
-        final parameters = settings.name.substring(1).split('&');
+        final parameters = settings.name!.substring(1).split('&');
 
         final terms = parameters
             .firstWhere((parameter) => parameter.startsWith('filter='),
@@ -63,7 +63,7 @@ class CurrentResultsApp extends StatelessWidget {
 /// TabBar, and to the TabController object created by that
 /// DefaultTabController widget.
 class Providers extends StatelessWidget {
-  const Providers({Key key}) : super(key: key);
+  const Providers({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class Providers extends StatelessWidget {
         child: Builder(
           // ChangeNotifierProvider.value in a Builder is needed to make
           // the TabController available for widgets to observe.
-          builder: (context) => ChangeNotifierProvider<TabController>.value(
+          builder: (context) => ChangeNotifierProvider<TabController?>.value(
             value: DefaultTabController.of(context),
             child: const CurrentResultsApp(),
           ),
@@ -86,7 +86,7 @@ class Providers extends StatelessWidget {
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
-  const CurrentResultsScaffold({Key key}) : super(key: key);
+  const CurrentResultsScaffold({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +201,7 @@ class TextPopup extends StatelessWidget {
             builder: (BuildContext context) {
               final text = [resultTextHeader]
                   .followedBy(results.names
-                      .expand((name) => results.grouped[name].values)
+                      .expand((name) => results.grouped[name]!.values)
                       .expand((list) => list)
                       .map(resultAsCommaSeparated))
                   .join('\n');
@@ -232,8 +232,8 @@ class TextPopup extends StatelessWidget {
 
 class NoTransitionPageRoute extends MaterialPageRoute {
   NoTransitionPageRoute({
-    @required WidgetBuilder builder,
-    RouteSettings settings,
+    required WidgetBuilder builder,
+    RouteSettings? settings,
     bool maintainState = true,
   }) : super(
           builder: builder,
@@ -248,7 +248,7 @@ class NoTransitionPageRoute extends MaterialPageRoute {
   }
 }
 
-void pushRoute(context, {Iterable<String> terms, int tab}) {
+void pushRoute(context, {Iterable<String>? terms, int? tab}) {
   if (terms == null && tab == null) {
     throw ArgumentError('pushRoute calls must have a named argument');
   }

@@ -5,17 +5,17 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.1.0
 
 environment:
-  sdk: ">=2.9.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_lints: ^1.0.0
-  http: ^0.13.1
-  grpc: ^3.0.0
-  protobuf: ^2.0.0
-  provider: ^4.3.2
-  url_launcher: ^6.0.0
+  flutter_lints: ^1.0.4
+  http: ^0.13.4
+  grpc: ^3.0.2
+  protobuf: ^2.0.1
+  provider: ^6.0.2
+  url_launcher: ^6.0.20
 
 dev_dependencies:
   flutter_test:
