@@ -65,7 +65,7 @@ class CountItem {
   CountItem._(this.text, this.color);
 
   factory CountItem(int count, Color color) {
-    var text;
+    String text;
     if (count > 0) {
       text = count.toString();
     } else {
@@ -94,7 +94,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
       children: [
         Container(
           height: 28.0,
-          padding: EdgeInsets.only(top: 0.0, left: 8.0),
+          padding: const EdgeInsets.only(top: 0.0, left: 8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -106,27 +106,27 @@ class _ExpandableResultState extends State<ExpandableResult> {
                 Container(
                   width: 24,
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 1.0),
                   decoration: BoxDecoration(
                     color: item.color,
                     shape: BoxShape.circle,
                   ),
-                  child: Text(item.text, style: TextStyle(fontSize: 14.0)),
+                  child: Text(item.text, style: const TextStyle(fontSize: 14.0)),
                 ),
               Expanded(
                 flex: 1,
                 child: Container(
-                  padding: EdgeInsets.only(left: 4.0),
+                  padding: const EdgeInsets.only(left: 4.0),
                   alignment: Alignment.centerLeft,
                   child: SelectableText(
                     name,
-                    style: TextStyle(fontSize: 16.0),
+                    style: const TextStyle(fontSize: 16.0),
                     maxLines: 1,
                   ),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.history),
+                icon: const Icon(Icons.history),
                 onPressed: () => url_launcher.launch(
                   Uri(
                           path: '/',
@@ -142,12 +142,12 @@ class _ExpandableResultState extends State<ExpandableResult> {
           for (final change in changeGroups.keys)
             Container(
               alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(left: 48.0),
+              padding: const EdgeInsets.only(left: 48.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(top: 12.0),
+                    padding: const EdgeInsets.only(top: 12.0),
                     child: Text(
                         '$change (${changeGroups[change].length} configurations)',
                         style: TextStyle(
@@ -159,18 +159,18 @@ class _ExpandableResultState extends State<ExpandableResult> {
                       Text(result.configuration),
                       if (change.kind == 'fail')
                         Padding(
-                            padding: EdgeInsets.only(left: 5),
+                            padding: const EdgeInsets.only(left: 5),
                             child: _link("log",
                                 _openTestLog(result.configuration, name))),
                       Padding(
-                          padding: EdgeInsets.only(left: 5),
+                          padding: const EdgeInsets.only(left: 5),
                           child: _link("source",
                               _openTestSource(result.revision, result.name))),
                     ])
                 ],
               ),
             ),
-        if (expanded) SizedBox(height: 12.0),
+        if (expanded) const SizedBox(height: 12.0),
       ],
     );
   }
@@ -179,7 +179,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
 Widget _link(String text, Function onClick) {
   final link = Text(text,
       style:
-          TextStyle(color: Colors.blue, decoration: TextDecoration.underline));
+          const TextStyle(color: Colors.blue, decoration: TextDecoration.underline));
   return InkWell(onTap: onClick, child: link);
 }
 
@@ -229,7 +229,7 @@ class Summary extends StatelessWidget {
   final String typeText;
   final Counts counts;
 
-  Summary(this.typeText, this.counts);
+  const Summary(this.typeText, this.counts);
 
   @override
   Widget build(BuildContext context) {
@@ -238,12 +238,12 @@ class Summary extends StatelessWidget {
       children: [
         Text(
           typeText,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         Pill(Colors.black26, counts.count, 'total'),
         Pill(resultColors['fail'], counts.countFailing, 'failing'),
         Pill(resultColors['flaky'], counts.countFlaky, 'flaky'),
-        SizedBox.fromSize(size: Size.fromWidth(8.0)),
+        SizedBox.fromSize(size: const Size.fromWidth(8.0)),
       ],
     );
   }
@@ -254,7 +254,7 @@ class Pill extends StatelessWidget {
   final int count;
   final String tooltip;
 
-  Pill(this.color, this.count, this.tooltip);
+  const Pill(this.color, this.count, this.tooltip);
 
   @override
   Widget build(BuildContext context) {
@@ -264,13 +264,13 @@ class Pill extends StatelessWidget {
         //width: 24,
         height: 24,
         alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: 2.0),
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 2.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(14.0),
         ),
-        child: Text(count.toString(), style: TextStyle(fontSize: 14.0)),
+        child: Text(count.toString(), style: const TextStyle(fontSize: 14.0)),
       ),
     );
   }

@@ -45,11 +45,11 @@ class _FilterUIState extends State<FilterUI> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 100.0),
+              constraints: const BoxConstraints(maxHeight: 100.0),
               child: Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                     alignment: Alignment.topLeft,
                     child: Wrap(
                       spacing: 8.0,
@@ -79,13 +79,13 @@ class _FilterUIState extends State<FilterUI> {
               thickness: 2,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 12.0),
+              padding: const EdgeInsets.only(left: 12.0),
               child: SizedBox(
                 width: 300.0,
                 height: 36.0,
                 child: TextField(
                   controller: controller,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       hintText: 'Test, configuration or experiment prefix'),
                   onSubmitted: (value) {
                     if (value.trim().isEmpty) return;

@@ -11,7 +11,7 @@ dependencies:
   clippy: ^1.0.0
   flutter:
     sdk: flutter
-
+  flutter_lints: ^1.0.0
   http: ^0.13.1
   grpc: ^3.0.0
   protobuf: ^2.0.0

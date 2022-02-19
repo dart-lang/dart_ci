@@ -12,7 +12,7 @@ import 'query.dart';
 import 'results.dart';
 
 void main() {
-  runApp(Providers());
+  runApp(const Providers());
 }
 
 class CurrentResultsApp extends StatelessWidget {
@@ -103,30 +103,30 @@ class CurrentResultsScaffold extends StatelessWidget {
                   fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
           backgroundColor: Colors.white,
           bottom: TabBar(
-            tabs: [
+            tabs: const [
               Tab(text: 'ALL'),
               Tab(text: 'FAILURES'),
               Tab(text: 'FLAKY'),
             ],
-            indicatorColor: Color.fromARGB(255, 63, 81, 181),
-            labelColor: Color.fromARGB(255, 63, 81, 181),
+            indicatorColor: const Color.fromARGB(255, 63, 81, 181),
+            labelColor: const Color.fromARGB(255, 63, 81, 181),
             onTap: (tab) {
               // We cannot compare to the previous value, it is gone.
               pushRoute(context, tab: tab);
             },
           ),
         ),
-        persistentFooterButtons: [
-          const TestSummary(),
-          const ResultsSummary(),
-          const ApiPortalLink(),
-          const JsonLink(),
-          const TextPopup(),
+        persistentFooterButtons: const [
+          TestSummary(),
+          ResultsSummary(),
+          ApiPortalLink(),
+          JsonLink(),
+          TextPopup(),
         ],
         body: Align(
           alignment: Alignment.topCenter,
           child: Container(
-            constraints: BoxConstraints(maxWidth: 1000.0),
+            constraints: const BoxConstraints(maxWidth: 1000.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -154,7 +154,7 @@ class ApiPortalLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: Text('API portal'),
+      child: const Text('API portal'),
       onPressed: () => url_launcher.launch(
         'https://endpointsportal.dart-ci.cloud.goog'
         '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
@@ -173,7 +173,7 @@ class JsonLink extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, results, child) {
         return TextButton(
-          child: Text('json'),
+          child: const Text('json'),
           onPressed: () => url_launcher.launch(
             Uri.https(apiHost, 'v1/results', {
               'filter': results.filter.terms.join(','),
@@ -195,7 +195,7 @@ class TextPopup extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, QueryResults results, child) {
         return TextButton(
-          child: Text('text'),
+          child: const Text('text'),
           onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -206,18 +206,18 @@ class TextPopup extends StatelessWidget {
                       .map(resultAsCommaSeparated))
                   .join('\n');
               return AlertDialog(
-                title: Text('Results query as text'),
+                title: const Text('Results query as text'),
                 content: SelectableText(text),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Copy and dismiss'),
+                    child: const Text('Copy and dismiss'),
                     onPressed: () {
                       clippy.write(text);
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text('Dismiss'),
+                    child: const Text('Dismiss'),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -252,12 +252,8 @@ void pushRoute(context, {Iterable<String> terms, int tab}) {
   if (terms == null && tab == null) {
     throw ArgumentError('pushRoute calls must have a named argument');
   }
-  if (tab == null) {
-    tab = Provider.of<TabController>(context, listen: false).index;
-  }
-  if (terms == null) {
-    terms = Provider.of<QueryResults>(context, listen: false).filter.terms;
-  }
+  tab ??= Provider.of<TabController>(context, listen: false).index;
+  terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
   final tabItems = [if (tab == 0) 'showAll', if (tab == 2) 'flaky'];
   Navigator.pushNamed(
     context,
