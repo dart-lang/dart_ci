@@ -111,7 +111,8 @@ class _ExpandableResultState extends State<ExpandableResult> {
                     color: item.color,
                     shape: BoxShape.circle,
                   ),
-                  child: Text(item.text, style: const TextStyle(fontSize: 14.0)),
+                  child:
+                      Text(item.text, style: const TextStyle(fontSize: 14.0)),
                 ),
               Expanded(
                 flex: 1,
@@ -178,8 +179,8 @@ class _ExpandableResultState extends State<ExpandableResult> {
 
 Widget _link(String text, Function onClick) {
   final link = Text(text,
-      style:
-          const TextStyle(color: Colors.blue, decoration: TextDecoration.underline));
+      style: const TextStyle(
+          color: Colors.blue, decoration: TextDecoration.underline));
   return InkWell(onTap: onClick as void Function()?, child: link);
 }
 

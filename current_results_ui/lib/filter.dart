@@ -49,7 +49,8 @@ class _FilterUIState extends State<FilterUI> {
               child: Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    padding:
+                        const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                     alignment: Alignment.topLeft,
                     child: Wrap(
                       spacing: 8.0,
