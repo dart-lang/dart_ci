@@ -5,7 +5,7 @@
 import 'package:clippy/browser.dart' as clippy;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'filter.dart';
 import 'query.dart';
@@ -155,11 +155,12 @@ class ApiPortalLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       child: Text('API portal'),
-      onPressed: () => html.window.open(
-          'https://endpointsportal.dart-ci.cloud.goog'
-              '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-              '/routes/v1/results/get',
-          '_blank'),
+      onPressed: () => url_launcher.launch(
+        'https://endpointsportal.dart-ci.cloud.goog'
+        '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
+        '/routes/v1/results/get',
+        webOnlyWindowName: '_blank',
+      ),
     );
   }
 }
@@ -173,12 +174,13 @@ class JsonLink extends StatelessWidget {
       builder: (context, results, child) {
         return TextButton(
           child: Text('json'),
-          onPressed: () => html.window.open(
-              Uri.https(apiHost, 'v1/results', {
-                'filter': results.filter.terms.join(','),
-                'pageSize': '4000'
-              }).toString(),
-              '_blank'),
+          onPressed: () => url_launcher.launch(
+            Uri.https(apiHost, 'v1/results', {
+              'filter': results.filter.terms.join(','),
+              'pageSize': '4000',
+            }).toString(),
+            webOnlyWindowName: '_blank',
+          ),
         );
       },
     );
@@ -207,14 +209,14 @@ class TextPopup extends StatelessWidget {
                 title: Text('Results query as text'),
                 content: SelectableText(text),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text('Copy and dismiss'),
                     onPressed: () {
                       clippy.write(text);
                       Navigator.of(context).pop();
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text('Dismiss'),
                     onPressed: () => Navigator.of(context).pop(),
                   ),

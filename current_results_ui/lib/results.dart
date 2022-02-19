@@ -2,16 +2,13 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-import 'src/generated/query.pb.dart';
 import 'instructions.dart';
 import 'query.dart';
+import 'src/generated/query.pb.dart';
 
 const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
 const Color gold = Color.fromARGB(255, 255, 215, 0);
@@ -129,13 +126,15 @@ class _ExpandableResultState extends State<ExpandableResult> {
                 ),
               ),
               IconButton(
-                  icon: Icon(Icons.history),
-                  onPressed: () => html.window.open(
-                      Uri(
-                              path: '/',
-                              fragment: 'showLatestFailures=false&test=$name')
-                          .toString(),
-                      '_blank')),
+                icon: Icon(Icons.history),
+                onPressed: () => url_launcher.launch(
+                  Uri(
+                          path: '/',
+                          fragment: 'showLatestFailures=false&test=$name')
+                      .toString(),
+                  webOnlyWindowName: '_blank',
+                ),
+              ),
             ],
           ),
         ),
@@ -186,16 +185,18 @@ Widget _link(String text, Function onClick) {
 
 Function _openTestSource(String revision, String name) {
   return () {
-    html.window
-        .open('https://dart-ci.appspot.com/test/$revision/$name', '_blank');
+    url_launcher.launch(
+      'https://dart-ci.appspot.com/test/$revision/$name',
+      webOnlyWindowName: '_blank',
+    );
   };
 }
 
 Function _openTestLog(String configuration, String name) {
   return () {
-    html.window.open(
+    url_launcher.launch(
       'https://dart-ci.appspot.com/log/any/$configuration/latest/$name',
-      '_blank',
+      webOnlyWindowName: '_blank',
     );
   };
 }
