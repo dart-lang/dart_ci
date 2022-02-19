@@ -2,8 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:clippy/browser.dart' as clippy;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -212,7 +212,7 @@ class TextPopup extends StatelessWidget {
                   TextButton(
                     child: const Text('Copy and dismiss'),
                     onPressed: () {
-                      clippy.write(text);
+                      Clipboard.setData(ClipboardData(text: text));
                       Navigator.of(context).pop();
                     },
                   ),
