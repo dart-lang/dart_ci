@@ -120,7 +120,7 @@ class ChangeInResult {
 
   ChangeInResult._(this.result, this.expected, this.flaky)
       : text = flaky
-            ? "flaky (latest result $result expected $expected"
+            ? "flaky (latest result $result expected $expected)"
             : "$result (expected $expected)";
 
   @override
