@@ -49,8 +49,7 @@ class _FilterUIState extends State<FilterUI> {
               child: Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
-                    padding:
-                        const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    padding: const EdgeInsets.only(top: 16.0),
                     alignment: Alignment.topLeft,
                     child: Wrap(
                       spacing: 8.0,
@@ -74,34 +73,24 @@ class _FilterUIState extends State<FilterUI> {
                 ),
               ),
             ),
-            Divider(
-              color: Colors.grey[300],
-              height: 2,
-              thickness: 2,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: SizedBox(
-                width: 300.0,
-                height: 36.0,
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                      hintText: 'Test, configuration or experiment prefix'),
-                  onSubmitted: (value) {
-                    if (value.trim().isEmpty) return;
-                    final newTerms = value.split(',').map((s) => s.trim());
-                    bool isNotReplacedByNewTerm(String term) =>
-                        !newTerms.any((newTerm) =>
-                            term.startsWith(newTerm) ||
-                            newTerm.startsWith(term));
-                    controller.text = '';
-                    pushRoute(context,
-                        terms: filter.terms
-                            .where(isNotReplacedByNewTerm)
-                            .followedBy(newTerms));
-                  },
-                ),
+            SizedBox(
+              width: 300.0,
+              child: TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                    hintText: 'Test, configuration or experiment prefix'),
+                onSubmitted: (value) {
+                  if (value.trim().isEmpty) return;
+                  final newTerms = value.split(',').map((s) => s.trim());
+                  bool isNotReplacedByNewTerm(String term) =>
+                      !newTerms.any((newTerm) =>
+                          term.startsWith(newTerm) || newTerm.startsWith(term));
+                  controller.text = '';
+                  pushRoute(context,
+                      terms: filter.terms
+                          .where(isNotReplacedByNewTerm)
+                          .followedBy(newTerms));
+                },
               ),
             ),
           ],

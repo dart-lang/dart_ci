@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'instructions.dart';
@@ -12,7 +13,7 @@ import 'src/generated/query.pb.dart';
 
 const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
 const Color gold = Color.fromARGB(255, 255, 215, 0);
-const resultColors = {
+const Map<String, Color> resultColors = {
   'pass': Colors.lightGreen,
   'flaky': gold,
   'fail': lightCoral,
@@ -22,15 +23,23 @@ class ResultsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer2<QueryResults, TabController>(
-      builder: (context, queryResults, tabController, child) {
+      builder: (context, QueryResults queryResults, tabController, child) {
         if (queryResults.noQuery) {
-          return Align(child: Instructions());
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Instructions(),
+          );
         }
-        bool isFailed(String name) =>
-            queryResults.counts[name]!.countFailing > 0;
-        bool isFlaky(String name) => queryResults.counts[name]!.countFlaky > 0;
-        final filter = [(name) => true, isFailed, isFlaky][tabController.index];
+
+        final counts = queryResults.counts;
+
+        bool isFailed(String name) => counts[name]!.countFailing > 0;
+        bool isFlaky(String name) => counts[name]!.countFlaky > 0;
+        bool all(String name) => true;
+
+        final filter = [isFailed, isFlaky, all][tabController.index];
         final filteredNames = queryResults.names.where(filter).toList();
+
         return ListView.builder(
           controller: ScrollController(),
           itemCount: filteredNames.length,
@@ -38,7 +47,8 @@ class ResultsPanel extends StatelessWidget {
             final name = filteredNames[index];
             final changeGroups = queryResults.grouped[name]!;
             final counts = queryResults.counts[name]!;
-            return ExpandableResult(name, changeGroups, counts);
+
+            return ExpandableResult(name, changeGroups, counts, index % 2 == 1);
           },
         );
       },
@@ -50,12 +60,156 @@ class ExpandableResult extends StatefulWidget {
   final String name;
   final Map<ChangeInResult, List<Result>> changeGroups;
   final Counts counts;
+  final bool oddRow;
 
-  ExpandableResult(this.name, this.changeGroups, this.counts)
+  ExpandableResult(this.name, this.changeGroups, this.counts, this.oddRow)
       : super(key: Key(name));
 
   @override
   _ExpandableResultState createState() => _ExpandableResultState();
+}
+
+class _ExpandableResultState extends State<ExpandableResult> {
+  bool expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = widget.name;
+    final changeGroups = widget.changeGroups;
+    final backgroundColor = widget.oddRow ? Colors.grey[200] : null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          color: backgroundColor,
+          child: Row(
+            key: ValueKey(name),
+            children: [
+              const SizedBox(width: 8),
+              IconButton(
+                icon: expanded
+                    ? const Icon(Icons.keyboard_arrow_down)
+                    : const Icon(Icons.keyboard_arrow_right),
+                onPressed: () => setState(() => expanded = !expanded),
+                splashRadius: 20,
+              ),
+              for (final item in countItems(widget.counts))
+                Row(
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: item.color,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(item.text,
+                          style: const TextStyle(fontSize: 14.0)),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                ),
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: SelectableText(
+                    name,
+                    style: const TextStyle(fontSize: 16.0),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Tooltip(
+                  message: 'Show latest failures',
+                  waitDuration: const Duration(milliseconds: 500),
+                  child: IconButton(
+                    icon: const Icon(Icons.history),
+                    splashRadius: 20,
+                    onPressed: () => url_launcher.launch(
+                      Uri(
+                              path: '/',
+                              fragment: 'showLatestFailures=false&test=$name')
+                          .toString(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          color: backgroundColor,
+          padding: const EdgeInsets.only(left: 76),
+          child: AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            alignment: Alignment.topLeft,
+            firstChild: Row(),
+            secondChild:
+                ExpandedResultInfo(changeGroups: changeGroups, name: name),
+            crossFadeState:
+                expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ExpandedResultInfo extends StatelessWidget {
+  const ExpandedResultInfo({
+    required this.changeGroups,
+    required this.name,
+    Key? key,
+  }) : super(key: key);
+
+  final Map<ChangeInResult, List<Result>> changeGroups;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final ChangeInResult change in changeGroups.keys)
+          for (final result in changeGroups[change]!)
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  margin: const EdgeInsets.symmetric(vertical: 2),
+                  decoration: BoxDecoration(
+                    color: resultColors[change.kind],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(change.text),
+                ),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    result.configuration,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+                if (change.kind == 'fail')
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child:
+                        _link("log", _openTestLog(result.configuration, name)),
+                  ),
+                const SizedBox(width: 5),
+                _link("source", _openTestSource(result.revision, result.name)),
+              ],
+            ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
 }
 
 class CountItem {
@@ -65,116 +219,19 @@ class CountItem {
   CountItem._(this.text, this.color);
 
   factory CountItem(int count, Color color) {
-    String text;
-    if (count > 0) {
-      text = count.toString();
-    } else {
-      color = Colors.transparent;
-      text = '';
-    }
-    return CountItem._(text, color);
+    return CountItem._('$count', color);
   }
 }
 
-List<CountItem> countItems(Counts counts) => [
+List<CountItem> countItems(Counts counts) {
+  return [
+    if (counts.countPassing > 0)
       CountItem(counts.countPassing, resultColors['pass']!),
+    if (counts.countFailing > 0)
       CountItem(counts.countFailing, resultColors['fail']!),
-      CountItem(counts.countFlaky, resultColors['flaky']!)
-    ];
-
-class _ExpandableResultState extends State<ExpandableResult> {
-  bool expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final name = widget.name;
-    final changeGroups = widget.changeGroups;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 28.0,
-          padding: const EdgeInsets.only(top: 0.0, left: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: () => setState(() => expanded = !expanded),
-              ),
-              for (final item in countItems(widget.counts))
-                Container(
-                  width: 24,
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                  decoration: BoxDecoration(
-                    color: item.color,
-                    shape: BoxShape.circle,
-                  ),
-                  child:
-                      Text(item.text, style: const TextStyle(fontSize: 14.0)),
-                ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  alignment: Alignment.centerLeft,
-                  child: SelectableText(
-                    name,
-                    style: const TextStyle(fontSize: 16.0),
-                    maxLines: 1,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.history),
-                onPressed: () => url_launcher.launch(
-                  Uri(
-                          path: '/',
-                          fragment: 'showLatestFailures=false&test=$name')
-                      .toString(),
-                  webOnlyWindowName: '_blank',
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (expanded)
-          for (final change in changeGroups.keys)
-            Container(
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.only(left: 48.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Text(
-                        '$change (${changeGroups[change]!.length} configurations)',
-                        style: TextStyle(
-                            backgroundColor: resultColors[change.kind],
-                            fontSize: 16.0)),
-                  ),
-                  for (final result in changeGroups[change]!)
-                    Row(children: [
-                      Text(result.configuration),
-                      if (change.kind == 'fail')
-                        Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: _link("log",
-                                _openTestLog(result.configuration, name))),
-                      Padding(
-                          padding: const EdgeInsets.only(left: 5),
-                          child: _link("source",
-                              _openTestSource(result.revision, result.name))),
-                    ])
-                ],
-              ),
-            ),
-        if (expanded) const SizedBox(height: 12.0),
-      ],
-    );
-  }
+    if (counts.countFlaky > 0)
+      CountItem(counts.countFlaky, resultColors['flaky']!),
+  ];
 }
 
 Widget _link(String text, Function onClick) {
@@ -188,7 +245,6 @@ Function _openTestSource(String revision, String name) {
   return () {
     url_launcher.launch(
       'https://dart-ci.appspot.com/test/$revision/$name',
-      webOnlyWindowName: '_blank',
     );
   };
 }
@@ -197,7 +253,6 @@ Function _openTestLog(String configuration, String name) {
   return () {
     url_launcher.launch(
       'https://dart-ci.appspot.com/log/any/$configuration/latest/$name',
-      webOnlyWindowName: '_blank',
     );
   };
 }
@@ -208,8 +263,33 @@ class ResultsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
-      builder: (context, results, child) =>
-          Summary("results", results.resultCounts),
+      builder: (context, results, child) {
+        return Summary("Results:", results.resultCounts);
+      },
+    );
+  }
+}
+
+class FetchingProgress extends StatelessWidget {
+  const FetchingProgress() : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResults>(
+      builder: (context, results, child) {
+        if (results.fetcher == null) {
+          return const SizedBox();
+        } else {
+          return const SizedBox(
+            width: 28,
+            height: 28,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 3,
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -220,8 +300,9 @@ class TestSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
-      builder: (context, results, child) =>
-          Summary("tests", results.testCounts),
+      builder: (context, results, child) {
+        return Summary("Tests:", results.testCounts);
+      },
     );
   }
 }
@@ -241,9 +322,9 @@ class Summary extends StatelessWidget {
           typeText,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        Pill(Colors.black26, counts.count, 'total'),
         Pill(resultColors['fail']!, counts.countFailing, 'failing'),
         Pill(resultColors['flaky']!, counts.countFlaky, 'flaky'),
+        Pill(Colors.black26, counts.count, 'total'),
         SizedBox.fromSize(size: const Size.fromWidth(8.0)),
       ],
     );
@@ -251,6 +332,8 @@ class Summary extends StatelessWidget {
 }
 
 class Pill extends StatelessWidget {
+  static final intl.NumberFormat nf = intl.NumberFormat.decimalPattern();
+
   final Color color;
   final int count;
   final String tooltip;
@@ -261,8 +344,8 @@ class Pill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
+      waitDuration: const Duration(milliseconds: 500),
       child: Container(
-        //width: 24,
         height: 24,
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -271,7 +354,7 @@ class Pill extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(14.0),
         ),
-        child: Text(count.toString(), style: const TextStyle(fontSize: 14.0)),
+        child: Text(nf.format(count), style: const TextStyle(fontSize: 14.0)),
       ),
     );
   }

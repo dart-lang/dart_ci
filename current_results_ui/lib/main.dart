@@ -36,23 +36,24 @@ class CurrentResultsApp extends StatelessWidget {
             .split('=')[1];
         final filter = Filter(terms);
         final showAll = parameters.contains('showAll');
-        final failures = parameters.contains('flaky');
+        final flakes = parameters.contains('flaky');
         final tab = showAll
-            ? 0
-            : failures
-                ? 2
-                : 1;
+            ? 2
+            : flakes
+                ? 1
+                : 0;
         return NoTransitionPageRoute(
-            builder: (context) {
-              Provider.of<QueryResults>(context, listen: false).fetch(filter);
-              // Not allowed to set state of tab controller in this builder.
-              WidgetsBinding.instance!.addPostFrameCallback((_) {
-                Provider.of<TabController>(context, listen: false).index = tab;
-              });
-              return const CurrentResultsScaffold();
-            },
-            settings: settings,
-            maintainState: false);
+          builder: (context) {
+            Provider.of<QueryResults>(context, listen: false).fetch(filter);
+            // Not allowed to set state of tab controller in this builder.
+            WidgetsBinding.instance!.addPostFrameCallback((_) {
+              Provider.of<TabController>(context, listen: false).index = tab;
+            });
+            return const CurrentResultsScaffold();
+          },
+          settings: settings,
+          maintainState: false,
+        );
       },
     );
   }
@@ -71,7 +72,7 @@ class Providers extends StatelessWidget {
       create: (context) => QueryResults(),
       child: DefaultTabController(
         length: 3,
-        initialIndex: 1,
+        initialIndex: 0,
         child: Builder(
           // ChangeNotifierProvider.value in a Builder is needed to make
           // the TabController available for widgets to observe.
@@ -94,54 +95,59 @@ class CurrentResultsScaffold extends StatelessWidget {
       alignment: Alignment.topLeft,
       child: Scaffold(
         appBar: AppBar(
-          leading: Align(
-            alignment: Alignment.center,
-            child: Image.asset('assets/dart_64.png', width: 40.0, height: 40.0),
+          leading: const Center(
+            child: FetchingProgress(),
           ),
-          title: const Text('Current Results',
-              style: TextStyle(
-                  fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
-          backgroundColor: Colors.white,
+          title: const Text(
+            'Current Results',
+            style: TextStyle(fontSize: 24.0),
+          ),
+          actions: [
+            Tooltip(
+              message: 'Send feeback!',
+              child: IconButton(
+                icon: const Icon(Icons.bug_report),
+                splashRadius: 20,
+                onPressed: () {
+                  url_launcher
+                      .launch('https://github.com/dart-lang/dart_ci/issues');
+                },
+              ),
+            ),
+          ],
           bottom: TabBar(
             tabs: const [
-              Tab(text: 'ALL'),
               Tab(text: 'FAILURES'),
-              Tab(text: 'FLAKY'),
+              Tab(text: 'FLAKES'),
+              Tab(text: 'ALL'),
             ],
-            indicatorColor: const Color.fromARGB(255, 63, 81, 181),
-            labelColor: const Color.fromARGB(255, 63, 81, 181),
-            onTap: (tab) {
+            onTap: (int tab) {
               // We cannot compare to the previous value, it is gone.
               pushRoute(context, tab: tab);
             },
           ),
         ),
         persistentFooterButtons: const [
-          TestSummary(),
           ResultsSummary(),
+          TestSummary(),
           ApiPortalLink(),
           JsonLink(),
           TextPopup(),
         ],
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 1000.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FilterUI(),
-                Divider(
-                  color: Colors.grey[300],
-                  height: 20,
-                  thickness: 2,
-                ),
-                Expanded(
-                  child: ResultsPanel(),
-                ),
-              ],
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: FilterUI(),
             ),
-          ),
+            Divider(
+              color: Colors.grey[300],
+              height: 20,
+            ),
+            Expanded(
+              child: ResultsPanel(),
+            ),
+          ],
         ),
       ),
     );
@@ -159,7 +165,6 @@ class ApiPortalLink extends StatelessWidget {
         'https://endpointsportal.dart-ci.cloud.goog'
         '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
         '/routes/v1/results/get',
-        webOnlyWindowName: '_blank',
       ),
     );
   }
@@ -173,13 +178,12 @@ class JsonLink extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, results, child) {
         return TextButton(
-          child: const Text('json'),
+          child: const Text('JSON'),
           onPressed: () => url_launcher.launch(
             Uri.https(apiHost, 'v1/results', {
               'filter': results.filter.terms.join(','),
               'pageSize': '4000',
             }).toString(),
-            webOnlyWindowName: '_blank',
           ),
         );
       },
@@ -194,35 +198,39 @@ class TextPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QueryResults>(
       builder: (context, QueryResults results, child) {
-        return TextButton(
-          child: const Text('text'),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              final text = [resultTextHeader]
-                  .followedBy(results.names
-                      .expand((name) => results.grouped[name]!.values)
-                      .expand((list) => list)
-                      .map(resultAsCommaSeparated))
-                  .join('\n');
-              return AlertDialog(
-                title: const Text('Results query as text'),
-                content: SelectableText(text),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('Copy and dismiss'),
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: text));
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Dismiss'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              );
-            },
+        return Tooltip(
+          message: 'Results query as text',
+          waitDuration: const Duration(milliseconds: 500),
+          child: TextButton(
+            child: const Text('Text'),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                final text = [resultTextHeader]
+                    .followedBy(results.names
+                        .expand((name) => results.grouped[name]!.values)
+                        .expand((list) => list)
+                        .map(resultAsCommaSeparated))
+                    .join('\n');
+                return AlertDialog(
+                  title: const Text('Results query as text'),
+                  content: SelectableText(text),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Copy and dismiss'),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: text));
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('Dismiss'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         );
       },
@@ -254,7 +262,10 @@ void pushRoute(context, {Iterable<String>? terms, int? tab}) {
   }
   tab ??= Provider.of<TabController>(context, listen: false).index;
   terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
-  final tabItems = [if (tab == 0) 'showAll', if (tab == 2) 'flaky'];
+  final tabItems = [
+    if (tab == 2) 'showAll',
+    if (tab == 1) 'flaky',
+  ];
   Navigator.pushNamed(
     context,
     [
