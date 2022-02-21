@@ -9,8 +9,10 @@ String getTestSourceUrl(List<Commit> commits, Change change, bool isTryResult) {
   if (isTryResult) {
     return '$serviceUrl/cl/${change.review}/${change.patchset}/${change.name}';
   } else {
-    final revision =
-        commits.singleWhere((c) => c.index == change.blamelistEndIndex).hash;
+    final revision = commits
+        .singleWhere(
+            (c) => c.index == (change.pinnedIndex ?? change.blamelistEndIndex))
+        .hash;
     return '$serviceUrl/$revision/${change.name}';
   }
 }
