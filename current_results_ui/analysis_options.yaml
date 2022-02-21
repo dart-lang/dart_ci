@@ -1,0 +1,13 @@
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Disabled as there are currently many violations.
+    use_key_in_widget_constructors: false
+    # Disabled - currently one violation.
+    avoid_print: false
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options

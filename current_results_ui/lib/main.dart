@@ -2,21 +2,21 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:clippy/browser.dart' as clippy;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'filter.dart';
 import 'query.dart';
 import 'results.dart';
 
 void main() {
-  runApp(Providers());
+  runApp(const Providers());
 }
 
 class CurrentResultsApp extends StatelessWidget {
-  const CurrentResultsApp({Key key}) : super(key: key);
+  const CurrentResultsApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class CurrentResultsApp extends StatelessWidget {
       ),
       initialRoute: '/',
       onGenerateRoute: (RouteSettings settings) {
-        final parameters = settings.name.substring(1).split('&');
+        final parameters = settings.name!.substring(1).split('&');
 
         final terms = parameters
             .firstWhere((parameter) => parameter.startsWith('filter='),
@@ -46,7 +46,7 @@ class CurrentResultsApp extends StatelessWidget {
             builder: (context) {
               Provider.of<QueryResults>(context, listen: false).fetch(filter);
               // Not allowed to set state of tab controller in this builder.
-              WidgetsBinding.instance.addPostFrameCallback((_) {
+              WidgetsBinding.instance!.addPostFrameCallback((_) {
                 Provider.of<TabController>(context, listen: false).index = tab;
               });
               return const CurrentResultsScaffold();
@@ -63,7 +63,7 @@ class CurrentResultsApp extends StatelessWidget {
 /// TabBar, and to the TabController object created by that
 /// DefaultTabController widget.
 class Providers extends StatelessWidget {
-  const Providers({Key key}) : super(key: key);
+  const Providers({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class Providers extends StatelessWidget {
           // ChangeNotifierProvider.value in a Builder is needed to make
           // the TabController available for widgets to observe.
           builder: (context) => ChangeNotifierProvider<TabController>.value(
-            value: DefaultTabController.of(context),
+            value: DefaultTabController.of(context)!,
             child: const CurrentResultsApp(),
           ),
         ),
@@ -86,7 +86,7 @@ class Providers extends StatelessWidget {
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
-  const CurrentResultsScaffold({Key key}) : super(key: key);
+  const CurrentResultsScaffold({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -103,30 +103,30 @@ class CurrentResultsScaffold extends StatelessWidget {
                   fontSize: 24.0, color: Color.fromARGB(255, 63, 81, 181))),
           backgroundColor: Colors.white,
           bottom: TabBar(
-            tabs: [
+            tabs: const [
               Tab(text: 'ALL'),
               Tab(text: 'FAILURES'),
               Tab(text: 'FLAKY'),
             ],
-            indicatorColor: Color.fromARGB(255, 63, 81, 181),
-            labelColor: Color.fromARGB(255, 63, 81, 181),
+            indicatorColor: const Color.fromARGB(255, 63, 81, 181),
+            labelColor: const Color.fromARGB(255, 63, 81, 181),
             onTap: (tab) {
               // We cannot compare to the previous value, it is gone.
               pushRoute(context, tab: tab);
             },
           ),
         ),
-        persistentFooterButtons: [
-          const TestSummary(),
-          const ResultsSummary(),
-          const ApiPortalLink(),
-          const JsonLink(),
-          const TextPopup(),
+        persistentFooterButtons: const [
+          TestSummary(),
+          ResultsSummary(),
+          ApiPortalLink(),
+          JsonLink(),
+          TextPopup(),
         ],
         body: Align(
           alignment: Alignment.topCenter,
           child: Container(
-            constraints: BoxConstraints(maxWidth: 1000.0),
+            constraints: const BoxConstraints(maxWidth: 1000.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -154,12 +154,13 @@ class ApiPortalLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: Text('API portal'),
-      onPressed: () => html.window.open(
-          'https://endpointsportal.dart-ci.cloud.goog'
-              '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-              '/routes/v1/results/get',
-          '_blank'),
+      child: const Text('API portal'),
+      onPressed: () => url_launcher.launch(
+        'https://endpointsportal.dart-ci.cloud.goog'
+        '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
+        '/routes/v1/results/get',
+        webOnlyWindowName: '_blank',
+      ),
     );
   }
 }
@@ -172,13 +173,14 @@ class JsonLink extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, results, child) {
         return TextButton(
-          child: Text('json'),
-          onPressed: () => html.window.open(
-              Uri.https(apiHost, 'v1/results', {
-                'filter': results.filter.terms.join(','),
-                'pageSize': '4000'
-              }).toString(),
-              '_blank'),
+          child: const Text('json'),
+          onPressed: () => url_launcher.launch(
+            Uri.https(apiHost, 'v1/results', {
+              'filter': results.filter.terms.join(','),
+              'pageSize': '4000',
+            }).toString(),
+            webOnlyWindowName: '_blank',
+          ),
         );
       },
     );
@@ -193,29 +195,29 @@ class TextPopup extends StatelessWidget {
     return Consumer<QueryResults>(
       builder: (context, QueryResults results, child) {
         return TextButton(
-          child: Text('text'),
+          child: const Text('text'),
           onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) {
               final text = [resultTextHeader]
                   .followedBy(results.names
-                      .expand((name) => results.grouped[name].values)
+                      .expand((name) => results.grouped[name]!.values)
                       .expand((list) => list)
                       .map(resultAsCommaSeparated))
                   .join('\n');
               return AlertDialog(
-                title: Text('Results query as text'),
+                title: const Text('Results query as text'),
                 content: SelectableText(text),
                 actions: <Widget>[
-                  FlatButton(
-                    child: Text('Copy and dismiss'),
+                  TextButton(
+                    child: const Text('Copy and dismiss'),
                     onPressed: () {
-                      clippy.write(text);
+                      Clipboard.setData(ClipboardData(text: text));
                       Navigator.of(context).pop();
                     },
                   ),
-                  FlatButton(
-                    child: Text('Dismiss'),
+                  TextButton(
+                    child: const Text('Dismiss'),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -230,8 +232,8 @@ class TextPopup extends StatelessWidget {
 
 class NoTransitionPageRoute extends MaterialPageRoute {
   NoTransitionPageRoute({
-    @required WidgetBuilder builder,
-    RouteSettings settings,
+    required WidgetBuilder builder,
+    RouteSettings? settings,
     bool maintainState = true,
   }) : super(
           builder: builder,
@@ -246,16 +248,12 @@ class NoTransitionPageRoute extends MaterialPageRoute {
   }
 }
 
-void pushRoute(context, {Iterable<String> terms, int tab}) {
+void pushRoute(context, {Iterable<String>? terms, int? tab}) {
   if (terms == null && tab == null) {
     throw ArgumentError('pushRoute calls must have a named argument');
   }
-  if (tab == null) {
-    tab = Provider.of<TabController>(context, listen: false).index;
-  }
-  if (terms == null) {
-    terms = Provider.of<QueryResults>(context, listen: false).filter.terms;
-  }
+  tab ??= Provider.of<TabController>(context, listen: false).index;
+  terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
   final tabItems = [if (tab == 0) 'showAll', if (tab == 2) 'flaky'];
   Navigator.pushNamed(
     context,

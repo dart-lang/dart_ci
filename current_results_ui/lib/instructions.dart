@@ -3,14 +3,14 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class Instructions extends StatelessWidget {
+  @override
   Widget build(context) {
     return SingleChildScrollView(
       controller: ScrollController(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
+        const Text(
           'Enter a query to see current test results',
           style: TextStyle(fontSize: 24.0),
         ),
@@ -40,7 +40,7 @@ class Instructions extends StatelessWidget {
           },
           {'description': 'null-safe language tests', 'terms': 'language/'},
         ]) ...[
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           InkWell(
             onTap: () {
               Navigator.pushNamed(
@@ -64,8 +64,8 @@ class Instructions extends StatelessWidget {
             ),
           ),
         ],
-        SizedBox(height: 24.0),
-        Text(
+        const SizedBox(height: 24.0),
+        const Text(
           'About Current Results',
           style: TextStyle(fontSize: 24.0),
         ),
@@ -84,8 +84,8 @@ class Instructions extends StatelessWidget {
 
   Widget paragraph(String text) {
     return Container(
-        constraints: BoxConstraints(maxWidth: 500.0),
-        padding: EdgeInsets.only(top: 12.0),
-        child: Text(text, style: TextStyle(height: 1.5)));
+        constraints: const BoxConstraints(maxWidth: 500.0),
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Text(text, style: const TextStyle(height: 1.5)));
   }
 }

@@ -19,7 +19,7 @@ const int maxFetchedResults = 100 * fetchLimit;
 
 class QueryResults extends ChangeNotifier {
   Filter filter = Filter('');
-  StreamSubscription<GetResultsResponse> fetcher;
+  StreamSubscription<GetResultsResponse>? fetcher;
   List<String> names = [];
   Map<String, Counts> counts = {};
   Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
@@ -62,7 +62,7 @@ class QueryResults extends ChangeNotifier {
     final results = response.results;
     fetchedResultsCount += results.length;
     if (fetchedResultsCount >= maxFetchedResults) {
-      fetcher.cancel();
+      fetcher?.cancel();
       fetcher = null;
     }
     for (final result in results) {
