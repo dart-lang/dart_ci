@@ -22,7 +22,7 @@ class Commit {
   Commit.fromJson(this.hash, Map<String, dynamic> data)
       : document = SafeDocument(Document(fields: taggedMap(data), name: ''));
   int get index => document.getInt('index')!;
-  String? get revertOf => document.getString(fRevertOf);
+  String? get revertOf => document.getStringOrNull(fRevertOf);
   bool get isRevert => document.fields.containsKey(fRevertOf);
   int? get review => document.getInt(fReview);
 
@@ -490,6 +490,18 @@ class FirestoreService {
         ...results
       ].join('\n'));
     }
+    return results;
+  }
+
+  Future<List<SafeDocument>> findUnapprovedFailures(
+      String configuration, int limit) async {
+    final results = await query(
+        from: 'results',
+        where: compositeFilter([
+          arrayContains('active_configurations', configuration),
+          fieldEquals('approved', false)
+        ]),
+        limit: limit);
     return results;
   }
 

@@ -21,7 +21,11 @@ class SafeDocument {
     return int.parse(value);
   }
 
-  String? getString(String name) {
+  String getString(String name) {
+    return fields[name]!.stringValue!;
+  }
+
+  String? getStringOrNull(String name) {
     return fields[name]?.stringValue;
   }
 

@@ -11,7 +11,7 @@ class BuildStatus {
   static const unapprovedFailuresLimit = 10;
   bool success = true;
   bool truncatedResults = false;
-  final Map<String, List<ResultRecord>> unapprovedFailures = {};
+  Map<String, List<SafeDocument>> unapprovedFailures = {};
 
   String toJson() {
     return jsonEncode({
@@ -23,7 +23,9 @@ class BuildStatus {
 
   String unapprovedFailuresReport() {
     if (unapprovedFailures.isEmpty) return '';
-    String resultLine(ResultRecord result) => '';
+    if (unapprovedFailures.containsKey('failed')) {
+      return 'There are unapproved failures. Error fetching details';
+    }
     return [
       'There are unapproved failures',
       for (final entry in unapprovedFailures.entries) ...[
@@ -35,4 +37,17 @@ class BuildStatus {
       ''
     ].join('\n');
   }
+}
+
+String resultLine(SafeDocument result) {
+  final name = result.getString(fName);
+  final previous = result.getString(fPreviousResult);
+  final current = result.getString(fResult);
+  final expected = result.getString(fExpected);
+  final start = result.getString(fBlamelistStartCommit);
+  final end = result.getString(fBlamelistEndCommit);
+  final range = start == end
+      ? start.substring(0, 6)
+      : '${start.substring(0, 6)}..${end.substring(0, 6)}';
+  return '    $name   ($previous -> $current , expected $expected ) at $range';
 }

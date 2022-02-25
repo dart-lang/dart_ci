@@ -5,33 +5,7 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
-import 'dart:convert' show jsonEncode;
-
 import 'package:googleapis/firestore/v1.dart' show Value;
-
-class ResultRecord {
-  final Map<String, Value> fields;
-
-  ResultRecord(this.fields);
-
-  bool get approved => fields['approved']!.booleanValue!;
-
-  @override
-  String toString() => jsonEncode(fields);
-
-  int get blamelistEndIndex {
-    return int.parse(fields['blamelist_end_index']!.integerValue!);
-  }
-
-  bool containsActiveConfiguration(String configuration) {
-    for (final value in fields['active_configurations']!.arrayValue!.values!) {
-      if (value.stringValue != null && value.stringValue == configuration) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
 
 // Field names of Result document fields
 const fName = 'name';
@@ -49,6 +23,26 @@ const fApproved = 'approved';
 const fActive = 'active';
 const fConfigurations = 'configurations';
 const fActiveConfigurations = 'active_configurations';
+// Fields added to a Result document by addBlamelistHashes()
+const fBlamelistStartCommit = 'blamelist_start_commit';
+const fBlamelistEndCommit = 'blamelist_end_commit';
+
+// Fields of a results.json change
+const fBuilderName = 'builder_name';
+const fBuildNumber = 'build_number';
+const fConfiguration = 'configuration';
+const fCommitHash = 'commit_hash';
+const fPreviousCommitHash = 'previous_commit_hash';
+
+// Field names of commit document fields
+const fHash = 'hash';
+const fIndex = 'index';
+const fAuthor = 'author';
+const fCreated = 'created';
+const fTitle = 'title';
+const fReview = 'review';
+const fRevertOf = 'revert_of';
+const fRelandOf = 'reland_of';
 
 bool isChangedResult(Map<String, dynamic> change) =>
     change[fChanged] && (!change[fFlaky] || !change[fPreviousFlaky]);
@@ -81,16 +75,6 @@ String testResult(Map<String, dynamic> change) => [
       fromStringOrValue(change[fExpected])
     ].join(' ');
 
-// Field names of commit document fields
-const fHash = 'hash';
-const fIndex = 'index';
-const fAuthor = 'author';
-const fCreated = 'created';
-const fTitle = 'title';
-const fReview = 'review';
-const fRevertOf = 'revert_of';
-const fRelandOf = 'reland_of';
-
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results
 class BuildInfo {
@@ -102,13 +86,13 @@ class BuildInfo {
   final String? previousCommitHash;
 
   BuildInfo(Map<String, dynamic> result)
-      : builderName = result['builder_name'],
-        buildNumber = int.parse(result['build_number']),
-        commitRef = result['commit_hash'],
-        previousCommitHash = result['previous_commit_hash'];
+      : builderName = result[fBuilderName],
+        buildNumber = int.parse(result[fBuildNumber]),
+        commitRef = result[fCommitHash],
+        previousCommitHash = result[fPreviousCommitHash];
 
   factory BuildInfo.fromResult(Map<String, dynamic> result) {
-    final commitRef = result['commit_hash'];
+    final commitRef = result[fCommitHash];
     final match = commitRefRegExp.matchAsPrefix(commitRef);
     if (match == null) {
       return BuildInfo(result);

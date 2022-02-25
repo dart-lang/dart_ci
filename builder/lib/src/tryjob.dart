@@ -81,9 +81,8 @@ class Tryjob {
   }
 
   bool isNotLandedResult(Map<String, dynamic> change) {
-    return !lastLandedResultByName.containsKey(change[fName]) ||
-        change[fResult] !=
-            lastLandedResultByName[change[fName]]!.getString(fResult);
+    return change[fResult] !=
+        lastLandedResultByName[change[fName]]?.getString(fResult);
   }
 
   Future<BuildStatus> process(List<Map<String, dynamic>> results) async {
@@ -97,7 +96,7 @@ class Tryjob {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.getString(fName)!: result
+          for (final result in landedResults) result.getString(fName): result
         };
       }
       final changes =

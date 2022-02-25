@@ -77,8 +77,8 @@ void main() async {
 
     Future<bool> findApproval(Map<String, dynamic> change) async {
       final result = await builderTest.firestore
-          .findActiveResults(change['name'], change['configuration']);
-      return ResultRecord(result.single.fields).approved;
+          .findActiveResults(change[fName], change[fConfiguration]);
+      return result.single.getBool(fApproved)!;
     }
 
     expect(await findApproval(commit56UnmatchingChange), false);

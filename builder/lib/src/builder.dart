@@ -14,7 +14,7 @@ import 'reverted_changes.dart';
 import 'status.dart';
 import 'tryjob.dart' show Tryjob;
 
-/// A Builder holds information about a CI build, and can
+/// A Build holds information about a CI build, and can
 /// store the changed results from that build, using an injected
 /// [FirestoreService] object.
 /// Tryjob builds are represented by the class [Tryjob] instead.
@@ -60,6 +60,16 @@ class Build {
     log('complete builder record');
     await firestore.completeBuilderRecord(info.builderName, endIndex, success);
     final status = BuildStatus()..success = success;
+    try {
+      status.unapprovedFailures = {
+        for (final configuration in configurations)
+          configuration: await unapprovedFailuresForConfiguration(configuration)
+      }..removeWhere((key, value) => value.isEmpty);
+    } catch (e) {
+      log('Failed to fetch unapproved failures: $e');
+      status.unapprovedFailures = {'failed': []};
+      status.success = false;
+    }
     final report = [
       'Processed ${changes.length} results from ${info.builderName}'
           ' build ${info.buildNumber}',
@@ -175,19 +185,38 @@ class Build {
     if (failure && !approved) success = false;
 
     for (final activeResult in activeResults) {
-      final resultRecord = ResultRecord(activeResult.fields);
       // Log error message if any expected invariants are violated
-      if (resultRecord.blamelistEndIndex >= startIndex ||
-          !resultRecord.containsActiveConfiguration(change['configuration'])) {
-        // log('Unexpected active result when processing new change:\n'
-        //     'Active result: ${untagMap(activeResult.fields)}\n\n'
-        //     'Change: $change\n\n'
-        //     'approved: $approved');
+      if (activeResult.getInt(fBlamelistEndIndex)! >= startIndex ||
+          !(activeResult
+                  .getList(fActiveConfigurations)
+                  ?.contains(change['configuration']) ??
+              false)) {
+        log('Unexpected active result when processing new change:\n'
+            'Active result: ${untagMap(activeResult.fields)}\n\n'
+            'Change: $change\n\n'
+            'approved: $approved');
       }
       // Removes the configuration from the list of active configurations.
       await firestore.removeActiveConfiguration(
           activeResult, change['configuration']);
     }
+  }
+
+  Future<List<SafeDocument>> unapprovedFailuresForConfiguration(
+      String configuration) async {
+    final failures = await firestore.findUnapprovedFailures(
+        configuration, BuildStatus.unapprovedFailuresLimit + 1);
+    await Future.forEach(failures, addBlamelistCommits);
+    return failures;
+  }
+
+  Future<void> addBlamelistCommits(SafeDocument result) async {
+    final startCommit = await commitsCache
+        .getCommitByIndex(result.getInt(fBlamelistStartIndex)!);
+    result.fields[fBlamelistStartCommit] = taggedValue(startCommit.hash);
+    final endCommit =
+        await commitsCache.getCommitByIndex(result.getInt(fBlamelistEndIndex)!);
+    result.fields[fBlamelistEndCommit] = taggedValue(endCommit.hash);
   }
 }
 
