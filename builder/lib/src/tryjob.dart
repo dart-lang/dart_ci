@@ -10,6 +10,7 @@ import 'commits_cache.dart';
 import 'firestore.dart';
 import 'gerrit_change.dart';
 import 'result.dart';
+import 'status.dart';
 
 class ChangeCounter {
   static const maxReportedSuccesses = 1000;
@@ -85,7 +86,7 @@ class Tryjob {
             lastLandedResultByName[change[fName]]!.getString(fResult);
   }
 
-  Future<void> process(List<Map<String, dynamic>> results) async {
+  Future<BuildStatus> process(List<Map<String, dynamic>> results) async {
     await update();
     log('storing ${results.length} change(s)');
     final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
@@ -109,6 +110,9 @@ class Tryjob {
     }
     await firestore.recordTryBuild(
         info, buildbucketID, success, counter.hasTruncatedChanges);
+    final status = BuildStatus()
+      ..success = success
+      ..truncatedResults = counter.hasTruncatedChanges;
     final report = [
       'Processed ${results.length} results from ${info.builderName} build ${info.buildNumber}',
       'Tryjob on CL ${info.review} patchset ${info.patchset}',
@@ -118,6 +122,7 @@ class Tryjob {
       '${firestore.documentsWritten} documents written',
     ];
     log(report.join('\n'));
+    return status;
   }
 
   Future<void> guardedStoreChange(Map<String, dynamic> change) =>

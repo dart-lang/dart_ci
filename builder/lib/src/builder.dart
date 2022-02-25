@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:pool/pool.dart';
 
@@ -9,6 +11,7 @@ import 'commits_cache.dart';
 import 'firestore.dart';
 import 'result.dart';
 import 'reverted_changes.dart';
+import 'status.dart';
 import 'tryjob.dart' show Tryjob;
 
 /// A Builder holds information about a CI build, and can
@@ -38,16 +41,16 @@ class Build {
 
   void log(String string) => firestore.log(string);
 
-  Future<void> process(List<Map<String, dynamic>> changes) async {
+  Future<BuildStatus> process(List<Map<String, dynamic>> changes) async {
     log('store build commits info');
     await storeBuildCommitsInfo();
     log('update build info');
     if (!await firestore.updateBuildInfo(
         info.builderName, info.buildNumber, endIndex)) {
       // This build's results have already been recorded.
-      log('build up-to-date, exiting');
+      log('build already uploaded to database, exiting');
       // TODO(karlklose): add a flag to overwrite builder results.
-      return;
+      exit(1);
     }
     final configurations =
         changes.map((change) => change['configuration'] as String).toSet();
@@ -56,7 +59,7 @@ class Build {
     await Pool(30).forEach(changes, guardedStoreChange).drain();
     log('complete builder record');
     await firestore.completeBuilderRecord(info.builderName, endIndex, success);
-
+    final status = BuildStatus()..success = success;
     final report = [
       'Processed ${changes.length} results from ${info.builderName}'
           ' build ${info.buildNumber}',
@@ -72,6 +75,7 @@ class Build {
       ]
     ];
     log(report.join('\n'));
+    return status;
   }
 
   Future<void> update(Iterable<String> configurations) async {

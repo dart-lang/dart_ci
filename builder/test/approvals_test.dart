@@ -246,8 +246,11 @@ void main() async {
       ..['configuration'] = 'second_approvals_configuration';
     final change4 = makeChange('approvals', newFailure, commit1, commit4,
         testName: 'approvals_2');
-    await makeBuild(commit1, change3).process([change3, change3a, change4]);
+    final status =
+        await makeBuild(commit1, change3).process([change3, change3a, change4]);
     await checkBuild(change3['builder_name'], index1, success: true);
+    expect(status.success, isTrue);
+    expect(status.truncatedResults, isFalse);
     await checkResult(change3, index3, index1, {
       'approved': true,
     });
@@ -255,8 +258,9 @@ void main() async {
     // the blamelist
     final change5 = makeChange('approvals_3', newFailure, commit1, commit3,
         testName: 'approvals');
-    await makeBuild(commit1, change5).process([change5]);
+    final status2 = await makeBuild(commit1, change5).process([change5]);
     await checkBuild(change5['builder_name'], index1, success: true);
+    expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {
       'approved': true,
       'configurations': [

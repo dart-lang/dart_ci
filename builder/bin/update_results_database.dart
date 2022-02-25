@@ -6,6 +6,7 @@ import 'package:builder/src/builder.dart';
 import 'package:builder/src/commits_cache.dart';
 import 'package:builder/src/firestore.dart';
 import 'package:builder/src/result.dart';
+import 'package:builder/src/status.dart';
 import 'package:builder/src/tryjob.dart';
 import 'package:googleapis/firestore/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -38,18 +39,18 @@ File fileOption(options, String name) {
   return file;
 }
 
-Future<void> processResults(options, client, firestore) async {
+Future<BuildStatus> processResults(options, client, firestore) async {
   final inputFile = fileOption(options, 'results');
   final results = await readChangedResults(inputFile);
   final String? buildbucketID = options['buildbucket_id'];
   final String? baseRevision = options['base_revision'];
   final commitCache = CommitsCache(firestore, client);
   if (buildInfo is TryBuildInfo) {
-    await Tryjob(buildInfo as TryBuildInfo, buildbucketID!, baseRevision!,
+    return Tryjob(buildInfo as TryBuildInfo, buildbucketID!, baseRevision!,
             commitCache, firestore, client)
         .process(results);
   } else {
-    await Build(buildInfo, commitCache, firestore).process(results);
+    return Build(buildInfo, commitCache, firestore).process(results);
   }
 }
 
@@ -61,7 +62,8 @@ void main(List<String> arguments) async {
             allowed: ['dart-ci-staging', 'dart-ci'])
         ..addOption('results', abbr: 'r')
         ..addOption('buildbucket_id', abbr: 'i')
-        ..addOption('base_revision', abbr: 'b'))
+        ..addOption('base_revision', abbr: 'b')
+        ..addOption('status_file'))
       .parse(arguments);
 
   final baseClient = http.Client();
@@ -71,7 +73,9 @@ void main(List<String> arguments) async {
   final api = FirestoreApi(client);
   final firestore = FirestoreService(api, client, project: options['project']);
 
-  await processResults(options, client, firestore);
-
+  final status = await processResults(options, client, firestore);
+  if (options['status_file'] != null) {
+    await File(options['status_file']).writeAsString(status.toJson());
+  }
   baseClient.close();
 }

@@ -195,8 +195,10 @@ void main() async {
   test('failure', () async {
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('failure', failingChange);
-    await tryjob.process([failingChange]);
+    final failedStatus = await tryjob.process([failingChange]);
     await checkTryBuild('failure', success: false);
+    expect(failedStatus.success, isFalse);
+    expect(failedStatus.truncatedResults, isFalse);
     // Add a second failing configuration for the test.
     final otherConfigurationChange = {
       ...failingChange,
@@ -206,8 +208,11 @@ void main() async {
     registerChangeForDeletion(otherConfigurationChange);
     final otherTryjob =
         makeTryjob('other_configuration', otherConfigurationChange);
-    await otherTryjob.process([otherConfigurationChange]);
+    final otherFailedStatus =
+        await otherTryjob.process([otherConfigurationChange]);
     await checkTryBuild('other_configuration', success: false);
+    expect(otherFailedStatus.success, isFalse);
+    expect(otherFailedStatus.truncatedResults, isFalse);
     final result = await firestore.query(
         from: 'try_results', where: fieldEquals('name', 'failure_test'));
     expect(result.length, 1);
@@ -224,17 +229,19 @@ void main() async {
     // try results, and ignored.
     final failingChange = makeChange('landedFailure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('landedFailure2', failingChange);
-    await tryjob.process([failingChange]);
+    final status = await tryjob.process([failingChange]);
     await checkTryBuild('landedFailure2', success: true);
+    expect(status.success, isTrue);
   });
 
   test('flaky', () async {
     final flakyChange =
         makeChange('flaky', 'Pass/RuntimeError/Pass', flaky: true);
     final tryjob = makeTryjob('flaky', flakyChange);
-    await tryjob.process([flakyChange]);
+    final status = await tryjob.process([flakyChange]);
     await checkTryBuild('flaky', success: true);
-    expect(tryjob.success, true);
+    expect(status.success, isTrue);
+    expect(tryjob.success, isTrue);
     expect(tryjob.counter.newFlakes, 1);
     expect(tryjob.counter.unapprovedFailures, 0);
   });
@@ -246,8 +253,11 @@ void main() async {
       ..['name'] = 'truncated_pass_2_test';
     registerChangeForDeletion(failingChange);
     tryjob.counter.passes = ChangeCounter.maxReportedSuccesses;
-    await tryjob.process([passingChange, failingChange]);
+    final truncatedStatus =
+        await tryjob.process([passingChange, failingChange]);
     await checkTryBuild('truncatedPass', success: false, truncated: true);
+    expect(truncatedStatus.success, isFalse);
+    expect(truncatedStatus.truncatedResults, isTrue);
     expect(tryjob.counter.passes, ChangeCounter.maxReportedSuccesses + 1);
     expect(tryjob.counter.unapprovedFailures, 1);
     expect(tryjob.counter.failures, 1);
@@ -269,8 +279,12 @@ void main() async {
     final truncatedChange = {...failingChange, 'name': 'truncated_2_test'};
     registerChangeForDeletion(truncatedChange);
     tryjob.counter.failures = ChangeCounter.maxReportedFailures - 1;
-    await tryjob.process([failingChange, truncatedChange]);
+    final truncatedStatus =
+        await tryjob.process([failingChange, truncatedChange]);
     await checkTryBuild('truncated', success: false, truncated: true);
+    expect(truncatedStatus.success, isFalse);
+    expect(truncatedStatus.truncatedResults, isTrue);
+    expect(truncatedStatus.truncatedResults, isTrue);
     expect(tryjob.counter.failures, ChangeCounter.maxReportedFailures + 1);
     expect(tryjob.counter.hasTooManyFailingChanges, isTrue);
     expect(tryjob.counter.hasTruncatedChanges, isTrue);
