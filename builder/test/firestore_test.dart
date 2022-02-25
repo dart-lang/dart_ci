@@ -24,7 +24,7 @@ void main() async {
       baseClient: baseClient);
   final api = FirestoreApi(client);
   final firestore = FirestoreService(api, client);
-  if (!await firestore.isStaging()) {
+  if (!firestore.isStaging) {
     throw (TestFailure(
         'Error: firestore_test_nodejs.dart is being run on production'));
   }

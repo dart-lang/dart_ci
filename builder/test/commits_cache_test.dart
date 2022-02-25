@@ -39,28 +39,13 @@ void main() async {
       expect(copied, commit);
     }
 
-    expect(commits.startIndex, isNull);
     await fetchAndTestCommit(commit68900);
-    expect(commits.startIndex, 68900);
-    expect(commits.endIndex, 68900);
     await fetchAndTestCommit(commit68900);
-    expect(commits.startIndex, 68900);
-    expect(commits.endIndex, 68900);
     await fetchAndTestCommitByIndex(commit68910);
-    expect(commits.startIndex, 68900);
-    expect(commits.endIndex, 68910);
     await fetchAndTestCommitByIndex(commit68905);
-    expect(commits.startIndex, 68900);
-    expect(commits.endIndex, 68910);
     await fetchAndTestCommit(commit68905);
-    expect(commits.startIndex, 68900);
-    expect(commits.endIndex, 68910);
     await fetchAndTestCommitByIndex(commit68890);
-    expect(commits.startIndex, 68890);
-    expect(commits.endIndex, 68910);
     await fetchAndTestCommitByIndex(commit68889);
-    expect(commits.startIndex, 68889);
-    expect(commits.endIndex, 68910);
   });
   tearDownAll(() => baseClient.close());
 }

@@ -119,7 +119,7 @@ class FirestoreService {
     await firestore.projects.databases.documents.commit(request, database);
   }
 
-  Future<bool> isStaging() => Future.value(project == 'dart-ci-staging');
+  bool get isStaging => project == 'dart-ci-staging';
 
   Future<bool> hasPatchset(String review, String patchset) {
     return documentExists('$documents/reviews/$review/patchsets/$patchset');

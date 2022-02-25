@@ -47,7 +47,7 @@ class FirestoreServiceFake implements FirestoreService {
   int addedResultIdCounter = 1;
 
   @override
-  Future<bool> isStaging() async => false;
+  bool get isStaging => false;
 
   @override
   void noSuchMethod(Invocation invocation) =>

@@ -202,7 +202,7 @@ void main() async {
       baseClient: baseClient);
   final api = FirestoreApi(client);
   firestore = FirestoreService(api, client);
-  if (!await firestore.isStaging()) {
+  if (!firestore.isStaging) {
     throw (TestFailure('Error: test is being run on production'));
   }
   commitsCache = CommitsCache(firestore, client);

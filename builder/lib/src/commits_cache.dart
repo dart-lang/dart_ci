@@ -10,25 +10,25 @@ import 'firestore.dart';
 import 'result.dart';
 
 /// Contains data about the commits on the tracked branch of the SDK repo.
-/// An instance of this class is stored in a top-level variable, and is
-/// shared between cloud function invocations.
 ///
 /// The class fetches commits from Firestore if they are present,
 /// and fetches them from gitiles if not, and saves them to Firestore.
+/// If a fetch of the latest 1000 commits from gitiles does not find the
+/// commit that is missing from Firestore, the request fails.
 class CommitsCache {
   FirestoreService firestore;
   final http.Client httpClient;
-  Map<String, Commit> byHash = {};
-  Map<int, Commit> byIndex = {};
-  int? startIndex;
-  int? endIndex;
+  Map<String, FutureOr<Commit>> byHash = {};
+  Map<int, FutureOr<Commit>> byIndex = {};
+  late final Future<void> _fetchCommits = _getNewCommits();
 
   CommitsCache(this.firestore, this.httpClient);
 
-  Future<Commit> getCommit(String hash) async {
-    var commit = byHash[hash] ?? await _fetchByHash(hash);
+  FutureOr<Commit> getCommit(String hash) => byHash[hash] ??= _getCommit(hash);
+  Future<Commit> _getCommit(String hash) async {
+    var commit = await _fetchByHash(hash);
     if (commit == null) {
-      await _getNewCommits();
+      await _fetchCommits;
       commit = await _fetchByHash(hash);
     }
     if (commit == null) {
@@ -37,10 +37,13 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit> getCommitByIndex(int index) async {
-    var commit = byIndex[index] ?? await _fetchByIndex(index);
+  FutureOr<Commit> getCommitByIndex(int index) =>
+      byIndex[index] ??= _getCommitByIndex(index);
+
+  Future<Commit> _getCommitByIndex(int index) async {
+    var commit = await _fetchByIndex(index);
     if (commit == null) {
-      await _getNewCommits();
+      await _fetchCommits;
       commit = await _fetchByIndex(index);
     }
     if (commit == null) {
@@ -50,67 +53,29 @@ class CommitsCache {
   }
 
   String _makeError(String message) {
-    final error = 'Failed to fetch commit: $message\n'
-        'Commit cache holds:\n'
-        '  $startIndex: ${byIndex[startIndex ?? -1]}\n'
-        '  ...\n'
-        '  $endIndex: ${byIndex[endIndex ?? -1]}';
+    final error = 'Failed to fetch commit: $message\n';
     print(error);
     return error;
-  }
-
-  /// Add a commit to the cache. The cache must be empty, or the commit
-  /// must be immediately before or after the current cached commits.
-  /// Otherwise, do nothing.
-  void _cacheCommit(Commit commit) {
-    final index = commit.index;
-    if (startIndex == null || startIndex == index + 1) {
-      startIndex = index;
-      endIndex ??= index;
-    } else if (endIndex! + 1 == index) {
-      endIndex = index;
-    } else {
-      return;
-    }
-    byHash[commit.hash] = commit;
-    byIndex[index] = commit;
   }
 
   Future<Commit?> _fetchByHash(String hash) async {
     final commit = await firestore.getCommit(hash);
     if (commit == null) return null;
-    final index = commit.index;
-    if (startIndex == null) {
-      _cacheCommit(commit);
-    } else if (index < startIndex!) {
-      for (var fetchIndex = startIndex! - 1; fetchIndex > index; --fetchIndex) {
-        // Other invocations may be fetching simultaneously.
-        if (fetchIndex < startIndex!) {
-          final infillCommit = await firestore.getCommitByIndex(fetchIndex);
-          _cacheCommit(infillCommit);
-        }
-      }
-      _cacheCommit(commit);
-    } else if (index > endIndex!) {
-      for (var fetchIndex = endIndex! + 1; fetchIndex < index; ++fetchIndex) {
-        // Other invocations may be fetching simultaneously.
-        if (fetchIndex > endIndex!) {
-          final infillCommit = await firestore.getCommitByIndex(fetchIndex);
-          _cacheCommit(infillCommit);
-        }
-      }
-      _cacheCommit(commit);
-    }
+    byHash[commit.hash] = commit;
+    byIndex[commit.index] = commit;
     return commit;
   }
 
-  Future<Commit?> _fetchByIndex(int index) => firestore
-      .getCommitByIndex(index)
-      .then((commit) => _fetchByHash(commit.hash));
+  Future<Commit?> _fetchByIndex(int index) async {
+    final commit = await firestore.getCommitByIndex(index);
+    if (commit == null) return null;
+    byHash[commit.hash] = commit;
+    byIndex[commit.index] = commit;
+    return commit;
+  }
 
   /// This function is idempotent, so every call of it should write the
-  /// same info to new Firestore documents. It is safe to call multiple
-  /// times simultaneously. Intentionally returns null, not void.
+  /// same info to new Firestore documents.
   Future<void> _getNewCommits() async {
     const prefix = ")]}'\n";
     final lastCommit = await firestore.getLastCommit();
@@ -186,9 +151,11 @@ class TestingCommitsCache extends CommitsCache {
   TestingCommitsCache(firestore, httpClient) : super(firestore, httpClient);
 
   @override
-  Future<void> _getNewCommits() async {
-    if ((await firestore.isStaging())) {
+  Future<void> _getNewCommits() {
+    if (firestore.isStaging) {
       return super._getNewCommits();
+    } else {
+      return Future.value(null);
     }
   }
 }
