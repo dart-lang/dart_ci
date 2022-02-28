@@ -84,20 +84,23 @@ class BuildInfo {
   final int buildNumber;
   final String commitRef;
   final String? previousCommitHash;
+  final Set<String> configurations;
 
-  BuildInfo(Map<String, dynamic> result)
+  BuildInfo(Map<String, dynamic> result, this.configurations)
       : builderName = result[fBuilderName],
         buildNumber = int.parse(result[fBuildNumber]),
         commitRef = result[fCommitHash],
         previousCommitHash = result[fPreviousCommitHash];
 
-  factory BuildInfo.fromResult(Map<String, dynamic> result) {
+  factory BuildInfo.fromResult(
+      Map<String, dynamic> result, Set<String> configurations) {
     final commitRef = result[fCommitHash];
     final match = commitRefRegExp.matchAsPrefix(commitRef);
     if (match == null) {
-      return BuildInfo(result);
+      return BuildInfo(result, configurations);
     } else {
-      return TryBuildInfo(result, int.parse(match[1]!), int.parse(match[2]!));
+      return TryBuildInfo(
+          result, configurations, int.parse(match[1]!), int.parse(match[2]!));
     }
   }
 }
@@ -106,7 +109,9 @@ class TryBuildInfo extends BuildInfo {
   final int review;
   final int patchset;
 
-  TryBuildInfo(result, this.review, this.patchset) : super(result);
+  TryBuildInfo(Map<String, dynamic> result, Set<String> configurations,
+      this.review, this.patchset)
+      : super(result, configurations);
 }
 
 class TestNameLock {

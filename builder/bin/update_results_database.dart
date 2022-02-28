@@ -21,7 +21,8 @@ Future<List<Map<String, dynamic>>> readChangedResults(File resultsFile) async {
     print('Empty input results.json file');
     exit(1);
   }
-  buildInfo = BuildInfo.fromResult(lines.first);
+  buildInfo = BuildInfo.fromResult(
+      lines.first, {for (final line in lines) line[fConfiguration]});
   return lines.where(isChangedResult).toList();
 }
 

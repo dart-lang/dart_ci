@@ -72,8 +72,10 @@ Future<void> loadCommits() async {
       await commitsCache.getCommitByIndex(previousBuildPreviousIndex);
 }
 
-Build makeBuild(Map<String, dynamic> firstChange) =>
-    Build(BuildInfo.fromResult(firstChange), commitsCache, firestore);
+Build makeBuild(Map<String, dynamic> firstChange) => Build(
+    BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]}),
+    commitsCache,
+    firestore);
 
 Map<String, dynamic> makeChange(String name, String result,
     {bool flaky = false}) {
@@ -120,7 +122,7 @@ void main() async {
       baseClient: baseClient);
   final api = FirestoreApi(client);
   firestore = FirestoreService(api, client);
-  if (!await firestore.isStaging()) {
+  if (!await firestore.isStaging) {
     throw (TestFailure('Error: test is being run on production'));
   }
   commitsCache = CommitsCache(firestore, client);
@@ -138,6 +140,9 @@ void main() async {
     registerChangeForDeletion(failingPreviousChange); // Name changed.
     final previousBuild = makeBuild(failingPreviousChange);
     final previousStatus = await previousBuild.process([failingPreviousChange]);
+    expect(previousStatus.success, isFalse);
+    expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
+
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final build = makeBuild(failingChange);
     final status = await build.process([failingChange]);
@@ -158,7 +163,6 @@ void main() async {
         previousBlamelistStartCommit.hash);
     expect(failure.getStringOrNull(fBlamelistEndCommit), commit.hash);
     expect(failure.getStringOrNull(fBlamelistStartCommit), commit.hash);
-
     final message = status.toJson();
     expect(message, matches(r"There are unapproved failures\\n"));
     expect(
@@ -169,8 +173,18 @@ void main() async {
         message,
         matches(
             r"failure_test   \(Pass -> RuntimeError , expected Pass \) at 2368c2"));
-    expect(previousStatus.success, isFalse);
-    expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
+
+    // Check a build with no changed results.
+    // Another build with the same blamelist and configuration is allowed,
+    // although it should not happen in practice. This build has no changes.
+    final unchangedChange =
+        makeChange('failure', 'RuntimeError/RuntimeError/Pass');
+    final unchangedBuild = makeBuild(unchangedChange);
+    final unchangedStatus = await unchangedBuild.process([]);
+    expect(unchangedStatus.success, isTrue);
+    expect(unchangedStatus.unapprovedFailures, isNotEmpty);
+    expect(unchangedStatus.unapprovedFailures['failure_configuration']!,
+        isNotEmpty);
   });
 
   test('existing approved failure', () async {
@@ -182,6 +196,10 @@ void main() async {
     final otherConfigurationBuild = makeBuild(failingOtherConfigurationChange);
     final otherStatus = await otherConfigurationBuild
         .process([failingOtherConfigurationChange]);
+    expect(otherStatus.success, isFalse);
+    expect(otherStatus.unapprovedFailures, isNotEmpty);
+    expect(
+        otherStatus.unapprovedFailures.keys, contains('other_configuration'));
     final result = (await firestore.findActiveResults(
             'approved_failure_test', 'other_configuration'))
         .single;
@@ -195,10 +213,6 @@ void main() async {
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
     expect(status.unapprovedFailures, isEmpty);
-    expect(otherStatus.success, isFalse);
-    expect(otherStatus.unapprovedFailures, isNotEmpty);
-    expect(
-        otherStatus.unapprovedFailures.keys, contains('other_configuration'));
     final changedResult = (await firestore.findActiveResults(
             'approved_failure_test', 'other_configuration'))
         .single;

@@ -113,7 +113,8 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
 }
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
-    BuildInfo.fromResult(firstChange) as TryBuildInfo,
+    BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+        as TryBuildInfo,
     'bbID_$name',
     data['landedCommit']!,
     commitsCache,
@@ -121,8 +122,14 @@ Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
     client);
 
 Tryjob makeLandedTryjob(String name, Map<String, dynamic> firstChange) =>
-    Tryjob(BuildInfo.fromResult(firstChange) as TryBuildInfo, 'bbID_$name',
-        data['baseCommit']!, commitsCache, firestore, client);
+    Tryjob(
+        BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+            as TryBuildInfo,
+        'bbID_$name',
+        data['baseCommit']!,
+        commitsCache,
+        firestore,
+        client);
 
 Map<String, dynamic> makeChange(String name, String result,
     {bool flaky = false}) {
@@ -243,6 +250,16 @@ void main() async {
     expect(status.success, isTrue);
     expect(tryjob.success, isTrue);
     expect(tryjob.counter.newFlakes, 1);
+    expect(tryjob.counter.unapprovedFailures, 0);
+  });
+
+  test('empty', () async {
+    final emptyChange = makeChange('empty', 'Pass/Pass/Pass');
+    final tryjob = makeTryjob('empty', emptyChange);
+    final status = await tryjob.process([]);
+    await checkTryBuild('empty', success: true);
+    expect(status.success, isTrue);
+    expect(tryjob.success, isTrue);
     expect(tryjob.counter.unapprovedFailures, 0);
   });
 

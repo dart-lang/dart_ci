@@ -52,9 +52,7 @@ class Build {
       // TODO(karlklose): add a flag to overwrite builder results.
       exit(1);
     }
-    final configurations =
-        changes.map((change) => change['configuration'] as String).toSet();
-    await update(configurations);
+    await update(info.configurations);
     log('storing ${changes.length} change(s)');
     await Pool(30).forEach(changes, guardedStoreChange).drain();
     log('complete builder record');
@@ -62,7 +60,7 @@ class Build {
     final status = BuildStatus()..success = success;
     try {
       status.unapprovedFailures = {
-        for (final configuration in configurations)
+        for (final configuration in info.configurations)
           configuration: await unapprovedFailuresForConfiguration(configuration)
       }..removeWhere((key, value) => value.isEmpty);
     } catch (e) {

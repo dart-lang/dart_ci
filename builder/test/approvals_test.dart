@@ -143,8 +143,14 @@ Future<void> loadTestCommits(int startIndex) async {
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange,
         {String? baseCommit}) =>
-    Tryjob(BuildInfo.fromResult(firstChange) as TryBuildInfo, 'bbID_$name',
-        baseCommit ?? commit4, commitsCache, firestore, client);
+    Tryjob(
+        BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+            as TryBuildInfo,
+        'bbID_$name',
+        baseCommit ?? commit4,
+        commitsCache,
+        firestore,
+        client);
 
 const newFailure = 'Pass/RuntimeError/Pass';
 Map<String, dynamic> makeTryChange(
@@ -192,7 +198,8 @@ Map<String, dynamic> makeChange(
 }
 
 Build makeBuild(String commit, Map<String, dynamic> change) {
-  return Build(BuildInfo.fromResult(change), commitsCache, firestore);
+  return Build(BuildInfo.fromResult(change, <String>{change[fConfiguration]}),
+      commitsCache, firestore);
 }
 
 void main() async {

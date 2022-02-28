@@ -22,7 +22,11 @@ class BuilderTest {
 
   BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
-    builder = Build(BuildInfo.fromResult(firstChange), commitsCache, firestore);
+    builder = Build(
+        BuildInfo.fromResult(
+            firstChange, <String>{firstChange[fConfiguration]}),
+        commitsCache,
+        firestore);
   }
 
   Future<void> update() async {
