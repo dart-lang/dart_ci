@@ -20,6 +20,12 @@ void main() async {
 
 Future<void> dispatchingServer(HttpRequest request) async {
   try {
+    if (request.headers['X-Forwarded-Proto']?.first == 'http') {
+      return redirectPermanent(
+          request, request.requestedUri.replace(scheme: 'https').toString());
+    }
+    request.response.headers
+        .add('Strict-Transport-Security', 'max-age=31536000; preload');
     final path = request.uri.path;
     if (path.startsWith('/log/')) {
       await serveLog(request);
@@ -138,6 +144,12 @@ Future<void> redirectToTest(HttpRequest request) async {
 Future<void> redirectTemporary(HttpRequest request, String newPath) {
   request.response.headers.add(HttpHeaders.locationHeader, newPath);
   request.response.statusCode = HttpStatus.movedTemporarily;
+  return request.response.close();
+}
+
+Future<void> redirectPermanent(HttpRequest request, String newPath) {
+  request.response.headers.add(HttpHeaders.locationHeader, newPath);
+  request.response.statusCode = HttpStatus.movedPermanently;
   return request.response.close();
 }
 
