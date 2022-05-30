@@ -238,8 +238,8 @@ class Slice {
   /// If [pageStart] is not null, test names before pageStart.name are
   /// filtered out.
   List<Result> getSortedResults(String prefix, List<String> configurations,
-      Set<String> experimentFilters, PageStart pageStart,
-      {int needed}) {
+      Set<String> experimentFilters, PageStart? pageStart,
+      {required int needed}) {
     final prefixResult = Result.nameOnly(prefix);
     var startResult;
     if (pageStart == null || pageStart.test.compareTo(prefixResult.name) <= 0) {
@@ -253,8 +253,8 @@ class Slice {
     var results = <Result>[];
 
     for (final configuration in configurations) {
-      var configurationRange = getResultRange(
-          _stored[configuration], startResult, prefixResult, experimentFilters);
+      var configurationRange = getResultRange(_stored[configuration]!,
+          startResult, prefixResult, experimentFilters);
 
       if (configurationRange.isEmpty) continue;
       if (pageStart != null &&
@@ -297,8 +297,8 @@ class Slice {
   void dropResultsOlderThan(Duration maximumAge) {
     final now = DateTime.now();
     for (final configuration in _lastFetched.keys.toList()) {
-      if (now.difference(_lastFetched[configuration]) > maximumAge) {
-        _size -= _stored[configuration].length;
+      if (now.difference(_lastFetched[configuration]!) > maximumAge) {
+        _size -= _stored[configuration]!.length;
         _stored.remove(configuration);
         _lastFetched.remove(configuration);
       }

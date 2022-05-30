@@ -26,9 +26,9 @@ abstract class gRpcCommand extends Command {
   Future<void> runWithClient(QueryClient client);
   @override
   Future<void> run() async {
-    final channel = ClientChannel(globalResults['host'],
-        port: int.parse(globalResults['port']),
-        options: globalResults['insecure'] == true
+    final channel = ClientChannel(globalResults!['host'],
+        port: int.parse(globalResults!['port']),
+        options: globalResults!['insecure'] == true
             ? const ChannelOptions(credentials: ChannelCredentials.insecure())
             : const ChannelOptions(credentials: ChannelCredentials.secure()));
 
@@ -59,12 +59,12 @@ class QueryCommand extends gRpcCommand {
   @override
   Future<void> runWithClient(QueryClient client) async {
     final request = GetResultsRequest();
-    request.filter = argResults['filter'] ?? '';
-    if (argResults['limit'] != null) {
-      request.pageSize = int.parse(argResults['limit']);
+    request.filter = argResults!['filter'] ?? '';
+    if (argResults!['limit'] != null) {
+      request.pageSize = int.parse(argResults!['limit']);
     }
-    if (argResults['page'] != null) {
-      request.pageToken = argResults['page'];
+    if (argResults!['page'] != null) {
+      request.pageToken = argResults!['page'];
     }
 
     final result = await client.getResults(request);
@@ -89,8 +89,8 @@ class ListTestsCommand extends gRpcCommand {
   @override
   Future<void> runWithClient(QueryClient client) async {
     final query = ListTestsRequest()
-      ..prefix = argResults['prefix']
-      ..limit = int.parse(argResults['limit']);
+      ..prefix = argResults!['prefix']
+      ..limit = int.parse(argResults!['limit']);
     final result = await client.listTests(query);
     print(jsonEncode(result.toProto3Json()));
   }

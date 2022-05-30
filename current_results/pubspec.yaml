@@ -2,18 +2,15 @@ name: current_results
 description: Cache and serve the most recent test results from Dart CI
 
 environment:
-  sdk: '>=2.7.2 <3.0.0'
+  sdk: '>=2.15.0 <3.0.0'
 
 dependencies:
   shelf: ^1.1.0
-  gcloud: ^0.7.0
+  gcloud: ^0.8.5
   googleapis_auth: ^1.1.0
   grpc: ^3.0.0
   pool: ^1.4.0
   protobuf: ^2.0.0
-
-dependency_overrides:
-  http: 0.13.1
 
 dev_dependencies:
   pedantic: ^1.8.0

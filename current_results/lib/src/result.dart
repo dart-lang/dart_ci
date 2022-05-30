@@ -32,7 +32,7 @@ class Result {
                 : other.experiments.map(unique).toList(growable: false));
 
   Result.nameOnly(String name)
-      : this(name, null, null, null, null, null, null, null);
+      : this(name, '', '', '', false, '', Duration(), []);
 
   static final uniqueStrings = <String>{};
 

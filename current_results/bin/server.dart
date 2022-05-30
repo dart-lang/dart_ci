@@ -20,7 +20,7 @@ void main() async {
   ]);
   final bucket = Storage(client, 'dart-ci').bucket('dart-test-results');
   final resultsBucket = ResultsBucket(bucket);
-  var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
+  var port = int.parse(Platform.environment['PORT'] ?? '8080');
   await startServer(port, resultsBucket);
 }
 

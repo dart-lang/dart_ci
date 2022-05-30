@@ -15,7 +15,7 @@ Slice makeTestSlice(Map<String, List<Map<String, dynamic>>> tests) {
   var slice = Slice();
   for (final configuration in tests.keys) {
     final lines = <String>[];
-    for (final data in tests[configuration]) {
+    for (final data in tests[configuration]!) {
       if (!{'name', 'experiments'}.containsAll(data.keys)) {
         throw 'Invalid test data:\n$data';
       }

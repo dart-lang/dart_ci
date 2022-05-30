@@ -40,7 +40,7 @@ void main() {
     ];
     final empty = <Map<String, int>>[];
 
-    int xField(Map<String, int> map) => map['x'];
+    int xField(Map<String, int> map) => map['x']!;
     expect(merge(a, b, xField), [
       {'x': 1, 'y': 9},
       {'x': 2},
@@ -81,7 +81,11 @@ void main() {
     expect(a.iterator.iterable, a);
     expect((a.iterator..moveNext()).iterable, a.skip(1));
     expect([].iterator.iterable, []);
-    expect(() => a.iterator.iterable..toList()..toList(), throwsStateError);
+    expect(
+        () => a.iterator.iterable
+          ..toList()
+          ..toList(),
+        throwsStateError);
     expect(a.getRange(1, 2).iterator.iterable.single, 2);
     expect(a.iterator.iterable.iterator.iterable, a);
     final m = {'x': 1, 'y': 2};

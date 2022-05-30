@@ -7,8 +7,8 @@ import 'package:grpc/grpc.dart';
 import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart';
 
 class BucketNotifications {
-  SubscriberClient client;
-  Subscription subscription;
+  late SubscriberClient client;
+  late Subscription subscription;
 
   Future<void> initialize() async {
     final authenticator = await applicationDefaultCredentialsAuthenticator(

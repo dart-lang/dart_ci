@@ -47,9 +47,9 @@ class QueryService extends QueryServiceBase {
     for (final message in messages) {
       if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
         final match =
-            latestObjectPattern.firstMatch(message.attributes['objectId']);
+            latestObjectPattern.firstMatch(message.attributes['objectId']!);
         if (match != null) {
-          configurations.add(match[1]);
+          configurations.add(match[1]!);
         }
       }
     }
