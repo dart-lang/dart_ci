@@ -45,7 +45,7 @@ const frontendUnitTestSuites = [
   "fasta/textual_outline",
 ];
 
-String findBaseName(String suite, Iterable<String> nameParts) {
+String? findBaseName(String suite, Iterable<String> nameParts) {
   var parts = nameParts.toList();
   final regExp = (suite == 'co19' || suite == 'co19_2')
       ? RegExp(r"t[0-9]{2,3}$")
@@ -60,11 +60,11 @@ String findBaseName(String suite, Iterable<String> nameParts) {
   return null;
 }
 
-Future<Uri> guessFileName(
+Future<Uri?> guessFileName(
     String suite, Uri testDirectory, Iterable<String> parts) async {
   final baseName = findBaseName(suite, parts);
   if (baseName != null) {
-    return testDirectory.resolve(baseName + ".dart");
+    return testDirectory.resolve('$baseName.dart');
   } else {
     return null;
   }
@@ -79,17 +79,17 @@ bool isFrontEndUnitTestSuiteTest(String testName) {
   return false;
 }
 
-Future<Uri> findTestFile(
+Future<Uri?> findTestFile(
     String testName, Uri root, String suite, Iterable<String> testParts) async {
   if (isCo19(suite)) {
     return await guessFileName(suite, root, testParts);
   } else if (isExternalPackage(suite)) {
-    return root.resolve(testParts.join('/') + ".dart");
+    return root.resolve('${testParts.join('/')}.dart');
   } else if (testDirectories.containsKey(suite)) {
-    var testDir = root.resolveUri(Uri.directory(testDirectories[suite]));
+    var testDir = root.resolveUri(Uri.directory(testDirectories[suite]!));
     return await guessFileName(suite, testDir, testParts);
   } else if (customTestRunnerSuites.containsKey(suite)) {
-    return root.resolve(customTestRunnerSuites[suite]);
+    return root.resolve(customTestRunnerSuites[suite]!);
   } else if (suite == 'pkg') {
     if (testParts.first == 'front_end' &&
         isFrontEndUnitTestSuiteTest(testName)) {
@@ -127,7 +127,8 @@ bool isExternalPackage(String suite) {
 }
 
 Future<String> findDepsRevision(String revision, String package) async {
-  final url = "https://dart.googlesource.com/sdk/+/$revision/DEPS?format=TEXT";
+  final url = Uri.parse(
+      'https://dart.googlesource.com/sdk/+/$revision/DEPS?format=TEXT');
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
     throw Exception("Unable to download DEPS for revision '$revision'"
@@ -135,14 +136,17 @@ Future<String> findDepsRevision(String revision, String package) async {
   }
   final body = String.fromCharCodes(base64Decode(response.body));
   final match = RegExp('"${package}_rev": "(.*)",').firstMatch(body);
-  return match?.group(1);
+  if (match == null) {
+    throw Exception("Unable to find $package revision '$revision' at $url");
+  }
+  return match.group(1)!;
 }
 
 const gerritDataHeader = ")]}'";
 
 Future<String> getPatchsetRevision(int review, int patchset) async {
-  final url = 'https://dart-review.googlesource.com/'
-      'changes/$review/revisions/$patchset/commit';
+  final url = Uri.parse('https://dart-review.googlesource.com/'
+      'changes/$review/revisions/$patchset/commit');
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
     throw Exception("Can't find revision for cl/$review/$patchset");
@@ -155,12 +159,12 @@ Future<String> getPatchsetRevision(int review, int patchset) async {
   return data['commit'];
 }
 
-Future<Uri> computeTestSource(
+Future<Uri?> computeTestSource(
     String revision, String testName, bool useGob) async {
   final splitName = testName.split('/');
   var parts = splitName.skip(1);
   final suite = splitName.first;
-  var root;
+  String root;
   if (isCo19(suite)) {
     revision = await findDepsRevision(revision, suite);
     root = "https://github.com/dart-lang/co19/blob/$revision/";

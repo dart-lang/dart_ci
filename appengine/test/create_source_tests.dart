@@ -44,13 +44,13 @@ main(List<String> arguments) async {
     testNames.putIfAbsent(key, () => testName);
   }
 
-  Map<String, Map<String, String>> results = {
+  Map<String, Map<String, String?>> results = {
     'suite/not_a_basename': {"true": null, "false": null},
   };
   for (var name in testNames.values) {
     results[name] = {};
     for (var gob in [true, false]) {
-      results[name][gob.toString()] =
+      results[name]![gob.toString()] =
           (await computeTestSource(revision, name, gob)).toString();
     }
   }

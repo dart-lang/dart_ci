@@ -9,15 +9,18 @@ import 'package:args/args.dart';
 
 import 'package:dart_ci/src/get_log.dart';
 
-void main(List<String> args) {
-  final parser = new ArgParser();
-  parser.addOption("builder", abbr: "b", help: "Fetch log from this builder");
+void main(List<String> args) async {
+  final parser = ArgParser();
+  parser.addOption("builder",
+      abbr: "b", defaultsTo: "any", help: "Fetch log from this builder");
   parser.addOption("build-number",
       abbr: "n",
       defaultsTo: "latest",
       help: "Fetch log from this build on the chosen builder");
   parser.addOption("test",
-      abbr: "t", help: "Fetch log for this test on the chosen builder");
+      abbr: "t",
+      defaultsTo: "*",
+      help: "Fetch log for this test on the chosen builder");
   parser.addOption("configuration",
       abbr: "c",
       defaultsTo: "*",
@@ -25,10 +28,17 @@ void main(List<String> args) {
   parser.addFlag("help", help: "Show the program usage.", negatable: false);
 
   final options = parser.parse(args);
-  final builder = options["builder"];
-  final test = options["test"];
-  final build = options["build-number"];
-  final configuration = options["configuration"];
+  final builder = options["builder"] as String;
+  var build = options["build-number"] as String;
+  final configuration = options["configuration"] as String;
+  final test = options["test"] as String;
 
-  getLog(builder, build, configuration, test).then((log) => print(log));
+  if (build == "latest") {
+    if (builder != "any") {
+      build = await getLatestBuildNumber(builder);
+    } else if (configuration != "*") {
+      build = await getLatestConfigurationBuildNumber(configuration);
+    }
+  }
+  print(await getLog(builder, build, configuration, test));
 }

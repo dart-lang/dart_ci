@@ -21,12 +21,12 @@ const verifyTargetExists = false;
 main() async {
   for (final name in testData.keys) {
     for (final useGob in [true, false]) {
-      final expected = testData[name][useGob.toString()];
-      if (!testData[name].keys.toSet().containsAll(["true", "false"])) {
+      final expected = testData[name]![useGob.toString()];
+      if (!testData[name]!.keys.toSet().containsAll(["true", "false"])) {
         throw 'Invalid test data for $name/$useGob';
       }
-      var actual;
-      var url;
+      String? actual;
+      Uri? url;
       try {
         url = await computeTestSource(revision, name, useGob);
         actual = url?.toString();

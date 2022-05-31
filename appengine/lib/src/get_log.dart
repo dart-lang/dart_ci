@@ -18,6 +18,7 @@ class UserVisibleFailure {
 
   UserVisibleFailure(this.message);
 
+  @override
   String toString() => "error: $message";
 }
 
@@ -26,7 +27,7 @@ Future<String> getCloudFile(String bucket, String path) async {
   try {
     final api = storage.StorageApi(client);
     final media = await api.objects
-        .get(bucket, path, downloadOptions: DownloadOptions.FullMedia) as Media;
+        .get(bucket, path, downloadOptions: DownloadOptions.fullMedia) as Media;
     return await utf8.decodeStream(media.stream);
   } catch (e) {
     throw UserVisibleFailure(
@@ -43,7 +44,7 @@ Future<String> getLatestConfigurationBuildNumber(String configuration) =>
     getCloudFile(resultsBucket, 'configuration/main/$configuration/latest');
 
 /// Fetches a log or logs and formats them for output.
-Future<String> getLog(
+Future<String?> getLog(
     String builder, String build, String configuration, String test) async {
   final safeRegExp = RegExp('^[-\\w]*\$');
   final digitsRegExp = RegExp('^\\d*\$');
@@ -72,13 +73,15 @@ Future<String> getLog(
 
   final logs = LineSplitter.split(jsonLogs)
       .where((line) => line.isNotEmpty)
-      .map(jsonDecode);
-  var testFilter = (Map<String, dynamic> log) => log['name'] == test;
+      .map(jsonDecode)
+      .cast<Map<String, dynamic>>();
+  bool Function(Map<String, dynamic>) testFilter =
+      (Map<String, dynamic> log) => log['name'] == test;
   if (test.endsWith('*')) {
     final prefix = test.substring(0, test.length - 1);
     testFilter = (Map<String, dynamic> log) => log['name'].startsWith(prefix);
   }
-  var configurationFilter =
+  bool Function(Map<String, dynamic>) configurationFilter =
       (Map<String, dynamic> log) => log['configuration'] == configuration;
   if (configuration.endsWith('*')) {
     final prefix = configuration.substring(0, configuration.length - 1);

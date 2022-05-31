@@ -1,3 +1,9 @@
+## 0.3.0
+
+* Upgraded to Dart 2.17.0.
+* Migrated to null safety.
+* Added package:lints.
+
 ## 0.2.0
 
 * Package name changed to dart_ci, moved to dart_lang/dart_ci repo on Github.

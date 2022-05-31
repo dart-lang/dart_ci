@@ -44,7 +44,7 @@ Future<void> dispatchingServer(HttpRequest request) async {
   }
 }
 
-void serveFrontPage(HttpRequest request) async {
+Future<void> serveFrontPage(HttpRequest request) async {
   request.response.headers.contentType = ContentType.html;
   request.response.write("""<!DOCTYPE html>
 <html lang="en">
@@ -117,7 +117,7 @@ Future<void> serveLog(HttpRequest request) async {
 Future<void> redirectToTest(HttpRequest request) async {
   final parts = request.uri.pathSegments.skip(1).toList();
   final isCl = parts.first == 'cl';
-  var revision;
+  late String revision;
   if (isCl) {
     final review = int.parse(parts[1]);
     final patchset = int.parse(parts[2]);
@@ -153,7 +153,7 @@ Future<void> redirectPermanent(HttpRequest request, String newPath) {
   return request.response.close();
 }
 
-Future<void> notFound(HttpRequest request, {String message}) {
+Future<void> notFound(HttpRequest request, {String? message}) {
   request.response.statusCode = HttpStatus.notFound;
   if (message != null) {
     request.response.write(message);
