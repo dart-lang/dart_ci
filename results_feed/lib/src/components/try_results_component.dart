@@ -76,6 +76,7 @@ class TryResultsComponent implements OnActivate {
 
   bool patchsetHasTruncatedResults(int patchset) {
     if (reviewInfo == null) return false;
+    if (patchset > reviewInfo.patchsets.length) return false;
     final patchsetGroup = reviewInfo.patchsets[patchset - 1].patchsetGroup;
     return reviewInfo.patchsets.any((patchset) =>
         patchset.patchsetGroup == patchsetGroup &&
