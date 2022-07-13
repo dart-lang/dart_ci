@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:pool/pool.dart';
 
-const _resultBase = 'gs://dart-test-results/builders';
+const _resultBase = 'gs://dart-test-results';
 
 /// Baselines a builder with the [options] and copies the results to the
 /// [resultBase]. [resultBase] can be a URL or a path supported by `gsutil cp`.
@@ -17,11 +17,12 @@ Future<void> baseline(BaselineOptions options,
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
-        baselineBuilder(options.builders, options.target, options.configs,
-            options.dryRun, options.ignoreUnmapped, resultBase)
+        baselineBuilder(options.builders, channel, options.target,
+            options.configs, options.dryRun, options.ignoreUnmapped, resultBase)
       else
         baselineBuilder(
             options.builders.map((b) => '$b-$channel').toList(),
+            channel,
             '${options.target}-$channel',
             options.configs,
             options.dryRun,
@@ -32,16 +33,18 @@ Future<void> baseline(BaselineOptions options,
 
 Future<void> baselineBuilder(
     List<String> builders,
+    String channel,
     String target,
     Map<String, String> configs,
     bool dryRun,
     bool ignoreUnmapped,
     String resultBase) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
-    var latest = await read('$resultBase/$builder/latest');
-    return await read('$resultBase/$builder/$latest/results.json');
+    var latest = await read('$resultBase/builders/$builder/latest');
+    return await read('$resultBase/builders/$builder/$latest/results.json');
   });
   var modifiedResults = StringBuffer();
+  var modifiedResultsPerConfig = <String, StringBuffer>{};
   await for (var results in resultsStream) {
     for (var json in LineSplitter.split(results).map(jsonDecode)) {
       var configuration = configs[json['configuration']];
@@ -59,13 +62,23 @@ Future<void> baselineBuilder(
       json['flaky'] = false;
       json['previous_flaky'] = false;
 
-      modifiedResults.writeln(jsonEncode(json));
+      var encoded = jsonEncode(json);
+      modifiedResults.writeln(encoded);
+      modifiedResultsPerConfig
+          .putIfAbsent(configuration, () => StringBuffer())
+          .writeln(encoded);
       if (dryRun) break;
     }
   }
-  await write(
-      '$resultBase/$target/0/results.json', modifiedResults.toString(), dryRun);
-  await write('$resultBase/$target/latest', '0', dryRun);
+  await write('$resultBase/builders/$target/0/results.json',
+      modifiedResults.toString(), dryRun);
+  for (var entry in modifiedResultsPerConfig.entries) {
+    await write(
+        '$resultBase/configuration/$channel/${entry.key}/0/results.json',
+        entry.value.toString(),
+        dryRun);
+  }
+  await write('$resultBase/builders/$target/latest', '0', dryRun);
 }
 
 Future<String> read(String url) {
