@@ -17,7 +17,8 @@ import 'package:test/test.dart';
 // to this test code and the records for them are removed afterward.
 // The test cleanup function removes these records, even if tests fail.
 // Requires the environment variable GOOGLE_APPLICATION_CREDENTIALS
-// to point to a json key to a service account.
+// to point to a json key to a service account or run
+// `gcloud auth application-default login`.
 // To run against the staging database, use a service account.
 // with write access to dart_ci_staging datastore.
 
