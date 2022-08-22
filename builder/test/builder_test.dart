@@ -122,7 +122,7 @@ void main() async {
       baseClient: baseClient);
   final api = FirestoreApi(client);
   firestore = FirestoreService(api, client);
-  if (!await firestore.isStaging) {
+  if (!firestore.isStaging) {
     throw (TestFailure('Error: test is being run on production'));
   }
   commitsCache = CommitsCache(firestore, client);
@@ -164,7 +164,7 @@ void main() async {
     expect(failure.getStringOrNull(fBlamelistEndCommit), commit.hash);
     expect(failure.getStringOrNull(fBlamelistStartCommit), commit.hash);
     final message = status.toJson();
-    expect(message, matches(r"There are unapproved failures\\n"));
+    expect(message, matches(r'There are unapproved failures\\n'));
     expect(
         message,
         matches(
@@ -172,7 +172,7 @@ void main() async {
     expect(
         message,
         matches(
-            r"failure_test   \(Pass -> RuntimeError , expected Pass \) at 2368c2"));
+            r'failure_test   \(Pass -> RuntimeError , expected Pass \) at 2368c2'));
 
     // Check a build with no changed results.
     // Another build with the same blamelist and configuration is allowed,
