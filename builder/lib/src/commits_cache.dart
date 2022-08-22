@@ -38,19 +38,7 @@ class CommitsCache {
   }
 
   FutureOr<Commit> getCommitByIndex(int index) =>
-      byIndex[index] ??= _getCommitByIndex(index);
-
-  Future<Commit> _getCommitByIndex(int index) async {
-    var commit = await _fetchByIndex(index);
-    if (commit == null) {
-      await _fetchCommits;
-      commit = await _fetchByIndex(index);
-    }
-    if (commit == null) {
-      throw _makeError('getCommitByIndex($index)');
-    }
-    return commit;
-  }
+      byIndex[index] ??= _fetchByIndex(index);
 
   String _makeError(String message) {
     final error = 'Failed to fetch commit: $message\n';
@@ -66,9 +54,8 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit?> _fetchByIndex(int index) async {
+  Future<Commit> _fetchByIndex(int index) async {
     final commit = await firestore.getCommitByIndex(index);
-    if (commit == null) return null;
     byHash[commit.hash] = commit;
     byIndex[commit.index] = commit;
     return commit;
