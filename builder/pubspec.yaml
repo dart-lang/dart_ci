@@ -1,9 +1,10 @@
 name: builder
 description: Scripts run on Dart CQ/CI builders
+publish_to: none
 version: 0.1.0
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: 2.17.6 # Pinned, the recipe will use this exact version.
 
 dependencies:
   args: ^2.3.0
