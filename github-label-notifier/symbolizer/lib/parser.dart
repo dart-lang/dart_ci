@@ -446,7 +446,7 @@ class _CrashExtractor {
       RegExp(r"Build fingerprint: '[^:']+:(?<version>[\d\.]+)/[^']*'");
   static final _backtraceStartPattern = RegExp(r'^\s*backtrace:\s*$');
   static final _androidFramePattern = RegExp(
-      r'^\s*#(?<no>\d+)\s+pc\s+(?<pc>[0-9a-f]+)\s+(?<binary>[^\s]+)(?<rest>.*)$');
+      r'^\s*#(?<no>\d+)\s+pc\s+(0x)?(?<pc>[0-9a-f]+)\s+(?<binary>[^\s]+)(?<rest>.*)$');
   static final _buildIdPattern = RegExp(r'\(BuildId: (?<id>[0-9a-f]+)\)');
   static final _launchModePattern =
       RegExp(r'^\s*Launching .* on .* in (?<mode>debug|release|profile) mode');

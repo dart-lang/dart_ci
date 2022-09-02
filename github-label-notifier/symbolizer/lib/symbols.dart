@@ -131,8 +131,9 @@ class SymbolsCache {
   void _loadState() {
     if (!_cacheStateFile.existsSync()) return;
 
-    final Map<String, dynamic> cacheState =
-        jsonDecode(_cacheStateFile.readAsStringSync());
+    final cacheState = _tryLoadState();
+    if (cacheState == null) return;
+
     final timestamps = cacheState['lastUsedTimestamp'] as List<dynamic>;
     _lastUsedTimestamp.clear();
     for (var i = 0; i < timestamps.length; i += 2) {
@@ -140,6 +141,16 @@ class SymbolsCache {
     }
     _buildIdCache.addAll((cacheState['buildIdCache'] as Map<String, dynamic>)
         .map((key, value) => MapEntry(key, EngineBuild.fromJson(value))));
+  }
+
+  Map<String, dynamic>? _tryLoadState() {
+    try {
+      return jsonDecode(_cacheStateFile.readAsStringSync());
+    } catch (e) {
+      // Some sort of cache corruption has occured. Purge the cache.
+      _cacheStateFile.parent.deleteSync(recursive: true);
+      return null;
+    }
   }
 
   void _saveState() {
@@ -224,8 +235,8 @@ class SymbolsCache {
       // Flutter.xcframework folder.
       // Futhermore it seems that arch suffix has changed between releases due
       // to https://github.com/flutter/flutter/issues/60043.
-      final archSuffix =
-          contentsList.contains('armv7_arm64') ? 'armv7_arm64' : 'arm64_armv7';
+      final archSuffix = const ['armv7_arm64', 'arm64_armv7', 'arm64']
+          .firstWhere(contentsList.contains, orElse: () => 'arm64');
       libraryPath =
           'Flutter.xcframework/ios-$archSuffix/Flutter.framework/Flutter';
       await _run('unzip', [artifactsFile, libraryPath],

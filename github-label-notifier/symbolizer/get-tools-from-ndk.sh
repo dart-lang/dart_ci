@@ -14,7 +14,7 @@ fi
 
 echo "Running with NDK $NDK for OS $OS"
 
-for BINARY in "x86_64-linux-android-readelf" "llvm-symbolizer" "llvm-objdump"; do
+for BINARY in "llvm-symbolizer" "llvm-objdump" "llvm-readobj"; do
   mkdir -p tools/android-ndk/toolchains/llvm/prebuilt/$OS-x86_64/bin/
   cp $NDK/toolchains/llvm/prebuilt/$OS-x86_64/bin/$BINARY tools/android-ndk/toolchains/llvm/prebuilt/$OS-x86_64/bin/$BINARY
 done

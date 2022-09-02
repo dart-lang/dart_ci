@@ -5,28 +5,18 @@
 
 set -xe
 
-if [[ ! -f "tools/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-symbolizer" ]]; then
-  echo "Missing linux-x86_64 build of llvm-symbolizer."
-  echo "Point get-tools-from-ndk.sh to Linux NDK to extract it."
-  exit 1
-fi
-
-if [[ ! -f "tools/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android-readelf" ]]; then
-  echo "Missing linux-x86_64 build of x86_64-linux-android-readelf."
-  echo "Point get-tools-from-ndk.sh to Linux NDK to extract it."
-  exit 1
-fi
-
-if [[ ! -f "tools/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump" ]]; then
-  echo "Missing linux-x86_64 build of llvm-objdump."
-  echo "Point get-tools-from-ndk.sh to Linux NDK to extract it."
-  exit 1
-fi
+for BINARY in "llvm-symbolizer" "llvm-objdump" "llvm-readobj"; do
+  if [[ ! -f "tools/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/${BINARY}" ]]; then
+    echo "Missing linux-x86_64 build of ${BINARY}."
+    echo "Point get-tools-from-ndk.sh to Linux NDK to extract it."
+    exit 1
+  fi
+done
 
 DART_VERSION=$(dart --version 2>&1 | grep -o -e '\d*\.\d*.\d*')
 
-if [[ $DART_VERSION != "2.10.1" ]]; then
-  echo "Version mismatch with server version: $DART_VERSION expected 2.10.1"
+if [[ $DART_VERSION != "2.18.0" ]]; then
+  echo "Version mismatch with server version: $DART_VERSION expected 2.18.0"
   exit 1
 fi
 

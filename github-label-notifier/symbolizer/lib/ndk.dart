@@ -13,7 +13,8 @@ import 'package:path/path.dart' as p;
 class Ndk {
   /// Return information about .text section from the given [object] file.
   Future<SectionInfo> getTextSectionInfo(String object) async {
-    final result = await _run(_readelfBinary, ['-lW', object]);
+    final result =
+        await _run(_readelfBinary, ['--elf-output-style=GNU', '-l', object]);
     for (var match in _loadCommandPattern.allMatches(result)) {
       if (match.namedGroup('flags')!.trim() == 'R E') {
         // Found .text section
@@ -29,7 +30,8 @@ class Ndk {
 
   /// Return build-id of the given [object] file.
   Future<String> getBuildId(String object) async {
-    final result = await _run(_readelfBinary, ['-nW', object]);
+    final result =
+        await _run(_readelfBinary, ['--elf-output-style=GNU', '-n', object]);
     final match = _buildIdPattern.firstMatch(result);
     if (match == null) {
       throw 'Failed to extract build-id from $object';
@@ -107,7 +109,7 @@ final _llvmSymbolizerBinary =
 final _llvmObjdumpBinary =
     '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-objdump';
 final _readelfBinary =
-    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-readelf';
+    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-readobj';
 final _buildIdPattern = RegExp(r'Build ID:\s+(?<id>[0-9a-f]+)');
 final _loadCommandPattern = RegExp(
     r'^\s+LOAD\s+(?<offset>0x[0-9a-f]+)\s+(?<vma>0x[0-9a-f]+)\s+(?<phys>0x[0-9a-f]+)\s+(?<filesz>0x[0-9a-f]+)\s+(?<memsz>0x[0-9a-f]+)\s+(?<flags>[^0]+)\s+0x[0-9a-f]+\s*$',
