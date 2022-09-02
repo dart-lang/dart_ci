@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `1d12d82d9cb54876f58044aa52198d53ec841c3d` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `1d12d82d9cb54876f58044aa52198d53ec841c3d` `ios-arm64-release`
 ```
 #00 00000001ca274414 libsystem_kernel.dylib 0x1ca24c000 + 164884
 #01 00000001e76aab40 libsystem_pthread.dylib 0x1e76a8000 + 11072

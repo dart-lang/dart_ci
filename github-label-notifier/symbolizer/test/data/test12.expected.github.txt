@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
 ```
 #00 00000001cb298b8c IOGPU -[IOGPUMetalCommandBuffer commandBufferResourceInfo] + 12
 #01 00000001d812f4e0 AGXMetalA9 (Missing)

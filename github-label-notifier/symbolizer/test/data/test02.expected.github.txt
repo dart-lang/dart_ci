@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d` `android-arm-debug`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 symbolized using symbols for `75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d` `android-arm-debug`
 ```
 #00 96a85449 <...>/lib/arm/libflutter.so+0x1384449
                                          dart::Profiler::DumpStackTrace(bool)
@@ -11,7 +11,7 @@ crash from null symbolized using symbols for `75bef9f6c8ac2ed4e1e04cdfcd88b177d9
 
 ```
 
-crash from null symbolized using symbols for `75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d` `android-arm-debug`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 symbolized using symbols for `75bef9f6c8ac2ed4e1e04cdfcd88b177d9f1850d` `android-arm-debug`
 ```
 #00 0001a43c /system/lib/libc.so (abort+63)
 #01 002bce85 <...>/lib/arm/libflutter.so (offset 0x1002000)

@@ -11,7 +11,6 @@ import 'dart:io';
 import 'package:github/github.dart';
 import 'package:github/hooks.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
 import 'package:symbolizer/bot.dart';
@@ -22,7 +21,7 @@ final _log = Logger('server');
 typedef _RequestHandler = Future<Object> Function(Map<String, dynamic> request);
 
 Future<void> serve(Object address, int port,
-    {@required Symbolizer symbolizer, @required Bot bot}) async {
+    {required Symbolizer symbolizer, required Bot bot}) async {
   final handlers = <String, _RequestHandler>{
     '/symbolize': (issue) => symbolizer.symbolize(issue['body']),
     '/command': (event) async {
@@ -30,7 +29,7 @@ Future<void> serve(Object address, int port,
           .contains(event['comment']['author_association']);
       final commentEvent = IssueCommentEvent.fromJson(event);
       final repo = RepositorySlug.full(event['repository']['full_name']);
-      await bot.executeCommand(repo, commentEvent.issue, commentEvent.comment,
+      await bot.executeCommand(repo, commentEvent.issue!, commentEvent.comment!,
           authorized: repoOrgMember);
       return {'status': 'ok'};
     },
@@ -55,7 +54,8 @@ Future<void> serve(Object address, int port,
     try {
       final requestObj =
           await utf8.decoder.bind(request).transform(json.decoder).first;
-      final responseJson = jsonEncode(await handler(requestObj));
+      final responseJson =
+          jsonEncode(await handler(requestObj as Map<String, dynamic>));
       request.response
         ..statusCode = HttpStatus.ok
         ..headers.add(HttpHeaders.contentTypeHeader, 'application/json')

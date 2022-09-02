@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:github/github.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
 import 'package:symbolizer/bot.dart';
@@ -18,21 +19,20 @@ import 'package:test/test.dart';
 
 import 'package:symbolizer/symbolizer.dart';
 
-class MockSymbolsCache extends Mock implements SymbolsCache {}
-
-class MockGitHub extends Mock implements GitHub {}
-
-class MockNdk extends Mock implements Ndk {}
-
-class MockRepositoriesService extends Mock implements RepositoriesService {}
-
-class MockRepositoryCommit extends Mock implements RepositoryCommit {}
+@GenerateNiceMocks([
+  MockSpec<SymbolsCache>(),
+  MockSpec<GitHub>(),
+  MockSpec<Ndk>(),
+  MockSpec<RepositoriesService>(),
+  MockSpec<RepositoryCommit>(),
+])
+import 'symbolizer_test.mocks.dart';
 
 class AlwaysFailingCrashExtractor implements CrashExtractor {
   const AlwaysFailingCrashExtractor();
 
   @override
-  List<Crash> extractCrashes(String text, {SymbolizationOverrides overrides}) {
+  List<Crash> extractCrashes(String text, {SymbolizationOverrides? overrides}) {
     throw UnimplementedError('This method always fails');
   }
 }
@@ -45,7 +45,7 @@ final config = loadConfigFromFile();
 
 void main() {
   group('end-to-end', () {
-    Symbolizer symbolizer;
+    late Symbolizer symbolizer;
     final files = Directory('test/data').listSync();
 
     setUpAll(() {
@@ -281,7 +281,7 @@ $backtrace
               buildId: 'aaaabbbbccccddddaaaabbbbccccdddd')));
       expect(results.first.engineBuild, equals(releaseBuild));
       expect(results.first.notes, isEmpty);
-      expect(results.first.symbolized.trim(), equals('''
+      expect(results.first.symbolized!.trim(), equals('''
 #00 0000000000111111 libflutter.so (BuildId: aaaabbbbccccddddaaaabbbbccccdddd)
                                    some-function
                                    third_party/something/else.cc

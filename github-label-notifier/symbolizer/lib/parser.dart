@@ -5,8 +5,6 @@
 /// Logic for extracting crashes from text.
 library symbolizer.parser;
 
-import 'package:meta/meta.dart';
-
 import 'package:symbolizer/model.dart';
 
 /// Returns [true] if the given text is likely to contain a crash.
@@ -19,37 +17,45 @@ class CrashExtractor {
   const CrashExtractor();
 
   /// Extract all crashes from the given [text] using [overrides].
-  List<Crash> extractCrashes(String text, {SymbolizationOverrides overrides}) =>
+  List<Crash> extractCrashes(String text,
+          {SymbolizationOverrides? overrides}) =>
       _CrashExtractor(text: text, overrides: overrides).crashes;
 }
 
 class _CrashExtractor {
   final List<String> lines;
-  final SymbolizationOverrides overrides;
+  final SymbolizationOverrides? overrides;
 
   final List<Crash> crashes = <Crash>[];
 
   int lineNo = 0;
 
-  String os;
-  String arch;
-  String mode;
-  String format;
-  List<CrashFrame> frames;
+  String? os;
+  String? arch;
+  String? mode;
+  String? format;
+  List<CrashFrame> frames = [];
 
-  RegExp logLinePattern;
+  RegExp? logLinePattern;
   bool collectingFrames = false;
-  int androidMajorVersion;
+  int? androidMajorVersion;
 
-  _CrashExtractor({@required String text, this.overrides})
+  _CrashExtractor({required String text, this.overrides})
       : lines = text.split(_lineEnding) {
-    if (overrides?.format == 'internal' && overrides?.os != null) {
-      parseAsCustomBacktrace(_internalFramePattern, overrides.os);
-    } else if (overrides?.force == true && overrides.os == 'ios') {
-      parseAsIosBacktrace();
-    } else {
-      processLines();
+    final overrides = this.overrides;
+    if (overrides != null) {
+      final os = overrides.os;
+      if (overrides.format == 'internal' && os != null) {
+        parseAsCustomBacktrace(_internalFramePattern, os);
+        return;
+      } else if (overrides.force && os == 'ios') {
+        parseAsIosBacktrace();
+        return;
+      }
     }
+
+    // Default processing.
+    processLines();
   }
 
   /// Extract only stack traces from the text which match the given regexp.
@@ -75,11 +81,11 @@ class _CrashExtractor {
 
       frames.add(CrashFrame.custom(
         no: frames.length.toString().padLeft(2, '0'),
-        binary: frameMatch.namedGroup('binary'),
-        pc: int.parse(frameMatch.namedGroup('pc')),
+        binary: frameMatch.namedGroup('binary')!,
+        pc: int.parse(frameMatch.namedGroup('pc')!),
         symbol: frameMatch.namedGroup('symbol'),
         offset: frameMatch.namedGroup('offset') != null
-            ? int.parse(frameMatch.namedGroup('offset'))
+            ? int.parse(frameMatch.namedGroup('offset')!)
             : null,
         location: frameMatch.namedGroup('location'),
       ));
@@ -128,12 +134,12 @@ class _CrashExtractor {
     endCrash();
   }
 
-  IosCrashFrame parseIosFrame(String line) {
+  IosCrashFrame? parseIosFrame(String line) {
     final frameMatch = _iosFramePattern.firstMatch(line);
     if (frameMatch == null) {
       return null;
     }
-    var rest = frameMatch.namedGroup('rest').trim();
+    var rest = frameMatch.namedGroup('rest')!.trim();
     var location = '';
     if (rest.endsWith(')')) {
       final open = rest.lastIndexOf('(');
@@ -144,22 +150,22 @@ class _CrashExtractor {
     }
     final offsetMatch = _offsetSuffixPattern.firstMatch(rest);
     String symbol;
-    int offset;
+    int? offset;
     if (offsetMatch != null) {
       // In some rare cases offset would be computed against load base of 0
       // in which case int.parse would refuse to parse it (because it is
       // a decimal integer outside of range for signed 64-bit integer).
       // Ignore such cases.
-      offset = int.tryParse(offsetMatch.namedGroup('offset'));
-      symbol = offsetMatch.namedGroup('symbol').trim();
+      offset = int.tryParse(offsetMatch.namedGroup('offset')!);
+      symbol = offsetMatch.namedGroup('symbol')!.trim();
     } else {
       symbol = rest.trim();
     }
 
-    return CrashFrame.ios(
-      no: frameMatch.namedGroup('no'),
-      binary: frameMatch.namedGroup('binary'),
-      pc: int.parse(frameMatch.namedGroup('pc')),
+    return IosCrashFrame(
+      no: frameMatch.namedGroup('no')!,
+      binary: frameMatch.namedGroup('binary')!,
+      pc: int.parse(frameMatch.namedGroup('pc')!),
       symbol: symbol,
       offset: offset,
       location: location,
@@ -179,9 +185,9 @@ class _CrashExtractor {
       // verbose output then strip the prefix characteristic for those log
       // types.
       if (logLinePattern != null) {
-        final m = logLinePattern.firstMatch(line);
+        final m = logLinePattern!.firstMatch(line);
         if (m != null) {
-          line = m.namedGroup('rest');
+          line = m.namedGroup('rest')!;
         } else {
           // No longer in the raw log output. If we started collecting a crash
           // flush it and continue handling the line.
@@ -208,7 +214,7 @@ class _CrashExtractor {
 
       final dartvmCrashMatch = _dartvmCrashMarker.firstMatch(line);
       if (dartvmCrashMatch != null) {
-        startCrash(dartvmCrashMatch.namedGroup('os'));
+        startCrash(dartvmCrashMatch.namedGroup('os')!);
         format = 'dartvm';
         arch = dartvmCrashMatch.namedGroup('arch');
         if (arch == 'ia32') {
@@ -226,9 +232,9 @@ class _CrashExtractor {
         final frameMatch = _dartvmFramePattern.firstMatch(line);
         if (frameMatch != null) {
           frames.add(CrashFrame.dartvm(
-            pc: int.parse(frameMatch.namedGroup('pc')),
-            binary: frameMatch.namedGroup('binary'),
-            offset: int.parse(frameMatch.namedGroup('offset')),
+            pc: int.parse(frameMatch.namedGroup('pc')!),
+            binary: frameMatch.namedGroup('binary')!,
+            offset: int.parse(frameMatch.namedGroup('offset')!),
           ));
         }
       }
@@ -262,12 +268,12 @@ class _CrashExtractor {
         if (collectingFrames) {
           final frameMatch = _androidFramePattern.firstMatch(line);
           if (frameMatch != null) {
-            final rest = frameMatch.namedGroup('rest');
+            final rest = frameMatch.namedGroup('rest')!;
             final buildIdMatch = _buildIdPattern.firstMatch(rest);
             frames.add(CrashFrame.android(
-              no: frameMatch.namedGroup('no'),
-              pc: int.parse(frameMatch.namedGroup('pc'), radix: 16),
-              binary: frameMatch.namedGroup('binary'),
+              no: frameMatch.namedGroup('no')!,
+              pc: int.parse(frameMatch.namedGroup('pc')!, radix: 16),
+              binary: frameMatch.namedGroup('binary')!,
               rest: rest,
               buildId: buildIdMatch?.namedGroup('id'),
             ));
@@ -339,23 +345,23 @@ class _CrashExtractor {
 
   void endCrash() {
     // We are not interested in crashes where we did not collect any frames.
-    if (frames != null && frames.isNotEmpty) {
+    if (frames.isNotEmpty) {
       if (os == 'android') {
         androidMajorVersion ??= guessAndroidVersion();
       }
 
       crashes.add(Crash(
         engineVariant: EngineVariant(
-          os: os,
+          os: os!,
           arch: overrides?.arch ?? arch,
           mode: overrides?.mode ?? mode,
         ),
         frames: frames,
-        format: format,
+        format: format!,
         androidMajorVersion: androidMajorVersion,
       ));
     }
-    frames = null;
+    frames = [];
     collectingFrames = false;
     logLinePattern = null;
   }
@@ -376,7 +382,7 @@ class _CrashExtractor {
     }
   }
 
-  int guessAndroidVersion() {
+  int? guessAndroidVersion() {
     // On Android 11 has introduced a change[1] which mangles APK install
     // locations with a random prefix (and suffix). We can use the presence of
     // this prefix to detect that we are running on Android 11 or above.
@@ -395,12 +401,12 @@ class _CrashExtractor {
 
     // Try to look backwards through log lines to determine launch mode.
     for (var i = lineNo - 1; i >= 0; i--) {
-      final logLineMatch = logLinePattern.firstMatch(lines[i]);
+      final logLineMatch = logLinePattern!.firstMatch(lines[i]);
       if (logLineMatch == null) {
         break;
       }
       final modeMatch =
-          _launchModePattern.firstMatch(logLineMatch.namedGroup('rest'));
+          _launchModePattern.firstMatch(logLineMatch.namedGroup('rest')!);
       if (modeMatch != null) {
         mode = modeMatch.namedGroup('mode');
         return;

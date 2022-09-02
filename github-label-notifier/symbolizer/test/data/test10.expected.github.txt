@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
 ```
 #00 000000019007e5c0 CoreFoundation 52963DBA-FA89-36C2-8262-28B9776F8C12 + 1185216
 #01 00000001a416c42c libobjc.A.dylib objc_exception_throw + 60
@@ -86,7 +86,7 @@ crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f
 
 ```
 
-crash from null symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `b8752bbfff0419c8bf616b602bc59fd28f6a3d1b` `ios-arm64-release`
 ```
 #00 0000000192b825c0 CoreFoundation 472C9193-115D-34CD-AD1D-0E7E091C9432 + 1185216
 #01 00000001a6bfc42c libobjc.A.dylib objc_exception_throw + 60

@@ -14,7 +14,6 @@ import 'dart:convert';
 
 import 'package:github/github.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:sendgrid_mailer/sendgrid_mailer.dart';
 
 import 'package:symbolizer/model.dart';
@@ -26,15 +25,15 @@ final _log = Logger(Bot.account);
 class Bot {
   final GitHub github;
   final Symbolizer symbolizer;
-  final Mailer mailer;
-  final String failuresEmail;
+  final Mailer? mailer;
+  final String? failuresEmail;
   final bool dryRun;
 
   Bot({
-    @required this.github,
-    @required this.symbolizer,
-    @required this.mailer,
-    @required this.failuresEmail,
+    required this.github,
+    required this.symbolizer,
+    required this.mailer,
+    required this.failuresEmail,
     this.dryRun = false,
   });
 
@@ -49,7 +48,7 @@ class Bot {
   /// Parse the given [text] as a command to the bot. See the library doc
   /// comment at the beginning of the file for information about the command
   /// format.
-  static BotCommand parseCommand(int issueNumber, String text) {
+  static BotCommand? parseCommand(int issueNumber, String text) {
     final command = text.split('\n').first;
     if (!isCommand(command)) {
       return null;
@@ -58,13 +57,13 @@ class Bot {
     final issueNumberStr = issueNumber.toString();
 
     var symbolizeThis = false;
-    final worklist = <String>{};
-    String engineHash;
-    String flutterVersion;
-    String os;
-    String arch;
-    String mode;
-    String format;
+    final Set<String> worklist = <String>{};
+    String? engineHash;
+    String? flutterVersion;
+    String? os;
+    String? arch;
+    String? mode;
+    String? format;
     var force = false;
 
     // Command is just a sequence of keywords which specify which comments
@@ -99,7 +98,7 @@ class Bot {
           var m = _commentLinkPattern.firstMatch(keyword);
           if (m != null) {
             if (m.namedGroup('issueNumber') == issueNumberStr) {
-              worklist.add(m.namedGroup('ref'));
+              worklist.add(m.namedGroup('ref')!);
             }
             break;
           }
@@ -141,30 +140,29 @@ class Bot {
     RepositorySlug repo,
     Issue issue,
     IssueComment commandComment, {
-    @required bool authorized,
+    required bool authorized,
   }) async {
     if (!authorized) {
       await github.issues.createComment(repo, issue.number, '''
-@${commandComment.user.login} Sorry, only **public members of Flutter org** can trigger my services.
+@${commandComment.user!.login} Sorry, only **public members of Flutter org** can trigger my services.
 
 Check your privacy settings as described [here](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-user-account/publicizing-or-hiding-organization-membership).
 ''');
       return;
     }
 
-    final command = parseCommand(issue.number, commandComment.body);
+    final command = parseCommand(issue.number, commandComment.body!);
     if (command == null) {
       return;
     }
 
     // Comments which potentially contain crashes by their id.
-    Map<int, _Comment> worklist;
+    final worklist = <_Comment>{};
     if (command.shouldProcessAll) {
-      worklist = await processAllComments(repo, issue);
+      worklist.addAll(await _processAllComments(repo, issue));
     } else {
-      worklist = {};
       if (command.symbolizeThis) {
-        worklist[commandComment.id] = _Comment.fromComment(commandComment);
+        worklist.add(_Comment.fromComment(commandComment));
       }
 
       // Process worklist from the command and fetch comment bodies.
@@ -173,11 +171,11 @@ Check your privacy settings as described [here](https://docs.github.com/en/free-
         final c = ref.split('-');
         final id = int.parse(c[1]);
         if (c[0] == 'issue') {
-          worklist[issue.id] = _Comment.fromIssue(issue);
+          worklist.add(_Comment.fromIssue(issue));
         } else {
           try {
             final comment = await github.issues.getComment(repo, id);
-            worklist[comment.id] = _Comment.fromComment(comment);
+            worklist.add(_Comment.fromComment(comment));
           } catch (e) {
             // Ignore.
           }
@@ -186,65 +184,66 @@ Check your privacy settings as described [here](https://docs.github.com/en/free-
     }
 
     // Process comments from the worklist.
-    await symbolizeGiven(
-        repo, issue, commandComment.user, worklist, command.overrides);
+    await _symbolizeGiven(
+        repo, issue, commandComment.user!, worklist, command.overrides);
   }
 
   /// Find all comments on the [issue] which potentially contain crashes
   /// and were not previously symbolized by the bot.
-  Future<Map<int, _Comment>> processAllComments(
+  Future<Set<_Comment>> _processAllComments(
       RepositorySlug repo, Issue issue) async {
     _log.info(
         'Requested to symbolize all comments on ${repo.fullName}#${issue.number}');
 
     // Dictionary of comments to symbolize by their id.
-    final worklist = <int, _Comment>{};
+    final worklist = <_Comment>{};
     final alreadySymbolized = <int>{};
 
     // Collect all comments which might contain crashes in the worklist
     // and ids of already symbolized comments in the [alreadySymbolized] set.
     if (containsCrash(issue.body)) {
-      worklist[issue.id] = _Comment.fromIssue(issue);
+      worklist.add(_Comment.fromIssue(issue));
     }
     await for (var comment
         in github.issues.listCommentsByIssue(repo, issue.number)) {
-      if (comment.user.login == Bot.account) {
+      if (comment.user!.login == Bot.account) {
         // From comments by the bot extract ids of already symbolized comments.
         // Bot adds it to its comments as a JSON encoded object within
         // HTML comment: <!-- {"symbolized": [id0, id1, ...]} -->
-        final m = _botInfoPattern.firstMatch(comment.body);
+        final m = _botInfoPattern.firstMatch(comment.body!);
         if (m != null) {
-          final state = jsonDecode(m.namedGroup('json').trim());
+          final state = jsonDecode(m.namedGroup('json')!.trim());
           if (state is Map<String, dynamic> &&
               state.containsKey('symbolized')) {
             alreadySymbolized
                 .addAll((state['symbolized'] as List<dynamic>).cast<int>());
           }
         }
-      } else if (containsCrash(comment.body)) {
-        worklist[comment.id] = _Comment.fromComment(comment);
+      } else if (containsCrash(comment.body!)) {
+        worklist.add(_Comment.fromComment(comment));
       }
     }
 
     _log.info(
-        'Found comments with crashes ${worklist.keys}, and already symbolized ${alreadySymbolized}');
+        'Found comments with crashes ${worklist.ids}, and already symbolized $alreadySymbolized');
     alreadySymbolized.forEach(worklist.remove);
     return worklist;
   }
 
   /// Symbolize crashes from all comments in the [worklist] using the given
   /// [overrides] and post response on the issue.
-  Future<void> symbolizeGiven(
+  Future<void> _symbolizeGiven(
       RepositorySlug repo,
       Issue issue,
       User commandUser,
-      Map<int, _Comment> worklist,
+      Set<_Comment> worklist,
       SymbolizationOverrides overrides) async {
-    _log.info('Symbolizing ${worklist.keys} with overrides {$overrides}');
+    _log.info('Symbolizing ${worklist.ids} with overrides {$overrides}');
 
     // Symbolize all collected comments.
-    final symbolized = <int, SymbolizationResult>{};
-    for (var comment in worklist.values) {
+    final Map<int, SymbolizationResult> symbolized =
+        <int, SymbolizationResult>{};
+    for (var comment in worklist) {
       final result =
           await symbolizer.symbolize(comment.body, overrides: overrides);
       if (result is SymbolizationResultError ||
@@ -275,37 +274,35 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
     }
 
     // Post a comment containing all successfully symbolized crashes.
-    await postResultComment(repo, issue, worklist, symbolized);
-    await mailFailures(repo, issue, worklist, symbolized);
+    _postResultComment(repo, issue, worklist, symbolized);
+    _mailFailures(repo, issue, worklist, symbolized);
   }
 
   /// Post a comment on the issue commenting successfully symbolized crashes.
-  void postResultComment(
-      RepositorySlug repo,
-      Issue issue,
-      Map<int, _Comment> comments,
-      Map<int, SymbolizationResult> symbolized) async {
+  void _postResultComment(RepositorySlug repo, Issue issue,
+      Set<_Comment> comments, Map<int, SymbolizationResult> symbolized) async {
     if (symbolized.isEmpty) {
       return;
     }
 
-    final successes = symbolized.onlySuccesses;
-    final failures = symbolized.onlyFailures;
+    final successes = _getOnlySuccesses(comments, symbolized);
+    final failures = _getOnlyFailures(comments, symbolized);
 
     final buf = StringBuffer();
     for (var entry in successes.entries) {
       for (var result in entry.value.results) {
         buf.write('''
-crash from ${comments[entry.key].url} symbolized using symbols for `${result.engineBuild.engineHash}` `${result.engineBuild.variant.os}-${result.engineBuild.variant.arch}-${result.engineBuild.variant.mode}`
+crash from ${entry.key} symbolized using symbols for `${result.engineBuild!.engineHash}` `${result.engineBuild!.variant.os}-${result.engineBuild!.variant.arch}-${result.engineBuild!.variant.mode}`
 ```
 ${result.symbolized}
 ```
 ''');
         for (var note in result.notes) {
           buf.write('_(${noteMessage[note.kind]}');
-          if ((note.message ?? '').isNotEmpty) {
+          final message = note.message;
+          if (message != null && message.isNotEmpty) {
             buf.write(': ');
-            buf.write(note.message);
+            buf.write(message);
           }
           buf.write(')_');
         }
@@ -324,16 +321,17 @@ ${result.symbolized}
 
       void appendNote(SymbolizationNote note) {
         buf.write('* ${noteMessage[note.kind]}');
-        if (note.message != null && note.message.isNotEmpty) {
-          if (note.message.contains('\n')) {
+        final message = note.message;
+        if (message != null && message.isNotEmpty) {
+          if (message.contains('\n')) {
             buf.writeln(':');
             buf.write('''
 ```
-${note.message}
+$message
 ```'''
                 .indentBy('    '));
           } else {
-            buf.writeln(': `${note.message}`');
+            buf.writeln(': `$message`');
           }
         }
         buf.writeln('');
@@ -343,7 +341,7 @@ ${note.message}
         entry.value.when(ok: (results) {
           for (var result in results) {
             buf.writeln('''
-When processing ${comments[entry.key].url} I found crash
+When processing ${entry.key} I found crash
 
 ```
 ${result.crash}
@@ -355,7 +353,7 @@ but failed to symbolize it with the following notes:
           }
         }, error: (note) {
           buf.writeln('''
-When processing ${comments[entry.key].url} I encountered the following error:
+When processing ${entry.key} I encountered the following error:
 ''');
           appendNote(note);
         });
@@ -370,8 +368,11 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
 
     // Append information about symbolized comments to the bot's comment so that
     // we could skip them later.
-    buf.writeln(
-        '<!-- ${jsonEncode({'symbolized': successes.keys.toList()})} -->');
+    final successIds = <int>{
+      for (var comment in comments)
+        if (successes.containsKey(comment.url)) comment.id
+    };
+    buf.writeln('<!-- ${jsonEncode({'symbolized': successIds.toList()})} -->');
 
     if (dryRun) {
       print(buf);
@@ -381,16 +382,13 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
   }
 
   /// Mail failures to the [failuresEmail] mail address.
-  void mailFailures(
-      RepositorySlug repo,
-      Issue issue,
-      Map<int, _Comment> comments,
+  void _mailFailures(RepositorySlug repo, Issue issue, Set<_Comment> comments,
       Map<int, SymbolizationResult> symbolized) async {
     if (failuresEmail == null) {
       return;
     }
 
-    final failures = symbolized.onlyFailures;
+    final failures = _getOnlyFailures(comments, symbolized);
     if (failures.isEmpty) {
       return;
     }
@@ -405,7 +403,7 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
       entry.value.when(ok: (results) {
         for (var result in results) {
           buf.writeln('''
-<p>When processing <a href="${comments[entry.key].url}">comment</a>, I found crash</p>
+<p>When processing <a href="${entry.key}">comment</a>, I found crash</p>
 <pre>${escape(result.crash.toString())}</pre>
 <p>but failed with the following notes:</p>
 ''');
@@ -416,7 +414,7 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
         }
       }, error: (note) {
         buf.writeln('''
-<p>When processing <a href="${comments[entry.key].url}">comment</a>, I failed with the following error:</p>
+<p>When processing <a href="${entry.key}">comment</a>, I failed with the following error:</p>
 ''');
         buf.writeln(
             '${noteMessage[note.kind]} <pre>${escape(note.message ?? '')}');
@@ -426,10 +424,10 @@ See [my documentation](https://github.com/flutter-symbolizer-bot/flutter-symboli
     if (dryRun) {
       print(buf);
     } else {
-      await mailer.send(
+      await mailer!.send(
         Email(
           [
-            Personalization([Address(failuresEmail)])
+            Personalization([Address(failuresEmail!)])
           ],
           Address('noreply@dart.dev'),
           'symbolization errors for issue #${issue.number}',
@@ -464,49 +462,64 @@ class _Comment {
   _Comment(this.id, this.url, this.body);
 
   _Comment.fromComment(IssueComment comment)
-      : this(comment.id, comment.htmlUrl, comment.body);
+      : this(comment.id!, comment.htmlUrl!, comment.body!);
 
   _Comment.fromIssue(Issue issue)
       : this(issue.id, issue.commentLikeHtmlUrl, issue.body);
+
+  @override
+  bool operator ==(Object other) {
+    return other is _Comment && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 extension on Issue {
   String get commentLikeHtmlUrl => '$htmlUrl#issue-$id';
 }
 
-extension on Map<int, SymbolizationResult> {
-  /// Filter multimap of symbolization results to get all successes.
-  Map<int, SymbolizationResultOk> get onlySuccesses {
-    return Map.fromEntries(entries
-        .where((e) => e.value is SymbolizationResultOk)
-        .map((e) => MapEntry(
-            e.key,
-            applyFilter(
-                e.value as SymbolizationResultOk, (r) => r.symbolized != null)))
-        .where((e) => e.value.results.isNotEmpty));
-  }
-
-  /// Filter multimap of symbolization results to get all failures.
-  Map<int, SymbolizationResult> get onlyFailures {
-    return Map.fromEntries(entries.map((e) {
-      final result = e.value;
-      return MapEntry(
+/// Filter multimap of symbolization results to get all successes.
+Map<String, SymbolizationResultOk> _getOnlySuccesses(
+    Set<_Comment> comments, Map<int, SymbolizationResult> results) {
+  return Map.fromEntries(comments
+      .map((comment) => MapEntry(comment.url, results[comment.id]!))
+      .where((e) => e.value is SymbolizationResultOk)
+      .map((e) => MapEntry(
           e.key,
-          result is SymbolizationResultOk
-              ? applyFilter(result, (r) => r.symbolized == null)
-              : result);
-    }).where((e) =>
-        e.value is SymbolizationResultError ||
-        (e.value as SymbolizationResultOk).results.isNotEmpty));
-  }
+          _applyFilter(
+              e.value as SymbolizationResultOk, (r) => r.symbolized != null)))
+      .where((e) => e.value.results.isNotEmpty));
+}
 
-  static SymbolizationResultOk applyFilter(SymbolizationResultOk result,
-      bool Function(CrashSymbolizationResult) predicate) {
-    return SymbolizationResultOk(
-        results: result.results.where(predicate).toList());
-  }
+/// Filter multimap of symbolization results to get all failures.
+Map<String, SymbolizationResult> _getOnlyFailures(
+    Set<_Comment> comments, Map<int, SymbolizationResult> results) {
+  return Map.fromEntries(comments
+      .map((comment) => MapEntry(comment.url, results[comment.id]!))
+      .map((e) {
+    final result = e.value;
+    return MapEntry(
+        e.key,
+        result is SymbolizationResultOk
+            ? _applyFilter(result, (r) => r.symbolized == null)
+            : result);
+  }).where((e) =>
+          e.value is SymbolizationResultError ||
+          (e.value as SymbolizationResultOk).results.isNotEmpty));
+}
+
+SymbolizationResultOk _applyFilter(SymbolizationResultOk result,
+    bool Function(CrashSymbolizationResult) predicate) {
+  return SymbolizationResultOk(
+      results: result.results.where(predicate).toList());
 }
 
 extension on String {
   String indentBy(String indent) => indent + split('\n').join('\n$indent');
+}
+
+extension on Set<_Comment> {
+  Iterable<int> get ids => map((e) => e.id);
 }

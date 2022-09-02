@@ -8,9 +8,9 @@ library symbolizer.symbolizer;
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:github/github.dart';
 
@@ -28,14 +28,14 @@ class Symbolizer {
   final CrashExtractor crashExtractor;
 
   Symbolizer({
-    @required this.symbols,
-    @required this.ndk,
-    @required this.github,
+    required this.symbols,
+    required this.ndk,
+    required this.github,
     this.crashExtractor = const CrashExtractor(),
   });
 
   Future<SymbolizationResult> symbolize(String text,
-      {SymbolizationOverrides overrides}) async {
+      {SymbolizationOverrides? overrides}) async {
     try {
       return SymbolizationResult.ok(
           results: await _symbolizeImpl(text, overrides: overrides));
@@ -49,14 +49,14 @@ class Symbolizer {
 
   /// Process the given [text] to find all crashes and symbolize them.
   Future<List<CrashSymbolizationResult>> _symbolizeImpl(String text,
-      {SymbolizationOverrides overrides}) async {
+      {SymbolizationOverrides? overrides}) async {
     final crashes = crashExtractor.extractCrashes(text, overrides: overrides);
     if (crashes.isEmpty) {
       return [];
     }
 
     // First compute engine hash to use for symbolization.
-    String engineHash;
+    String? engineHash;
     try {
       engineHash = await _guessEngineHash(text, overrides);
     } catch (e, st) {
@@ -82,14 +82,14 @@ class Symbolizer {
     return result;
   }
 
-  Future<String> _guessEngineHash(
-      String text, SymbolizationOverrides overrides) async {
+  Future<String?> _guessEngineHash(
+      String text, SymbolizationOverrides? overrides) async {
     // Try to establish engine hash based on the content.
     var engineHash = overrides?.engineHash ??
         _reEngineHash.firstMatch(text)?.namedGroup('shortHash');
     if (engineHash == null && overrides?.flutterVersion != null) {
       engineHash =
-          await _engineHashFromFlutterVersion(overrides.flutterVersion);
+          await _engineHashFromFlutterVersion(overrides!.flutterVersion);
     }
     if (engineHash != null) {
       // Try to expand short hash into full hash.
@@ -109,9 +109,9 @@ class Symbolizer {
     return engineHash;
   }
 
-  Future<String> _engineHashFromFlutterVersion(String version) async {
-    final response = await http.get(
-        'https://raw.githubusercontent.com/flutter/flutter/${version}/bin/internal/engine.version');
+  Future<String?> _engineHashFromFlutterVersion(String? version) async {
+    final response = await http.get(Uri.parse(
+        'https://raw.githubusercontent.com/flutter/flutter/$version/bin/internal/engine.version'));
     if (response.statusCode == HttpStatus.ok) {
       return response.body.trim();
     }
@@ -132,7 +132,7 @@ class Symbolizer {
   }
 
   Future<CrashSymbolizationResult> _symbolizeCrash(
-      Crash crash, String engineHash, SymbolizationOverrides overrides) async {
+      Crash crash, String engineHash, SymbolizationOverrides? overrides) async {
     // Apply overrides
     if (crash.engineVariant.arch == null) {
       return _failedToSymbolize(crash, SymbolizationNoteKind.unknownAbi);
@@ -173,7 +173,7 @@ class Symbolizer {
       } catch (e) {
         return _failedToSymbolize(
             crash, SymbolizationNoteKind.exceptionWhileLookingByBuildId,
-            error: '(${buildId}) $e');
+            error: '($buildId) $e');
       }
     }
 
@@ -196,19 +196,17 @@ class Symbolizer {
           await ndk.getBuildId(p.join(symbolsDir, 'libflutter.so'));
       if (engineBuildId != buildId) {
         result = result.withNote(SymbolizationNoteKind.buildIdMismatch,
-            'Backtrace refers to ${buildId} but we used engine with ${engineBuildId}');
+            'Backtrace refers to $buildId but we used engine with $engineBuildId');
       }
     }
 
     return result;
   }
 
-  static String _findBuildIdInFrames(List<CrashFrame> frames) => frames
+  static String? _findBuildIdInFrames(List<CrashFrame> frames) => frames
       .whereType<AndroidCrashFrame>()
-      .firstWhere(
-          (frame) =>
-              frame.binary.endsWith('libflutter.so') && frame.buildId != null,
-          orElse: () => null)
+      .firstWhereOrNull((frame) =>
+          frame.binary.endsWith('libflutter.so') && frame.buildId != null)
       ?.buildId;
 
   Future<CrashSymbolizationResult> _symbolizeCrashWithGivenSymbols(
@@ -251,17 +249,17 @@ class Symbolizer {
 
   Future<CrashSymbolizationResult>
       _symbolizeGeneric<FrameType extends CrashFrame>({
-    @required CrashSymbolizationResult result,
-    @required List<FrameType> frames,
-    @required String arch,
-    @required String object,
-    @required bool Function(FrameType) shouldSymbolize,
-    @required int Function(FrameType) getRelativePC,
-    @required FutureOr<int> Function(Iterable<FrameType>) computePCBias,
-    @required String Function(FrameType) frameSuffix,
-    @required bool shouldAdjustInnerPCs,
+    required CrashSymbolizationResult result,
+    required List<FrameType> frames,
+    required String? arch,
+    required String object,
+    required bool Function(FrameType) shouldSymbolize,
+    required int Function(FrameType) getRelativePC,
+    required FutureOr<int> Function(Iterable<FrameType>) computePCBias,
+    required String Function(FrameType) frameSuffix,
+    required bool shouldAdjustInnerPCs,
   }) async {
-    _log.info('Symbolizing using ${object}');
+    _log.info('Symbolizing using $object');
 
     final worklist = <int>{};
 
@@ -302,7 +300,7 @@ class Symbolizer {
       buf.writeln(frameSuffix(frame));
       if (worklist.contains(i)) {
         final indent = ' ' * (prefix.length + 1);
-        for (var line in symbolized[i].split('\n')) {
+        for (var line in symbolized[i]!.split('\n')) {
           buf.write(indent);
           buf.writeln(line);
         }
@@ -315,9 +313,9 @@ class Symbolizer {
   Future<CrashSymbolizationResult> _symbolizeAndroidFrames(
     CrashSymbolizationResult result,
     List<AndroidCrashFrame> frames,
-    String arch,
+    String? arch,
     String symbolsDir,
-    int androidMajorVersion,
+    int? androidMajorVersion,
   ) async {
     final flutterSo = p.join(symbolsDir, 'libflutter.so');
     return _symbolizeGeneric<AndroidCrashFrame>(
@@ -356,10 +354,10 @@ class Symbolizer {
   Future<CrashSymbolizationResult> _symbolizeDartvmFrames(
       CrashSymbolizationResult result,
       List<DartvmCrashFrame> frames,
-      String arch,
+      String? arch,
       String symbolsDir) async {
     final flutterSo = p.join(symbolsDir, 'libflutter.so');
-    return _symbolizeGeneric(
+    return _symbolizeGeneric<DartvmCrashFrame>(
       result: result,
       frames: frames,
       arch: arch,
@@ -406,28 +404,27 @@ class Symbolizer {
 
   /// Extract information about calls (branch-link instruction) locations
   /// in the binary.
-  Future<_CallLocations> _determineCallLocations(EngineBuild build) async {
+  Future<_CallLocations?> _determineCallLocations(EngineBuild build) async {
     if (build.variant.arch != 'arm64') {
       return null;
     }
 
     final flutterSo = await symbols.getEngineBinary(build);
-    if (flutterSo == null) {
-      return null;
-    }
 
-    int startAddr, endAddr;
+    int? startAddr, endAddr;
     final isCallAt = <bool>[];
-    await for (var line
-        in ndk.objdump(object: flutterSo, arch: build.variant.arch)) {
+    await for (var line in ndk.objdump(object: flutterSo, arch: 'arm64')) {
       final m = _objdumpPattern.firstMatch(line);
       if (m == null) continue;
 
-      final addr = int.parse(m.namedGroup('addr'), radix: 16);
+      final addr = int.parse(m.namedGroup('addr')!, radix: 16);
       startAddr ??= addr;
       endAddr = addr;
-      final op = m.namedGroup('op');
+      final op = m.namedGroup('op')!;
       isCallAt.add(op.startsWith('bl'));
+    }
+    if (startAddr == null || endAddr == null) {
+      return null;
     }
     final codeSize = endAddr - startAddr + 4;
     if (codeSize != isCallAt.length * 4) {
@@ -445,9 +442,9 @@ class Symbolizer {
   /// We are going to look through the binary trying to find call locations
   /// which have the same relative offsets to each other as the given pcs.
   /// Each such group gives us potential load base.
-  Future<_LoadBase> _tryFindLoadBase(
+  Future<_LoadBase?> _tryFindLoadBase(
       EngineBuild build, List<int> retAddrs) async {
-    _log.info('looking for load base of ${build} based on ${retAddrs}');
+    _log.info('looking for load base of $build based on $retAddrs');
     if (retAddrs.length < 2) {
       return null; // Need at least two retAddrs.
     }
@@ -478,7 +475,7 @@ class Symbolizer {
     return null;
   }
 
-  int _tryFindLoadBaseImpl(
+  int? _tryFindLoadBaseImpl(
       EngineBuild build, List<int> retAddrs, _CallLocations calls) {
     const arm64InstrSize = 4;
     const arm64InstrShift = 2;
@@ -511,7 +508,7 @@ class Symbolizer {
 
     // Single possible base found - return it.
     if (possibleBases.length == 1) {
-      _log.info('found load base of ${build} based on ${retAddrs}: '
+      _log.info('found load base of $build based on $retAddrs: '
           '${possibleBases.first}');
       return possibleBases.first;
     }
@@ -519,14 +516,14 @@ class Symbolizer {
     // Either no bases or more than a single possibility found.
     _log.info(
         'found ${possibleBases.isEmpty ? 'no' : 'multiple'} potential load '
-        'bases of ${build} based on ${retAddrs}: ${possibleBases}');
+        'bases of $build based on $retAddrs: $possibleBases');
     return null;
   }
 
   Future<CrashSymbolizationResult> _symbolizeIosFrames(
       CrashSymbolizationResult result,
       List<IosCrashFrame> frames,
-      String arch,
+      String? arch,
       EngineBuild build,
       String symbolsDir) async {
     final object =
@@ -580,7 +577,7 @@ class Symbolizer {
       shouldSymbolize: (frame) =>
           frame.symbol == 'Flutter' || frame.symbol.startsWith('0x'),
       shouldAdjustInnerPCs: adjustInnerPCs,
-      getRelativePC: (frame) => frame.offset,
+      getRelativePC: (frame) => frame.offset!,
       computePCBias: (frames) => 0,
       frameSuffix: (frame) => [
         '',
@@ -595,7 +592,7 @@ class Symbolizer {
   Future<CrashSymbolizationResult> _symbolizeCustomFrames(
       CrashSymbolizationResult result,
       List<CustomCrashFrame> frames,
-      String arch,
+      String? arch,
       EngineBuild build,
       String symbolsDir) async {
     // For now we assuem
@@ -650,17 +647,17 @@ class Symbolizer {
       object: object,
       shouldSymbolize: (frame) => true,
       shouldAdjustInnerPCs: adjustInnerPCs,
-      getRelativePC: (frame) => frame.offset,
+      getRelativePC: (frame) => frame.offset!,
       computePCBias: (frames) => 0,
       frameSuffix: (frame) => [
         '',
-        if (frame.symbol != null && frame.symbol.isNotEmpty)
+        if (frame.symbol != null && frame.symbol!.isNotEmpty)
           frame.symbol
         else
           frame.binary,
         if (frame.offset != null) '+',
         if (frame.offset != null) frame.offset,
-        if (frame.location != null) frame.location.trimLeft(),
+        if (frame.location != null) frame.location!.trimLeft(),
       ].join(' '),
     );
   }
@@ -675,7 +672,7 @@ String _shortBinaryName(String binary) {
   return binary;
 }
 
-int _pointerSize(String arch) {
+int _pointerSize(String? arch) {
   switch (arch) {
     case 'arm64':
     case 'x64':
@@ -691,14 +688,14 @@ String _addrHex(int v, int pointerSize) =>
 String _asHex(int v) => '0x${v.toRadixString(16)}';
 
 List<CrashSymbolizationResult> _failedToSymbolizeAll(
-        List<Crash> crashes, SymbolizationNoteKind note, {Object error}) =>
+        List<Crash> crashes, SymbolizationNoteKind note, {Object? error}) =>
     crashes
         .map((crash) => _failedToSymbolize(crash, note, error: error))
         .toList();
 
 CrashSymbolizationResult _failedToSymbolize(
         Crash crash, SymbolizationNoteKind note,
-        {Object error}) =>
+        {Object? error}) =>
     CrashSymbolizationResult(
       crash: crash,
       engineBuild: null,
@@ -738,5 +735,5 @@ class _CallLocations {
 class _LoadBase {
   final int loadBase;
   final bool pcAdjusted;
-  _LoadBase({this.loadBase, this.pcAdjusted});
+  _LoadBase({required this.loadBase, required this.pcAdjusted});
 }

@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `45b66b722e1275c47dccbe6b002c8e4cb13ea983` `android-x64-debug`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 symbolized using symbols for `45b66b722e1275c47dccbe6b002c8e4cb13ea983` `android-x64-debug`
 ```
 #00 000000000009b80e /system/lib64/libc.so (je_arena_ralloc+142)
 #01 00000000000b098b /system/lib64/libc.so (je_realloc+283)
@@ -6,16 +6,16 @@ crash from null symbolized using symbols for `45b66b722e1275c47dccbe6b002c8e4cb1
                                                     sk_realloc_throw(void*, unsigned long)
                                                     third_party/skia/src/ports/SkMemory_malloc.cpp:57:35
 #03 0000000000dfd565 <...>/lib/x86_64/libflutter.so (offset 0xdb0000)
-                                                    SkTDArray<unsigned char>::resizeStorageToAtLeast(int)
+                                                    SkTDArray<bool>::resizeStorageToAtLeast(int)
                                                     third_party/skia/include/private/SkTDArray.h:364:22
 #04 0000000000dfd532 <...>/lib/x86_64/libflutter.so (offset 0xdb0000)
-                                                    SkTDArray<unsigned char>::setCount(int)
+                                                    SkTDArray<bool>::setCount(int)
                                                     third_party/skia/include/private/SkTDArray.h:145:19
 #05 0000000000dfd4eb <...>/lib/x86_64/libflutter.so (offset 0xdb0000)
-                                                    SkTDArray<unsigned char>::adjustCount(int)
+                                                    SkTDArray<char>::adjustCount(int)
                                                     third_party/skia/include/private/SkTDArray.h:343:15
 #06 0000000000dfd4a4 <...>/lib/x86_64/libflutter.so (offset 0xdb0000)
-                                                    SkTDArray<unsigned char>::append(int, unsigned char const*)
+                                                    SkTDArray<char>::append(int, char const*)
                                                     third_party/skia/include/private/SkTDArray.h:176:19
 #07 0000000000f61ead <...>/lib/x86_64/libflutter.so (offset 0xdb0000)
                                                     GrQuadBuffer<(anonymous namespace)::FillRectOp::ColorAndAA>::concat(GrQuadBuffer<(anonymous namespace)::FillRectOp::ColorAndAA> const&)

@@ -8,7 +8,6 @@ library symbolizer.ndk;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 class Ndk {
@@ -16,12 +15,12 @@ class Ndk {
   Future<SectionInfo> getTextSectionInfo(String object) async {
     final result = await _run(_readelfBinary, ['-lW', object]);
     for (var match in _loadCommandPattern.allMatches(result)) {
-      if (match.namedGroup('flags').trim() == 'R E') {
+      if (match.namedGroup('flags')!.trim() == 'R E') {
         // Found .text section
         return SectionInfo(
-          fileOffset: int.parse(match.namedGroup('offset')),
-          fileSize: int.parse(match.namedGroup('filesz')),
-          virtualAddress: int.parse(match.namedGroup('vma')),
+          fileOffset: int.parse(match.namedGroup('offset')!),
+          fileSize: int.parse(match.namedGroup('filesz')!),
+          virtualAddress: int.parse(match.namedGroup('vma')!),
         );
       }
     }
@@ -35,13 +34,15 @@ class Ndk {
     if (match == null) {
       throw 'Failed to extract build-id from $object';
     }
-    return match.namedGroup('id');
+    return match.namedGroup('id')!;
   }
 
   /// Symbolize given [addresses] using information available for the specified
   /// [arch] in the given [object] file.
   Future<List<String>> symbolize(
-      {String object, List<String> addresses, String arch}) async {
+      {required String object,
+      required List<String> addresses,
+      String? arch}) async {
     final result = await _run(_llvmSymbolizerBinary, [
       if (arch != null) '--default-arch=$arch',
       '--obj',
@@ -51,7 +52,7 @@ class Ndk {
     ]);
 
     final symbolized = result.replaceAllMapped(_builderPathPattern, (m) {
-      return p.relative(p.normalize(m[0]),
+      return p.relative(p.normalize(m[0]!),
           from: (m as RegExpMatch).namedGroup('root'));
     }).split('\n\n');
     if (symbolized.last == '') symbolized.length--;
@@ -62,11 +63,11 @@ class Ndk {
   /// Runs `llvm-objdump` on the given [object] and returns all lines produced
   /// by it.
   Stream<String> objdump({
-    @required String object,
-    @required String arch,
+    required String object,
+    required String arch,
   }) async* {
     final process =
-        await Process.start(_llvmObjdumpBinary, ['--arch=arm64', '-d', object]);
+        await Process.start(_llvmObjdumpBinary, ['--arch=$arch', '-d', object]);
 
     await for (var line in process.stdout
         .transform(utf8.decoder)
@@ -93,20 +94,20 @@ class SectionInfo {
   final int virtualAddress;
 
   SectionInfo({
-    @required this.fileOffset,
-    @required this.fileSize,
-    @required this.virtualAddress,
+    required this.fileOffset,
+    required this.fileSize,
+    required this.virtualAddress,
   });
 }
 
 final _platform = Platform.isLinux ? 'linux' : 'darwin';
 final _ndkDir = 'tools/android-ndk';
 final _llvmSymbolizerBinary =
-    '${_ndkDir}/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-symbolizer';
+    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-symbolizer';
 final _llvmObjdumpBinary =
-    '${_ndkDir}/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-objdump';
+    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-objdump';
 final _readelfBinary =
-    '${_ndkDir}/toolchains/llvm/prebuilt/$_platform-x86_64/bin/x86_64-linux-android-readelf';
+    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-readelf';
 final _buildIdPattern = RegExp(r'Build ID:\s+(?<id>[0-9a-f]+)');
 final _loadCommandPattern = RegExp(
     r'^\s+LOAD\s+(?<offset>0x[0-9a-f]+)\s+(?<vma>0x[0-9a-f]+)\s+(?<phys>0x[0-9a-f]+)\s+(?<filesz>0x[0-9a-f]+)\s+(?<memsz>0x[0-9a-f]+)\s+(?<flags>[^0]+)\s+0x[0-9a-f]+\s*$',

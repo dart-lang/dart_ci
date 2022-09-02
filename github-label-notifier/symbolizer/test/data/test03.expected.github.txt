@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `5babba6c4d25fa237bbf755ab85c9a0c50b3c6ec` `android-arm-debug`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 symbolized using symbols for `5babba6c4d25fa237bbf755ab85c9a0c50b3c6ec` `android-arm-debug`
 ```
 #00 0107f1b6 <...>/lib/arm/libflutter.so (offset 0x102f000)
                                          neon::HLGish_k(skcms_TransferFunction const*, unsigned int, unsigned int, unsigned int, float vector[4]&, float vector[4]&, float vector[4]&, float vector[4]&, float vector[4]&, float vector[4]&, float vector[4]&, float vector[4]&)::'lambda'(float vector[4])::operator()(float vector[4]) const

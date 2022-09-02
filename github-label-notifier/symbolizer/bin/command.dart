@@ -67,7 +67,11 @@ ${argParser.usage}''');
   await bot.executeCommand(
     repo,
     await github.issues.get(repo, issueNumber),
-    IssueComment(body: '${Bot.accountMention} ${command}'),
+    IssueComment(
+        body: '${Bot.accountMention} $command',
+        user: User(
+          login: Platform.environment['USER'],
+        )),
     authorized: true,
   );
   github.dispose();

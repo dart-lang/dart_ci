@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `6ac856380fa4f66469552ce986edf59f65f7cd68` `android-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `6ac856380fa4f66469552ce986edf59f65f7cd68` `android-arm64-release`
 ```
 #00 00000000000ca3dc /vendor/lib64/egl/libGLESv2_mtk.so 
 #01 0000000000130224 /vendor/lib64/egl/libGLESv2_mtk.so 

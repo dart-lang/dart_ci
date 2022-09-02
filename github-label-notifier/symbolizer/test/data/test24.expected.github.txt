@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `b3af521a050e6ef076778bcaf16e27b2521df8f8` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `b3af521a050e6ef076778bcaf16e27b2521df8f8` `ios-arm64-release`
 ```
 #00 00000001061f8d88 FirebaseCrashlytics FIRCLSProcessRecordAllThreads + 184
 #01 00000001061f9168 FirebaseCrashlytics FIRCLSProcessRecordAllThreads + 1176

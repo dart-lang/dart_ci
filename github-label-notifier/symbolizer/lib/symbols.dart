@@ -10,7 +10,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:symbolizer/model.dart';
@@ -46,8 +45,8 @@ class SymbolsCache {
   /// Constructs cache at the given [path], which is assumed to be a directory.
   /// If destination does not exist it will be created.
   SymbolsCache({
-    @required Ndk ndk,
-    @required String path,
+    required Ndk ndk,
+    required String path,
     int sizeThreshold = 20,
     Duration evictionThreshold = const Duration(minutes: 5),
   })  : _ndk = ndk,
@@ -80,10 +79,12 @@ class SymbolsCache {
   ) {
     final cacheDir = _cacheDirectoryFor(build, suffix: suffix);
     if (!_downloads.containsKey(cacheDir)) {
-      _downloads[cacheDir] = _getImpl(cacheDir, build, downloader);
-      _downloads[cacheDir].then((_) => _downloads.remove(cacheDir));
+      _downloads[cacheDir] = _getImpl(cacheDir, build, downloader)
+        ..whenComplete(() {
+          _downloads.remove(cacheDir);
+        });
     }
-    return _downloads[cacheDir];
+    return _downloads[cacheDir]!;
   }
 
   /// Given the [engineHash] and [EngineVariant] which specifies OS and
@@ -93,22 +94,22 @@ class SymbolsCache {
   /// Currently only used for Android symbols because on iOS LC_UUID
   /// is unreliable.
   Future<EngineBuild> findVariantByBuildId({
-    @required String engineHash,
-    @required EngineVariant variant,
-    @required String buildId,
+    required String engineHash,
+    required EngineVariant variant,
+    required String? buildId,
   }) async {
-    _log.info('looking for ${buildId} among ${variant} engines');
+    _log.info('looking for $buildId among $variant engines');
     if (variant.os != 'android') {
       throw ArgumentError(
           'LC_UUID is unreliable on iOS and can not be used for mode matching');
     }
 
     // Check if we already have a match in the Build-Id cache.
-    if (_buildIdCache.containsKey(buildId)) {
-      final build = _buildIdCache[buildId];
-      if (build.variant.os == variant.os &&
-          build.variant.arch == variant.arch) {
-        return build;
+    final cachedBuild = _buildIdCache[buildId!];
+    if (cachedBuild != null) {
+      if (cachedBuild.variant.os == variant.os &&
+          cachedBuild.variant.arch == variant.arch) {
+        return cachedBuild;
       }
     }
 
@@ -122,7 +123,7 @@ class SymbolsCache {
         return engineBuild;
       }
     }
-    throw 'Failed to find build with matching buildId (${buildId})';
+    throw 'Failed to find build with matching buildId ($buildId)';
   }
 
   File get _cacheStateFile => File(p.join(_path, 'cache.json'));
@@ -151,7 +152,7 @@ class SymbolsCache {
 
   String _cacheDirectoryFor(EngineBuild build, {String suffix = ''}) =>
       'symbols-cache/${build.engineHash}-${build.variant.toArtifactPath()}'
-      '${suffix.isNotEmpty ? '-' : ''}${suffix}';
+      '${suffix.isNotEmpty ? '-' : ''}$suffix';
 
   Future<String> _getImpl(String targetDir, EngineBuild build,
       Future<void> Function(Directory, EngineBuild) downloader) async {
@@ -163,7 +164,7 @@ class SymbolsCache {
 
     // Make sure we have some space.
     _evictOldEntriesIfNecessary();
-    _log.info('downloading ${targetDir} for ${build}');
+    _log.info('downloading $targetDir for $build');
 
     // Download symbols into a temporary directory, once we successfully
     // unpack them we will rename this directory.
@@ -197,7 +198,7 @@ class SymbolsCache {
         build.variant.os == 'ios' ? 'Flutter.dSYM.zip' : 'symbols.zip';
 
     await _copyFromGS(
-        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${symbolsFile}',
+        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/$symbolsFile',
         p.join(tempDir.path, symbolsFile));
     await _run('unzip', [symbolsFile], workingDirectory: tempDir.path);
 
@@ -208,7 +209,7 @@ class SymbolsCache {
   Future<void> _downloadEngine(Directory tempDir, EngineBuild build) async {
     final artifactsFile = 'artifacts.zip';
     await _copyFromGS(
-        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/${artifactsFile}',
+        'gs://flutter_infra_release/flutter/${build.engineHash}/${build.variant.toArtifactPath()}/$artifactsFile',
         p.join(tempDir.path, artifactsFile));
 
     final nestedZip =
@@ -217,7 +218,7 @@ class SymbolsCache {
     final contentsList = await _run('unzip', ['-l', artifactsFile],
         workingDirectory: tempDir.path);
 
-    var libraryPath;
+    String libraryPath;
     if (build.variant.os == 'ios' && !contentsList.contains(nestedZip)) {
       // Newer versions don't contains nested zip inside and instead contain
       // Flutter.xcframework folder.
@@ -275,11 +276,11 @@ class SymbolsCache {
   }
 
   Future<String> _run(String executable, List<String> args,
-      {String workingDirectory}) async {
+      {String? workingDirectory}) async {
     final result =
         await Process.run(executable, args, workingDirectory: workingDirectory);
     if (result.exitCode != 0) {
-      throw 'Failed to run ${executable} ${args.join(' ')} '
+      throw 'Failed to run $executable ${args.join(' ')} '
           '(exit code ${result.exitCode}): ${result.stdout} ${result.stderr}';
     }
     return result.stdout;
@@ -315,11 +316,11 @@ class SymbolsCache {
 
 extension on EngineVariant {
   String toArtifactPath() {
-    final modeSuffix = (mode == 'debug') ? '' : '-${mode}';
+    final modeSuffix = (mode == 'debug') ? '' : '-$mode';
     if (os == 'ios') {
-      return '${os}${modeSuffix}';
+      return '$os$modeSuffix';
     } else {
-      return '${os}-${arch}${modeSuffix}';
+      return '$os-$arch$modeSuffix';
     }
   }
 }

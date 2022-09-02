@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `499a70f5e21b2d2ee2fd360f2f58579fc29e0c55` `android-arm64-profile`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 symbolized using symbols for `499a70f5e21b2d2ee2fd360f2f58579fc29e0c55` `android-arm64-profile`
 ```
 #00 00000000012de4ec <...>/lib/arm64/libflutter.so (BuildId: bad8640c836d37c147451a3a6ff5fbc721467212)
                                                    ??

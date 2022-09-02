@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `05e680e202af9a92461070cb2d9982acad46c83c` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `05e680e202af9a92461070cb2d9982acad46c83c` `ios-arm64-release`
 ```
 #00 000000019df7fc30 Metal 0x19df6c000 + 80944
 #01 00000001c0e31984 AGXMetalA12 0x1c0dbb000 + 485764

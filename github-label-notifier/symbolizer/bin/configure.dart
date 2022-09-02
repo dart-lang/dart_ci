@@ -25,7 +25,7 @@ void main(List<String> args) {
   final opts = parser.parse(args);
   for (var opt in ['github-token', 'sendgrid-token', 'failure-email']) {
     if (opts[opt].isEmpty) {
-      throw 'Pass non-empty value via --${opt} or through'
+      throw 'Pass non-empty value via --$opt or through'
           ' ${opt.toUpperCase().replaceAll('-', '_')} environment variable';
     }
   }

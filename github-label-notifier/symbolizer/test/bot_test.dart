@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:github/github.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
 import 'package:symbolizer/bot.dart';
@@ -16,9 +17,11 @@ import 'package:test/test.dart';
 
 import 'package:symbolizer/symbolizer.dart';
 
-class MockGitHub extends Mock implements GitHub {}
-
-class MockIssuesService extends Mock implements IssuesService {}
+@GenerateNiceMocks([
+  MockSpec<GitHub>(),
+  MockSpec<IssuesService>(),
+])
+import 'bot_test.mocks.dart';
 
 class SymbolsCacheProxy implements SymbolsCache {
   final SymbolsCache impl;
@@ -27,7 +30,9 @@ class SymbolsCacheProxy implements SymbolsCache {
 
   @override
   Future<EngineBuild> findVariantByBuildId(
-      {String engineHash, EngineVariant variant, String buildId}) {
+      {required String engineHash,
+      required EngineVariant variant,
+      String? buildId}) {
     return impl.findVariantByBuildId(
         engineHash: engineHash, variant: variant, buildId: buildId);
   }
@@ -35,7 +40,7 @@ class SymbolsCacheProxy implements SymbolsCache {
   @override
   Future<String> get(EngineBuild build) {
     if (shouldThrow) {
-      throw 'Failed to download ${build}';
+      throw 'Failed to download $build';
     }
     return impl.get(build);
   }
@@ -117,9 +122,9 @@ void main() {
   });
 
   group('end-to-end', () {
-    SymbolsCache symbols;
-    Ndk ndk;
-    GitHub github;
+    late SymbolsCache symbols;
+    late Ndk ndk;
+    late GitHub github;
     final files = Directory('test/data').listSync();
 
     setUpAll(() {
@@ -156,26 +161,41 @@ void main() {
         );
 
         final command = Bot.isCommand(input)
-            ? Bot.parseCommand(0, input).symbolizeThis
+            ? Bot.parseCommand(0, input)!.symbolizeThis
                 ? input
                 : input.split('\n').first
             : Bot.accountMention;
 
         final somebody = User(login: 'somebody');
-        final commandComment =
-            IssueComment(id: 1001, body: command, user: somebody);
+        final commandComment = IssueComment(
+            id: 1001,
+            body: command,
+            user: somebody,
+            htmlUrl:
+                'https://github.com/flutter/flutter/issues/12345#issuecomment-1001');
 
-        when(mockGitHub.issues).thenAnswer((realInvocation) => mockIssues);
+        when(mockGitHub.issues).thenReturn(mockIssues);
+
         when(mockIssues.listCommentsByIssue(repo, 42))
             .thenAnswer((realInvocation) async* {
-          yield IssueComment(id: 1002, body: 'something', user: somebody);
-          yield IssueComment(id: 1042, body: input, user: somebody);
+          yield IssueComment(
+              id: 1002,
+              body: 'something',
+              user: somebody,
+              htmlUrl:
+                  'https://github.com/flutter/flutter/issues/12345#issuecomment-1002');
+          yield IssueComment(
+              id: 1042,
+              body: input,
+              user: somebody,
+              htmlUrl:
+                  'https://github.com/flutter/flutter/issues/12345#issuecomment-1042');
           yield commandComment;
         });
 
         when(mockIssues.createComment(repo, 42, any))
             .thenAnswer((realInvocation) async {
-          return null;
+          return IssueComment();
         });
 
         throwOnMissingStub(mockGitHub);

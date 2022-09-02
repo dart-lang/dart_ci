@@ -1,4 +1,4 @@
-crash from null symbolized using symbols for `defa8be2b10650dad50dfee9324ed8d16eeec13f` `ios-arm64-release`
+crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `defa8be2b10650dad50dfee9324ed8d16eeec13f` `ios-arm64-release`
 ```
 #00 000000010604661c Flutter Flutter + 4089372
                              std::__1::unique_ptr<bssl::SSL_HANDSHAKE, bssl::internal::Deleter<bssl::SSL_HANDSHAKE> >::get() const

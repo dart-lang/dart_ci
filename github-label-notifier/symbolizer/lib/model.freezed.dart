@@ -1,5 +1,7 @@
+// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
 part of symbolizer.model;
 
@@ -8,46 +10,24 @@ part of symbolizer.model;
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 EngineVariant _$EngineVariantFromJson(Map<String, dynamic> json) {
   return _EngineVariant.fromJson(json);
 }
 
 /// @nodoc
-class _$EngineVariantTearOff {
-  const _$EngineVariantTearOff();
-
-// ignore: unused_element
-  _EngineVariant call(
-      {@required String os,
-      @required @nullable String arch,
-      @required @nullable String mode}) {
-    return _EngineVariant(
-      os: os,
-      arch: arch,
-      mode: mode,
-    );
-  }
-
-// ignore: unused_element
-  EngineVariant fromJson(Map<String, Object> json) {
-    return EngineVariant.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $EngineVariant = _$EngineVariantTearOff();
-
-/// @nodoc
 mixin _$EngineVariant {
-  String get os;
-  @nullable
-  String get arch;
-  @nullable
-  String get mode;
+  String get os => throw _privateConstructorUsedError;
+  String? get arch => throw _privateConstructorUsedError;
+  String? get mode => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $EngineVariantCopyWith<EngineVariant> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EngineVariantCopyWith<EngineVariant> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -55,7 +35,7 @@ abstract class $EngineVariantCopyWith<$Res> {
   factory $EngineVariantCopyWith(
           EngineVariant value, $Res Function(EngineVariant) then) =
       _$EngineVariantCopyWithImpl<$Res>;
-  $Res call({String os, @nullable String arch, @nullable String mode});
+  $Res call({String os, String? arch, String? mode});
 }
 
 /// @nodoc
@@ -69,74 +49,85 @@ class _$EngineVariantCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object os = freezed,
-    Object arch = freezed,
-    Object mode = freezed,
+    Object? os = freezed,
+    Object? arch = freezed,
+    Object? mode = freezed,
   }) {
     return _then(_value.copyWith(
-      os: os == freezed ? _value.os : os as String,
-      arch: arch == freezed ? _value.arch : arch as String,
-      mode: mode == freezed ? _value.mode : mode as String,
+      os: os == freezed
+          ? _value.os
+          : os // ignore: cast_nullable_to_non_nullable
+              as String,
+      arch: arch == freezed
+          ? _value.arch
+          : arch // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mode: mode == freezed
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$EngineVariantCopyWith<$Res>
+abstract class _$$_EngineVariantCopyWith<$Res>
     implements $EngineVariantCopyWith<$Res> {
-  factory _$EngineVariantCopyWith(
-          _EngineVariant value, $Res Function(_EngineVariant) then) =
-      __$EngineVariantCopyWithImpl<$Res>;
+  factory _$$_EngineVariantCopyWith(
+          _$_EngineVariant value, $Res Function(_$_EngineVariant) then) =
+      __$$_EngineVariantCopyWithImpl<$Res>;
   @override
-  $Res call({String os, @nullable String arch, @nullable String mode});
+  $Res call({String os, String? arch, String? mode});
 }
 
 /// @nodoc
-class __$EngineVariantCopyWithImpl<$Res>
+class __$$_EngineVariantCopyWithImpl<$Res>
     extends _$EngineVariantCopyWithImpl<$Res>
-    implements _$EngineVariantCopyWith<$Res> {
-  __$EngineVariantCopyWithImpl(
-      _EngineVariant _value, $Res Function(_EngineVariant) _then)
-      : super(_value, (v) => _then(v as _EngineVariant));
+    implements _$$_EngineVariantCopyWith<$Res> {
+  __$$_EngineVariantCopyWithImpl(
+      _$_EngineVariant _value, $Res Function(_$_EngineVariant) _then)
+      : super(_value, (v) => _then(v as _$_EngineVariant));
 
   @override
-  _EngineVariant get _value => super._value as _EngineVariant;
+  _$_EngineVariant get _value => super._value as _$_EngineVariant;
 
   @override
   $Res call({
-    Object os = freezed,
-    Object arch = freezed,
-    Object mode = freezed,
+    Object? os = freezed,
+    Object? arch = freezed,
+    Object? mode = freezed,
   }) {
-    return _then(_EngineVariant(
-      os: os == freezed ? _value.os : os as String,
-      arch: arch == freezed ? _value.arch : arch as String,
-      mode: mode == freezed ? _value.mode : mode as String,
+    return _then(_$_EngineVariant(
+      os: os == freezed
+          ? _value.os
+          : os // ignore: cast_nullable_to_non_nullable
+              as String,
+      arch: arch == freezed
+          ? _value.arch
+          : arch // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mode: mode == freezed
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_EngineVariant implements _EngineVariant {
-  _$_EngineVariant(
-      {@required this.os,
-      @required @nullable this.arch,
-      @required @nullable this.mode})
-      : assert(os != null);
+  _$_EngineVariant({required this.os, required this.arch, required this.mode});
 
   factory _$_EngineVariant.fromJson(Map<String, dynamic> json) =>
-      _$_$_EngineVariantFromJson(json);
+      _$$_EngineVariantFromJson(json);
 
   @override
   final String os;
   @override
-  @nullable
-  final String arch;
+  final String? arch;
   @override
-  @nullable
-  final String mode;
+  final String? mode;
 
   @override
   String toString() {
@@ -146,37 +137,39 @@ class _$_EngineVariant implements _EngineVariant {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _EngineVariant &&
-            (identical(other.os, os) ||
-                const DeepCollectionEquality().equals(other.os, os)) &&
-            (identical(other.arch, arch) ||
-                const DeepCollectionEquality().equals(other.arch, arch)) &&
-            (identical(other.mode, mode) ||
-                const DeepCollectionEquality().equals(other.mode, mode)));
+        (other.runtimeType == runtimeType &&
+            other is _$_EngineVariant &&
+            const DeepCollectionEquality().equals(other.os, os) &&
+            const DeepCollectionEquality().equals(other.arch, arch) &&
+            const DeepCollectionEquality().equals(other.mode, mode));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(os) ^
-      const DeepCollectionEquality().hash(arch) ^
-      const DeepCollectionEquality().hash(mode);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(os),
+      const DeepCollectionEquality().hash(arch),
+      const DeepCollectionEquality().hash(mode));
 
+  @JsonKey(ignore: true)
   @override
-  _$EngineVariantCopyWith<_EngineVariant> get copyWith =>
-      __$EngineVariantCopyWithImpl<_EngineVariant>(this, _$identity);
+  _$$_EngineVariantCopyWith<_$_EngineVariant> get copyWith =>
+      __$$_EngineVariantCopyWithImpl<_$_EngineVariant>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_EngineVariantToJson(this);
+    return _$$_EngineVariantToJson(
+      this,
+    );
   }
 }
 
 abstract class _EngineVariant implements EngineVariant {
   factory _EngineVariant(
-      {@required String os,
-      @required @nullable String arch,
-      @required @nullable String mode}) = _$_EngineVariant;
+      {required final String os,
+      required final String? arch,
+      required final String? mode}) = _$_EngineVariant;
 
   factory _EngineVariant.fromJson(Map<String, dynamic> json) =
       _$_EngineVariant.fromJson;
@@ -184,13 +177,13 @@ abstract class _EngineVariant implements EngineVariant {
   @override
   String get os;
   @override
-  @nullable
-  String get arch;
+  String? get arch;
   @override
-  @nullable
-  String get mode;
+  String? get mode;
   @override
-  _$EngineVariantCopyWith<_EngineVariant> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_EngineVariantCopyWith<_$_EngineVariant> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 EngineBuild _$EngineBuildFromJson(Map<String, dynamic> json) {
@@ -198,35 +191,14 @@ EngineBuild _$EngineBuildFromJson(Map<String, dynamic> json) {
 }
 
 /// @nodoc
-class _$EngineBuildTearOff {
-  const _$EngineBuildTearOff();
-
-// ignore: unused_element
-  _EngineBuild call(
-      {@required String engineHash, @required EngineVariant variant}) {
-    return _EngineBuild(
-      engineHash: engineHash,
-      variant: variant,
-    );
-  }
-
-// ignore: unused_element
-  EngineBuild fromJson(Map<String, Object> json) {
-    return EngineBuild.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $EngineBuild = _$EngineBuildTearOff();
-
-/// @nodoc
 mixin _$EngineBuild {
-  String get engineHash;
-  EngineVariant get variant;
+  String get engineHash => throw _privateConstructorUsedError;
+  EngineVariant get variant => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $EngineBuildCopyWith<EngineBuild> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EngineBuildCopyWith<EngineBuild> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -249,21 +221,23 @@ class _$EngineBuildCopyWithImpl<$Res> implements $EngineBuildCopyWith<$Res> {
 
   @override
   $Res call({
-    Object engineHash = freezed,
-    Object variant = freezed,
+    Object? engineHash = freezed,
+    Object? variant = freezed,
   }) {
     return _then(_value.copyWith(
-      engineHash:
-          engineHash == freezed ? _value.engineHash : engineHash as String,
-      variant: variant == freezed ? _value.variant : variant as EngineVariant,
+      engineHash: engineHash == freezed
+          ? _value.engineHash
+          : engineHash // ignore: cast_nullable_to_non_nullable
+              as String,
+      variant: variant == freezed
+          ? _value.variant
+          : variant // ignore: cast_nullable_to_non_nullable
+              as EngineVariant,
     ));
   }
 
   @override
   $EngineVariantCopyWith<$Res> get variant {
-    if (_value.variant == null) {
-      return null;
-    }
     return $EngineVariantCopyWith<$Res>(_value.variant, (value) {
       return _then(_value.copyWith(variant: value));
     });
@@ -271,11 +245,11 @@ class _$EngineBuildCopyWithImpl<$Res> implements $EngineBuildCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$EngineBuildCopyWith<$Res>
+abstract class _$$_EngineBuildCopyWith<$Res>
     implements $EngineBuildCopyWith<$Res> {
-  factory _$EngineBuildCopyWith(
-          _EngineBuild value, $Res Function(_EngineBuild) then) =
-      __$EngineBuildCopyWithImpl<$Res>;
+  factory _$$_EngineBuildCopyWith(
+          _$_EngineBuild value, $Res Function(_$_EngineBuild) then) =
+      __$$_EngineBuildCopyWithImpl<$Res>;
   @override
   $Res call({String engineHash, EngineVariant variant});
 
@@ -284,38 +258,40 @@ abstract class _$EngineBuildCopyWith<$Res>
 }
 
 /// @nodoc
-class __$EngineBuildCopyWithImpl<$Res> extends _$EngineBuildCopyWithImpl<$Res>
-    implements _$EngineBuildCopyWith<$Res> {
-  __$EngineBuildCopyWithImpl(
-      _EngineBuild _value, $Res Function(_EngineBuild) _then)
-      : super(_value, (v) => _then(v as _EngineBuild));
+class __$$_EngineBuildCopyWithImpl<$Res> extends _$EngineBuildCopyWithImpl<$Res>
+    implements _$$_EngineBuildCopyWith<$Res> {
+  __$$_EngineBuildCopyWithImpl(
+      _$_EngineBuild _value, $Res Function(_$_EngineBuild) _then)
+      : super(_value, (v) => _then(v as _$_EngineBuild));
 
   @override
-  _EngineBuild get _value => super._value as _EngineBuild;
+  _$_EngineBuild get _value => super._value as _$_EngineBuild;
 
   @override
   $Res call({
-    Object engineHash = freezed,
-    Object variant = freezed,
+    Object? engineHash = freezed,
+    Object? variant = freezed,
   }) {
-    return _then(_EngineBuild(
-      engineHash:
-          engineHash == freezed ? _value.engineHash : engineHash as String,
-      variant: variant == freezed ? _value.variant : variant as EngineVariant,
+    return _then(_$_EngineBuild(
+      engineHash: engineHash == freezed
+          ? _value.engineHash
+          : engineHash // ignore: cast_nullable_to_non_nullable
+              as String,
+      variant: variant == freezed
+          ? _value.variant
+          : variant // ignore: cast_nullable_to_non_nullable
+              as EngineVariant,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_EngineBuild implements _EngineBuild {
-  _$_EngineBuild({@required this.engineHash, @required this.variant})
-      : assert(engineHash != null),
-        assert(variant != null);
+  _$_EngineBuild({required this.engineHash, required this.variant});
 
   factory _$_EngineBuild.fromJson(Map<String, dynamic> json) =>
-      _$_$_EngineBuildFromJson(json);
+      _$$_EngineBuildFromJson(json);
 
   @override
   final String engineHash;
@@ -330,34 +306,37 @@ class _$_EngineBuild implements _EngineBuild {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _EngineBuild &&
-            (identical(other.engineHash, engineHash) ||
-                const DeepCollectionEquality()
-                    .equals(other.engineHash, engineHash)) &&
-            (identical(other.variant, variant) ||
-                const DeepCollectionEquality().equals(other.variant, variant)));
+        (other.runtimeType == runtimeType &&
+            other is _$_EngineBuild &&
+            const DeepCollectionEquality()
+                .equals(other.engineHash, engineHash) &&
+            const DeepCollectionEquality().equals(other.variant, variant));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(engineHash) ^
-      const DeepCollectionEquality().hash(variant);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(engineHash),
+      const DeepCollectionEquality().hash(variant));
 
+  @JsonKey(ignore: true)
   @override
-  _$EngineBuildCopyWith<_EngineBuild> get copyWith =>
-      __$EngineBuildCopyWithImpl<_EngineBuild>(this, _$identity);
+  _$$_EngineBuildCopyWith<_$_EngineBuild> get copyWith =>
+      __$$_EngineBuildCopyWithImpl<_$_EngineBuild>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_EngineBuildToJson(this);
+    return _$$_EngineBuildToJson(
+      this,
+    );
   }
 }
 
 abstract class _EngineBuild implements EngineBuild {
   factory _EngineBuild(
-      {@required String engineHash,
-      @required EngineVariant variant}) = _$_EngineBuild;
+      {required final String engineHash,
+      required final EngineVariant variant}) = _$_EngineBuild;
 
   factory _EngineBuild.fromJson(Map<String, dynamic> json) =
       _$_EngineBuild.fromJson;
@@ -367,11 +346,13 @@ abstract class _EngineBuild implements EngineBuild {
   @override
   EngineVariant get variant;
   @override
-  _$EngineBuildCopyWith<_EngineBuild> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_EngineBuildCopyWith<_$_EngineBuild> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 CrashFrame _$CrashFrameFromJson(Map<String, dynamic> json) {
-  switch (json['runtimeType'] as String) {
+  switch (json['runtimeType']) {
     case 'ios':
       return IosCrashFrame.fromJson(json);
     case 'android':
@@ -382,134 +363,89 @@ CrashFrame _$CrashFrameFromJson(Map<String, dynamic> json) {
       return DartvmCrashFrame.fromJson(json);
 
     default:
-      throw FallThroughError();
+      throw CheckedFromJsonException(json, 'runtimeType', 'CrashFrame',
+          'Invalid union type "${json['runtimeType']}"!');
   }
 }
-
-/// @nodoc
-class _$CrashFrameTearOff {
-  const _$CrashFrameTearOff();
-
-// ignore: unused_element
-  IosCrashFrame ios(
-      {@required String no,
-      @required String binary,
-      @required int pc,
-      @required String symbol,
-      @required @nullable int offset,
-      @required String location}) {
-    return IosCrashFrame(
-      no: no,
-      binary: binary,
-      pc: pc,
-      symbol: symbol,
-      offset: offset,
-      location: location,
-    );
-  }
-
-// ignore: unused_element
-  AndroidCrashFrame android(
-      {@required String no,
-      @required int pc,
-      @required String binary,
-      @required String rest,
-      @required @nullable String buildId}) {
-    return AndroidCrashFrame(
-      no: no,
-      pc: pc,
-      binary: binary,
-      rest: rest,
-      buildId: buildId,
-    );
-  }
-
-// ignore: unused_element
-  CustomCrashFrame custom(
-      {@required String no,
-      @required int pc,
-      @required String binary,
-      @required @nullable int offset,
-      @required @nullable String location,
-      @required @nullable String symbol}) {
-    return CustomCrashFrame(
-      no: no,
-      pc: pc,
-      binary: binary,
-      offset: offset,
-      location: location,
-      symbol: symbol,
-    );
-  }
-
-// ignore: unused_element
-  DartvmCrashFrame dartvm(
-      {@required int pc, @required String binary, @required int offset}) {
-    return DartvmCrashFrame(
-      pc: pc,
-      binary: binary,
-      offset: offset,
-    );
-  }
-
-// ignore: unused_element
-  CrashFrame fromJson(Map<String, Object> json) {
-    return CrashFrame.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $CrashFrame = _$CrashFrameTearOff();
 
 /// @nodoc
 mixin _$CrashFrame {
-  String get binary;
+  String get binary => throw _privateConstructorUsedError;
 
   /// Absolute PC of the frame.
-  int get pc;
-
+  int get pc => throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required
-        Result ios(String no, String binary, int pc, String symbol,
-            @nullable int offset, String location),
-    @required
-        Result android(String no, int pc, String binary, String rest,
-            @nullable String buildId),
-    @required
-        Result custom(String no, int pc, String binary, @nullable int offset,
-            @nullable String location, @nullable String symbol),
-    @required Result dartvm(int pc, String binary, int offset),
-  });
+  TResult when<TResult extends Object?>({
+    required TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)
+        ios,
+    required TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)
+        android,
+    required TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)
+        custom,
+    required TResult Function(int pc, String binary, int offset) dartvm,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ios(String no, String binary, int pc, String symbol,
-        @nullable int offset, String location),
-    Result android(String no, int pc, String binary, String rest,
-        @nullable String buildId),
-    Result custom(String no, int pc, String binary, @nullable int offset,
-        @nullable String location, @nullable String symbol),
-    Result dartvm(int pc, String binary, int offset),
-    @required Result orElse(),
-  });
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ios(IosCrashFrame value),
-    @required Result android(AndroidCrashFrame value),
-    @required Result custom(CustomCrashFrame value),
-    @required Result dartvm(DartvmCrashFrame value),
-  });
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ios(IosCrashFrame value),
-    Result android(AndroidCrashFrame value),
-    Result custom(CustomCrashFrame value),
-    Result dartvm(DartvmCrashFrame value),
-    @required Result orElse(),
-  });
-  Map<String, dynamic> toJson();
-  $CrashFrameCopyWith<CrashFrame> get copyWith;
+  TResult map<TResult extends Object?>({
+    required TResult Function(IosCrashFrame value) ios,
+    required TResult Function(AndroidCrashFrame value) android,
+    required TResult Function(CustomCrashFrame value) custom,
+    required TResult Function(DartvmCrashFrame value) dartvm,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CrashFrameCopyWith<CrashFrame> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -530,97 +466,119 @@ class _$CrashFrameCopyWithImpl<$Res> implements $CrashFrameCopyWith<$Res> {
 
   @override
   $Res call({
-    Object binary = freezed,
-    Object pc = freezed,
+    Object? binary = freezed,
+    Object? pc = freezed,
   }) {
     return _then(_value.copyWith(
-      binary: binary == freezed ? _value.binary : binary as String,
-      pc: pc == freezed ? _value.pc : pc as int,
+      binary: binary == freezed
+          ? _value.binary
+          : binary // ignore: cast_nullable_to_non_nullable
+              as String,
+      pc: pc == freezed
+          ? _value.pc
+          : pc // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class $IosCrashFrameCopyWith<$Res>
+abstract class _$$IosCrashFrameCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory $IosCrashFrameCopyWith(
-          IosCrashFrame value, $Res Function(IosCrashFrame) then) =
-      _$IosCrashFrameCopyWithImpl<$Res>;
+  factory _$$IosCrashFrameCopyWith(
+          _$IosCrashFrame value, $Res Function(_$IosCrashFrame) then) =
+      __$$IosCrashFrameCopyWithImpl<$Res>;
   @override
   $Res call(
       {String no,
       String binary,
       int pc,
       String symbol,
-      @nullable int offset,
+      int? offset,
       String location});
 }
 
 /// @nodoc
-class _$IosCrashFrameCopyWithImpl<$Res> extends _$CrashFrameCopyWithImpl<$Res>
-    implements $IosCrashFrameCopyWith<$Res> {
-  _$IosCrashFrameCopyWithImpl(
-      IosCrashFrame _value, $Res Function(IosCrashFrame) _then)
-      : super(_value, (v) => _then(v as IosCrashFrame));
+class __$$IosCrashFrameCopyWithImpl<$Res> extends _$CrashFrameCopyWithImpl<$Res>
+    implements _$$IosCrashFrameCopyWith<$Res> {
+  __$$IosCrashFrameCopyWithImpl(
+      _$IosCrashFrame _value, $Res Function(_$IosCrashFrame) _then)
+      : super(_value, (v) => _then(v as _$IosCrashFrame));
 
   @override
-  IosCrashFrame get _value => super._value as IosCrashFrame;
+  _$IosCrashFrame get _value => super._value as _$IosCrashFrame;
 
   @override
   $Res call({
-    Object no = freezed,
-    Object binary = freezed,
-    Object pc = freezed,
-    Object symbol = freezed,
-    Object offset = freezed,
-    Object location = freezed,
+    Object? no = freezed,
+    Object? binary = freezed,
+    Object? pc = freezed,
+    Object? symbol = freezed,
+    Object? offset = freezed,
+    Object? location = freezed,
   }) {
-    return _then(IosCrashFrame(
-      no: no == freezed ? _value.no : no as String,
-      binary: binary == freezed ? _value.binary : binary as String,
-      pc: pc == freezed ? _value.pc : pc as int,
-      symbol: symbol == freezed ? _value.symbol : symbol as String,
-      offset: offset == freezed ? _value.offset : offset as int,
-      location: location == freezed ? _value.location : location as String,
+    return _then(_$IosCrashFrame(
+      no: no == freezed
+          ? _value.no
+          : no // ignore: cast_nullable_to_non_nullable
+              as String,
+      binary: binary == freezed
+          ? _value.binary
+          : binary // ignore: cast_nullable_to_non_nullable
+              as String,
+      pc: pc == freezed
+          ? _value.pc
+          : pc // ignore: cast_nullable_to_non_nullable
+              as int,
+      symbol: symbol == freezed
+          ? _value.symbol
+          : symbol // ignore: cast_nullable_to_non_nullable
+              as String,
+      offset: offset == freezed
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+      location: location == freezed
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$IosCrashFrame implements IosCrashFrame {
   _$IosCrashFrame(
-      {@required this.no,
-      @required this.binary,
-      @required this.pc,
-      @required this.symbol,
-      @required @nullable this.offset,
-      @required this.location})
-      : assert(no != null),
-        assert(binary != null),
-        assert(pc != null),
-        assert(symbol != null),
-        assert(location != null);
+      {required this.no,
+      required this.binary,
+      required this.pc,
+      required this.symbol,
+      required this.offset,
+      required this.location,
+      final String? $type})
+      : $type = $type ?? 'ios';
 
   factory _$IosCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$_$IosCrashFrameFromJson(json);
+      _$$IosCrashFrameFromJson(json);
 
   @override
   final String no;
   @override
   final String binary;
-  @override
 
   /// Absolute PC of the frame.
+  @override
   final int pc;
   @override
   final String symbol;
   @override
-  @nullable
-  final int offset;
+  final int? offset;
   @override
   final String location;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -630,70 +588,81 @@ class _$IosCrashFrame implements IosCrashFrame {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is IosCrashFrame &&
-            (identical(other.no, no) ||
-                const DeepCollectionEquality().equals(other.no, no)) &&
-            (identical(other.binary, binary) ||
-                const DeepCollectionEquality().equals(other.binary, binary)) &&
-            (identical(other.pc, pc) ||
-                const DeepCollectionEquality().equals(other.pc, pc)) &&
-            (identical(other.symbol, symbol) ||
-                const DeepCollectionEquality().equals(other.symbol, symbol)) &&
-            (identical(other.offset, offset) ||
-                const DeepCollectionEquality().equals(other.offset, offset)) &&
-            (identical(other.location, location) ||
-                const DeepCollectionEquality()
-                    .equals(other.location, location)));
+        (other.runtimeType == runtimeType &&
+            other is _$IosCrashFrame &&
+            const DeepCollectionEquality().equals(other.no, no) &&
+            const DeepCollectionEquality().equals(other.binary, binary) &&
+            const DeepCollectionEquality().equals(other.pc, pc) &&
+            const DeepCollectionEquality().equals(other.symbol, symbol) &&
+            const DeepCollectionEquality().equals(other.offset, offset) &&
+            const DeepCollectionEquality().equals(other.location, location));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(no) ^
-      const DeepCollectionEquality().hash(binary) ^
-      const DeepCollectionEquality().hash(pc) ^
-      const DeepCollectionEquality().hash(symbol) ^
-      const DeepCollectionEquality().hash(offset) ^
-      const DeepCollectionEquality().hash(location);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(no),
+      const DeepCollectionEquality().hash(binary),
+      const DeepCollectionEquality().hash(pc),
+      const DeepCollectionEquality().hash(symbol),
+      const DeepCollectionEquality().hash(offset),
+      const DeepCollectionEquality().hash(location));
 
+  @JsonKey(ignore: true)
   @override
-  $IosCrashFrameCopyWith<IosCrashFrame> get copyWith =>
-      _$IosCrashFrameCopyWithImpl<IosCrashFrame>(this, _$identity);
+  _$$IosCrashFrameCopyWith<_$IosCrashFrame> get copyWith =>
+      __$$IosCrashFrameCopyWithImpl<_$IosCrashFrame>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required
-        Result ios(String no, String binary, int pc, String symbol,
-            @nullable int offset, String location),
-    @required
-        Result android(String no, int pc, String binary, String rest,
-            @nullable String buildId),
-    @required
-        Result custom(String no, int pc, String binary, @nullable int offset,
-            @nullable String location, @nullable String symbol),
-    @required Result dartvm(int pc, String binary, int offset),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)
+        ios,
+    required TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)
+        android,
+    required TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)
+        custom,
+    required TResult Function(int pc, String binary, int offset) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return ios(no, binary, pc, symbol, offset, location);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ios(String no, String binary, int pc, String symbol,
-        @nullable int offset, String location),
-    Result android(String no, int pc, String binary, String rest,
-        @nullable String buildId),
-    Result custom(String no, int pc, String binary, @nullable int offset,
-        @nullable String location, @nullable String symbol),
-    Result dartvm(int pc, String binary, int offset),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
   }) {
-    assert(orElse != null);
+    return ios?.call(no, binary, pc, symbol, offset, location);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+    required TResult orElse(),
+  }) {
     if (ios != null) {
       return ios(no, binary, pc, symbol, offset, location);
     }
@@ -702,29 +671,35 @@ class _$IosCrashFrame implements IosCrashFrame {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ios(IosCrashFrame value),
-    @required Result android(AndroidCrashFrame value),
-    @required Result custom(CustomCrashFrame value),
-    @required Result dartvm(DartvmCrashFrame value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(IosCrashFrame value) ios,
+    required TResult Function(AndroidCrashFrame value) android,
+    required TResult Function(CustomCrashFrame value) custom,
+    required TResult Function(DartvmCrashFrame value) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return ios(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ios(IosCrashFrame value),
-    Result android(AndroidCrashFrame value),
-    Result custom(CustomCrashFrame value),
-    Result dartvm(DartvmCrashFrame value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
   }) {
-    assert(orElse != null);
+    return ios?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+    required TResult orElse(),
+  }) {
     if (ios != null) {
       return ios(this);
     }
@@ -733,18 +708,20 @@ class _$IosCrashFrame implements IosCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$IosCrashFrameToJson(this)..['runtimeType'] = 'ios';
+    return _$$IosCrashFrameToJson(
+      this,
+    );
   }
 }
 
 abstract class IosCrashFrame implements CrashFrame {
   factory IosCrashFrame(
-      {@required String no,
-      @required String binary,
-      @required int pc,
-      @required String symbol,
-      @required @nullable int offset,
-      @required String location}) = _$IosCrashFrame;
+      {required final String no,
+      required final String binary,
+      required final int pc,
+      required final String symbol,
+      required final int? offset,
+      required final String location}) = _$IosCrashFrame;
 
   factory IosCrashFrame.fromJson(Map<String, dynamic> json) =
       _$IosCrashFrame.fromJson;
@@ -757,88 +734,98 @@ abstract class IosCrashFrame implements CrashFrame {
   /// Absolute PC of the frame.
   int get pc;
   String get symbol;
-  @nullable
-  int get offset;
+  int? get offset;
   String get location;
   @override
-  $IosCrashFrameCopyWith<IosCrashFrame> get copyWith;
+  @JsonKey(ignore: true)
+  _$$IosCrashFrameCopyWith<_$IosCrashFrame> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AndroidCrashFrameCopyWith<$Res>
+abstract class _$$AndroidCrashFrameCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory $AndroidCrashFrameCopyWith(
-          AndroidCrashFrame value, $Res Function(AndroidCrashFrame) then) =
-      _$AndroidCrashFrameCopyWithImpl<$Res>;
+  factory _$$AndroidCrashFrameCopyWith(
+          _$AndroidCrashFrame value, $Res Function(_$AndroidCrashFrame) then) =
+      __$$AndroidCrashFrameCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {String no,
-      int pc,
-      String binary,
-      String rest,
-      @nullable String buildId});
+  $Res call({String no, int pc, String binary, String rest, String? buildId});
 }
 
 /// @nodoc
-class _$AndroidCrashFrameCopyWithImpl<$Res>
+class __$$AndroidCrashFrameCopyWithImpl<$Res>
     extends _$CrashFrameCopyWithImpl<$Res>
-    implements $AndroidCrashFrameCopyWith<$Res> {
-  _$AndroidCrashFrameCopyWithImpl(
-      AndroidCrashFrame _value, $Res Function(AndroidCrashFrame) _then)
-      : super(_value, (v) => _then(v as AndroidCrashFrame));
+    implements _$$AndroidCrashFrameCopyWith<$Res> {
+  __$$AndroidCrashFrameCopyWithImpl(
+      _$AndroidCrashFrame _value, $Res Function(_$AndroidCrashFrame) _then)
+      : super(_value, (v) => _then(v as _$AndroidCrashFrame));
 
   @override
-  AndroidCrashFrame get _value => super._value as AndroidCrashFrame;
+  _$AndroidCrashFrame get _value => super._value as _$AndroidCrashFrame;
 
   @override
   $Res call({
-    Object no = freezed,
-    Object pc = freezed,
-    Object binary = freezed,
-    Object rest = freezed,
-    Object buildId = freezed,
+    Object? no = freezed,
+    Object? pc = freezed,
+    Object? binary = freezed,
+    Object? rest = freezed,
+    Object? buildId = freezed,
   }) {
-    return _then(AndroidCrashFrame(
-      no: no == freezed ? _value.no : no as String,
-      pc: pc == freezed ? _value.pc : pc as int,
-      binary: binary == freezed ? _value.binary : binary as String,
-      rest: rest == freezed ? _value.rest : rest as String,
-      buildId: buildId == freezed ? _value.buildId : buildId as String,
+    return _then(_$AndroidCrashFrame(
+      no: no == freezed
+          ? _value.no
+          : no // ignore: cast_nullable_to_non_nullable
+              as String,
+      pc: pc == freezed
+          ? _value.pc
+          : pc // ignore: cast_nullable_to_non_nullable
+              as int,
+      binary: binary == freezed
+          ? _value.binary
+          : binary // ignore: cast_nullable_to_non_nullable
+              as String,
+      rest: rest == freezed
+          ? _value.rest
+          : rest // ignore: cast_nullable_to_non_nullable
+              as String,
+      buildId: buildId == freezed
+          ? _value.buildId
+          : buildId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$AndroidCrashFrame implements AndroidCrashFrame {
   _$AndroidCrashFrame(
-      {@required this.no,
-      @required this.pc,
-      @required this.binary,
-      @required this.rest,
-      @required @nullable this.buildId})
-      : assert(no != null),
-        assert(pc != null),
-        assert(binary != null),
-        assert(rest != null);
+      {required this.no,
+      required this.pc,
+      required this.binary,
+      required this.rest,
+      required this.buildId,
+      final String? $type})
+      : $type = $type ?? 'android';
 
   factory _$AndroidCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$_$AndroidCrashFrameFromJson(json);
+      _$$AndroidCrashFrameFromJson(json);
 
   @override
   final String no;
-  @override
 
   /// Relative PC of the frame.
+  @override
   final int pc;
   @override
   final String binary;
   @override
   final String rest;
   @override
-  @nullable
-  final String buildId;
+  final String? buildId;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -848,66 +835,79 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is AndroidCrashFrame &&
-            (identical(other.no, no) ||
-                const DeepCollectionEquality().equals(other.no, no)) &&
-            (identical(other.pc, pc) ||
-                const DeepCollectionEquality().equals(other.pc, pc)) &&
-            (identical(other.binary, binary) ||
-                const DeepCollectionEquality().equals(other.binary, binary)) &&
-            (identical(other.rest, rest) ||
-                const DeepCollectionEquality().equals(other.rest, rest)) &&
-            (identical(other.buildId, buildId) ||
-                const DeepCollectionEquality().equals(other.buildId, buildId)));
+        (other.runtimeType == runtimeType &&
+            other is _$AndroidCrashFrame &&
+            const DeepCollectionEquality().equals(other.no, no) &&
+            const DeepCollectionEquality().equals(other.pc, pc) &&
+            const DeepCollectionEquality().equals(other.binary, binary) &&
+            const DeepCollectionEquality().equals(other.rest, rest) &&
+            const DeepCollectionEquality().equals(other.buildId, buildId));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(no) ^
-      const DeepCollectionEquality().hash(pc) ^
-      const DeepCollectionEquality().hash(binary) ^
-      const DeepCollectionEquality().hash(rest) ^
-      const DeepCollectionEquality().hash(buildId);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(no),
+      const DeepCollectionEquality().hash(pc),
+      const DeepCollectionEquality().hash(binary),
+      const DeepCollectionEquality().hash(rest),
+      const DeepCollectionEquality().hash(buildId));
 
+  @JsonKey(ignore: true)
   @override
-  $AndroidCrashFrameCopyWith<AndroidCrashFrame> get copyWith =>
-      _$AndroidCrashFrameCopyWithImpl<AndroidCrashFrame>(this, _$identity);
+  _$$AndroidCrashFrameCopyWith<_$AndroidCrashFrame> get copyWith =>
+      __$$AndroidCrashFrameCopyWithImpl<_$AndroidCrashFrame>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required
-        Result ios(String no, String binary, int pc, String symbol,
-            @nullable int offset, String location),
-    @required
-        Result android(String no, int pc, String binary, String rest,
-            @nullable String buildId),
-    @required
-        Result custom(String no, int pc, String binary, @nullable int offset,
-            @nullable String location, @nullable String symbol),
-    @required Result dartvm(int pc, String binary, int offset),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)
+        ios,
+    required TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)
+        android,
+    required TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)
+        custom,
+    required TResult Function(int pc, String binary, int offset) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return android(no, pc, binary, rest, buildId);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ios(String no, String binary, int pc, String symbol,
-        @nullable int offset, String location),
-    Result android(String no, int pc, String binary, String rest,
-        @nullable String buildId),
-    Result custom(String no, int pc, String binary, @nullable int offset,
-        @nullable String location, @nullable String symbol),
-    Result dartvm(int pc, String binary, int offset),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
   }) {
-    assert(orElse != null);
+    return android?.call(no, pc, binary, rest, buildId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+    required TResult orElse(),
+  }) {
     if (android != null) {
       return android(no, pc, binary, rest, buildId);
     }
@@ -916,29 +916,35 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ios(IosCrashFrame value),
-    @required Result android(AndroidCrashFrame value),
-    @required Result custom(CustomCrashFrame value),
-    @required Result dartvm(DartvmCrashFrame value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(IosCrashFrame value) ios,
+    required TResult Function(AndroidCrashFrame value) android,
+    required TResult Function(CustomCrashFrame value) custom,
+    required TResult Function(DartvmCrashFrame value) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return android(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ios(IosCrashFrame value),
-    Result android(AndroidCrashFrame value),
-    Result custom(CustomCrashFrame value),
-    Result dartvm(DartvmCrashFrame value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
   }) {
-    assert(orElse != null);
+    return android?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+    required TResult orElse(),
+  }) {
     if (android != null) {
       return android(this);
     }
@@ -947,17 +953,19 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$AndroidCrashFrameToJson(this)..['runtimeType'] = 'android';
+    return _$$AndroidCrashFrameToJson(
+      this,
+    );
   }
 }
 
 abstract class AndroidCrashFrame implements CrashFrame {
   factory AndroidCrashFrame(
-      {@required String no,
-      @required int pc,
-      @required String binary,
-      @required String rest,
-      @required @nullable String buildId}) = _$AndroidCrashFrame;
+      {required final String no,
+      required final int pc,
+      required final String binary,
+      required final String rest,
+      required final String? buildId}) = _$AndroidCrashFrame;
 
   factory AndroidCrashFrame.fromJson(Map<String, dynamic> json) =
       _$AndroidCrashFrame.fromJson;
@@ -970,76 +978,93 @@ abstract class AndroidCrashFrame implements CrashFrame {
   @override
   String get binary;
   String get rest;
-  @nullable
-  String get buildId;
+  String? get buildId;
   @override
-  $AndroidCrashFrameCopyWith<AndroidCrashFrame> get copyWith;
+  @JsonKey(ignore: true)
+  _$$AndroidCrashFrameCopyWith<_$AndroidCrashFrame> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CustomCrashFrameCopyWith<$Res>
+abstract class _$$CustomCrashFrameCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory $CustomCrashFrameCopyWith(
-          CustomCrashFrame value, $Res Function(CustomCrashFrame) then) =
-      _$CustomCrashFrameCopyWithImpl<$Res>;
+  factory _$$CustomCrashFrameCopyWith(
+          _$CustomCrashFrame value, $Res Function(_$CustomCrashFrame) then) =
+      __$$CustomCrashFrameCopyWithImpl<$Res>;
   @override
   $Res call(
       {String no,
       int pc,
       String binary,
-      @nullable int offset,
-      @nullable String location,
-      @nullable String symbol});
+      int? offset,
+      String? location,
+      String? symbol});
 }
 
 /// @nodoc
-class _$CustomCrashFrameCopyWithImpl<$Res>
+class __$$CustomCrashFrameCopyWithImpl<$Res>
     extends _$CrashFrameCopyWithImpl<$Res>
-    implements $CustomCrashFrameCopyWith<$Res> {
-  _$CustomCrashFrameCopyWithImpl(
-      CustomCrashFrame _value, $Res Function(CustomCrashFrame) _then)
-      : super(_value, (v) => _then(v as CustomCrashFrame));
+    implements _$$CustomCrashFrameCopyWith<$Res> {
+  __$$CustomCrashFrameCopyWithImpl(
+      _$CustomCrashFrame _value, $Res Function(_$CustomCrashFrame) _then)
+      : super(_value, (v) => _then(v as _$CustomCrashFrame));
 
   @override
-  CustomCrashFrame get _value => super._value as CustomCrashFrame;
+  _$CustomCrashFrame get _value => super._value as _$CustomCrashFrame;
 
   @override
   $Res call({
-    Object no = freezed,
-    Object pc = freezed,
-    Object binary = freezed,
-    Object offset = freezed,
-    Object location = freezed,
-    Object symbol = freezed,
+    Object? no = freezed,
+    Object? pc = freezed,
+    Object? binary = freezed,
+    Object? offset = freezed,
+    Object? location = freezed,
+    Object? symbol = freezed,
   }) {
-    return _then(CustomCrashFrame(
-      no: no == freezed ? _value.no : no as String,
-      pc: pc == freezed ? _value.pc : pc as int,
-      binary: binary == freezed ? _value.binary : binary as String,
-      offset: offset == freezed ? _value.offset : offset as int,
-      location: location == freezed ? _value.location : location as String,
-      symbol: symbol == freezed ? _value.symbol : symbol as String,
+    return _then(_$CustomCrashFrame(
+      no: no == freezed
+          ? _value.no
+          : no // ignore: cast_nullable_to_non_nullable
+              as String,
+      pc: pc == freezed
+          ? _value.pc
+          : pc // ignore: cast_nullable_to_non_nullable
+              as int,
+      binary: binary == freezed
+          ? _value.binary
+          : binary // ignore: cast_nullable_to_non_nullable
+              as String,
+      offset: offset == freezed
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+      location: location == freezed
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+      symbol: symbol == freezed
+          ? _value.symbol
+          : symbol // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$CustomCrashFrame implements CustomCrashFrame {
   _$CustomCrashFrame(
-      {@required this.no,
-      @required this.pc,
-      @required this.binary,
-      @required @nullable this.offset,
-      @required @nullable this.location,
-      @required @nullable this.symbol})
-      : assert(no != null),
-        assert(pc != null),
-        assert(binary != null);
+      {required this.no,
+      required this.pc,
+      required this.binary,
+      required this.offset,
+      required this.location,
+      required this.symbol,
+      final String? $type})
+      : $type = $type ?? 'custom';
 
   factory _$CustomCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$_$CustomCrashFrameFromJson(json);
+      _$$CustomCrashFrameFromJson(json);
 
   @override
   final String no;
@@ -1048,14 +1073,14 @@ class _$CustomCrashFrame implements CustomCrashFrame {
   @override
   final String binary;
   @override
-  @nullable
-  final int offset;
+  final int? offset;
   @override
-  @nullable
-  final String location;
+  final String? location;
   @override
-  @nullable
-  final String symbol;
+  final String? symbol;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -1065,70 +1090,81 @@ class _$CustomCrashFrame implements CustomCrashFrame {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is CustomCrashFrame &&
-            (identical(other.no, no) ||
-                const DeepCollectionEquality().equals(other.no, no)) &&
-            (identical(other.pc, pc) ||
-                const DeepCollectionEquality().equals(other.pc, pc)) &&
-            (identical(other.binary, binary) ||
-                const DeepCollectionEquality().equals(other.binary, binary)) &&
-            (identical(other.offset, offset) ||
-                const DeepCollectionEquality().equals(other.offset, offset)) &&
-            (identical(other.location, location) ||
-                const DeepCollectionEquality()
-                    .equals(other.location, location)) &&
-            (identical(other.symbol, symbol) ||
-                const DeepCollectionEquality().equals(other.symbol, symbol)));
+        (other.runtimeType == runtimeType &&
+            other is _$CustomCrashFrame &&
+            const DeepCollectionEquality().equals(other.no, no) &&
+            const DeepCollectionEquality().equals(other.pc, pc) &&
+            const DeepCollectionEquality().equals(other.binary, binary) &&
+            const DeepCollectionEquality().equals(other.offset, offset) &&
+            const DeepCollectionEquality().equals(other.location, location) &&
+            const DeepCollectionEquality().equals(other.symbol, symbol));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(no) ^
-      const DeepCollectionEquality().hash(pc) ^
-      const DeepCollectionEquality().hash(binary) ^
-      const DeepCollectionEquality().hash(offset) ^
-      const DeepCollectionEquality().hash(location) ^
-      const DeepCollectionEquality().hash(symbol);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(no),
+      const DeepCollectionEquality().hash(pc),
+      const DeepCollectionEquality().hash(binary),
+      const DeepCollectionEquality().hash(offset),
+      const DeepCollectionEquality().hash(location),
+      const DeepCollectionEquality().hash(symbol));
 
+  @JsonKey(ignore: true)
   @override
-  $CustomCrashFrameCopyWith<CustomCrashFrame> get copyWith =>
-      _$CustomCrashFrameCopyWithImpl<CustomCrashFrame>(this, _$identity);
+  _$$CustomCrashFrameCopyWith<_$CustomCrashFrame> get copyWith =>
+      __$$CustomCrashFrameCopyWithImpl<_$CustomCrashFrame>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required
-        Result ios(String no, String binary, int pc, String symbol,
-            @nullable int offset, String location),
-    @required
-        Result android(String no, int pc, String binary, String rest,
-            @nullable String buildId),
-    @required
-        Result custom(String no, int pc, String binary, @nullable int offset,
-            @nullable String location, @nullable String symbol),
-    @required Result dartvm(int pc, String binary, int offset),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)
+        ios,
+    required TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)
+        android,
+    required TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)
+        custom,
+    required TResult Function(int pc, String binary, int offset) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return custom(no, pc, binary, offset, location, symbol);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ios(String no, String binary, int pc, String symbol,
-        @nullable int offset, String location),
-    Result android(String no, int pc, String binary, String rest,
-        @nullable String buildId),
-    Result custom(String no, int pc, String binary, @nullable int offset,
-        @nullable String location, @nullable String symbol),
-    Result dartvm(int pc, String binary, int offset),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
   }) {
-    assert(orElse != null);
+    return custom?.call(no, pc, binary, offset, location, symbol);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+    required TResult orElse(),
+  }) {
     if (custom != null) {
       return custom(no, pc, binary, offset, location, symbol);
     }
@@ -1137,29 +1173,35 @@ class _$CustomCrashFrame implements CustomCrashFrame {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ios(IosCrashFrame value),
-    @required Result android(AndroidCrashFrame value),
-    @required Result custom(CustomCrashFrame value),
-    @required Result dartvm(DartvmCrashFrame value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(IosCrashFrame value) ios,
+    required TResult Function(AndroidCrashFrame value) android,
+    required TResult Function(CustomCrashFrame value) custom,
+    required TResult Function(DartvmCrashFrame value) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return custom(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ios(IosCrashFrame value),
-    Result android(AndroidCrashFrame value),
-    Result custom(CustomCrashFrame value),
-    Result dartvm(DartvmCrashFrame value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
   }) {
-    assert(orElse != null);
+    return custom?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+    required TResult orElse(),
+  }) {
     if (custom != null) {
       return custom(this);
     }
@@ -1168,18 +1210,20 @@ class _$CustomCrashFrame implements CustomCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$CustomCrashFrameToJson(this)..['runtimeType'] = 'custom';
+    return _$$CustomCrashFrameToJson(
+      this,
+    );
   }
 }
 
 abstract class CustomCrashFrame implements CrashFrame {
   factory CustomCrashFrame(
-      {@required String no,
-      @required int pc,
-      @required String binary,
-      @required @nullable int offset,
-      @required @nullable String location,
-      @required @nullable String symbol}) = _$CustomCrashFrame;
+      {required final String no,
+      required final int pc,
+      required final String binary,
+      required final int? offset,
+      required final String? location,
+      required final String? symbol}) = _$CustomCrashFrame;
 
   factory CustomCrashFrame.fromJson(Map<String, dynamic> json) =
       _$CustomCrashFrame.fromJson;
@@ -1189,76 +1233,86 @@ abstract class CustomCrashFrame implements CrashFrame {
   int get pc;
   @override
   String get binary;
-  @nullable
-  int get offset;
-  @nullable
-  String get location;
-  @nullable
-  String get symbol;
+  int? get offset;
+  String? get location;
+  String? get symbol;
   @override
-  $CustomCrashFrameCopyWith<CustomCrashFrame> get copyWith;
+  @JsonKey(ignore: true)
+  _$$CustomCrashFrameCopyWith<_$CustomCrashFrame> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $DartvmCrashFrameCopyWith<$Res>
+abstract class _$$DartvmCrashFrameCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory $DartvmCrashFrameCopyWith(
-          DartvmCrashFrame value, $Res Function(DartvmCrashFrame) then) =
-      _$DartvmCrashFrameCopyWithImpl<$Res>;
+  factory _$$DartvmCrashFrameCopyWith(
+          _$DartvmCrashFrame value, $Res Function(_$DartvmCrashFrame) then) =
+      __$$DartvmCrashFrameCopyWithImpl<$Res>;
   @override
   $Res call({int pc, String binary, int offset});
 }
 
 /// @nodoc
-class _$DartvmCrashFrameCopyWithImpl<$Res>
+class __$$DartvmCrashFrameCopyWithImpl<$Res>
     extends _$CrashFrameCopyWithImpl<$Res>
-    implements $DartvmCrashFrameCopyWith<$Res> {
-  _$DartvmCrashFrameCopyWithImpl(
-      DartvmCrashFrame _value, $Res Function(DartvmCrashFrame) _then)
-      : super(_value, (v) => _then(v as DartvmCrashFrame));
+    implements _$$DartvmCrashFrameCopyWith<$Res> {
+  __$$DartvmCrashFrameCopyWithImpl(
+      _$DartvmCrashFrame _value, $Res Function(_$DartvmCrashFrame) _then)
+      : super(_value, (v) => _then(v as _$DartvmCrashFrame));
 
   @override
-  DartvmCrashFrame get _value => super._value as DartvmCrashFrame;
+  _$DartvmCrashFrame get _value => super._value as _$DartvmCrashFrame;
 
   @override
   $Res call({
-    Object pc = freezed,
-    Object binary = freezed,
-    Object offset = freezed,
+    Object? pc = freezed,
+    Object? binary = freezed,
+    Object? offset = freezed,
   }) {
-    return _then(DartvmCrashFrame(
-      pc: pc == freezed ? _value.pc : pc as int,
-      binary: binary == freezed ? _value.binary : binary as String,
-      offset: offset == freezed ? _value.offset : offset as int,
+    return _then(_$DartvmCrashFrame(
+      pc: pc == freezed
+          ? _value.pc
+          : pc // ignore: cast_nullable_to_non_nullable
+              as int,
+      binary: binary == freezed
+          ? _value.binary
+          : binary // ignore: cast_nullable_to_non_nullable
+              as String,
+      offset: offset == freezed
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$DartvmCrashFrame implements DartvmCrashFrame {
   _$DartvmCrashFrame(
-      {@required this.pc, @required this.binary, @required this.offset})
-      : assert(pc != null),
-        assert(binary != null),
-        assert(offset != null);
+      {required this.pc,
+      required this.binary,
+      required this.offset,
+      final String? $type})
+      : $type = $type ?? 'dartvm';
 
   factory _$DartvmCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$_$DartvmCrashFrameFromJson(json);
-
-  @override
+      _$$DartvmCrashFrameFromJson(json);
 
   /// Absolute PC of the frame.
-  final int pc;
   @override
+  final int pc;
 
   /// Binary which contains the given PC.
-  final String binary;
   @override
+  final String binary;
 
   /// Offset from load base of the binary to the PC.
+  @override
   final int offset;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -1268,60 +1322,75 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is DartvmCrashFrame &&
-            (identical(other.pc, pc) ||
-                const DeepCollectionEquality().equals(other.pc, pc)) &&
-            (identical(other.binary, binary) ||
-                const DeepCollectionEquality().equals(other.binary, binary)) &&
-            (identical(other.offset, offset) ||
-                const DeepCollectionEquality().equals(other.offset, offset)));
+        (other.runtimeType == runtimeType &&
+            other is _$DartvmCrashFrame &&
+            const DeepCollectionEquality().equals(other.pc, pc) &&
+            const DeepCollectionEquality().equals(other.binary, binary) &&
+            const DeepCollectionEquality().equals(other.offset, offset));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(pc) ^
-      const DeepCollectionEquality().hash(binary) ^
-      const DeepCollectionEquality().hash(offset);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(pc),
+      const DeepCollectionEquality().hash(binary),
+      const DeepCollectionEquality().hash(offset));
 
+  @JsonKey(ignore: true)
   @override
-  $DartvmCrashFrameCopyWith<DartvmCrashFrame> get copyWith =>
-      _$DartvmCrashFrameCopyWithImpl<DartvmCrashFrame>(this, _$identity);
+  _$$DartvmCrashFrameCopyWith<_$DartvmCrashFrame> get copyWith =>
+      __$$DartvmCrashFrameCopyWithImpl<_$DartvmCrashFrame>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required
-        Result ios(String no, String binary, int pc, String symbol,
-            @nullable int offset, String location),
-    @required
-        Result android(String no, int pc, String binary, String rest,
-            @nullable String buildId),
-    @required
-        Result custom(String no, int pc, String binary, @nullable int offset,
-            @nullable String location, @nullable String symbol),
-    @required Result dartvm(int pc, String binary, int offset),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)
+        ios,
+    required TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)
+        android,
+    required TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)
+        custom,
+    required TResult Function(int pc, String binary, int offset) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return dartvm(pc, binary, offset);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ios(String no, String binary, int pc, String symbol,
-        @nullable int offset, String location),
-    Result android(String no, int pc, String binary, String rest,
-        @nullable String buildId),
-    Result custom(String no, int pc, String binary, @nullable int offset,
-        @nullable String location, @nullable String symbol),
-    Result dartvm(int pc, String binary, int offset),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
   }) {
-    assert(orElse != null);
+    return dartvm?.call(pc, binary, offset);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String no, String binary, int pc, String symbol,
+            int? offset, String location)?
+        ios,
+    TResult Function(
+            String no, int pc, String binary, String rest, String? buildId)?
+        android,
+    TResult Function(String no, int pc, String binary, int? offset,
+            String? location, String? symbol)?
+        custom,
+    TResult Function(int pc, String binary, int offset)? dartvm,
+    required TResult orElse(),
+  }) {
     if (dartvm != null) {
       return dartvm(pc, binary, offset);
     }
@@ -1330,29 +1399,35 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ios(IosCrashFrame value),
-    @required Result android(AndroidCrashFrame value),
-    @required Result custom(CustomCrashFrame value),
-    @required Result dartvm(DartvmCrashFrame value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(IosCrashFrame value) ios,
+    required TResult Function(AndroidCrashFrame value) android,
+    required TResult Function(CustomCrashFrame value) custom,
+    required TResult Function(DartvmCrashFrame value) dartvm,
   }) {
-    assert(ios != null);
-    assert(android != null);
-    assert(custom != null);
-    assert(dartvm != null);
     return dartvm(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ios(IosCrashFrame value),
-    Result android(AndroidCrashFrame value),
-    Result custom(CustomCrashFrame value),
-    Result dartvm(DartvmCrashFrame value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
   }) {
-    assert(orElse != null);
+    return dartvm?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(IosCrashFrame value)? ios,
+    TResult Function(AndroidCrashFrame value)? android,
+    TResult Function(CustomCrashFrame value)? custom,
+    TResult Function(DartvmCrashFrame value)? dartvm,
+    required TResult orElse(),
+  }) {
     if (dartvm != null) {
       return dartvm(this);
     }
@@ -1361,15 +1436,17 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$DartvmCrashFrameToJson(this)..['runtimeType'] = 'dartvm';
+    return _$$DartvmCrashFrameToJson(
+      this,
+    );
   }
 }
 
 abstract class DartvmCrashFrame implements CrashFrame {
   factory DartvmCrashFrame(
-      {@required int pc,
-      @required String binary,
-      @required int offset}) = _$DartvmCrashFrame;
+      {required final int pc,
+      required final String binary,
+      required final int offset}) = _$DartvmCrashFrame;
 
   factory DartvmCrashFrame.fromJson(Map<String, dynamic> json) =
       _$DartvmCrashFrame.fromJson;
@@ -1386,7 +1463,9 @@ abstract class DartvmCrashFrame implements CrashFrame {
   /// Offset from load base of the binary to the PC.
   int get offset;
   @override
-  $DartvmCrashFrameCopyWith<DartvmCrashFrame> get copyWith;
+  @JsonKey(ignore: true)
+  _$$DartvmCrashFrameCopyWith<_$DartvmCrashFrame> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 Crash _$CrashFromJson(Map<String, dynamic> json) {
@@ -1394,43 +1473,15 @@ Crash _$CrashFromJson(Map<String, dynamic> json) {
 }
 
 /// @nodoc
-class _$CrashTearOff {
-  const _$CrashTearOff();
-
-// ignore: unused_element
-  _Crash call(
-      {EngineVariant engineVariant,
-      List<CrashFrame> frames,
-      @required String format,
-      @nullable int androidMajorVersion}) {
-    return _Crash(
-      engineVariant: engineVariant,
-      frames: frames,
-      format: format,
-      androidMajorVersion: androidMajorVersion,
-    );
-  }
-
-// ignore: unused_element
-  Crash fromJson(Map<String, Object> json) {
-    return Crash.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $Crash = _$CrashTearOff();
-
-/// @nodoc
 mixin _$Crash {
-  EngineVariant get engineVariant;
-  List<CrashFrame> get frames;
-  String get format;
-  @nullable
-  int get androidMajorVersion;
+  EngineVariant get engineVariant => throw _privateConstructorUsedError;
+  List<CrashFrame> get frames => throw _privateConstructorUsedError;
+  String get format => throw _privateConstructorUsedError;
+  int? get androidMajorVersion => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $CrashCopyWith<Crash> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CrashCopyWith<Crash> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1441,7 +1492,7 @@ abstract class $CrashCopyWith<$Res> {
       {EngineVariant engineVariant,
       List<CrashFrame> frames,
       String format,
-      @nullable int androidMajorVersion});
+      int? androidMajorVersion});
 
   $EngineVariantCopyWith<$Res> get engineVariant;
 }
@@ -1456,28 +1507,33 @@ class _$CrashCopyWithImpl<$Res> implements $CrashCopyWith<$Res> {
 
   @override
   $Res call({
-    Object engineVariant = freezed,
-    Object frames = freezed,
-    Object format = freezed,
-    Object androidMajorVersion = freezed,
+    Object? engineVariant = freezed,
+    Object? frames = freezed,
+    Object? format = freezed,
+    Object? androidMajorVersion = freezed,
   }) {
     return _then(_value.copyWith(
       engineVariant: engineVariant == freezed
           ? _value.engineVariant
-          : engineVariant as EngineVariant,
-      frames: frames == freezed ? _value.frames : frames as List<CrashFrame>,
-      format: format == freezed ? _value.format : format as String,
+          : engineVariant // ignore: cast_nullable_to_non_nullable
+              as EngineVariant,
+      frames: frames == freezed
+          ? _value.frames
+          : frames // ignore: cast_nullable_to_non_nullable
+              as List<CrashFrame>,
+      format: format == freezed
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
       androidMajorVersion: androidMajorVersion == freezed
           ? _value.androidMajorVersion
-          : androidMajorVersion as int,
+          : androidMajorVersion // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 
   @override
   $EngineVariantCopyWith<$Res> get engineVariant {
-    if (_value.engineVariant == null) {
-      return null;
-    }
     return $EngineVariantCopyWith<$Res>(_value.engineVariant, (value) {
       return _then(_value.copyWith(engineVariant: value));
     });
@@ -1485,72 +1541,83 @@ class _$CrashCopyWithImpl<$Res> implements $CrashCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$CrashCopyWith<$Res> implements $CrashCopyWith<$Res> {
-  factory _$CrashCopyWith(_Crash value, $Res Function(_Crash) then) =
-      __$CrashCopyWithImpl<$Res>;
+abstract class _$$_CrashCopyWith<$Res> implements $CrashCopyWith<$Res> {
+  factory _$$_CrashCopyWith(_$_Crash value, $Res Function(_$_Crash) then) =
+      __$$_CrashCopyWithImpl<$Res>;
   @override
   $Res call(
       {EngineVariant engineVariant,
       List<CrashFrame> frames,
       String format,
-      @nullable int androidMajorVersion});
+      int? androidMajorVersion});
 
   @override
   $EngineVariantCopyWith<$Res> get engineVariant;
 }
 
 /// @nodoc
-class __$CrashCopyWithImpl<$Res> extends _$CrashCopyWithImpl<$Res>
-    implements _$CrashCopyWith<$Res> {
-  __$CrashCopyWithImpl(_Crash _value, $Res Function(_Crash) _then)
-      : super(_value, (v) => _then(v as _Crash));
+class __$$_CrashCopyWithImpl<$Res> extends _$CrashCopyWithImpl<$Res>
+    implements _$$_CrashCopyWith<$Res> {
+  __$$_CrashCopyWithImpl(_$_Crash _value, $Res Function(_$_Crash) _then)
+      : super(_value, (v) => _then(v as _$_Crash));
 
   @override
-  _Crash get _value => super._value as _Crash;
+  _$_Crash get _value => super._value as _$_Crash;
 
   @override
   $Res call({
-    Object engineVariant = freezed,
-    Object frames = freezed,
-    Object format = freezed,
-    Object androidMajorVersion = freezed,
+    Object? engineVariant = freezed,
+    Object? frames = freezed,
+    Object? format = freezed,
+    Object? androidMajorVersion = freezed,
   }) {
-    return _then(_Crash(
+    return _then(_$_Crash(
       engineVariant: engineVariant == freezed
           ? _value.engineVariant
-          : engineVariant as EngineVariant,
-      frames: frames == freezed ? _value.frames : frames as List<CrashFrame>,
-      format: format == freezed ? _value.format : format as String,
+          : engineVariant // ignore: cast_nullable_to_non_nullable
+              as EngineVariant,
+      frames: frames == freezed
+          ? _value._frames
+          : frames // ignore: cast_nullable_to_non_nullable
+              as List<CrashFrame>,
+      format: format == freezed
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String,
       androidMajorVersion: androidMajorVersion == freezed
           ? _value.androidMajorVersion
-          : androidMajorVersion as int,
+          : androidMajorVersion // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_Crash implements _Crash {
   _$_Crash(
-      {this.engineVariant,
-      this.frames,
-      @required this.format,
-      @nullable this.androidMajorVersion})
-      : assert(format != null);
+      {required this.engineVariant,
+      required final List<CrashFrame> frames,
+      required this.format,
+      this.androidMajorVersion})
+      : _frames = frames;
 
   factory _$_Crash.fromJson(Map<String, dynamic> json) =>
-      _$_$_CrashFromJson(json);
+      _$$_CrashFromJson(json);
 
   @override
   final EngineVariant engineVariant;
+  final List<CrashFrame> _frames;
   @override
-  final List<CrashFrame> frames;
+  List<CrashFrame> get frames {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_frames);
+  }
+
   @override
   final String format;
   @override
-  @nullable
-  final int androidMajorVersion;
+  final int? androidMajorVersion;
 
   @override
   String toString() {
@@ -1560,43 +1627,44 @@ class _$_Crash implements _Crash {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _Crash &&
-            (identical(other.engineVariant, engineVariant) ||
-                const DeepCollectionEquality()
-                    .equals(other.engineVariant, engineVariant)) &&
-            (identical(other.frames, frames) ||
-                const DeepCollectionEquality().equals(other.frames, frames)) &&
-            (identical(other.format, format) ||
-                const DeepCollectionEquality().equals(other.format, format)) &&
-            (identical(other.androidMajorVersion, androidMajorVersion) ||
-                const DeepCollectionEquality()
-                    .equals(other.androidMajorVersion, androidMajorVersion)));
+        (other.runtimeType == runtimeType &&
+            other is _$_Crash &&
+            const DeepCollectionEquality()
+                .equals(other.engineVariant, engineVariant) &&
+            const DeepCollectionEquality().equals(other._frames, _frames) &&
+            const DeepCollectionEquality().equals(other.format, format) &&
+            const DeepCollectionEquality()
+                .equals(other.androidMajorVersion, androidMajorVersion));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(engineVariant) ^
-      const DeepCollectionEquality().hash(frames) ^
-      const DeepCollectionEquality().hash(format) ^
-      const DeepCollectionEquality().hash(androidMajorVersion);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(engineVariant),
+      const DeepCollectionEquality().hash(_frames),
+      const DeepCollectionEquality().hash(format),
+      const DeepCollectionEquality().hash(androidMajorVersion));
 
+  @JsonKey(ignore: true)
   @override
-  _$CrashCopyWith<_Crash> get copyWith =>
-      __$CrashCopyWithImpl<_Crash>(this, _$identity);
+  _$$_CrashCopyWith<_$_Crash> get copyWith =>
+      __$$_CrashCopyWithImpl<_$_Crash>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_CrashToJson(this);
+    return _$$_CrashToJson(
+      this,
+    );
   }
 }
 
 abstract class _Crash implements Crash {
   factory _Crash(
-      {EngineVariant engineVariant,
-      List<CrashFrame> frames,
-      @required String format,
-      @nullable int androidMajorVersion}) = _$_Crash;
+      {required final EngineVariant engineVariant,
+      required final List<CrashFrame> frames,
+      required final String format,
+      final int? androidMajorVersion}) = _$_Crash;
 
   factory _Crash.fromJson(Map<String, dynamic> json) = _$_Crash.fromJson;
 
@@ -1607,77 +1675,67 @@ abstract class _Crash implements Crash {
   @override
   String get format;
   @override
-  @nullable
-  int get androidMajorVersion;
+  int? get androidMajorVersion;
   @override
-  _$CrashCopyWith<_Crash> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_CrashCopyWith<_$_Crash> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 SymbolizationResult _$SymbolizationResultFromJson(Map<String, dynamic> json) {
-  switch (json['runtimeType'] as String) {
+  switch (json['runtimeType']) {
     case 'ok':
       return SymbolizationResultOk.fromJson(json);
     case 'error':
       return SymbolizationResultError.fromJson(json);
 
     default:
-      throw FallThroughError();
+      throw CheckedFromJsonException(json, 'runtimeType', 'SymbolizationResult',
+          'Invalid union type "${json['runtimeType']}"!');
   }
 }
-
-/// @nodoc
-class _$SymbolizationResultTearOff {
-  const _$SymbolizationResultTearOff();
-
-// ignore: unused_element
-  SymbolizationResultOk ok({@required List<CrashSymbolizationResult> results}) {
-    return SymbolizationResultOk(
-      results: results,
-    );
-  }
-
-// ignore: unused_element
-  SymbolizationResultError error({@required SymbolizationNote error}) {
-    return SymbolizationResultError(
-      error: error,
-    );
-  }
-
-// ignore: unused_element
-  SymbolizationResult fromJson(Map<String, Object> json) {
-    return SymbolizationResult.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $SymbolizationResult = _$SymbolizationResultTearOff();
 
 /// @nodoc
 mixin _$SymbolizationResult {
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result ok(List<CrashSymbolizationResult> results),
-    @required Result error(SymbolizationNote error),
-  });
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<CrashSymbolizationResult> results) ok,
+    required TResult Function(SymbolizationNote error) error,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ok(List<CrashSymbolizationResult> results),
-    Result error(SymbolizationNote error),
-    @required Result orElse(),
-  });
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ok(SymbolizationResultOk value),
-    @required Result error(SymbolizationResultError value),
-  });
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ok(SymbolizationResultOk value),
-    Result error(SymbolizationResultError value),
-    @required Result orElse(),
-  });
-  Map<String, dynamic> toJson();
+  TResult map<TResult extends Object?>({
+    required TResult Function(SymbolizationResultOk value) ok,
+    required TResult Function(SymbolizationResultError value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1698,47 +1756,59 @@ class _$SymbolizationResultCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class $SymbolizationResultOkCopyWith<$Res> {
-  factory $SymbolizationResultOkCopyWith(SymbolizationResultOk value,
-          $Res Function(SymbolizationResultOk) then) =
-      _$SymbolizationResultOkCopyWithImpl<$Res>;
+abstract class _$$SymbolizationResultOkCopyWith<$Res> {
+  factory _$$SymbolizationResultOkCopyWith(_$SymbolizationResultOk value,
+          $Res Function(_$SymbolizationResultOk) then) =
+      __$$SymbolizationResultOkCopyWithImpl<$Res>;
   $Res call({List<CrashSymbolizationResult> results});
 }
 
 /// @nodoc
-class _$SymbolizationResultOkCopyWithImpl<$Res>
+class __$$SymbolizationResultOkCopyWithImpl<$Res>
     extends _$SymbolizationResultCopyWithImpl<$Res>
-    implements $SymbolizationResultOkCopyWith<$Res> {
-  _$SymbolizationResultOkCopyWithImpl(
-      SymbolizationResultOk _value, $Res Function(SymbolizationResultOk) _then)
-      : super(_value, (v) => _then(v as SymbolizationResultOk));
+    implements _$$SymbolizationResultOkCopyWith<$Res> {
+  __$$SymbolizationResultOkCopyWithImpl(_$SymbolizationResultOk _value,
+      $Res Function(_$SymbolizationResultOk) _then)
+      : super(_value, (v) => _then(v as _$SymbolizationResultOk));
 
   @override
-  SymbolizationResultOk get _value => super._value as SymbolizationResultOk;
+  _$SymbolizationResultOk get _value => super._value as _$SymbolizationResultOk;
 
   @override
   $Res call({
-    Object results = freezed,
+    Object? results = freezed,
   }) {
-    return _then(SymbolizationResultOk(
+    return _then(_$SymbolizationResultOk(
       results: results == freezed
-          ? _value.results
-          : results as List<CrashSymbolizationResult>,
+          ? _value._results
+          : results // ignore: cast_nullable_to_non_nullable
+              as List<CrashSymbolizationResult>,
     ));
   }
 }
 
-@JsonSerializable(explicitToJson: true)
-
 /// @nodoc
+
+@JsonSerializable(explicitToJson: true)
 class _$SymbolizationResultOk implements SymbolizationResultOk {
-  _$SymbolizationResultOk({@required this.results}) : assert(results != null);
+  _$SymbolizationResultOk(
+      {required final List<CrashSymbolizationResult> results,
+      final String? $type})
+      : _results = results,
+        $type = $type ?? 'ok';
 
   factory _$SymbolizationResultOk.fromJson(Map<String, dynamic> json) =>
-      _$_$SymbolizationResultOkFromJson(json);
+      _$$SymbolizationResultOkFromJson(json);
 
+  final List<CrashSymbolizationResult> _results;
   @override
-  final List<CrashSymbolizationResult> results;
+  List<CrashSymbolizationResult> get results {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_results);
+  }
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -1748,39 +1818,47 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is SymbolizationResultOk &&
-            (identical(other.results, results) ||
-                const DeepCollectionEquality().equals(other.results, results)));
+        (other.runtimeType == runtimeType &&
+            other is _$SymbolizationResultOk &&
+            const DeepCollectionEquality().equals(other._results, _results));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(results);
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_results));
 
+  @JsonKey(ignore: true)
   @override
-  $SymbolizationResultOkCopyWith<SymbolizationResultOk> get copyWith =>
-      _$SymbolizationResultOkCopyWithImpl<SymbolizationResultOk>(
+  _$$SymbolizationResultOkCopyWith<_$SymbolizationResultOk> get copyWith =>
+      __$$SymbolizationResultOkCopyWithImpl<_$SymbolizationResultOk>(
           this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result ok(List<CrashSymbolizationResult> results),
-    @required Result error(SymbolizationNote error),
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<CrashSymbolizationResult> results) ok,
+    required TResult Function(SymbolizationNote error) error,
   }) {
-    assert(ok != null);
-    assert(error != null);
     return ok(results);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ok(List<CrashSymbolizationResult> results),
-    Result error(SymbolizationNote error),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
   }) {
-    assert(orElse != null);
+    return ok?.call(results);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
+    required TResult orElse(),
+  }) {
     if (ok != null) {
       return ok(results);
     }
@@ -1789,23 +1867,29 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ok(SymbolizationResultOk value),
-    @required Result error(SymbolizationResultError value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(SymbolizationResultOk value) ok,
+    required TResult Function(SymbolizationResultError value) error,
   }) {
-    assert(ok != null);
-    assert(error != null);
     return ok(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ok(SymbolizationResultOk value),
-    Result error(SymbolizationResultError value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
   }) {
-    assert(orElse != null);
+    return ok?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
+    required TResult orElse(),
+  }) {
     if (ok != null) {
       return ok(this);
     }
@@ -1814,75 +1898,83 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$SymbolizationResultOkToJson(this)..['runtimeType'] = 'ok';
+    return _$$SymbolizationResultOkToJson(
+      this,
+    );
   }
 }
 
 abstract class SymbolizationResultOk implements SymbolizationResult {
   factory SymbolizationResultOk(
-          {@required List<CrashSymbolizationResult> results}) =
+          {required final List<CrashSymbolizationResult> results}) =
       _$SymbolizationResultOk;
 
   factory SymbolizationResultOk.fromJson(Map<String, dynamic> json) =
       _$SymbolizationResultOk.fromJson;
 
   List<CrashSymbolizationResult> get results;
-  $SymbolizationResultOkCopyWith<SymbolizationResultOk> get copyWith;
+  @JsonKey(ignore: true)
+  _$$SymbolizationResultOkCopyWith<_$SymbolizationResultOk> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SymbolizationResultErrorCopyWith<$Res> {
-  factory $SymbolizationResultErrorCopyWith(SymbolizationResultError value,
-          $Res Function(SymbolizationResultError) then) =
-      _$SymbolizationResultErrorCopyWithImpl<$Res>;
+abstract class _$$SymbolizationResultErrorCopyWith<$Res> {
+  factory _$$SymbolizationResultErrorCopyWith(_$SymbolizationResultError value,
+          $Res Function(_$SymbolizationResultError) then) =
+      __$$SymbolizationResultErrorCopyWithImpl<$Res>;
   $Res call({SymbolizationNote error});
 
   $SymbolizationNoteCopyWith<$Res> get error;
 }
 
 /// @nodoc
-class _$SymbolizationResultErrorCopyWithImpl<$Res>
+class __$$SymbolizationResultErrorCopyWithImpl<$Res>
     extends _$SymbolizationResultCopyWithImpl<$Res>
-    implements $SymbolizationResultErrorCopyWith<$Res> {
-  _$SymbolizationResultErrorCopyWithImpl(SymbolizationResultError _value,
-      $Res Function(SymbolizationResultError) _then)
-      : super(_value, (v) => _then(v as SymbolizationResultError));
+    implements _$$SymbolizationResultErrorCopyWith<$Res> {
+  __$$SymbolizationResultErrorCopyWithImpl(_$SymbolizationResultError _value,
+      $Res Function(_$SymbolizationResultError) _then)
+      : super(_value, (v) => _then(v as _$SymbolizationResultError));
 
   @override
-  SymbolizationResultError get _value =>
-      super._value as SymbolizationResultError;
+  _$SymbolizationResultError get _value =>
+      super._value as _$SymbolizationResultError;
 
   @override
   $Res call({
-    Object error = freezed,
+    Object? error = freezed,
   }) {
-    return _then(SymbolizationResultError(
-      error: error == freezed ? _value.error : error as SymbolizationNote,
+    return _then(_$SymbolizationResultError(
+      error: error == freezed
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as SymbolizationNote,
     ));
   }
 
   @override
   $SymbolizationNoteCopyWith<$Res> get error {
-    if (_value.error == null) {
-      return null;
-    }
     return $SymbolizationNoteCopyWith<$Res>(_value.error, (value) {
       return _then(_value.copyWith(error: value));
     });
   }
 }
 
-@JsonSerializable(explicitToJson: true)
-
 /// @nodoc
+
+@JsonSerializable(explicitToJson: true)
 class _$SymbolizationResultError implements SymbolizationResultError {
-  _$SymbolizationResultError({@required this.error}) : assert(error != null);
+  _$SymbolizationResultError({required this.error, final String? $type})
+      : $type = $type ?? 'error';
 
   factory _$SymbolizationResultError.fromJson(Map<String, dynamic> json) =>
-      _$_$SymbolizationResultErrorFromJson(json);
+      _$$SymbolizationResultErrorFromJson(json);
 
   @override
   final SymbolizationNote error;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
 
   @override
   String toString() {
@@ -1892,39 +1984,48 @@ class _$SymbolizationResultError implements SymbolizationResultError {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is SymbolizationResultError &&
-            (identical(other.error, error) ||
-                const DeepCollectionEquality().equals(other.error, error)));
+        (other.runtimeType == runtimeType &&
+            other is _$SymbolizationResultError &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(error));
 
+  @JsonKey(ignore: true)
   @override
-  $SymbolizationResultErrorCopyWith<SymbolizationResultError> get copyWith =>
-      _$SymbolizationResultErrorCopyWithImpl<SymbolizationResultError>(
-          this, _$identity);
+  _$$SymbolizationResultErrorCopyWith<_$SymbolizationResultError>
+      get copyWith =>
+          __$$SymbolizationResultErrorCopyWithImpl<_$SymbolizationResultError>(
+              this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result ok(List<CrashSymbolizationResult> results),
-    @required Result error(SymbolizationNote error),
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<CrashSymbolizationResult> results) ok,
+    required TResult Function(SymbolizationNote error) error,
   }) {
-    assert(ok != null);
-    assert(error != null);
     return error(this.error);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result ok(List<CrashSymbolizationResult> results),
-    Result error(SymbolizationNote error),
-    @required Result orElse(),
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
   }) {
-    assert(orElse != null);
+    return error?.call(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<CrashSymbolizationResult> results)? ok,
+    TResult Function(SymbolizationNote error)? error,
+    required TResult orElse(),
+  }) {
     if (error != null) {
       return error(this.error);
     }
@@ -1933,23 +2034,29 @@ class _$SymbolizationResultError implements SymbolizationResultError {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result ok(SymbolizationResultOk value),
-    @required Result error(SymbolizationResultError value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(SymbolizationResultOk value) ok,
+    required TResult Function(SymbolizationResultError value) error,
   }) {
-    assert(ok != null);
-    assert(error != null);
     return error(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result ok(SymbolizationResultOk value),
-    Result error(SymbolizationResultError value),
-    @required Result orElse(),
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
   }) {
-    assert(orElse != null);
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SymbolizationResultOk value)? ok,
+    TResult Function(SymbolizationResultError value)? error,
+    required TResult orElse(),
+  }) {
     if (error != null) {
       return error(this);
     }
@@ -1958,19 +2065,23 @@ class _$SymbolizationResultError implements SymbolizationResultError {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$SymbolizationResultErrorToJson(this)..['runtimeType'] = 'error';
+    return _$$SymbolizationResultErrorToJson(
+      this,
+    );
   }
 }
 
 abstract class SymbolizationResultError implements SymbolizationResult {
-  factory SymbolizationResultError({@required SymbolizationNote error}) =
+  factory SymbolizationResultError({required final SymbolizationNote error}) =
       _$SymbolizationResultError;
 
   factory SymbolizationResultError.fromJson(Map<String, dynamic> json) =
       _$SymbolizationResultError.fromJson;
 
   SymbolizationNote get error;
-  $SymbolizationResultErrorCopyWith<SymbolizationResultError> get copyWith;
+  @JsonKey(ignore: true)
+  _$$SymbolizationResultErrorCopyWith<_$SymbolizationResultError>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 CrashSymbolizationResult _$CrashSymbolizationResultFromJson(
@@ -1979,46 +2090,18 @@ CrashSymbolizationResult _$CrashSymbolizationResultFromJson(
 }
 
 /// @nodoc
-class _$CrashSymbolizationResultTearOff {
-  const _$CrashSymbolizationResultTearOff();
-
-// ignore: unused_element
-  _CrashSymbolizationResult call(
-      {@required Crash crash,
-      @required @nullable EngineBuild engineBuild,
-      @required @nullable String symbolized,
-      List<SymbolizationNote> notes = const []}) {
-    return _CrashSymbolizationResult(
-      crash: crash,
-      engineBuild: engineBuild,
-      symbolized: symbolized,
-      notes: notes,
-    );
-  }
-
-// ignore: unused_element
-  CrashSymbolizationResult fromJson(Map<String, Object> json) {
-    return CrashSymbolizationResult.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $CrashSymbolizationResult = _$CrashSymbolizationResultTearOff();
-
-/// @nodoc
 mixin _$CrashSymbolizationResult {
-  Crash get crash;
-  @nullable
-  EngineBuild get engineBuild;
+  Crash get crash => throw _privateConstructorUsedError;
+  EngineBuild? get engineBuild => throw _privateConstructorUsedError;
 
   /// Symbolization result - not null if symbolization succeeded.
-  @nullable
-  String get symbolized;
-  List<SymbolizationNote> get notes;
+  String? get symbolized => throw _privateConstructorUsedError;
+  List<SymbolizationNote> get notes => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $CrashSymbolizationResultCopyWith<CrashSymbolizationResult> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CrashSymbolizationResultCopyWith<CrashSymbolizationResult> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2028,12 +2111,12 @@ abstract class $CrashSymbolizationResultCopyWith<$Res> {
       _$CrashSymbolizationResultCopyWithImpl<$Res>;
   $Res call(
       {Crash crash,
-      @nullable EngineBuild engineBuild,
-      @nullable String symbolized,
+      EngineBuild? engineBuild,
+      String? symbolized,
       List<SymbolizationNote> notes});
 
   $CrashCopyWith<$Res> get crash;
-  $EngineBuildCopyWith<$Res> get engineBuild;
+  $EngineBuildCopyWith<$Res>? get engineBuild;
 }
 
 /// @nodoc
@@ -2047,121 +2130,139 @@ class _$CrashSymbolizationResultCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object crash = freezed,
-    Object engineBuild = freezed,
-    Object symbolized = freezed,
-    Object notes = freezed,
+    Object? crash = freezed,
+    Object? engineBuild = freezed,
+    Object? symbolized = freezed,
+    Object? notes = freezed,
   }) {
     return _then(_value.copyWith(
-      crash: crash == freezed ? _value.crash : crash as Crash,
+      crash: crash == freezed
+          ? _value.crash
+          : crash // ignore: cast_nullable_to_non_nullable
+              as Crash,
       engineBuild: engineBuild == freezed
           ? _value.engineBuild
-          : engineBuild as EngineBuild,
-      symbolized:
-          symbolized == freezed ? _value.symbolized : symbolized as String,
-      notes: notes == freezed ? _value.notes : notes as List<SymbolizationNote>,
+          : engineBuild // ignore: cast_nullable_to_non_nullable
+              as EngineBuild?,
+      symbolized: symbolized == freezed
+          ? _value.symbolized
+          : symbolized // ignore: cast_nullable_to_non_nullable
+              as String?,
+      notes: notes == freezed
+          ? _value.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as List<SymbolizationNote>,
     ));
   }
 
   @override
   $CrashCopyWith<$Res> get crash {
-    if (_value.crash == null) {
-      return null;
-    }
     return $CrashCopyWith<$Res>(_value.crash, (value) {
       return _then(_value.copyWith(crash: value));
     });
   }
 
   @override
-  $EngineBuildCopyWith<$Res> get engineBuild {
+  $EngineBuildCopyWith<$Res>? get engineBuild {
     if (_value.engineBuild == null) {
       return null;
     }
-    return $EngineBuildCopyWith<$Res>(_value.engineBuild, (value) {
+
+    return $EngineBuildCopyWith<$Res>(_value.engineBuild!, (value) {
       return _then(_value.copyWith(engineBuild: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$CrashSymbolizationResultCopyWith<$Res>
+abstract class _$$_CrashSymbolizationResultCopyWith<$Res>
     implements $CrashSymbolizationResultCopyWith<$Res> {
-  factory _$CrashSymbolizationResultCopyWith(_CrashSymbolizationResult value,
-          $Res Function(_CrashSymbolizationResult) then) =
-      __$CrashSymbolizationResultCopyWithImpl<$Res>;
+  factory _$$_CrashSymbolizationResultCopyWith(
+          _$_CrashSymbolizationResult value,
+          $Res Function(_$_CrashSymbolizationResult) then) =
+      __$$_CrashSymbolizationResultCopyWithImpl<$Res>;
   @override
   $Res call(
       {Crash crash,
-      @nullable EngineBuild engineBuild,
-      @nullable String symbolized,
+      EngineBuild? engineBuild,
+      String? symbolized,
       List<SymbolizationNote> notes});
 
   @override
   $CrashCopyWith<$Res> get crash;
   @override
-  $EngineBuildCopyWith<$Res> get engineBuild;
+  $EngineBuildCopyWith<$Res>? get engineBuild;
 }
 
 /// @nodoc
-class __$CrashSymbolizationResultCopyWithImpl<$Res>
+class __$$_CrashSymbolizationResultCopyWithImpl<$Res>
     extends _$CrashSymbolizationResultCopyWithImpl<$Res>
-    implements _$CrashSymbolizationResultCopyWith<$Res> {
-  __$CrashSymbolizationResultCopyWithImpl(_CrashSymbolizationResult _value,
-      $Res Function(_CrashSymbolizationResult) _then)
-      : super(_value, (v) => _then(v as _CrashSymbolizationResult));
+    implements _$$_CrashSymbolizationResultCopyWith<$Res> {
+  __$$_CrashSymbolizationResultCopyWithImpl(_$_CrashSymbolizationResult _value,
+      $Res Function(_$_CrashSymbolizationResult) _then)
+      : super(_value, (v) => _then(v as _$_CrashSymbolizationResult));
 
   @override
-  _CrashSymbolizationResult get _value =>
-      super._value as _CrashSymbolizationResult;
+  _$_CrashSymbolizationResult get _value =>
+      super._value as _$_CrashSymbolizationResult;
 
   @override
   $Res call({
-    Object crash = freezed,
-    Object engineBuild = freezed,
-    Object symbolized = freezed,
-    Object notes = freezed,
+    Object? crash = freezed,
+    Object? engineBuild = freezed,
+    Object? symbolized = freezed,
+    Object? notes = freezed,
   }) {
-    return _then(_CrashSymbolizationResult(
-      crash: crash == freezed ? _value.crash : crash as Crash,
+    return _then(_$_CrashSymbolizationResult(
+      crash: crash == freezed
+          ? _value.crash
+          : crash // ignore: cast_nullable_to_non_nullable
+              as Crash,
       engineBuild: engineBuild == freezed
           ? _value.engineBuild
-          : engineBuild as EngineBuild,
-      symbolized:
-          symbolized == freezed ? _value.symbolized : symbolized as String,
-      notes: notes == freezed ? _value.notes : notes as List<SymbolizationNote>,
+          : engineBuild // ignore: cast_nullable_to_non_nullable
+              as EngineBuild?,
+      symbolized: symbolized == freezed
+          ? _value.symbolized
+          : symbolized // ignore: cast_nullable_to_non_nullable
+              as String?,
+      notes: notes == freezed
+          ? _value._notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as List<SymbolizationNote>,
     ));
   }
 }
 
-@JsonSerializable(explicitToJson: true)
-
 /// @nodoc
+
+@JsonSerializable(explicitToJson: true)
 class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
   _$_CrashSymbolizationResult(
-      {@required this.crash,
-      @required @nullable this.engineBuild,
-      @required @nullable this.symbolized,
-      this.notes = const []})
-      : assert(crash != null),
-        assert(notes != null);
+      {required this.crash,
+      required this.engineBuild,
+      required this.symbolized,
+      final List<SymbolizationNote> notes = const []})
+      : _notes = notes;
 
   factory _$_CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =>
-      _$_$_CrashSymbolizationResultFromJson(json);
+      _$$_CrashSymbolizationResultFromJson(json);
 
   @override
   final Crash crash;
   @override
-  @nullable
-  final EngineBuild engineBuild;
-  @override
+  final EngineBuild? engineBuild;
 
   /// Symbolization result - not null if symbolization succeeded.
-  @nullable
-  final String symbolized;
-  @JsonKey(defaultValue: const [])
   @override
-  final List<SymbolizationNote> notes;
+  final String? symbolized;
+  final List<SymbolizationNote> _notes;
+  @override
+  @JsonKey()
+  List<SymbolizationNote> get notes {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_notes);
+  }
 
   @override
   String toString() {
@@ -2171,44 +2272,45 @@ class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _CrashSymbolizationResult &&
-            (identical(other.crash, crash) ||
-                const DeepCollectionEquality().equals(other.crash, crash)) &&
-            (identical(other.engineBuild, engineBuild) ||
-                const DeepCollectionEquality()
-                    .equals(other.engineBuild, engineBuild)) &&
-            (identical(other.symbolized, symbolized) ||
-                const DeepCollectionEquality()
-                    .equals(other.symbolized, symbolized)) &&
-            (identical(other.notes, notes) ||
-                const DeepCollectionEquality().equals(other.notes, notes)));
+        (other.runtimeType == runtimeType &&
+            other is _$_CrashSymbolizationResult &&
+            const DeepCollectionEquality().equals(other.crash, crash) &&
+            const DeepCollectionEquality()
+                .equals(other.engineBuild, engineBuild) &&
+            const DeepCollectionEquality()
+                .equals(other.symbolized, symbolized) &&
+            const DeepCollectionEquality().equals(other._notes, _notes));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(crash) ^
-      const DeepCollectionEquality().hash(engineBuild) ^
-      const DeepCollectionEquality().hash(symbolized) ^
-      const DeepCollectionEquality().hash(notes);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(crash),
+      const DeepCollectionEquality().hash(engineBuild),
+      const DeepCollectionEquality().hash(symbolized),
+      const DeepCollectionEquality().hash(_notes));
 
+  @JsonKey(ignore: true)
   @override
-  _$CrashSymbolizationResultCopyWith<_CrashSymbolizationResult> get copyWith =>
-      __$CrashSymbolizationResultCopyWithImpl<_CrashSymbolizationResult>(
-          this, _$identity);
+  _$$_CrashSymbolizationResultCopyWith<_$_CrashSymbolizationResult>
+      get copyWith => __$$_CrashSymbolizationResultCopyWithImpl<
+          _$_CrashSymbolizationResult>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_CrashSymbolizationResultToJson(this);
+    return _$$_CrashSymbolizationResultToJson(
+      this,
+    );
   }
 }
 
 abstract class _CrashSymbolizationResult implements CrashSymbolizationResult {
   factory _CrashSymbolizationResult(
-      {@required Crash crash,
-      @required @nullable EngineBuild engineBuild,
-      @required @nullable String symbolized,
-      List<SymbolizationNote> notes}) = _$_CrashSymbolizationResult;
+      {required final Crash crash,
+      required final EngineBuild? engineBuild,
+      required final String? symbolized,
+      final List<SymbolizationNote> notes}) = _$_CrashSymbolizationResult;
 
   factory _CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =
       _$_CrashSymbolizationResult.fromJson;
@@ -2216,17 +2318,17 @@ abstract class _CrashSymbolizationResult implements CrashSymbolizationResult {
   @override
   Crash get crash;
   @override
-  @nullable
-  EngineBuild get engineBuild;
+  EngineBuild? get engineBuild;
   @override
 
   /// Symbolization result - not null if symbolization succeeded.
-  @nullable
-  String get symbolized;
+  String? get symbolized;
   @override
   List<SymbolizationNote> get notes;
   @override
-  _$CrashSymbolizationResultCopyWith<_CrashSymbolizationResult> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_CrashSymbolizationResultCopyWith<_$_CrashSymbolizationResult>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 SymbolizationNote _$SymbolizationNoteFromJson(Map<String, dynamic> json) {
@@ -2234,36 +2336,14 @@ SymbolizationNote _$SymbolizationNoteFromJson(Map<String, dynamic> json) {
 }
 
 /// @nodoc
-class _$SymbolizationNoteTearOff {
-  const _$SymbolizationNoteTearOff();
-
-// ignore: unused_element
-  _SymbolizationNote call(
-      {@required SymbolizationNoteKind kind, @nullable String message}) {
-    return _SymbolizationNote(
-      kind: kind,
-      message: message,
-    );
-  }
-
-// ignore: unused_element
-  SymbolizationNote fromJson(Map<String, Object> json) {
-    return SymbolizationNote.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $SymbolizationNote = _$SymbolizationNoteTearOff();
-
-/// @nodoc
 mixin _$SymbolizationNote {
-  SymbolizationNoteKind get kind;
-  @nullable
-  String get message;
+  SymbolizationNoteKind get kind => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $SymbolizationNoteCopyWith<SymbolizationNote> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SymbolizationNoteCopyWith<SymbolizationNote> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2271,7 +2351,7 @@ abstract class $SymbolizationNoteCopyWith<$Res> {
   factory $SymbolizationNoteCopyWith(
           SymbolizationNote value, $Res Function(SymbolizationNote) then) =
       _$SymbolizationNoteCopyWithImpl<$Res>;
-  $Res call({SymbolizationNoteKind kind, @nullable String message});
+  $Res call({SymbolizationNoteKind kind, String? message});
 }
 
 /// @nodoc
@@ -2285,64 +2365,73 @@ class _$SymbolizationNoteCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object kind = freezed,
-    Object message = freezed,
+    Object? kind = freezed,
+    Object? message = freezed,
   }) {
     return _then(_value.copyWith(
-      kind: kind == freezed ? _value.kind : kind as SymbolizationNoteKind,
-      message: message == freezed ? _value.message : message as String,
+      kind: kind == freezed
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as SymbolizationNoteKind,
+      message: message == freezed
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$SymbolizationNoteCopyWith<$Res>
+abstract class _$$_SymbolizationNoteCopyWith<$Res>
     implements $SymbolizationNoteCopyWith<$Res> {
-  factory _$SymbolizationNoteCopyWith(
-          _SymbolizationNote value, $Res Function(_SymbolizationNote) then) =
-      __$SymbolizationNoteCopyWithImpl<$Res>;
+  factory _$$_SymbolizationNoteCopyWith(_$_SymbolizationNote value,
+          $Res Function(_$_SymbolizationNote) then) =
+      __$$_SymbolizationNoteCopyWithImpl<$Res>;
   @override
-  $Res call({SymbolizationNoteKind kind, @nullable String message});
+  $Res call({SymbolizationNoteKind kind, String? message});
 }
 
 /// @nodoc
-class __$SymbolizationNoteCopyWithImpl<$Res>
+class __$$_SymbolizationNoteCopyWithImpl<$Res>
     extends _$SymbolizationNoteCopyWithImpl<$Res>
-    implements _$SymbolizationNoteCopyWith<$Res> {
-  __$SymbolizationNoteCopyWithImpl(
-      _SymbolizationNote _value, $Res Function(_SymbolizationNote) _then)
-      : super(_value, (v) => _then(v as _SymbolizationNote));
+    implements _$$_SymbolizationNoteCopyWith<$Res> {
+  __$$_SymbolizationNoteCopyWithImpl(
+      _$_SymbolizationNote _value, $Res Function(_$_SymbolizationNote) _then)
+      : super(_value, (v) => _then(v as _$_SymbolizationNote));
 
   @override
-  _SymbolizationNote get _value => super._value as _SymbolizationNote;
+  _$_SymbolizationNote get _value => super._value as _$_SymbolizationNote;
 
   @override
   $Res call({
-    Object kind = freezed,
-    Object message = freezed,
+    Object? kind = freezed,
+    Object? message = freezed,
   }) {
-    return _then(_SymbolizationNote(
-      kind: kind == freezed ? _value.kind : kind as SymbolizationNoteKind,
-      message: message == freezed ? _value.message : message as String,
+    return _then(_$_SymbolizationNote(
+      kind: kind == freezed
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as SymbolizationNoteKind,
+      message: message == freezed
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_SymbolizationNote implements _SymbolizationNote {
-  _$_SymbolizationNote({@required this.kind, @nullable this.message})
-      : assert(kind != null);
+  _$_SymbolizationNote({required this.kind, this.message});
 
   factory _$_SymbolizationNote.fromJson(Map<String, dynamic> json) =>
-      _$_$_SymbolizationNoteFromJson(json);
+      _$$_SymbolizationNoteFromJson(json);
 
   @override
   final SymbolizationNoteKind kind;
   @override
-  @nullable
-  final String message;
+  final String? message;
 
   @override
   String toString() {
@@ -2352,33 +2441,37 @@ class _$_SymbolizationNote implements _SymbolizationNote {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _SymbolizationNote &&
-            (identical(other.kind, kind) ||
-                const DeepCollectionEquality().equals(other.kind, kind)) &&
-            (identical(other.message, message) ||
-                const DeepCollectionEquality().equals(other.message, message)));
+        (other.runtimeType == runtimeType &&
+            other is _$_SymbolizationNote &&
+            const DeepCollectionEquality().equals(other.kind, kind) &&
+            const DeepCollectionEquality().equals(other.message, message));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(kind) ^
-      const DeepCollectionEquality().hash(message);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(kind),
+      const DeepCollectionEquality().hash(message));
 
+  @JsonKey(ignore: true)
   @override
-  _$SymbolizationNoteCopyWith<_SymbolizationNote> get copyWith =>
-      __$SymbolizationNoteCopyWithImpl<_SymbolizationNote>(this, _$identity);
+  _$$_SymbolizationNoteCopyWith<_$_SymbolizationNote> get copyWith =>
+      __$$_SymbolizationNoteCopyWithImpl<_$_SymbolizationNote>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_SymbolizationNoteToJson(this);
+    return _$$_SymbolizationNoteToJson(
+      this,
+    );
   }
 }
 
 abstract class _SymbolizationNote implements SymbolizationNote {
   factory _SymbolizationNote(
-      {@required SymbolizationNoteKind kind,
-      @nullable String message}) = _$_SymbolizationNote;
+      {required final SymbolizationNoteKind kind,
+      final String? message}) = _$_SymbolizationNote;
 
   factory _SymbolizationNote.fromJson(Map<String, dynamic> json) =
       _$_SymbolizationNote.fromJson;
@@ -2386,48 +2479,30 @@ abstract class _SymbolizationNote implements SymbolizationNote {
   @override
   SymbolizationNoteKind get kind;
   @override
-  @nullable
-  String get message;
+  String? get message;
   @override
-  _$SymbolizationNoteCopyWith<_SymbolizationNote> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_SymbolizationNoteCopyWith<_$_SymbolizationNote> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-
-/// @nodoc
-class _$BotCommandTearOff {
-  const _$BotCommandTearOff();
-
-// ignore: unused_element
-  _BotCommand call(
-      {@required SymbolizationOverrides overrides,
-      @required bool symbolizeThis,
-      @required Set<String> worklist}) {
-    return _BotCommand(
-      overrides: overrides,
-      symbolizeThis: symbolizeThis,
-      worklist: worklist,
-    );
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $BotCommand = _$BotCommandTearOff();
 
 /// @nodoc
 mixin _$BotCommand {
   /// Overrides that should be used for symbolization. These overrides
   /// replace or augment information available in the comments themselves.
-  SymbolizationOverrides get overrides;
+  SymbolizationOverrides get overrides => throw _privateConstructorUsedError;
 
   /// [true] if the user requested to symbolize the comment that contains
   /// command.
-  bool get symbolizeThis;
+  bool get symbolizeThis => throw _privateConstructorUsedError;
 
   /// List of references to comments which need to be symbolized. Each reference
   /// is either in `issue-id` or in `issuecomment-id` format.
-  Set<String> get worklist;
+  Set<String> get worklist => throw _privateConstructorUsedError;
 
-  $BotCommandCopyWith<BotCommand> get copyWith;
+  @JsonKey(ignore: true)
+  $BotCommandCopyWith<BotCommand> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2453,26 +2528,28 @@ class _$BotCommandCopyWithImpl<$Res> implements $BotCommandCopyWith<$Res> {
 
   @override
   $Res call({
-    Object overrides = freezed,
-    Object symbolizeThis = freezed,
-    Object worklist = freezed,
+    Object? overrides = freezed,
+    Object? symbolizeThis = freezed,
+    Object? worklist = freezed,
   }) {
     return _then(_value.copyWith(
       overrides: overrides == freezed
           ? _value.overrides
-          : overrides as SymbolizationOverrides,
+          : overrides // ignore: cast_nullable_to_non_nullable
+              as SymbolizationOverrides,
       symbolizeThis: symbolizeThis == freezed
           ? _value.symbolizeThis
-          : symbolizeThis as bool,
-      worklist: worklist == freezed ? _value.worklist : worklist as Set<String>,
+          : symbolizeThis // ignore: cast_nullable_to_non_nullable
+              as bool,
+      worklist: worklist == freezed
+          ? _value.worklist
+          : worklist // ignore: cast_nullable_to_non_nullable
+              as Set<String>,
     ));
   }
 
   @override
   $SymbolizationOverridesCopyWith<$Res> get overrides {
-    if (_value.overrides == null) {
-      return null;
-    }
     return $SymbolizationOverridesCopyWith<$Res>(_value.overrides, (value) {
       return _then(_value.copyWith(overrides: value));
     });
@@ -2480,10 +2557,11 @@ class _$BotCommandCopyWithImpl<$Res> implements $BotCommandCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$BotCommandCopyWith<$Res> implements $BotCommandCopyWith<$Res> {
-  factory _$BotCommandCopyWith(
-          _BotCommand value, $Res Function(_BotCommand) then) =
-      __$BotCommandCopyWithImpl<$Res>;
+abstract class _$$_BotCommandCopyWith<$Res>
+    implements $BotCommandCopyWith<$Res> {
+  factory _$$_BotCommandCopyWith(
+          _$_BotCommand value, $Res Function(_$_BotCommand) then) =
+      __$$_BotCommandCopyWithImpl<$Res>;
   @override
   $Res call(
       {SymbolizationOverrides overrides,
@@ -2495,58 +2573,68 @@ abstract class _$BotCommandCopyWith<$Res> implements $BotCommandCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$BotCommandCopyWithImpl<$Res> extends _$BotCommandCopyWithImpl<$Res>
-    implements _$BotCommandCopyWith<$Res> {
-  __$BotCommandCopyWithImpl(
-      _BotCommand _value, $Res Function(_BotCommand) _then)
-      : super(_value, (v) => _then(v as _BotCommand));
+class __$$_BotCommandCopyWithImpl<$Res> extends _$BotCommandCopyWithImpl<$Res>
+    implements _$$_BotCommandCopyWith<$Res> {
+  __$$_BotCommandCopyWithImpl(
+      _$_BotCommand _value, $Res Function(_$_BotCommand) _then)
+      : super(_value, (v) => _then(v as _$_BotCommand));
 
   @override
-  _BotCommand get _value => super._value as _BotCommand;
+  _$_BotCommand get _value => super._value as _$_BotCommand;
 
   @override
   $Res call({
-    Object overrides = freezed,
-    Object symbolizeThis = freezed,
-    Object worklist = freezed,
+    Object? overrides = freezed,
+    Object? symbolizeThis = freezed,
+    Object? worklist = freezed,
   }) {
-    return _then(_BotCommand(
+    return _then(_$_BotCommand(
       overrides: overrides == freezed
           ? _value.overrides
-          : overrides as SymbolizationOverrides,
+          : overrides // ignore: cast_nullable_to_non_nullable
+              as SymbolizationOverrides,
       symbolizeThis: symbolizeThis == freezed
           ? _value.symbolizeThis
-          : symbolizeThis as bool,
-      worklist: worklist == freezed ? _value.worklist : worklist as Set<String>,
+          : symbolizeThis // ignore: cast_nullable_to_non_nullable
+              as bool,
+      worklist: worklist == freezed
+          ? _value._worklist
+          : worklist // ignore: cast_nullable_to_non_nullable
+              as Set<String>,
     ));
   }
 }
 
 /// @nodoc
+
 class _$_BotCommand implements _BotCommand {
   _$_BotCommand(
-      {@required this.overrides,
-      @required this.symbolizeThis,
-      @required this.worklist})
-      : assert(overrides != null),
-        assert(symbolizeThis != null),
-        assert(worklist != null);
-
-  @override
+      {required this.overrides,
+      required this.symbolizeThis,
+      required final Set<String> worklist})
+      : _worklist = worklist;
 
   /// Overrides that should be used for symbolization. These overrides
   /// replace or augment information available in the comments themselves.
-  final SymbolizationOverrides overrides;
   @override
+  final SymbolizationOverrides overrides;
 
   /// [true] if the user requested to symbolize the comment that contains
   /// command.
-  final bool symbolizeThis;
   @override
+  final bool symbolizeThis;
 
   /// List of references to comments which need to be symbolized. Each reference
   /// is either in `issue-id` or in `issuecomment-id` format.
-  final Set<String> worklist;
+  final Set<String> _worklist;
+
+  /// List of references to comments which need to be symbolized. Each reference
+  /// is either in `issue-id` or in `issuecomment-id` format.
+  @override
+  Set<String> get worklist {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_worklist);
+  }
 
   @override
   String toString() {
@@ -2556,35 +2644,32 @@ class _$_BotCommand implements _BotCommand {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _BotCommand &&
-            (identical(other.overrides, overrides) ||
-                const DeepCollectionEquality()
-                    .equals(other.overrides, overrides)) &&
-            (identical(other.symbolizeThis, symbolizeThis) ||
-                const DeepCollectionEquality()
-                    .equals(other.symbolizeThis, symbolizeThis)) &&
-            (identical(other.worklist, worklist) ||
-                const DeepCollectionEquality()
-                    .equals(other.worklist, worklist)));
+        (other.runtimeType == runtimeType &&
+            other is _$_BotCommand &&
+            const DeepCollectionEquality().equals(other.overrides, overrides) &&
+            const DeepCollectionEquality()
+                .equals(other.symbolizeThis, symbolizeThis) &&
+            const DeepCollectionEquality().equals(other._worklist, _worklist));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(overrides) ^
-      const DeepCollectionEquality().hash(symbolizeThis) ^
-      const DeepCollectionEquality().hash(worklist);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(overrides),
+      const DeepCollectionEquality().hash(symbolizeThis),
+      const DeepCollectionEquality().hash(_worklist));
 
+  @JsonKey(ignore: true)
   @override
-  _$BotCommandCopyWith<_BotCommand> get copyWith =>
-      __$BotCommandCopyWithImpl<_BotCommand>(this, _$identity);
+  _$$_BotCommandCopyWith<_$_BotCommand> get copyWith =>
+      __$$_BotCommandCopyWithImpl<_$_BotCommand>(this, _$identity);
 }
 
 abstract class _BotCommand implements BotCommand {
   factory _BotCommand(
-      {@required SymbolizationOverrides overrides,
-      @required bool symbolizeThis,
-      @required Set<String> worklist}) = _$_BotCommand;
+      {required final SymbolizationOverrides overrides,
+      required final bool symbolizeThis,
+      required final Set<String> worklist}) = _$_BotCommand;
 
   @override
 
@@ -2602,55 +2687,24 @@ abstract class _BotCommand implements BotCommand {
   /// is either in `issue-id` or in `issuecomment-id` format.
   Set<String> get worklist;
   @override
-  _$BotCommandCopyWith<_BotCommand> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_BotCommandCopyWith<_$_BotCommand> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-
-/// @nodoc
-class _$SymbolizationOverridesTearOff {
-  const _$SymbolizationOverridesTearOff();
-
-// ignore: unused_element
-  _SymbolizationOverrides call(
-      {@nullable String engineHash,
-      @nullable String flutterVersion,
-      @nullable String arch,
-      @nullable String mode,
-      bool force = false,
-      @nullable String format,
-      @nullable String os}) {
-    return _SymbolizationOverrides(
-      engineHash: engineHash,
-      flutterVersion: flutterVersion,
-      arch: arch,
-      mode: mode,
-      force: force,
-      format: format,
-      os: os,
-    );
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $SymbolizationOverrides = _$SymbolizationOverridesTearOff();
 
 /// @nodoc
 mixin _$SymbolizationOverrides {
-  @nullable
-  String get engineHash;
-  @nullable
-  String get flutterVersion;
-  @nullable
-  String get arch;
-  @nullable
-  String get mode;
-  bool get force;
-  @nullable
-  String get format;
-  @nullable
-  String get os;
+  String? get engineHash => throw _privateConstructorUsedError;
+  String? get flutterVersion => throw _privateConstructorUsedError;
+  String? get arch => throw _privateConstructorUsedError;
+  String? get mode => throw _privateConstructorUsedError;
+  bool get force => throw _privateConstructorUsedError;
+  String? get format => throw _privateConstructorUsedError;
+  String? get os => throw _privateConstructorUsedError;
 
-  $SymbolizationOverridesCopyWith<SymbolizationOverrides> get copyWith;
+  @JsonKey(ignore: true)
+  $SymbolizationOverridesCopyWith<SymbolizationOverrides> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2659,13 +2713,13 @@ abstract class $SymbolizationOverridesCopyWith<$Res> {
           $Res Function(SymbolizationOverrides) then) =
       _$SymbolizationOverridesCopyWithImpl<$Res>;
   $Res call(
-      {@nullable String engineHash,
-      @nullable String flutterVersion,
-      @nullable String arch,
-      @nullable String mode,
+      {String? engineHash,
+      String? flutterVersion,
+      String? arch,
+      String? mode,
       bool force,
-      @nullable String format,
-      @nullable String os});
+      String? format,
+      String? os});
 }
 
 /// @nodoc
@@ -2679,115 +2733,146 @@ class _$SymbolizationOverridesCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object engineHash = freezed,
-    Object flutterVersion = freezed,
-    Object arch = freezed,
-    Object mode = freezed,
-    Object force = freezed,
-    Object format = freezed,
-    Object os = freezed,
+    Object? engineHash = freezed,
+    Object? flutterVersion = freezed,
+    Object? arch = freezed,
+    Object? mode = freezed,
+    Object? force = freezed,
+    Object? format = freezed,
+    Object? os = freezed,
   }) {
     return _then(_value.copyWith(
-      engineHash:
-          engineHash == freezed ? _value.engineHash : engineHash as String,
+      engineHash: engineHash == freezed
+          ? _value.engineHash
+          : engineHash // ignore: cast_nullable_to_non_nullable
+              as String?,
       flutterVersion: flutterVersion == freezed
           ? _value.flutterVersion
-          : flutterVersion as String,
-      arch: arch == freezed ? _value.arch : arch as String,
-      mode: mode == freezed ? _value.mode : mode as String,
-      force: force == freezed ? _value.force : force as bool,
-      format: format == freezed ? _value.format : format as String,
-      os: os == freezed ? _value.os : os as String,
+          : flutterVersion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      arch: arch == freezed
+          ? _value.arch
+          : arch // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mode: mode == freezed
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      force: force == freezed
+          ? _value.force
+          : force // ignore: cast_nullable_to_non_nullable
+              as bool,
+      format: format == freezed
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String?,
+      os: os == freezed
+          ? _value.os
+          : os // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$SymbolizationOverridesCopyWith<$Res>
+abstract class _$$_SymbolizationOverridesCopyWith<$Res>
     implements $SymbolizationOverridesCopyWith<$Res> {
-  factory _$SymbolizationOverridesCopyWith(_SymbolizationOverrides value,
-          $Res Function(_SymbolizationOverrides) then) =
-      __$SymbolizationOverridesCopyWithImpl<$Res>;
+  factory _$$_SymbolizationOverridesCopyWith(_$_SymbolizationOverrides value,
+          $Res Function(_$_SymbolizationOverrides) then) =
+      __$$_SymbolizationOverridesCopyWithImpl<$Res>;
   @override
   $Res call(
-      {@nullable String engineHash,
-      @nullable String flutterVersion,
-      @nullable String arch,
-      @nullable String mode,
+      {String? engineHash,
+      String? flutterVersion,
+      String? arch,
+      String? mode,
       bool force,
-      @nullable String format,
-      @nullable String os});
+      String? format,
+      String? os});
 }
 
 /// @nodoc
-class __$SymbolizationOverridesCopyWithImpl<$Res>
+class __$$_SymbolizationOverridesCopyWithImpl<$Res>
     extends _$SymbolizationOverridesCopyWithImpl<$Res>
-    implements _$SymbolizationOverridesCopyWith<$Res> {
-  __$SymbolizationOverridesCopyWithImpl(_SymbolizationOverrides _value,
-      $Res Function(_SymbolizationOverrides) _then)
-      : super(_value, (v) => _then(v as _SymbolizationOverrides));
+    implements _$$_SymbolizationOverridesCopyWith<$Res> {
+  __$$_SymbolizationOverridesCopyWithImpl(_$_SymbolizationOverrides _value,
+      $Res Function(_$_SymbolizationOverrides) _then)
+      : super(_value, (v) => _then(v as _$_SymbolizationOverrides));
 
   @override
-  _SymbolizationOverrides get _value => super._value as _SymbolizationOverrides;
+  _$_SymbolizationOverrides get _value =>
+      super._value as _$_SymbolizationOverrides;
 
   @override
   $Res call({
-    Object engineHash = freezed,
-    Object flutterVersion = freezed,
-    Object arch = freezed,
-    Object mode = freezed,
-    Object force = freezed,
-    Object format = freezed,
-    Object os = freezed,
+    Object? engineHash = freezed,
+    Object? flutterVersion = freezed,
+    Object? arch = freezed,
+    Object? mode = freezed,
+    Object? force = freezed,
+    Object? format = freezed,
+    Object? os = freezed,
   }) {
-    return _then(_SymbolizationOverrides(
-      engineHash:
-          engineHash == freezed ? _value.engineHash : engineHash as String,
+    return _then(_$_SymbolizationOverrides(
+      engineHash: engineHash == freezed
+          ? _value.engineHash
+          : engineHash // ignore: cast_nullable_to_non_nullable
+              as String?,
       flutterVersion: flutterVersion == freezed
           ? _value.flutterVersion
-          : flutterVersion as String,
-      arch: arch == freezed ? _value.arch : arch as String,
-      mode: mode == freezed ? _value.mode : mode as String,
-      force: force == freezed ? _value.force : force as bool,
-      format: format == freezed ? _value.format : format as String,
-      os: os == freezed ? _value.os : os as String,
+          : flutterVersion // ignore: cast_nullable_to_non_nullable
+              as String?,
+      arch: arch == freezed
+          ? _value.arch
+          : arch // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mode: mode == freezed
+          ? _value.mode
+          : mode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      force: force == freezed
+          ? _value.force
+          : force // ignore: cast_nullable_to_non_nullable
+              as bool,
+      format: format == freezed
+          ? _value.format
+          : format // ignore: cast_nullable_to_non_nullable
+              as String?,
+      os: os == freezed
+          ? _value.os
+          : os // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
+
 class _$_SymbolizationOverrides implements _SymbolizationOverrides {
   _$_SymbolizationOverrides(
-      {@nullable this.engineHash,
-      @nullable this.flutterVersion,
-      @nullable this.arch,
-      @nullable this.mode,
+      {this.engineHash,
+      this.flutterVersion,
+      this.arch,
+      this.mode,
       this.force = false,
-      @nullable this.format,
-      @nullable this.os})
-      : assert(force != null);
+      this.format,
+      this.os});
 
   @override
-  @nullable
-  final String engineHash;
+  final String? engineHash;
   @override
-  @nullable
-  final String flutterVersion;
+  final String? flutterVersion;
   @override
-  @nullable
-  final String arch;
+  final String? arch;
   @override
-  @nullable
-  final String mode;
-  @JsonKey(defaultValue: false)
+  final String? mode;
   @override
+  @JsonKey()
   final bool force;
   @override
-  @nullable
-  final String format;
+  final String? format;
   @override
-  @nullable
-  final String os;
+  final String? os;
 
   @override
   String toString() {
@@ -2797,74 +2882,65 @@ class _$_SymbolizationOverrides implements _SymbolizationOverrides {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _SymbolizationOverrides &&
-            (identical(other.engineHash, engineHash) ||
-                const DeepCollectionEquality()
-                    .equals(other.engineHash, engineHash)) &&
-            (identical(other.flutterVersion, flutterVersion) ||
-                const DeepCollectionEquality()
-                    .equals(other.flutterVersion, flutterVersion)) &&
-            (identical(other.arch, arch) ||
-                const DeepCollectionEquality().equals(other.arch, arch)) &&
-            (identical(other.mode, mode) ||
-                const DeepCollectionEquality().equals(other.mode, mode)) &&
-            (identical(other.force, force) ||
-                const DeepCollectionEquality().equals(other.force, force)) &&
-            (identical(other.format, format) ||
-                const DeepCollectionEquality().equals(other.format, format)) &&
-            (identical(other.os, os) ||
-                const DeepCollectionEquality().equals(other.os, os)));
+        (other.runtimeType == runtimeType &&
+            other is _$_SymbolizationOverrides &&
+            const DeepCollectionEquality()
+                .equals(other.engineHash, engineHash) &&
+            const DeepCollectionEquality()
+                .equals(other.flutterVersion, flutterVersion) &&
+            const DeepCollectionEquality().equals(other.arch, arch) &&
+            const DeepCollectionEquality().equals(other.mode, mode) &&
+            const DeepCollectionEquality().equals(other.force, force) &&
+            const DeepCollectionEquality().equals(other.format, format) &&
+            const DeepCollectionEquality().equals(other.os, os));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(engineHash) ^
-      const DeepCollectionEquality().hash(flutterVersion) ^
-      const DeepCollectionEquality().hash(arch) ^
-      const DeepCollectionEquality().hash(mode) ^
-      const DeepCollectionEquality().hash(force) ^
-      const DeepCollectionEquality().hash(format) ^
-      const DeepCollectionEquality().hash(os);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(engineHash),
+      const DeepCollectionEquality().hash(flutterVersion),
+      const DeepCollectionEquality().hash(arch),
+      const DeepCollectionEquality().hash(mode),
+      const DeepCollectionEquality().hash(force),
+      const DeepCollectionEquality().hash(format),
+      const DeepCollectionEquality().hash(os));
 
+  @JsonKey(ignore: true)
   @override
-  _$SymbolizationOverridesCopyWith<_SymbolizationOverrides> get copyWith =>
-      __$SymbolizationOverridesCopyWithImpl<_SymbolizationOverrides>(
+  _$$_SymbolizationOverridesCopyWith<_$_SymbolizationOverrides> get copyWith =>
+      __$$_SymbolizationOverridesCopyWithImpl<_$_SymbolizationOverrides>(
           this, _$identity);
 }
 
 abstract class _SymbolizationOverrides implements SymbolizationOverrides {
   factory _SymbolizationOverrides(
-      {@nullable String engineHash,
-      @nullable String flutterVersion,
-      @nullable String arch,
-      @nullable String mode,
-      bool force,
-      @nullable String format,
-      @nullable String os}) = _$_SymbolizationOverrides;
+      {final String? engineHash,
+      final String? flutterVersion,
+      final String? arch,
+      final String? mode,
+      final bool force,
+      final String? format,
+      final String? os}) = _$_SymbolizationOverrides;
 
   @override
-  @nullable
-  String get engineHash;
+  String? get engineHash;
   @override
-  @nullable
-  String get flutterVersion;
+  String? get flutterVersion;
   @override
-  @nullable
-  String get arch;
+  String? get arch;
   @override
-  @nullable
-  String get mode;
+  String? get mode;
   @override
   bool get force;
   @override
-  @nullable
-  String get format;
+  String? get format;
   @override
-  @nullable
-  String get os;
+  String? get os;
   @override
-  _$SymbolizationOverridesCopyWith<_SymbolizationOverrides> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_SymbolizationOverridesCopyWith<_$_SymbolizationOverrides> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) {
@@ -2872,37 +2948,15 @@ ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) {
 }
 
 /// @nodoc
-class _$ServerConfigTearOff {
-  const _$ServerConfigTearOff();
-
-// ignore: unused_element
-  _ServerConfig call(
-      {String githubToken, String sendgridToken, String failureEmail}) {
-    return _ServerConfig(
-      githubToken: githubToken,
-      sendgridToken: sendgridToken,
-      failureEmail: failureEmail,
-    );
-  }
-
-// ignore: unused_element
-  ServerConfig fromJson(Map<String, Object> json) {
-    return ServerConfig.fromJson(json);
-  }
-}
-
-/// @nodoc
-// ignore: unused_element
-const $ServerConfig = _$ServerConfigTearOff();
-
-/// @nodoc
 mixin _$ServerConfig {
-  String get githubToken;
-  String get sendgridToken;
-  String get failureEmail;
+  String get githubToken => throw _privateConstructorUsedError;
+  String get sendgridToken => throw _privateConstructorUsedError;
+  String get failureEmail => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ServerConfigCopyWith<ServerConfig> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ServerConfigCopyWith<ServerConfig> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2923,70 +2977,81 @@ class _$ServerConfigCopyWithImpl<$Res> implements $ServerConfigCopyWith<$Res> {
 
   @override
   $Res call({
-    Object githubToken = freezed,
-    Object sendgridToken = freezed,
-    Object failureEmail = freezed,
+    Object? githubToken = freezed,
+    Object? sendgridToken = freezed,
+    Object? failureEmail = freezed,
   }) {
     return _then(_value.copyWith(
-      githubToken:
-          githubToken == freezed ? _value.githubToken : githubToken as String,
+      githubToken: githubToken == freezed
+          ? _value.githubToken
+          : githubToken // ignore: cast_nullable_to_non_nullable
+              as String,
       sendgridToken: sendgridToken == freezed
           ? _value.sendgridToken
-          : sendgridToken as String,
+          : sendgridToken // ignore: cast_nullable_to_non_nullable
+              as String,
       failureEmail: failureEmail == freezed
           ? _value.failureEmail
-          : failureEmail as String,
+          : failureEmail // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ServerConfigCopyWith<$Res>
+abstract class _$$_ServerConfigCopyWith<$Res>
     implements $ServerConfigCopyWith<$Res> {
-  factory _$ServerConfigCopyWith(
-          _ServerConfig value, $Res Function(_ServerConfig) then) =
-      __$ServerConfigCopyWithImpl<$Res>;
+  factory _$$_ServerConfigCopyWith(
+          _$_ServerConfig value, $Res Function(_$_ServerConfig) then) =
+      __$$_ServerConfigCopyWithImpl<$Res>;
   @override
   $Res call({String githubToken, String sendgridToken, String failureEmail});
 }
 
 /// @nodoc
-class __$ServerConfigCopyWithImpl<$Res> extends _$ServerConfigCopyWithImpl<$Res>
-    implements _$ServerConfigCopyWith<$Res> {
-  __$ServerConfigCopyWithImpl(
-      _ServerConfig _value, $Res Function(_ServerConfig) _then)
-      : super(_value, (v) => _then(v as _ServerConfig));
+class __$$_ServerConfigCopyWithImpl<$Res>
+    extends _$ServerConfigCopyWithImpl<$Res>
+    implements _$$_ServerConfigCopyWith<$Res> {
+  __$$_ServerConfigCopyWithImpl(
+      _$_ServerConfig _value, $Res Function(_$_ServerConfig) _then)
+      : super(_value, (v) => _then(v as _$_ServerConfig));
 
   @override
-  _ServerConfig get _value => super._value as _ServerConfig;
+  _$_ServerConfig get _value => super._value as _$_ServerConfig;
 
   @override
   $Res call({
-    Object githubToken = freezed,
-    Object sendgridToken = freezed,
-    Object failureEmail = freezed,
+    Object? githubToken = freezed,
+    Object? sendgridToken = freezed,
+    Object? failureEmail = freezed,
   }) {
-    return _then(_ServerConfig(
-      githubToken:
-          githubToken == freezed ? _value.githubToken : githubToken as String,
+    return _then(_$_ServerConfig(
+      githubToken: githubToken == freezed
+          ? _value.githubToken
+          : githubToken // ignore: cast_nullable_to_non_nullable
+              as String,
       sendgridToken: sendgridToken == freezed
           ? _value.sendgridToken
-          : sendgridToken as String,
+          : sendgridToken // ignore: cast_nullable_to_non_nullable
+              as String,
       failureEmail: failureEmail == freezed
           ? _value.failureEmail
-          : failureEmail as String,
+          : failureEmail // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ServerConfig implements _ServerConfig {
-  _$_ServerConfig({this.githubToken, this.sendgridToken, this.failureEmail});
+  _$_ServerConfig(
+      {required this.githubToken,
+      required this.sendgridToken,
+      required this.failureEmail});
 
   factory _$_ServerConfig.fromJson(Map<String, dynamic> json) =>
-      _$_$_ServerConfigFromJson(json);
+      _$$_ServerConfigFromJson(json);
 
   @override
   final String githubToken;
@@ -3003,40 +3068,42 @@ class _$_ServerConfig implements _ServerConfig {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _ServerConfig &&
-            (identical(other.githubToken, githubToken) ||
-                const DeepCollectionEquality()
-                    .equals(other.githubToken, githubToken)) &&
-            (identical(other.sendgridToken, sendgridToken) ||
-                const DeepCollectionEquality()
-                    .equals(other.sendgridToken, sendgridToken)) &&
-            (identical(other.failureEmail, failureEmail) ||
-                const DeepCollectionEquality()
-                    .equals(other.failureEmail, failureEmail)));
+        (other.runtimeType == runtimeType &&
+            other is _$_ServerConfig &&
+            const DeepCollectionEquality()
+                .equals(other.githubToken, githubToken) &&
+            const DeepCollectionEquality()
+                .equals(other.sendgridToken, sendgridToken) &&
+            const DeepCollectionEquality()
+                .equals(other.failureEmail, failureEmail));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(githubToken) ^
-      const DeepCollectionEquality().hash(sendgridToken) ^
-      const DeepCollectionEquality().hash(failureEmail);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(githubToken),
+      const DeepCollectionEquality().hash(sendgridToken),
+      const DeepCollectionEquality().hash(failureEmail));
 
+  @JsonKey(ignore: true)
   @override
-  _$ServerConfigCopyWith<_ServerConfig> get copyWith =>
-      __$ServerConfigCopyWithImpl<_ServerConfig>(this, _$identity);
+  _$$_ServerConfigCopyWith<_$_ServerConfig> get copyWith =>
+      __$$_ServerConfigCopyWithImpl<_$_ServerConfig>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_ServerConfigToJson(this);
+    return _$$_ServerConfigToJson(
+      this,
+    );
   }
 }
 
 abstract class _ServerConfig implements ServerConfig {
   factory _ServerConfig(
-      {String githubToken,
-      String sendgridToken,
-      String failureEmail}) = _$_ServerConfig;
+      {required final String githubToken,
+      required final String sendgridToken,
+      required final String failureEmail}) = _$_ServerConfig;
 
   factory _ServerConfig.fromJson(Map<String, dynamic> json) =
       _$_ServerConfig.fromJson;
@@ -3048,5 +3115,7 @@ abstract class _ServerConfig implements ServerConfig {
   @override
   String get failureEmail;
   @override
-  _$ServerConfigCopyWith<_ServerConfig> get copyWith;
+  @JsonKey(ignore: true)
+  _$$_ServerConfigCopyWith<_$_ServerConfig> get copyWith =>
+      throw _privateConstructorUsedError;
 }
