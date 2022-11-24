@@ -6,9 +6,9 @@
 // with emails and names removed.
 String revertReviewGerritLog = r'''
 {
-  "id": "sdk~master~Ie212fae88bc1977e34e4d791c644b77783a8deb1",
+  "id": "sdk~main~Ie212fae88bc1977e34e4d791c644b77783a8deb1",
   "project": "sdk",
-  "branch": "master",
+  "branch": "main",
   "hashtags": [],
   "change_id": "Ie212fae88bc1977e34e4d791c644b77783a8deb1",
   "subject": "Revert \"[SDK] Adds IndirectGoto implementation of sync-yield.\"",

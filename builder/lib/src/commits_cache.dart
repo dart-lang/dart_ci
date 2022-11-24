@@ -69,7 +69,7 @@ class CommitsCache {
     final lastHash = lastCommit.hash;
     final lastIndex = lastCommit.index;
 
-    final branch = 'master';
+    final branch = 'main';
     final logUrl = 'https://dart.googlesource.com/sdk/+log/';
     final range = '$lastHash..$branch';
     final parameters = ['format=JSON', 'topo-order', 'first-parent', 'n=1000'];
