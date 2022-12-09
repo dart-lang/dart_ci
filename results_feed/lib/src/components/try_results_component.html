@@ -7,6 +7,11 @@
   <h2 *ngIf="hasTruncatedResults" style="color:red">
     Tryjob results are truncated because there are more than
     1000 new failures or passes.</h2>
+  <h2 *ngIf="flakyConfigurations.isNotEmpty" style="color:red">
+    Try builds are failing because the following configurations have
+    more than 10 new, previously unseen, flaky failures:
+    {{flakyConfigurations.join(" ")}}
+  </h2>
   <h2 *ngIf="noChanges">No changed test results</h2>
   <results-panel *ngIf="!approving"
       [changes]="changeGroup.changes"

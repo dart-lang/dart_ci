@@ -241,8 +241,13 @@ class Change implements Comparable {
   bool get skipped => result == skippedResult;
   bool get success => result == expected;
   bool get failed => !flaky && !skipped && !success;
-  String get resultStyle =>
-      flaky ? 'flaky' : skipped ? 'skipped' : success ? 'success' : 'failure';
+  String get resultStyle => flaky
+      ? 'flaky'
+      : skipped
+          ? 'skipped'
+          : success
+              ? 'success'
+              : 'failure';
 }
 
 class Changes with IterableMixin<List<List<Change>>> {
@@ -349,6 +354,25 @@ class Changes with IterableMixin<List<List<Change>>> {
     }
     return applyFilter<Change>((c, f) => c, list, filter,
         (change, filter) => filter.showUnapprovedOnly && change.approved);
+  }
+
+  List<String> listFlakyConfigurations({int threshold = 10}) {
+    final flakyConfigurations = <String, int>{};
+    for (final configurationGroup in changes) {
+      for (final resultGroup in configurationGroup) {
+        final change = resultGroup.first;
+        if (change.flaky) {
+          for (final config in change.configurations.configurations) {
+            flakyConfigurations[config] =
+                (flakyConfigurations[config] ?? 0) + resultGroup.length;
+          }
+        }
+      }
+    }
+    return [
+      for (final entry in flakyConfigurations.entries)
+        if (entry.value >= threshold) entry.key
+    ];
   }
 }
 

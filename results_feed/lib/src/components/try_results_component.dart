@@ -60,6 +60,7 @@ class TryResultsComponent implements OnActivate {
   bool updating = false;
   bool updatePending = false;
   bool _approving = false;
+  List<String> flakyConfigurations = [];
   final Set<Change> selected = {};
   String commentText;
 
@@ -149,6 +150,8 @@ class TryResultsComponent implements OnActivate {
       cachedPatchset = patchset;
       changeGroup =
           ChangeGroup(null, {}, comments, changes, LoadedResultsStatus());
+      flakyConfigurations =
+          changeGroup.changes.listFlakyConfigurations(threshold: 10);
     }
   }
 
