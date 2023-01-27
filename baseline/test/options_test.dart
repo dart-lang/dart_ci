@@ -31,6 +31,11 @@ main() {
     expect(options.configs, {'c': 'd', 'e': 'f'});
   });
 
+  test('suites', () {
+    var options = BaselineOptions(['-ss1,s2', ..._builders]);
+    expect(options.suites, {'s1', 's2'});
+  });
+
   test('ignore-unmapped', () {
     var options = BaselineOptions(['-u', '-mc:d,e:f', ..._builders]);
     expect(options.ignoreUnmapped, true);

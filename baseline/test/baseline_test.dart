@@ -80,10 +80,10 @@ main() {
 
   test('baseline ignored config mapping', () async {
     final newBuilderStableResults = [
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}'
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}'
     ];
     final newBuilderResults = [
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}'
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}'
     ];
     await baselineTest([
       '--builders=builder,builder2',
@@ -116,16 +116,16 @@ main() {
 
   test('baseline', () async {
     final newBuilderStableResults = [
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config3","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config4","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config1","suite":"suite1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config3","suite":"suite1","test_name":"test1","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config4","suite":"suite2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
     ];
     final newBuilderResults = [
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config3","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
-      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config4","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config1","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config3","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config4","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
     ];
 
     await baselineTest([
@@ -155,6 +155,40 @@ main() {
       ],
       'configuration/stable/new-config4/0/results.json': [
         newBuilderStableResults[3]
+      ],
+      ...testData,
+    });
+  });
+
+  test('baseline with suite filter', () async {
+    final newBuilderStableResults = [
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder-stable","configuration":"new-config4","suite":"suite2","test_name":"test2","result":"FAIL","flaky":false,"previous_flaky":false}',
+    ];
+    final newBuilderResults = [
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config2","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"new-builder","configuration":"new-config4","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+    ];
+    await baselineTest([
+      '--builders=builder,builder2',
+      '--target=new-builder',
+      '--channel=main,stable',
+      '--config-mapping=config1:new-config1,config2:new-config2,'
+          'config3:new-config3,config4:new-config4',
+      '--suites=suite2',
+    ], {
+      'builders/new-builder-stable/0/results.json':
+          unorderedEquals(newBuilderStableResults),
+      'builders/new-builder-stable/latest': ['0'],
+      'builders/new-builder/0/results.json': unorderedEquals(newBuilderResults),
+      'builders/new-builder/latest': ['0'],
+      'configuration/main/new-config2/0/results.json': [newBuilderResults[0]],
+      'configuration/stable/new-config2/0/results.json': [
+        newBuilderStableResults[0]
+      ],
+      'configuration/main/new-config4/0/results.json': [newBuilderResults[1]],
+      'configuration/stable/new-config4/0/results.json': [
+        newBuilderStableResults[1]
       ],
       ...testData,
     });

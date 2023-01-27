@@ -17,12 +17,20 @@ Future<void> baseline(BaselineOptions options,
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
-        baselineBuilder(options.builders, channel, options.target,
-            options.configs, options.dryRun, options.ignoreUnmapped, resultBase)
+        baselineBuilder(
+            options.builders,
+            channel,
+            options.suites,
+            options.target,
+            options.configs,
+            options.dryRun,
+            options.ignoreUnmapped,
+            resultBase)
       else
         baselineBuilder(
             options.builders.map((b) => '$b-$channel').toList(),
             channel,
+            options.suites,
             '${options.target}-$channel',
             options.configs,
             options.dryRun,
@@ -34,6 +42,7 @@ Future<void> baseline(BaselineOptions options,
 Future<void> baselineBuilder(
     List<String> builders,
     String channel,
+    Set<String> suites,
     String target,
     Map<String, String> configs,
     bool dryRun,
@@ -55,6 +64,7 @@ Future<void> baselineBuilder(
         throw Exception(
             "Missing configuration mapping for ${json['configuration']}");
       }
+      if (suites.isNotEmpty && !suites.contains(json['suite'])) continue;
       json['configuration'] = configuration;
       json['build_number'] = '0';
       json['previous_build_number'] = '0';
@@ -99,8 +109,10 @@ Future<String> run(String command, List<String> arguments,
     return '';
   }
   var process = await Process.start(command, arguments);
+  process.stderr.transform(utf8.decoder).forEach(print);
   if (stdin != null) {
     process.stdin.write(stdin);
+    await process.stdin.flush();
     process.stdin.close();
   }
   var stdout = process.stdout.transform(utf8.decoder).join();

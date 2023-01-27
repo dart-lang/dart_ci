@@ -12,6 +12,7 @@ class BaselineOptions {
   late final List<String> builders;
   late final Map<String, String> configs;
   late final List<String> channels;
+  late final Set<String> suites;
   late final String target;
 
   BaselineOptions(List<String> arguments) {
@@ -28,6 +29,8 @@ class BaselineOptions {
     parser.addMultiOption('builders',
         abbr: 'b',
         help: 'a comma separated list of builders to read result data from');
+    parser.addMultiOption('suites',
+        abbr: 's', help: 'a comma separated list of test suites to include');
     parser.addOption('target',
         abbr: 't', help: 'a the name of the builder to baseline');
     parser.addFlag('dry-run',
@@ -40,6 +43,7 @@ class BaselineOptions {
         defaultsTo: false,
         help: 'ignore tests in unmapped configurations',
         negatable: false);
+
     parser.addFlag('help',
         abbr: 'h', negatable: false, help: 'prints this message');
     var parsed = parser.parse(arguments);
@@ -58,6 +62,7 @@ class BaselineOptions {
     ignoreUnmapped = parsed['ignore-unmapped'];
     dryRun = parsed['dry-run'];
     channels = parsed['channel'];
+    suites = Set.unmodifiable(parsed['suites']);
     target = parsed['target'];
   }
 }
