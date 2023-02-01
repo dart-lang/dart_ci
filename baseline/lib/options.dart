@@ -7,15 +7,18 @@ import 'dart:io';
 import 'package:args/args.dart';
 
 class BaselineOptions {
-  late final bool ignoreUnmapped;
-  late final bool dryRun;
-  late final List<String> builders;
-  late final Map<String, String> configs;
-  late final List<String> channels;
-  late final Set<String> suites;
-  late final String target;
+  final List<String> builders;
+  final Map<String, String> configs;
+  final bool dryRun;
+  final List<String> channels;
+  final ConfigurationMapping mapping;
+  final Set<String> suites;
+  final String target;
 
-  BaselineOptions(List<String> arguments) {
+  BaselineOptions(this.builders, this.configs, this.dryRun, this.channels,
+      this.mapping, this.suites, this.target);
+
+  factory BaselineOptions.parse(List<String> arguments) {
     var parser = ArgParser();
     parser.addMultiOption('channel',
         abbr: 'c',
@@ -24,6 +27,7 @@ class BaselineOptions {
         help: 'a comma separated list of channels');
     parser.addMultiOption('config-mapping',
         abbr: 'm',
+        defaultsTo: ['*'],
         help: 'a comma separated list of configuration mappings in the form:'
             '<old1>:<new1>,<old2>:<new2>');
     parser.addMultiOption('builders',
@@ -43,7 +47,6 @@ class BaselineOptions {
         defaultsTo: false,
         help: 'ignore tests in unmapped configurations',
         negatable: false);
-
     parser.addFlag('help',
         abbr: 'h', negatable: false, help: 'prints this message');
     var parsed = parser.parse(arguments);
@@ -53,16 +56,49 @@ class BaselineOptions {
       print(parser.usage);
       exit(64);
     }
-    builders = (parsed['builders'] as List<String>);
-    configs = {
-      for (var v in ((parsed['config-mapping'] as Iterable<String>)
-          .map((c) => c.split(':'))))
-        v[0]: v[1]
-    };
-    ignoreUnmapped = parsed['ignore-unmapped'];
-    dryRun = parsed['dry-run'];
-    channels = parsed['channel'];
-    suites = Set.unmodifiable(parsed['suites']);
-    target = parsed['target'];
+    var builders = (parsed['builders'] as List<String>);
+    final target = parsed['target'];
+    if (builders.isEmpty) {
+      builders = [target];
+    }
+    var mapping = parsed['ignore-unmapped']
+        ? ConfigurationMapping.relaxed
+        : ConfigurationMapping.strict;
+    var configs = const <String, String>{};
+    final configMapping = parsed['config-mapping'] as List<String>;
+    if (configMapping.length == 1 && configMapping.first == '*') {
+      mapping = ConfigurationMapping.none;
+    } else {
+      configs = {
+        for (var v in configMapping.map((c) => c.split(':'))) v[0]: v[1]
+      };
+    }
+    final dryRun = parsed['dry-run'];
+    final channels = parsed['channel'];
+    final suites = Set.unmodifiable(parsed['suites'] as List<String>);
+
+    return BaselineOptions(
+        builders, configs, dryRun, channels, mapping, suites, target);
   }
+}
+
+String? _strict(String configuration, Map<String, String> configs) =>
+    configs[configuration] ??
+    (throw Exception("Missing configuration mapping for $configuration"));
+String? _relaxed(String configuration, Map<String, String> configs) =>
+    configs[configuration];
+String? _none(String configuration, Map<String, String> configs) =>
+    configuration;
+
+enum ConfigurationMapping {
+  none(_none),
+  strict(_strict),
+  relaxed(_relaxed);
+
+  const ConfigurationMapping(this.mapping);
+  final String? Function(String configuration, Map<String, String> configs)
+      mapping;
+
+  String? call(String configuration, Map<String, String> configs) =>
+      mapping(configuration, configs);
 }

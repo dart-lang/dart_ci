@@ -17,6 +17,8 @@ Future<void> baseline(BaselineOptions options,
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
+        // baseline a new builder on main
+        // builder,builder2 -> new-builder
         baselineBuilder(
             options.builders,
             channel,
@@ -24,9 +26,23 @@ Future<void> baseline(BaselineOptions options,
             options.target,
             options.configs,
             options.dryRun,
-            options.ignoreUnmapped,
+            options.mapping,
+            resultBase)
+      else if (options.builders.contains(options.target))
+        // baseline a builder on a channel with main builder data
+        // builder,builder2 -> builder-dev
+        baselineBuilder(
+            options.builders,
+            channel,
+            options.suites,
+            '${options.target}-$channel',
+            options.configs,
+            options.dryRun,
+            options.mapping,
             resultBase)
       else
+        // baseline a builder on a channel with channel builder data
+        // builder-dev,builder2-dev -> new-builder-dev
         baselineBuilder(
             options.builders.map((b) => '$b-$channel').toList(),
             channel,
@@ -34,7 +50,7 @@ Future<void> baseline(BaselineOptions options,
             '${options.target}-$channel',
             options.configs,
             options.dryRun,
-            options.ignoreUnmapped,
+            options.mapping,
             resultBase)
   ]);
 }
@@ -46,7 +62,7 @@ Future<void> baselineBuilder(
     String target,
     Map<String, String> configs,
     bool dryRun,
-    bool ignoreUnmapped,
+    ConfigurationMapping mapping,
     String resultBase) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
     var latest = await read('$resultBase/builders/$builder/latest');
@@ -55,14 +71,12 @@ Future<void> baselineBuilder(
   var modifiedResults = StringBuffer();
   var modifiedResultsPerConfig = <String, StringBuffer>{};
   await for (var results in resultsStream) {
-    for (var json in LineSplitter.split(results).map(jsonDecode)) {
-      var configuration = configs[json['configuration']];
+    for (var json in LineSplitter.split(results)
+        .map(jsonDecode)
+        .cast<Map<String, dynamic>>()) {
+      var configuration = mapping(json['configuration'], configs);
       if (configuration == null) {
-        if (ignoreUnmapped) {
-          continue;
-        }
-        throw Exception(
-            "Missing configuration mapping for ${json['configuration']}");
+        continue;
       }
       if (suites.isNotEmpty && !suites.contains(json['suite'])) continue;
       json['configuration'] = configuration;

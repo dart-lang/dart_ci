@@ -7,5 +7,5 @@ import 'package:baseline/baseline.dart';
 import 'package:baseline/options.dart';
 
 void main(List<String> arguments) async {
-  await baseline(BaselineOptions(arguments));
+  await baseline(BaselineOptions.parse(arguments));
 }

@@ -56,7 +56,7 @@ main() {
   test('baseline missing config mapping throws', () {
     expect(
         baseline(
-            BaselineOptions([
+            BaselineOptions.parse([
               '--builders=builder,builder2',
               '--target=new-builder',
               '--channel=main,stable',
@@ -100,6 +100,50 @@ main() {
       'configuration/stable/new-config2/0/results.json':
           newBuilderStableResults,
       ...testData,
+    });
+  });
+
+  test('baseline default config mapping', () async {
+    final newBuilderDevResults = [
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-dev","configuration":"config1","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-dev","configuration":"config2","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-dev","configuration":"config3","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-dev","configuration":"config4","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+    ];
+    final newBuilderStableResults = [
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-stable","configuration":"config1","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-stable","configuration":"config2","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-stable","configuration":"config3","suite":"suite1","test_name":"test1","result":"FAIL","flaky":false,"previous_flaky":false}',
+      '{"build_number":"0","previous_build_number":"0","builder_name":"builder-stable","configuration":"config4","suite":"suite2","test_name":"test2","result":"PASS","flaky":false,"previous_flaky":false}',
+    ];
+    await baselineTest([
+      '--builders=builder,builder2',
+      '--target=builder',
+      '--channel=dev,stable',
+    ], {
+      ...testData,
+      'builders/builder-stable/0/results.json':
+          unorderedEquals(newBuilderStableResults),
+      'builders/builder-stable/latest': ['0'],
+      'configuration/stable/config1/0/results.json': [
+        newBuilderStableResults[0]
+      ],
+      'configuration/stable/config2/0/results.json': [
+        newBuilderStableResults[1]
+      ],
+      'configuration/stable/config3/0/results.json': [
+        newBuilderStableResults[2]
+      ],
+      'configuration/stable/config4/0/results.json': [
+        newBuilderStableResults[3]
+      ],
+      'builders/builder-dev/0/results.json':
+          unorderedEquals(newBuilderDevResults),
+      'builders/builder-dev/latest': ['0'],
+      'configuration/dev/config1/0/results.json': [newBuilderDevResults[0]],
+      'configuration/dev/config2/0/results.json': [newBuilderDevResults[1]],
+      'configuration/dev/config3/0/results.json': [newBuilderDevResults[2]],
+      'configuration/dev/config4/0/results.json': [newBuilderDevResults[3]],
     });
   });
 
@@ -200,7 +244,7 @@ Future<void> baselineTest(
   var temp = await Directory.systemTemp.createTemp();
   try {
     await copyPath('test/data', temp.path);
-    await baseline(BaselineOptions(arguments), temp.path);
+    await baseline(BaselineOptions.parse(arguments), temp.path);
     var files = temp
         .listSync(recursive: true)
         .whereType<File>()
