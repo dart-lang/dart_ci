@@ -8,7 +8,7 @@ import 'package:args/args.dart';
 
 class BaselineOptions {
   final List<String> builders;
-  final Map<String, String> configs;
+  final Map<String, List<String>> configs;
   final bool dryRun;
   final List<String> channels;
   final ConfigurationMapping mapping;
@@ -64,14 +64,15 @@ class BaselineOptions {
     var mapping = parsed['ignore-unmapped']
         ? ConfigurationMapping.relaxed
         : ConfigurationMapping.strict;
-    var configs = const <String, String>{};
+    var configs = const <String, List<String>>{};
     final configMapping = parsed['config-mapping'] as List<String>;
     if (configMapping.length == 1 && configMapping.first == '*') {
       mapping = ConfigurationMapping.none;
     } else {
-      configs = {
-        for (var v in configMapping.map((c) => c.split(':'))) v[0]: v[1]
-      };
+      configs = {};
+      for (var mapping in configMapping.map((c) => c.split(':'))) {
+        configs.putIfAbsent(mapping.first, () => []).add(mapping.last);
+      }
     }
     final dryRun = parsed['dry-run'];
     final channels = parsed['channel'];
@@ -82,13 +83,15 @@ class BaselineOptions {
   }
 }
 
-String? _strict(String configuration, Map<String, String> configs) =>
+List<String>? _strict(
+        String configuration, Map<String, List<String>> configs) =>
     configs[configuration] ??
     (throw Exception("Missing configuration mapping for $configuration"));
-String? _relaxed(String configuration, Map<String, String> configs) =>
+List<String>? _relaxed(
+        String configuration, Map<String, List<String>> configs) =>
     configs[configuration];
-String? _none(String configuration, Map<String, String> configs) =>
-    configuration;
+List<String>? _none(String configuration, Map<String, List<String>> configs) =>
+    [configuration];
 
 enum ConfigurationMapping {
   none(_none),
@@ -96,9 +99,9 @@ enum ConfigurationMapping {
   relaxed(_relaxed);
 
   const ConfigurationMapping(this.mapping);
-  final String? Function(String configuration, Map<String, String> configs)
-      mapping;
+  final List<String>? Function(
+      String configuration, Map<String, List<String>> configs) mapping;
 
-  String? call(String configuration, Map<String, String> configs) =>
+  List<String>? call(String configuration, Map<String, List<String>> configs) =>
       mapping(configuration, configs);
 }

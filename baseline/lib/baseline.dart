@@ -60,7 +60,7 @@ Future<void> baselineBuilder(
     String channel,
     Set<String> suites,
     String target,
-    Map<String, String> configs,
+    Map<String, List<String>> configs,
     bool dryRun,
     ConfigurationMapping mapping,
     String resultBase) async {
@@ -74,23 +74,25 @@ Future<void> baselineBuilder(
     for (var json in LineSplitter.split(results)
         .map(jsonDecode)
         .cast<Map<String, dynamic>>()) {
-      var configuration = mapping(json['configuration'], configs);
-      if (configuration == null) {
+      var configurations = mapping(json['configuration'], configs);
+      if (configurations == null) {
         continue;
       }
-      if (suites.isNotEmpty && !suites.contains(json['suite'])) continue;
-      json['configuration'] = configuration;
-      json['build_number'] = '0';
-      json['previous_build_number'] = '0';
-      json['builder_name'] = target;
-      json['flaky'] = false;
-      json['previous_flaky'] = false;
+      for (var configuration in configurations) {
+        if (suites.isNotEmpty && !suites.contains(json['suite'])) continue;
+        json['configuration'] = configuration;
+        json['build_number'] = '0';
+        json['previous_build_number'] = '0';
+        json['builder_name'] = target;
+        json['flaky'] = false;
+        json['previous_flaky'] = false;
 
-      var encoded = jsonEncode(json);
-      modifiedResults.writeln(encoded);
-      modifiedResultsPerConfig
-          .putIfAbsent(configuration, () => StringBuffer())
-          .writeln(encoded);
+        var encoded = jsonEncode(json);
+        modifiedResults.writeln(encoded);
+        modifiedResultsPerConfig
+            .putIfAbsent(configuration, () => StringBuffer())
+            .writeln(encoded);
+      }
       if (dryRun) break;
     }
   }

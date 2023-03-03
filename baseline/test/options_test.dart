@@ -33,7 +33,18 @@ main() {
 
   test('config-mapping', () {
     var options = BaselineOptions.parse(['-mc:d,e:f', ..._builders]);
-    expect(options.configs, {'c': 'd', 'e': 'f'});
+    expect(options.configs, {
+      'c': ['d'],
+      'e': ['f']
+    });
+    expect(options.mapping, ConfigurationMapping.strict);
+  });
+
+  test('config-mapping-multiple', () {
+    var options = BaselineOptions.parse(['-ma:b,a:c', ..._builders]);
+    expect(options.configs, {
+      'a': ['b', 'c']
+    });
     expect(options.mapping, ConfigurationMapping.strict);
   });
 
@@ -64,18 +75,41 @@ main() {
   });
 
   test('mapping: strict', () {
-    expect(ConfigurationMapping.strict('foo', {'foo': 'bar'}), 'bar');
-    expect(() => ConfigurationMapping.strict('oof', {'foo': 'bar'}),
+    expect(
+        ConfigurationMapping.strict('foo', {
+          'foo': ['bar']
+        }),
+        'bar');
+    expect(
+        () => ConfigurationMapping.strict('oof', {
+              'foo': ['bar']
+            }),
         throwsException);
   });
 
   test('mapping: relaxed', () {
-    expect(ConfigurationMapping.relaxed('foo', {'foo': 'bar'}), 'bar');
-    expect(ConfigurationMapping.relaxed('oof', {'foo': 'bar'}), null);
+    expect(
+        ConfigurationMapping.relaxed('foo', {
+          'foo': ['bar']
+        }),
+        'bar');
+    expect(
+        ConfigurationMapping.relaxed('oof', {
+          'foo': ['bar']
+        }),
+        null);
   });
 
   test('mapping: none', () {
-    expect(ConfigurationMapping.none('foo', {'foo': 'bar'}), 'foo');
-    expect(ConfigurationMapping.none('oof', {'foo': 'bar'}), 'oof');
+    expect(
+        ConfigurationMapping.none('foo', {
+          'foo': ['bar']
+        }),
+        'foo');
+    expect(
+        ConfigurationMapping.none('oof', {
+          'foo': ['bar']
+        }),
+        'oof');
   });
 }
