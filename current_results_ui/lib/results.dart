@@ -190,10 +190,9 @@ class ExpandedResultInfo extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Flexible(
-                  child: Text(
+                  child: SelectableText(
                     result.configuration,
                     maxLines: 1,
-                    overflow: TextOverflow.clip,
                   ),
                 ),
                 if (change.kind == 'fail')
