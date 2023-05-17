@@ -262,11 +262,24 @@ class FirestoreService {
   }
 
   Future<Document> storeResult(Map<String, dynamic> result) async {
-    final document = Document()..fields = taggedMap(result);
-    final createdDocument = await firestore.projects.databases.documents
-        .createDocument(document, documents, 'results');
-    documentsWritten++;
-    return createdDocument;
+    for (var retries = 0; true; retries++) {
+      try {
+        final document = Document()..fields = taggedMap(result);
+        final createdDocument = await firestore.projects.databases.documents
+            .createDocument(document, documents, 'results');
+        documentsWritten++;
+        return createdDocument;
+      } catch (e) {
+        log('Failed creating document at path $documents/results.');
+        log('Retrying in 1000 ms.');
+        log('Document contents: ${jsonEncode(result)}\n');
+        log('$e');
+        if (retries > 2) {
+          rethrow;
+        }
+        await Future.delayed(Duration(milliseconds: 1000));
+      }
+    }
   }
 
   Future<bool> updateResult(
@@ -314,8 +327,8 @@ class FirestoreService {
     return approved;
   }
 
-  Future retryCommit(Future<Write> Function() request) async {
-    while (true) {
+  Future<void> retryCommit(Future<Write> Function() request) async {
+    for (var retries = 0; true; retries++) {
       final write = await request();
       try {
         // Use commit instead of write to check for the precondition on the
@@ -325,7 +338,10 @@ class FirestoreService {
         await firestore.projects.databases.documents.commit(request, database);
         return;
       } catch (e) {
-        log('Error while writing data: $e, retrying...');
+        if (retries > 10) {
+          rethrow;
+        }
+        log('Error while writing data: $e, retrying.');
         sleep(Duration(milliseconds: 100));
       }
     }
