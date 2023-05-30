@@ -66,7 +66,7 @@ class ExpandableResult extends StatefulWidget {
       : super(key: Key(name));
 
   @override
-  _ExpandableResultState createState() => _ExpandableResultState();
+  State<ExpandableResult> createState() => _ExpandableResultState();
 }
 
 class _ExpandableResultState extends State<ExpandableResult> {
@@ -129,11 +129,10 @@ class _ExpandableResultState extends State<ExpandableResult> {
                   child: IconButton(
                     icon: const Icon(Icons.history),
                     splashRadius: 20,
-                    onPressed: () => url_launcher.launch(
+                    onPressed: () => url_launcher.launchUrl(
                       Uri(
-                              path: '/',
-                              fragment: 'showLatestFailures=false&test=$name')
-                          .toString(),
+                          path: '/',
+                          fragment: 'showLatestFailures=false&test=$name'),
                     ),
                   ),
                 ),
@@ -147,7 +146,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
           child: AnimatedCrossFade(
             duration: const Duration(milliseconds: 200),
             alignment: Alignment.topLeft,
-            firstChild: Row(),
+            firstChild: const Row(),
             secondChild:
                 ExpandedResultInfo(changeGroups: changeGroups, name: name),
             crossFadeState:
@@ -242,16 +241,16 @@ Widget _link(String text, Function onClick) {
 
 Function _openTestSource(String revision, String name) {
   return () {
-    url_launcher.launch(
-      'https://dart-ci.appspot.com/test/$revision/$name',
+    url_launcher.launchUrl(
+      Uri.https('dart-ci.appspot.com', '/test/$revision/$name'),
     );
   };
 }
 
 Function _openTestLog(String configuration, String name) {
   return () {
-    url_launcher.launch(
-      'https://dart-ci.appspot.com/log/any/$configuration/latest/$name',
+    url_launcher.launchUrl(
+      Uri.https('dart-ci.appspot.com', '/log/any/$configuration/latest/$name'),
     );
   };
 }

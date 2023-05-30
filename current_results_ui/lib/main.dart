@@ -46,7 +46,7 @@ class CurrentResultsApp extends StatelessWidget {
           builder: (context) {
             Provider.of<QueryResults>(context, listen: false).fetch(filter);
             // Not allowed to set state of tab controller in this builder.
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               Provider.of<TabController>(context, listen: false).index = tab;
             });
             return const CurrentResultsScaffold();
@@ -77,7 +77,7 @@ class Providers extends StatelessWidget {
           // ChangeNotifierProvider.value in a Builder is needed to make
           // the TabController available for widgets to observe.
           builder: (context) => ChangeNotifierProvider<TabController>.value(
-            value: DefaultTabController.of(context)!,
+            value: DefaultTabController.of(context),
             child: const CurrentResultsApp(),
           ),
         ),
@@ -109,8 +109,8 @@ class CurrentResultsScaffold extends StatelessWidget {
                 icon: const Icon(Icons.bug_report),
                 splashRadius: 20,
                 onPressed: () {
-                  url_launcher
-                      .launch('https://github.com/dart-lang/dart_ci/issues');
+                  url_launcher.launchUrl(
+                      Uri.https('github.com', '/dart-lang/dart_ci/issues'));
                 },
               ),
             ),
@@ -161,11 +161,11 @@ class ApiPortalLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       child: const Text('API portal'),
-      onPressed: () => url_launcher.launch(
-        'https://endpointsportal.dart-ci.cloud.goog'
+      onPressed: () => url_launcher.launchUrl(Uri.https(
+        'endpointsportal.dart-ci.cloud.goog',
         '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-        '/routes/v1/results/get',
-      ),
+            '/routes/v1/results/get',
+      )),
     );
   }
 }
@@ -179,11 +179,11 @@ class JsonLink extends StatelessWidget {
       builder: (context, results, child) {
         return TextButton(
           child: const Text('JSON'),
-          onPressed: () => url_launcher.launch(
+          onPressed: () => url_launcher.launchUrl(
             Uri.https(apiHost, 'v1/results', {
               'filter': results.filter.terms.join(','),
               'pageSize': '4000',
-            }).toString(),
+            }),
           ),
         );
       },

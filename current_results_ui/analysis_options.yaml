@@ -2,6 +2,9 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude: [lib/src/generated/**]
+
 linter:
   rules:
     # Disabled as there are currently many violations.
