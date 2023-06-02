@@ -20,6 +20,8 @@ const Map<String, Color> resultColors = {
 };
 
 class ResultsPanel extends StatelessWidget {
+  const ResultsPanel();
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<QueryResults, TabController>(
@@ -114,7 +116,7 @@ class _ExpandableResultState extends State<ExpandableResult> {
               Expanded(
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  child: SelectableText(
+                  child: Text(
                     name,
                     style: const TextStyle(fontSize: 16.0),
                     maxLines: 1,
@@ -189,7 +191,7 @@ class ExpandedResultInfo extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Flexible(
-                  child: SelectableText(
+                  child: Text(
                     result.configuration,
                     maxLines: 1,
                   ),

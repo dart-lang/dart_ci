@@ -134,21 +134,22 @@ class CurrentResultsScaffold extends StatelessWidget {
           JsonLink(),
           TextPopup(),
         ],
-        body: Column(
+        body: const SelectionArea(
+            child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: FilterUI(),
             ),
             Divider(
-              color: Colors.grey[300],
+              color: Colors.black12,
               height: 20,
             ),
             Expanded(
               child: ResultsPanel(),
             ),
           ],
-        ),
+        )),
       ),
     );
   }

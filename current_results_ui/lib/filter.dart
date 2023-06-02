@@ -23,6 +23,8 @@ class Filter {
 }
 
 class FilterUI extends StatefulWidget {
+  const FilterUI();
+
   @override
   State<FilterUI> createState() => _FilterUIState();
 }
