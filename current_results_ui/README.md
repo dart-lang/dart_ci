@@ -11,7 +11,7 @@ project.
 
 The page is visible at
 
-https://dart-ci-staging.firebaseapp.com/current_results/index.html
+https://dart-current-results.web.app
 
 It includes options to filter the current results show by test
 name (partial prefixes of test name allowed) and by configuration (partial
@@ -21,18 +21,11 @@ prefixes allowed).
 
 It is written for deployment in Flutter web, but may work on other platforms.
 
-It is deployed to the current_results directory of the dart_ci Firebase
-hosted web app at https://dart-ci.firebaseapp.com/ (dart-ci-staging for
-testing).
+It is deployed to the  the dart_ci Firebase
+hosted web app at https://dart-current-results.app.web/
 
-It is currently built and deployed with Flutter version 2.11.0-0.1.pre.
+It is built and deployed with the Flutter master channel.
 
-Build with
+Build and deploy with
 
-    flutter build web
-
-and deploy by copying the contents of build/web to
-
-    [results_feed]/build/web/current_results
-
-before deploying the results feed.
+    gcloud --project=dart-ci builds submit

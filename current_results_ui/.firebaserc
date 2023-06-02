@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "dart-ci-staging",
+    "staging": "dart-ci-staging",
+    "production": "dart-ci"
+  },
+  "targets": {
+    "dart-ci": {
+      "hosting": {
+        "current-results": [
+          "dart-current-results"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

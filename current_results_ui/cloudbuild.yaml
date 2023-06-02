@@ -1,0 +1,5 @@
+steps:
+- name: gcr.io/dart_ci/flutter:master
+  args: ['build', 'web']
+- name: gcr.io/dart_ci/firebase
+  args: ['deploy', '--project=dart-ci', '--only=hosting:current-results']
