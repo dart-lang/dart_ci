@@ -1,10 +1,12 @@
 {
   "hosting": {
     "public": "build/web",
-    "rewrites": [ {
+    "redirects": [ {
       "source": "/current_results**",
-      "destination": "/current_results/index.html"
-    },
+      "destination": "https://dart-current-results.web.app",
+      "type": 301
+    } ],
+    "rewrites": [
     {
       "source": "**",
       "destination": "/index.html"

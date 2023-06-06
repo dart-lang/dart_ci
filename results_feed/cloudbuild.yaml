@@ -1,0 +1,11 @@
+steps:
+- name: google/dart:2.10
+  script: |
+    #!/usr/bin/env bash
+    dart pub get
+    dart pub global activate webdev 2.5.9
+    dart pub global run webdev build --output=web:build/web
+    rm -rf build/web/packages build/web/.dart_tool
+- name: gcr.io/$PROJECT_ID/firebase
+  args: ['deploy', '--project=dart-ci', '--only=hosting']
+

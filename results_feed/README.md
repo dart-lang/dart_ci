@@ -11,7 +11,11 @@ https://dart-ci.firebaseapp.com/
 - webdev 2.5.9 (run `pub global activate webdev 2.5.9`)
 
 ## Building
-Build the project with the command
+Build and deploy the project using cloud build with the command
+
+    gcloud --project=dart-ci builds submit
+
+Local builds can be run with
 
     webdev build --output=web:build/web
 
