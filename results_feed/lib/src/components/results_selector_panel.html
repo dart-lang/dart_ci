@@ -58,7 +58,7 @@
         <div *deferredContent>
           <h4>{{change.name}}</h4>
           <a
-              href="https://dart-ci.firebaseapp.com/current_results/#/filter={{change.name}}&showAll"
+              href="https://dart-current-results.web.app/#/filter={{change.name}}&showAll"
               target="_blank">
             current test results
           </a><br>
@@ -83,7 +83,7 @@
         <div *deferredContent>
           <h4>{{change.name}}</h4>
           <a
-              href="https://dart-ci.firebaseapp.com/current_results/#/filter={{change.name}}&showAll"
+              href="https://dart-current-results.web.app/#/filter={{change.name}}&showAll"
               target="_blank">
             current test results
           </a><br>
@@ -95,7 +95,7 @@
           <div *ngFor="let configuration of change.configurations.configurations">
             {{configuration}}
             <a
-                href="https://dart-ci.firebaseapp.com/#showLatestFailures=false&test={{change.name}}&configurations={{configuration}}"
+                href="https://dart-ci.web.app/#showLatestFailures=false&test={{change.name}}&configurations={{configuration}}"
                 target="_blank">
               history
             </a>

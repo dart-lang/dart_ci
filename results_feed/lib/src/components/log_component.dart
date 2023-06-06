@@ -14,7 +14,7 @@ import '../services/build_service.dart';
   template: '''
             {{configuration}}
             <a
-            href="https://dart-ci.firebaseapp.com/#showLatestFailures=false&test={{test}}&configurations={{configuration}}"
+            href="https://dart-ci.web.app/#showLatestFailures=false&test={{test}}&configurations={{configuration}}"
             target="_blank">history</a>
             <a *ngIf="build != null"
             href="https://dart-ci.appspot.com/log/{{build.builder}}/{{configuration}}/{{build.buildNumber}}/{{test}}"
