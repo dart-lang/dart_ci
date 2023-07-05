@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_lints: ^2.0.1
-  grpc: ^3.1.0
+  grpc: ^3.2.2
   http: ^0.13.4
   intl: ^0.18.1
   protobuf: ^2.0.1
