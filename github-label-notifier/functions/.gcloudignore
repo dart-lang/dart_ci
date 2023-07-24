@@ -10,11 +10,6 @@
 .git
 .gitignore
 
-node_modules
-lib
-node
-.packages
+test
 deploy.sh
-pubspec.yaml
-pubspec.lock
 #!include:.gitignore

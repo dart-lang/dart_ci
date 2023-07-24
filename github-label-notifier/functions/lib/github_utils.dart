@@ -6,38 +6,45 @@
 library github_label_notifier.github_utils;
 
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
-import 'package:node_interop/buffer.dart';
-import 'package:node_io/node_io.dart';
-
-import 'package:github_label_notifier/node_crypto.dart';
+import 'package:crypto/crypto.dart';
 
 /// Computes the GitHub event signature for the given [body] using
 /// `GITHUB_SECRET` environment variable as a key.
-String signEvent(dynamic body) {
+String signEvent(List<int> body) {
   final secret = Platform.environment['GITHUB_SECRET'];
   if (secret == null) {
     throw 'GITHUB_SECRET is missing';
   }
-  final bodyHmac = crypto.createHmac('sha1', secret).update(body).digest('hex');
-  return 'sha1=${bodyHmac}';
+  final digest = Hmac(sha1, utf8.encode(secret)).convert(body);
+  return 'sha1=$digest';
 }
 
 /// Validate that the given [body] and [signature] against `GITHUB_SECRET`
 /// environment variable.
 bool verifyEventSignature(dynamic body, String signature) {
-  final expectedSignature = signEvent(jsonEncode(body));
-  return signature.length == expectedSignature.length &&
-      crypto.timingSafeEqual(
-          Buffer.from(signature), Buffer.from(expectedSignature));
+  final expectedSignature = signEvent(utf8.encode(json.encode(body)));
+  // Timing-safe compare
+  final aUnits = signature.codeUnits;
+  final bUnits = expectedSignature.codeUnits;
+  var result = true;
+  for (var i = 0; i < aUnits.length; i++) {
+    if (aUnits[i] != bUnits[i]) result = false;
+  }
+  return result;
 }
 
 /// Validate that the given [body] and [signature] against `GITHUB_SECRET`
 /// environment variable.
-bool verifyEventSignatureRaw(Uint8List body, String signature) {
+bool verifyEventSignatureRaw(List<int> body, String signature) {
   final expectedSignature = signEvent(body);
-  return signature.length == expectedSignature.length &&
-      crypto.timingSafeEqual(
-          Buffer.from(signature), Buffer.from(expectedSignature));
+  // Timing-safe compare
+  final aUnits = signature.codeUnits;
+  final bUnits = expectedSignature.codeUnits;
+  var result = true;
+  for (var i = 0; i < aUnits.length; i++) {
+    if (aUnits[i] != bUnits[i]) result = false;
+  }
+  return result;
 }

@@ -16,16 +16,9 @@ if [[ -z "$SENDGRID_SECRET" ]]; then
 fi
 
 # First step is to run the build
-pub run build_runner build --output=build
-
-# Create a deployment folder.
-rm -rf deploy
-mkdir -p deploy/build/node
-cp build/node/index.dart.js deploy/build/node
-cp package.json deploy/
-
-# Deploy the function.
-gcloud functions deploy githubWebhook --project dart-ci --source deploy --trigger-http \
-    --vpc-connector cloud-run-to-gce \
-    --runtime nodejs12 --memory 128MB \
-    --set-env-vars GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET
+gcloud run deploy github-webhook --port 8080 --project dart-ci \
+    --region us-central1 --timeout 120s \
+    --memory 128Mi \
+    --source=./ --allow-unauthenticated \
+    --description 'The Github label notifier service' \
+    --set-env-vars "GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET"

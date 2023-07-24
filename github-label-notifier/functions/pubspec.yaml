@@ -6,20 +6,22 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: '>=2.6.0 <3.0.0'
+  sdk: '>=2.18.0 <4.0.0'
 
 dependencies:
-  firebase_functions_interop: ^1.0.0
-  node_http: ^1.0.0
-  node_interop: ^1.0.3
-  node_io: ^1.0.1
-  js: any
+  async: ^2.10.0
+  collection: ^1.17.1
+  crypto: ^3.0.2
+  gcp: ^0.1.0
+  googleapis: ^11.2.0
+  googleapis_auth: ^1.3.1
+  http: ^0.13.5
+  sendgrid_mailer: ^0.1.3
+  shelf: ^1.4.0
+  shelf_router: ^1.1.3
   test: any
   symbolizer:
     path: ../symbolizer
 
 dev_dependencies:
-  # Needed to compile Dart to valid Node.js module.
-  build_runner: ^1.0.0
-  build_node_compilers: ^0.2.0
-  pedantic: 1.9.2
+  lints: ^2.0.1

@@ -17,6 +17,6 @@ export SYMBOLIZER_SERVER=localhost:4040
 export GITHUB_SECRET=a_fake_github_secret_value
 export SENDGRID_SECRET=fake_SG.I9JN-n6oQb-X686126S.qJasdasdasda_lyadasd
 
-dart run build_runner build --output=build
+export PORT=8002
 
-firebase emulators:exec --project github-label-notifier 'node build/node/index.test.dart.js'
+firebase emulators:exec --project github-label-notifier 'dart test/integration_test.dart'

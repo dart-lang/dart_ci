@@ -1,90 +1,99 @@
-// Copyright (c) 2019, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2023, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:io';
 
-import 'package:firebase_functions_interop/firebase_functions_interop.dart';
-import 'package:js/js_util.dart';
-import 'package:node_interop/node_interop.dart';
-import 'package:node_io/node_io.dart';
-import 'package:node_http/node_http.dart' as http;
-
-import 'package:github_label_notifier/github_utils.dart';
-import 'package:github_label_notifier/sendgrid.dart' as sendgrid;
-import 'package:github_label_notifier/subscriptions_db.dart' as db;
+import 'package:async/async.dart' show Result;
+import 'package:http/http.dart' as http;
+import 'package:gcp/gcp.dart';
+import 'package:sendgrid_mailer/sendgrid_mailer.dart' as sendgrid;
+import 'package:shelf/shelf.dart';
+import 'package:shelf_router/shelf_router.dart';
 import 'package:symbolizer/model.dart';
 import 'package:symbolizer/parser.dart';
 import 'package:symbolizer/bot.dart';
 
+import 'package:github_label_notifier/github_utils.dart';
+import 'package:github_label_notifier/redirecting_http.dart';
+import 'package:github_label_notifier/subscriptions_db.dart' as db;
+
 final String symbolizerServer = Platform.environment['SYMBOLIZER_SERVER'] ??
     'crash-symbolizer.c.dart-ci.internal:4040';
+late final sendgrid.Mailer mailer;
+late final Future<Result<void>> Function(sendgrid.Email) sendMail;
 
-extension on ExpressHttpRequest {
-  Uint8List get rawBody {
-    if (!hasProperty(nativeInstance, 'rawBody')) return null;
-    return getProperty(nativeInstance, 'rawBody');
+// To enable offline testing we redirect all requests to our mock server.
+final mockServer = Platform.environment['SENDGRID_MOCK_SERVER'];
+final mockUrl = 'http://$mockServer';
+
+Future<void> main() async {
+  await db.ensureInitialized;
+  mailer = sendgrid.Mailer(Platform.environment['SENDGRID_SECRET']!);
+  final mockSendgridServer = Platform.environment['SENDGRID_MOCK_SERVER'];
+  if (mockSendgridServer == null) {
+    sendMail = mailer.send;
+  } else {
+    final host = mockSendgridServer.split(':').first;
+    final port = int.parse(mockSendgridServer.split(':').last);
+    sendMail =
+        (sendgrid.Email email) => http.runWithClient<Future<Result<void>>>(() {
+              return mailer.send(email);
+            }, () => RedirectingIOClient(host, port));
   }
+  final router = Router()..post('/githubWebhook', wrappedGithubWebhook);
+  await serveHandler(router);
 }
 
-void main() {
-  db.ensureInitialized();
-  functions['githubWebhook'] = functions.https.onRequest((request) async {
-    try {
-      await githubWebhook(request);
-    } catch (e, stack) {
-      try {
-        request.response.statusCode =
-            e is WebHookError ? e.statusCode : HttpStatus.internalServerError;
-      } catch (e) {
-        console.error('Failed to set statusCode: ${e}');
-      }
-      console.error('Caught exception: ${e}\n${stack}');
-      request.response.write('FAILURE');
-    } finally {
-      await request.response.close();
-    }
-  });
+/// If githubWebHook throws a WebHookError, this function prints it
+/// to stdout and responds with an appropriate HTTP error response.
+Future<Response> wrappedGithubWebhook(Request request) async {
+  try {
+    return await githubWebhook(request);
+  } catch (e, st) {
+    print('Caught exception: $e\n$st');
+    final statusCode =
+        e is WebHookError ? e.statusCode : HttpStatus.internalServerError;
+    final response = Response(statusCode, body: 'FAILURE');
+    return response;
+  }
 }
 
 /// Entry point for a [GitHub WebHook](https://developer.github.com/webhooks/).
 ///
 /// Actual handlers are defined in [eventHandlers] dictionary.
-Future<void> githubWebhook(ExpressHttpRequest request) async {
+Future<Response> githubWebhook(Request request) async {
   // First we need to validate that this is a request originating from GitHub
   // by checking if it has all required header values and is properly signed.
   if (request.method != 'POST') {
     throw WebHookError(
         HttpStatus.methodNotAllowed, 'Expected to be called via POST method');
   }
-
-  if (request.body == null) {
-    throw WebHookError(HttpStatus.badRequest, 'Request is missing a body');
-  }
-
+  final rawBody = await request
+      .read()
+      .fold<List<int>>([], (body, chunk) => body..addAll(chunk));
   final signature = getRequiredHeaderValue(request, 'x-hub-signature');
   final event = getRequiredHeaderValue(request, 'x-github-event');
   final delivery = getRequiredHeaderValue(request, 'x-github-delivery');
 
-  final body = request.body;
-  if (!verifyEventSignatureRaw(request.rawBody, signature)) {
+  if (!verifyEventSignatureRaw(rawBody, signature)) {
     throw WebHookError(
         HttpStatus.unauthorized, 'Failed to validate the signature');
   }
 
+  final body = json.decode(utf8.decode(rawBody));
   // Event has passed the validation. Dispatch it to the handler.
   print('Received event from GitHub: $delivery $event ${body['action']}');
   await eventHandlers[event]?.call(body);
 
-  request.response.statusCode = HttpStatus.ok;
-  request.response.writeln('OK: ${event}');
+  return Response(HttpStatus.ok, body: 'OK: $event');
 }
 
 typedef GitHubEventHandler = Future<void> Function(Map<String, dynamic> event);
 
 final eventHandlers = <String, GitHubEventHandler>{
-  'issues': (event) => issueActionHandlers[event['action']]?.call(event),
-  'issue_comment': (event) =>
+  'issues': (event) async => issueActionHandlers[event['action']]?.call(event),
+  'issue_comment': (event) async =>
       commentActionHandlers[event['action']]?.call(event)
 };
 
@@ -105,9 +114,10 @@ final commentActionHandlers = <String, GitHubEventHandler>{
 Future<void> onIssueLabeled(Map<String, dynamic> event) async {
   final labelName = event['label']['name'];
   final repositoryName = event['repository']['full_name'];
-
+  print("label repository: $labelName $repositoryName");
   final emails =
       await db.lookupLabelSubscriberEmails(repositoryName, labelName);
+  print("emails $emails");
   if (emails.isEmpty) {
     return;
   }
@@ -124,27 +134,42 @@ Future<void> onIssueLabeled(Map<String, dynamic> event) async {
 
   final escape = htmlEscape.convert;
 
-  await sendgrid.sendMultiple(
-      from: 'noreply@dart.dev',
-      to: emails,
-      subject: '[+${labelName}] ${issueTitle} (#${issueNumber})',
-      text: '''
-${issueUrl}
+  final personalizations = [
+    for (final to in emails) sendgrid.Personalization([sendgrid.Address(to)])
+  ];
+  final subject = '[+$labelName] $issueTitle (#$issueNumber)';
+  final text = '''
+$issueUrl
 
-Reported by ${issueReporterUsername}
+Reported by $issueReporterUsername
 
-Labeled ${labelName} by ${senderUser}
+Labeled $labelName by $senderUser
 
 --
 Sent by dart-github-label-notifier.web.app
-''',
-      html: '''
-<p>${escape(issueTitle)}&nbsp;(<a href="${issueUrl}">${escape(repositoryName)}#${escape(issueNumber.toString())}</a>)</p>
-<p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
-<p>Labeled <strong>${escape(labelName)}</strong> by <a href="${senderUrl}">${escape(senderUser)}</a></p>
+''';
+  final html = '''
+<p>${escape(issueTitle)}&nbsp;(<a href="$issueUrl">${escape(repositoryName)}#${escape(issueNumber.toString())}</a>)</p>
+<p>Reported by <a href="$issueReporterUrl">${escape(issueReporterUsername)}</a></p>
+<p>Labeled <strong>${escape(labelName)}</strong> by <a href="$senderUrl">${escape(senderUser)}</a></p>
 <hr>
 <p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
-''');
+''';
+  final email = sendgrid.Email(
+    personalizations,
+    sendgrid.Address('noreply@dart.dev'),
+    subject,
+    content: [
+      sendgrid.Content('text/plain', text),
+      sendgrid.Content('text/html', html)
+    ],
+  );
+
+  final result = await sendMail(email);
+  if (result.isError) {
+    print(result.asError!.error);
+    print(result.asError!.stackTrace);
+  }
 }
 
 /// Handler for the 'opened' issue event which triggers whenever a new issue
@@ -153,13 +178,13 @@ Sent by dart-github-label-notifier.web.app
 /// The handler will search the body of the open issue for specific keywords
 /// and send emails to all subscribers to a specific label.
 Future<void> onIssueOpened(Map<String, dynamic> event) async {
-  SymbolizationResult symbolizedCrashes;
+  SymbolizationResult? symbolizedCrashes;
 
   final repositoryName = event['repository']['full_name'];
+  print("opened issue $repositoryName");
   final subscription = await db.lookupKeywordSubscription(repositoryName);
-
-  if (subscription != null &&
-      subscription.keywords.contains('crash') &&
+  if (subscription == null) return;
+  if (subscription.keywords.contains('crash') &&
       containsCrash(event['issue']['body'])) {
     symbolizedCrashes = await _trySymbolize(event['issue']);
   }
@@ -167,7 +192,7 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
   final match = (symbolizedCrashes is SymbolizationResultOk &&
           symbolizedCrashes.results.isNotEmpty)
       ? 'crash'
-      : subscription?.match(event['issue']['body']);
+      : subscription.match(event['issue']['body']);
   if (match == null) {
     return;
   }
@@ -192,7 +217,7 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
                   '',
                   ...results.expand((r) => [
                         if (r.symbolized != null)
-                          '# engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash'
+                          '# engine ${r.engineBuild!.engineHash} ${r.engineBuild!.variant.pretty} crash'
                         else
                           '# engine crash',
                         for (var note in r.notes)
@@ -214,12 +239,12 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
             ok: (results) {
               return results.expand((r) => [
                     if (r.symbolized != null)
-                      '<p>engine ${r.engineBuild.engineHash} ${r.engineBuild.variant.pretty} crash</p>'
+                      '<p>engine ${r.engineBuild!.engineHash} ${r.engineBuild!.variant.pretty} crash</p>'
                     else
                       '<p>engine crash</p>',
                     for (var note in r.notes)
                       if (note.message != null)
-                        '<em>${noteMessage[note.kind]}: <pre>${escape(note.message)}</pre></em>'
+                        '<em>${noteMessage[note.kind]}: <pre>${escape(note.message!)}</pre></em>'
                       else
                         '<em>${noteMessage[note.kind]}</em>',
                     '<pre>${escape(r.symbolized ?? r.crash.frames.toString())}</pre>',
@@ -230,30 +255,40 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
           ?.join('') ??
       '';
 
-  await sendgrid.sendMultiple(
-      from: 'noreply@dart.dev',
-      to: subscribers,
-      subject: '[$repositoryName] ${issueTitle} (#${issueNumber})',
-      text: '''
-${issueUrl}
+  final personalizations = [
+    for (final to in subscribers)
+      sendgrid.Personalization([sendgrid.Address(to)])
+  ];
+  final result = await sendMail(sendgrid.Email(
+      personalizations,
+      sendgrid.Address('noreply@dart.dev'),
+      '[$repositoryName] $issueTitle (#$issueNumber)',
+      content: [
+        sendgrid.Content('text/plain', '''
+$issueUrl
 
-Reported by ${issueReporterUsername}
+Reported by $issueReporterUsername
 
-Matches keyword: ${match}
-${symbolizedCrashesText}
+Matches keyword: $match
+$symbolizedCrashesText
 You are getting this mail because you are subscribed to label ${subscription.label}.
 --
 Sent by dart-github-label-notifier.web.app
-''',
-      html: '''
-<p><strong><a href="${issueUrl}">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber.toString())})</strong></p>
-<p>Reported by <a href="${issueReporterUrl}">${escape(issueReporterUsername)}</a></p>
-<p>Matches keyword: <b>${match}</b></p>
-${symbolizedCrashesHtml}
+'''),
+        sendgrid.Content('text/html', '''
+<p><strong><a href="$issueUrl">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber.toString())})</strong></p>
+<p>Reported by <a href="$issueReporterUrl">${escape(issueReporterUsername)}</a></p>
+<p>Matches keyword: <b>$match</b></p>
+$symbolizedCrashesHtml
 <p>You are getting this mail because you are subscribed to label ${subscription.label}</p>
 <hr>
 <p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
-''');
+''')
+      ]));
+  if (result.isError) {
+    print(result.asError!.error);
+    print(result.asError!.stackTrace);
+  }
 }
 
 Future<void> onIssueCommentCreated(Map<String, dynamic> event) async {
@@ -261,7 +296,7 @@ Future<void> onIssueCommentCreated(Map<String, dynamic> event) async {
 
   if (Bot.isCommand(body)) {
     final response = await http.post(
-      'http://$symbolizerServer/command',
+      Uri.http(symbolizerServer, 'command'),
       body: jsonEncode(event),
     );
     if (response.statusCode != HttpStatus.ok) {
@@ -283,17 +318,17 @@ class WebHookError {
 
 /// Helper which gets a value of the header with the given name from a
 /// request or throws an error if request does not contain such a header.
-String getRequiredHeaderValue(ExpressHttpRequest request, String header) {
-  return request.headers.value(header) ??
+String getRequiredHeaderValue(Request request, String header) {
+  return request.headers[header] ??
       (throw WebHookError(
-          HttpStatus.badRequest, 'Missing ${header} header value.'));
+          HttpStatus.badRequest, 'Missing $header header value.'));
 }
 
 Future<SymbolizationResult> _trySymbolize(Map<String, dynamic> body) async {
   try {
     final response = await http
         .post(
-          'http://$symbolizerServer/symbolize',
+          Uri.http(symbolizerServer, 'symbolize'),
           body: jsonEncode(body),
         )
         .timeout(const Duration(seconds: 20));
@@ -304,4 +339,15 @@ Future<SymbolizationResult> _trySymbolize(Map<String, dynamic> body) async {
             kind: SymbolizationNoteKind.exceptionWhileSymbolizing,
             message: '$e\n$st'));
   }
+}
+
+Future<http.Response> Function(Uri url,
+    {Object? body,
+    Encoding? encoding,
+    Map<String, String>? headers}) redirectingHttpPost(String replacementHost) {
+  return (Uri url,
+      {Object? body, Encoding? encoding, Map<String, String>? headers}) {
+    final newUrl = url.replace(scheme: 'http', host: replacementHost);
+    return http.post(newUrl, body: body, encoding: encoding, headers: headers);
+  };
 }
