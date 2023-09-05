@@ -541,11 +541,7 @@ class FirestoreService {
   }
 
   Future _executeWrite(List<Write> writes) async {
-    const debug = false;
     final request = BatchWriteRequest()..writes = writes;
-    if (debug) {
-      log('WriteRequest: ${request.toJson()}');
-    }
     documentsWritten += writes.length;
     return firestore.projects.databases.documents.batchWrite(request, database);
   }
