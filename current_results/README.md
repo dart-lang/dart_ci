@@ -2,7 +2,11 @@
 
 This server runs on Google Cloud Run, and provides the most recent test results
 from the Dart CI (continuous integration) testing visible at
-https://ci.chromium.org/p/dart/g/be/console
+https://ci.chromium.org/p/dart/g/be/console.
+
+This service is the backend for https://dart-current-results.web.app/
+which provides a filterable view of the current test status across
+all configurations.
 
 ## Build and deploy
 
@@ -23,55 +27,45 @@ Pre-requisites:
 - A copy of https://github.com/protocolbuffers/protobuf
 
 To generate the required Dart files for the protos, run
-`tools/generate_protogen.sh` with the environtment variables
+`tools/generate_protogen.sh` with the environment variables
 `GOOGLEAPIS_PATH` and `PROTOBUF_PATH` set to the location of the checkouts
 mentioned above.
 
-### Staging
-To build the server and deploy to cloud run on staging, run
-
-```
-gcloud builds submit --project=dart-ci-staging --tag gcr.io/dart-ci-staging/current_results
-gcloud run deploy --project=dart-ci-staging current-results --image gcr.io/dart-ci-staging/current_results --platform=managed --allow-unauthenticated
-```
-
-Unauthenticated access is allowed only while the server being developed does
-not modify any data, remove that flag before adding APIs that modify data.
-
-### Production XXX NOT READY YET
-To build the server and deploy to cloud run on production, run
+### Deployment
+To build the server and deploy to production, run
 
 ```
 gcloud builds submit --project=dart-ci --tag gcr.io/dart-ci/current_results
-gcloud run deploy --project=dart-ci current-results --image gcr.io/dart-ci/current_results --platform=managed
 ```
+When that build has completed successfully, run
+```
+gcloud compute ssh current-results-server --project=dart-ci --zone=us-central1-a --command="docker kill current-results; docker rm current-results; docker pull gcr.io/dart-ci/current_results"
+gcloud compute ssh current-results-server --project=dart-ci --zone=us-central1-a --command="docker run -d --net=bridge_net --publish=8080:8080 --name=current-results gcr.io/dart-ci/current_results"
+```
+
+There is also a REST proxy which provides the public REST api for this backend server.
+Instructions on deploying this ESPv2 proxy (https://github.com/GoogleCloudPlatform/esp-v2)
+are in internal team documentation. The connection between the public REST api and the gRPC api
+is configured in the lib/protos/query.proto file in this repository.
 
 ## Services
 
 ### Data cached by server
 
-The server reads the current results.json and flaky.json from cloud storage
-at gs://dart-test-results/configuration/master/[configuration name]/[build number]/
-and stores selected fields from those records in memory. (Flaky.json reads not
-implemented).
+The server reads the current results.json from cloud storage
+at gs://dart-test-results/configuration/main/[configuration name]/[build number]/
+and caches selected fields from those records in memory.
 
 ### Updating results data
 
 The server exposes a service to Pub/Sub on the same project, which is
 triggered by any object creation on the dart-test-results bucket.  If the
-object is a /configuration/master/[configuration name]/latest file, the build
-number is read from that file and the cached results.json and flaky.json are
+object is a /configuration/main/[configuration name]/latest file, the build
+number is read from that file and the cached results.json is
 updated from that build.
 
 ### Serving results data
 
 A gRPC service is defined, with a query message type and a response message
-type defined by protocol buffers.  It will allow queries by test name or
-test name prefix and by configuration or configuration set.
-
-### Managing flakiness
-
-APIs will be defined to query current flakiness data, and to revoke the
-flakiness mark on test-configuration pairs.  When designing the API to
-revoke flakiness, security and auditing concerns must be addressed by
-requiring authentication.
+type defined by protocol buffers.  It allows test result queries by test name or
+test name prefix and by configuration or configuration prefix.

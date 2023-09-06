@@ -22,7 +22,10 @@ then
   exit 1
 fi
 
-protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/*.proto
+protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/duration.proto
+protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/empty.proto
+protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/field_mask.proto
+protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/timestamp.proto
 protoc --dart_out=grpc:lib/src/generated -I$GOOGLEAPIS_PATH $GOOGLEAPIS_PATH/google/pubsub/v1/pubsub.proto
 protoc --dart_out=grpc:lib/src/generated -I$GOOGLEAPIS_PATH $GOOGLEAPIS_PATH/google/pubsub/v1/schema.proto
 
