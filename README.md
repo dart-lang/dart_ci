@@ -6,7 +6,7 @@ The repository is based at dart.googlesource.com/dart_ci. It is mirrored to gith
 
 ### Results Feed
 
-The results feed is an angular Dart application that displays changed results from the CI and from CQ runs (tryjobs). The code is in the results_feed directory. It is deployed to ci.dart.dev, using Firebase hosting.
+The results feed is an angular Dart application that displays changed results from the CI and from CQ runs (try-jobs). The code is in the results_feed directory. It is deployed to ci.dart.dev, using Firebase hosting.
 
 ### Cloud functions
 
