@@ -74,6 +74,7 @@ class Slice {
       final result = Result.fromApi(api.Result()
         ..mergeFromProto3Json(json.decode(line),
             supportNamesWithUnderscores: true));
+      if (result.result == 'skipped') continue;
       if (configuration == null) {
         configuration = result.configuration;
       } else if (result.configuration != configuration) {
