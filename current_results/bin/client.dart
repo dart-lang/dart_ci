@@ -22,7 +22,7 @@ void main(List<String> args) async {
   await runner.run(args);
 }
 
-abstract class gRpcCommand extends Command {
+abstract class GrpcCommand extends Command<void> {
   Future<void> runWithClient(QueryClient client);
   @override
   Future<void> run() async {
@@ -41,7 +41,7 @@ abstract class gRpcCommand extends Command {
   }
 }
 
-class QueryCommand extends gRpcCommand {
+class QueryCommand extends GrpcCommand {
   QueryCommand() {
     argParser.addOption('filter',
         abbr: 'f',
@@ -72,7 +72,7 @@ class QueryCommand extends gRpcCommand {
   }
 }
 
-class ListTestsCommand extends gRpcCommand {
+class ListTestsCommand extends GrpcCommand {
   ListTestsCommand() {
     argParser.addOption('prefix',
         defaultsTo: '', help: 'test name prefix to fetch test names for');
@@ -96,7 +96,7 @@ class ListTestsCommand extends gRpcCommand {
   }
 }
 
-class FetchCommand extends gRpcCommand {
+class FetchCommand extends GrpcCommand {
   @override
   String get name => 'fetch';
   @override

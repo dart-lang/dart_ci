@@ -28,7 +28,9 @@ Future<void> startServer(int port, ResultsBucket bucket) async {
   final notifications = BucketNotifications();
   await notifications.initialize();
   final current = await loadData(bucket);
-  final grpcServer = Server([QueryService(current, notifications, bucket)]);
+  final grpcServer = Server.create(
+    services: [QueryService(current, notifications, bucket)],
+  );
   await grpcServer.serve(port: port);
   print('Grpc serving on port ${grpcServer.port}');
 }
@@ -48,6 +50,6 @@ Future<Slice> loadData(ResultsBucket bucket) async {
     } catch (e, stack) {
       print('Error loading configuration $configurationDirectory: $e\n$stack');
     }
-  }).drain();
+  }).drain<void>();
   return result;
 }

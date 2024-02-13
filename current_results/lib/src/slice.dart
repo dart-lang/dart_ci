@@ -67,8 +67,7 @@ class Slice {
   int get size => _size;
 
   void add(List<String> lines) {
-    if (lines.isEmpty) return;
-    var configuration;
+    String? configuration;
     final results = <Result>[];
     for (final line in lines) {
       final result = Result.fromApi(api.Result()
@@ -85,6 +84,9 @@ class Slice {
       _experimentNames.addAll(result.experiments);
       results.add(result);
     }
+    // If there were no results or they were all skips, don't continue.
+    if (configuration == null) return;
+
     final sorted = results.toList()..sort(compareNames);
     _size -= _stored[configuration]?.length ?? 0;
     _stored[configuration] = sorted;
@@ -242,7 +244,7 @@ class Slice {
       Set<String> experimentFilters, PageStart? pageStart,
       {required int needed}) {
     final prefixResult = Result.nameOnly(prefix);
-    var startResult;
+    final Result startResult;
     if (pageStart == null || pageStart.test.compareTo(prefixResult.name) <= 0) {
       startResult = prefixResult;
     } else if (pageStart.test.startsWith(prefixResult.name)) {

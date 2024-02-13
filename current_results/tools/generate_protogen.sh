@@ -31,4 +31,4 @@ protoc --dart_out=grpc:lib/src/generated -I$GOOGLEAPIS_PATH $GOOGLEAPIS_PATH/goo
 
 protoc --dart_out=lib/src/generated ../common/result.proto -I../common
 protoc --dart_out=grpc:lib/src/generated -Ilib/protos -Ithird_party/proto lib/protos/query.proto
-dartfmt -w lib/src/generated/query* lib/src/generated/result*
+dart format lib/src/generated/query* lib/src/generated/result*

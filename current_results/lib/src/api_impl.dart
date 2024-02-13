@@ -18,28 +18,28 @@ class QueryService extends QueryServiceBase {
 
   @override
   Future<GetResultsResponse> getResults(
-          ServiceCall call, GetResultsRequest query) =>
-      Future.value(current.results(query));
+          ServiceCall call, GetResultsRequest request) =>
+      Future.value(current.results(request));
 
   @override
   Future<ListTestsResponse> listTests(
-          ServiceCall call, ListTestsRequest query) =>
-      Future.value(current.listTests(query));
+          ServiceCall call, ListTestsRequest request) =>
+      Future.value(current.listTests(request));
 
   @override
   Future<ListTestsResponse> listTestPathCompletions(
-      ServiceCall call, ListTestsRequest query) async {
+      ServiceCall call, ListTestsRequest request) async {
     throw UnimplementedError();
   }
 
   @override
   Future<ListConfigurationsResponse> listConfigurations(
-      ServiceCall call, ListConfigurationsRequest query) async {
+      ServiceCall call, ListConfigurationsRequest request) async {
     throw UnimplementedError;
   }
 
   @override
-  Future<FetchResponse> fetch(ServiceCall call, Empty _) async {
+  Future<FetchResponse> fetch(ServiceCall call, Empty request) async {
     final response = FetchResponse();
     final messages = await notifications.getMessages();
     final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
