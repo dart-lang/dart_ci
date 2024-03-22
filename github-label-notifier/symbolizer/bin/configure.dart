@@ -13,17 +13,11 @@ final parser = ArgParser()
   ..addOption('github-token',
       help: 'GitHub OAuth token',
       defaultsTo: Platform.environment['GITHUB_TOKEN'])
-  ..addOption('sendgrid-token',
-      help: 'SendGrid API token',
-      defaultsTo: Platform.environment['SENDGRID_TOKEN'])
-  ..addOption('failure-email',
-      help: 'Email for failure reports',
-      defaultsTo: Platform.environment['FAILURE_EMAIL'])
   ..addOption('output', help: 'Config to write', defaultsTo: '.config.json');
 
 void main(List<String> args) {
   final opts = parser.parse(args);
-  for (var opt in ['github-token', 'sendgrid-token', 'failure-email']) {
+  for (var opt in ['github-token']) {
     if (opts[opt].isEmpty) {
       throw 'Pass non-empty value via --$opt or through'
           ' ${opt.toUpperCase().replaceAll('-', '_')} environment variable';
@@ -32,8 +26,6 @@ void main(List<String> args) {
 
   final config = ServerConfig(
     githubToken: opts['github-token'],
-    sendgridToken: opts['sendgrid-token'],
-    failureEmail: opts['failure-email'],
   );
   File(opts['output']).writeAsStringSync(jsonEncode(config));
 }

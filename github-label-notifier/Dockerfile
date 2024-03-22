@@ -5,7 +5,6 @@ FROM dart:stable AS build
 # Resolve app dependencies.
 WORKDIR /app
 COPY functions/pubspec.* functions/
-COPY symbolizer symbolizer
 WORKDIR /app/functions
 RUN dart pub get
 

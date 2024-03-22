@@ -237,14 +237,80 @@ class SymbolizationOverrides with _$SymbolizationOverrides {
     String? format,
     String? os,
   }) = _SymbolizationOverrides;
+
+  /// Parse the given [overrides].
+  ///
+  /// See README.md for overrides documentation.
+  static SymbolizationOverrides? tryParse(String overrides) {
+    String? engineHash;
+    String? flutterVersion;
+    String? os;
+    String? arch;
+    String? mode;
+    String? format;
+    var force = false;
+
+    // Command is just a sequence of keywords which specify which comments
+    // to symbolize and which symbols to use.
+    for (var keyword in overrides.split(' ')) {
+      switch (keyword) {
+        case 'x86':
+        case 'arm':
+        case 'arm64':
+        case 'x64':
+          arch = keyword;
+          break;
+        case 'debug':
+        case 'profile':
+        case 'release':
+          mode = keyword;
+          break;
+        case 'internal':
+          format = 'internal';
+          break;
+        case 'force':
+          force = true;
+          break;
+        case 'ios':
+          os = 'ios';
+          break;
+        default:
+          // Check if this keyword is an engine hash.
+          var m = _engineHashPattern.firstMatch(keyword);
+          if (m != null) {
+            engineHash = m.namedGroup('sha');
+            break;
+          }
+
+          m = _flutterHashOrVersionPattern.firstMatch(keyword);
+          if (m != null) {
+            flutterVersion = m.namedGroup('version');
+            break;
+          }
+          break;
+      }
+    }
+
+    return SymbolizationOverrides(
+      arch: arch,
+      engineHash: engineHash,
+      flutterVersion: flutterVersion,
+      mode: mode,
+      os: os,
+      force: force,
+      format: format,
+    );
+  }
+
+  static final _engineHashPattern = RegExp(r'^engine#(?<sha>[a-f0-9]+)$');
+  static final _flutterHashOrVersionPattern =
+      RegExp(r'^flutter#v?(?<version>[a-f0-9\.]+)$');
 }
 
 @freezed
 class ServerConfig with _$ServerConfig {
   factory ServerConfig({
     required String githubToken,
-    required String sendgridToken,
-    required String failureEmail,
   }) = _ServerConfig;
 
   factory ServerConfig.fromJson(Map<String, dynamic> json) =>

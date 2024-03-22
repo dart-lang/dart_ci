@@ -1,21 +1,81 @@
 This folder contains implementation of symbolization tooling capable of
-extracting Android and iOS crashes from plain text comments on GitHub and
-then automatically symbolize these crash reports using Flutter Engine symbols
-stored in the Cloud Storage.
+extracting Android and iOS crashes from plain text comments on GitHub or
+from local text files and then automatically symbolize these crash reports
+using Flutter Engine symbols stored in the Cloud Storage.
 
-# `bin/server.dart`
+# Using this locally
 
-Server exposing simple HTTP API to this functionality. It has two endpoints:
+```
+$ dart pub global activate -sgit https://github.com/dart-lang/dart_ci.git --git-path github-label-notifier/symbolizer/
+$ dart pub global run symbolizer:symbolize <file-or-uri> ["overrides"]
+$ dart pub global run symbolizer:symbolize --help
+```
 
-- `POST /symbolize` with GitHub's `issue` JSON payload runs symbolization on the
-  issue's body and returns result as a JSON serialized list of
-  `SymbolizationResult`.
-- `POST /command` with GitHub's [`issue_comment`](https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads#issue_comment)
-  payload executes the given comment as a bot command (if it represents one).
+# Symbolization overrides
 
-Note: the server itself does not listen to GitHub events - instead there is a
-Cloud Function exposed as a GitHub WebHook which routes relevant
-`issue_comment` events to it.
+Not all information might be available in the stack trace itself. In this case
+_symbolization overrides_ can be used to fill in gaps. They have the following
+format:
+
+```
+[engine#<sha>|flutter#<commit>] [profile|release|debug] [x86|arm|arm64|x64]
+```
+
+- `engine#<sha>` - use symbols for specific _engine commit_;
+- `flutter#<commit>` use symbols for specific Flutter Framework commit
+  (this is just another way of specifiying engine commit);
+- `profile|release|debug` use symbols for specific _build mode_ (iOS builds
+  only have `release` symbols available though);
+- `x86|arm|arm64|x64` use symbols for specific _architecture_.
+
+If your backtrace comes from Crashlytics with lines that look like this:
+
+```
+4  Flutter                        0x106013134 (Missing)
+```
+
+You would need to use `force ios [arm64|arm] [engine#<sha>|flutter#<commit>]`
+overrides:
+
+- `force ios` instructs tooling to ignore native crash markers and simply look
+  for lines that match `ios` backtrace format;
+- `[arm64|arm]` gives information about architecture, which is otherwise
+  missing from the report;
+- `engine#sha|flutter#commit` gives engine version;
+
+If your backtrace has lines that look like this:
+
+```
+0x0000000105340708(Flutter + 0x002b4708)
+```
+
+You would need to use `internal [arm64|arm] [engine#<sha>|flutter#<commit>]`
+overrides:
+
+- `internal` instructs tooling to ignore native crash markers and look for
+  lines that match this special _internal_ backtrace format.
+
+### Note about Relative PCs
+
+To symbolize stack trace correctly symbolizer needs to know PC relative to
+binary image load base. Native crash formats usually include this information:
+
+- On Android `pc` column actually contains relative PCs rather then absolute.
+  Though Android versions prior to Android 11 have issues with their unwinder
+  which makes these relative PCs skewed in different ways (see
+  [this bug](https://github.com/android/ndk/issues/1366) for more information).
+  This package tries best to correct for these known issues;
+- On iOS crash parser is looking for lines like this `Flutter + <rel-pc>`
+  which gives it necessary information.
+
+Some crash formats (Crashlytics) do not contain neither load base nor relative
+PCs. In this case symbolizer will try to determine load base heuristically
+based on the set of return addresses available in the backtrace: it will look
+through Flutter Engine binary for all call sites and then iterate through
+potential load bases to see if one of them makes all of PCs present in the
+backtrace fall onto callsites. The pattern of call sites in the binary is often
+unique enough for the symbolizer to be able to determine a single possible load
+base based on 3-4 unique return addresses.
 
 # Scripts
 
@@ -26,30 +86,17 @@ this script to at least configure GitHub OAuth token to ensure that
 you don't hit GitHub's API quota limits for unauthorized users.
 
 ```console
-$ bin/configure.dart --github-token ... --sendgrid-token ... --failure-email ...
+$ bin/configure.dart --github-token ...
 ```
-
-## `bin/command.dart`
-
-```console
-$ bin/command.dart [--act] <issue-number> 'keywords*'
-```
-
-Execute the given string of keywords as a `@flutter-symbolizer-bot` command in
-context of the issue with the given `issue-number` number.
-
-By default would simply print `@flutter-symbolizer-bot` response to stdout.
-
-If `--act` is passed then bot would actually post a comment with its response
-to the issue using GitHub OAuth token from `.config.json`.
 
 ## `bin/symbolize.dart`
 
 ```console
-$ bin/symbolize.dart <input-file> 'keywords*'
+$ bin/symbolize.dart <input-file|URI> 'keywords*'
 ```
 
-Symbolize contents of the given file using overrides specified through keywords.
+Symbolize contents of the given file or GitHub comment or issue using overrides
+specified through keywords.
 
 # Development
 
@@ -61,7 +108,7 @@ hit GitHub API limits for unauthorized users and timeout.
 Run `bin/configure.dart` to create `.config.json`.
 
 ```
-bin/configure.dart --github-token ... --sendgrid-token ... --failure-email ...
+bin/configure.dart --github-token ...
 ```
 
 ## NDK tooling
@@ -80,13 +127,13 @@ classes. To regenerate `model.g.dart` and `mode.freezed.dart` after editing
 `model.dart` run:
 
 ```console
-$ pub run build_runner build
+$ dart run build_runner build
 ```
 
 # Testing
 
 ```console
-$ pub run test -j1 --no-chain-stack-traces
+$ dart test test -j1 --no-chain-stack-traces
 ```
 
 - `-j1` is needed to avoid racy access to symbols cache from multiple
@@ -96,24 +143,6 @@ $ pub run test -j1 --no-chain-stack-traces
 
 To update expectation files set `REGENERATE_EXPECTATIONS` environment
 variable to `true` (`export REGENERATE_EXPECTATIONS=true`).
-
-# Deployment
-
-Bot is running on `crash-symbolizer` Compute Engine instance and is kept
-alive by `superviserd`. The GCE instance is not directly reachable from
-the outside world. To deploy a new version run:
-
-```console
-$ GITHUB_TOKEN=... SENDGRID_TOKEN=... FAILURE_EMAIL=... ./deploy.sh
-```
-
-- `GITHUB_TOKEN` provides OAuth token for `flutter-symbolizer-bot` account;
-- `SENDGRID_TOKEN` provides SendGrid API token
-- `FAILURE_EMAIL` configures email that bot should report exceptions to.
-- Under certain conditions your machine might not be able to connect to
-  GCE instance. In this case you will need to proxy your deployment through
-  another machine that *can* connect to the instance. You can specify
-  this "proxy" machine via `DEPLOYMENT_PROXY`.
 
 ## SDK version
 

@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:googleapis/firestore/v1.dart';
 import 'package:sendgrid_mailer/sendgrid_mailer.dart';
-import 'package:symbolizer/model.dart';
 import 'package:test/test.dart';
 
 import 'package:github_label_notifier/firestore_helpers.dart';
@@ -50,83 +49,6 @@ Future<HttpServer> createSendgridMockServer(
           ..headers.contentType = ContentType.text
           ..write('OK'))
         .close();
-  });
-  return server;
-}
-
-Future<HttpServer> createSymbolizerServer(List<String> commandLog) async {
-  // Start mock Symbolizer server at the address/port specified in
-  // SYMBOLIZER_SERVER environment variable.
-  final serverAddress = Platform.environment['SYMBOLIZER_SERVER'];
-  if (serverAddress == null) {
-    throw 'SENDGRID_MOCK_SERVER environment variable is not set';
-  }
-  final serverUri = Uri.parse('http://$serverAddress');
-  final server = await HttpServer.bind(serverUri.host, serverUri.port);
-  server.listen((request) async {
-    final body = await utf8.decodeStream(request);
-    switch (request.requestedUri.path) {
-      case '/symbolize':
-        // Reply with symbolized crash.
-        SymbolizationResult result;
-        print(body);
-        if (body.contains('TRIGGER_SYMBOLIZATION_ERROR')) {
-          result = SymbolizationResult.error(
-            error: SymbolizationNote(
-                kind: SymbolizationNoteKind.exceptionWhileParsing,
-                message: 'some detailed error'),
-          );
-        } else {
-          result = SymbolizationResult.ok(results: [
-            CrashSymbolizationResult(
-                crash: Crash(
-                    engineVariant:
-                        EngineVariant(arch: 'arm', os: 'ios', mode: 'debug'),
-                    format: 'native',
-                    frames: [
-                      CrashFrame.ios(
-                        no: '00',
-                        binary: 'BINARY',
-                        pc: 0x10042,
-                        symbol: '0x',
-                        offset: 42,
-                        location: '',
-                      )
-                    ]),
-                engineBuild: EngineBuild(
-                  engineHash: 'aaabbb',
-                  variant: EngineVariant(arch: 'arm', os: 'ios', mode: 'debug'),
-                ),
-                symbolized: 'SYMBOLIZED_STACK_HERE')
-          ]);
-        }
-        await (request.response
-              ..statusCode = HttpStatus.ok
-              ..reasonPhrase = 'OK'
-              ..headers.contentType = ContentType.text
-              ..write(jsonEncode(result)))
-            .close();
-        break;
-      case '/command':
-        commandLog.add(jsonDecode(body)['comment']['body']);
-
-        // Reply with 200 OK.
-        await (request.response
-              ..statusCode = HttpStatus.ok
-              ..reasonPhrase = 'OK'
-              ..headers.contentType = ContentType.text
-              ..write('OK'))
-            .close();
-        break;
-      default: // Reply with 404.
-        await (request.response
-              ..statusCode = HttpStatus.notFound
-              ..reasonPhrase = 'Not Found'
-              ..headers.contentType = ContentType.text
-              ..write('Not Found'))
-            .close();
-        break;
-    }
   });
   return server;
 }
@@ -204,7 +126,6 @@ void main() async {
         '$keywordDatabase/dart-lang\$webhook-test');
 
     sendgridMockServer = await createSendgridMockServer(sendgridRequests);
-    symbolizerServer = await createSymbolizerServer(symbolizerCommands);
     createGithubLabelNotifier();
   });
 
@@ -216,9 +137,6 @@ void main() async {
   tearDownAll(() async {
     // Shutdown the mock SendGrid server.
     await sendgridMockServer.close();
-
-    // Shutdown the mock symbolizer.
-    await symbolizerServer.close();
   });
 
   // Helper to send a mock GitHub event to the locally running instance of the
@@ -473,35 +391,10 @@ Much information
     expect(rs.statusCode, equals(HttpStatus.ok));
     expect(sendgridRequests.length, equals(1));
     final request = sendgridRequests.first;
-    final plainTextBody = request.body['content']
-        .firstWhere((c) => c['type'] == 'text/plain')['value'];
-    expect(plainTextBody, contains('engine aaabbb ios-arm-debug crash'));
-    expect(plainTextBody, contains('SYMBOLIZED_STACK_HERE'));
-  });
-
-  test('ok - issue opened - crash - error during symbolization', () async {
-    final rs = await sendEvent(body: makeIssueOpenedEvent(body: '''
-I had Flutter engine c_r_a_s_h on me with the following message
-
-*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-Such c_r_a_s_h
-Much information
-TRIGGER_SYMBOLIZATION_ERROR
-'''));
-    expect(rs.statusCode, equals(HttpStatus.ok));
-    expect(sendgridRequests.length, equals(0));
-  });
-
-  test('ok - issue comment - forward bot command', () async {
-    final command = '''@flutter-symbolizer-bot aaa bbb''';
-    final rs = await sendEvent(
-        event: 'issue_comment',
-        body: makeIssueCommentEvent(
-          commentBody: command,
-          authorAssociation: 'MEMBER',
-        ));
-    expect(rs.statusCode, equals(HttpStatus.ok));
-    expect(symbolizerCommands, equals([command]));
+    expect(
+        request.body['content']
+            .firstWhere((c) => c['type'] == 'text/plain')['value'],
+        contains('Matches keyword: crash'));
   });
 }
 

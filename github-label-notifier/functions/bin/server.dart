@@ -10,9 +10,6 @@ import 'package:gcp/gcp.dart';
 import 'package:sendgrid_mailer/sendgrid_mailer.dart' as sendgrid;
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
-import 'package:symbolizer/model.dart';
-import 'package:symbolizer/parser.dart';
-import 'package:symbolizer/bot.dart';
 
 import 'package:github_label_notifier/github_utils.dart';
 import 'package:github_label_notifier/redirecting_http.dart';
@@ -178,19 +175,13 @@ Sent by dart-github-label-notifier.web.app
 /// The handler will search the body of the open issue for specific keywords
 /// and send emails to all subscribers to a specific label.
 Future<void> onIssueOpened(Map<String, dynamic> event) async {
-  SymbolizationResult? symbolizedCrashes;
-
   final repositoryName = event['repository']['full_name'];
   print("opened issue $repositoryName");
   final subscription = await db.lookupKeywordSubscription(repositoryName);
   if (subscription == null) return;
-  if (subscription.keywords.contains('crash') &&
-      containsCrash(event['issue']['body'])) {
-    symbolizedCrashes = await _trySymbolize(event['issue']);
-  }
 
-  final match = (symbolizedCrashes is SymbolizationResultOk &&
-          symbolizedCrashes.results.isNotEmpty)
+  final match = (subscription.keywords.contains('crash') &&
+          _containsCrash(event['issue']['body']))
       ? 'crash'
       : subscription.match(event['issue']['body']);
   if (match == null) {
@@ -210,51 +201,6 @@ Future<void> onIssueOpened(Map<String, dynamic> event) async {
 
   final escape = htmlEscape.convert;
 
-  final symbolizedCrashesText = symbolizedCrashes
-          ?.when(
-              ok: (results) {
-                return [
-                  '',
-                  ...results.expand((r) => [
-                        if (r.symbolized != null)
-                          '# engine ${r.engineBuild!.engineHash} ${r.engineBuild!.variant.pretty} crash'
-                        else
-                          '# engine crash',
-                        for (var note in r.notes)
-                          if (note.message != null)
-                            '# ${noteMessage[note.kind]}: ${note.message}'
-                          else
-                            '# ${noteMessage[note.kind]}',
-                        r.symbolized ?? r.crash.frames.toString(),
-                      ]),
-                  ''
-                ];
-              },
-              error: (note) => null)
-          ?.join('\n') ??
-      '';
-
-  final symbolizedCrashesHtml = symbolizedCrashes
-          ?.when(
-            ok: (results) {
-              return results.expand((r) => [
-                    if (r.symbolized != null)
-                      '<p>engine ${r.engineBuild!.engineHash} ${r.engineBuild!.variant.pretty} crash</p>'
-                    else
-                      '<p>engine crash</p>',
-                    for (var note in r.notes)
-                      if (note.message != null)
-                        '<em>${noteMessage[note.kind]}: <pre>${escape(note.message!)}</pre></em>'
-                      else
-                        '<em>${noteMessage[note.kind]}</em>',
-                    '<pre>${escape(r.symbolized ?? r.crash.frames.toString())}</pre>',
-                  ]);
-            },
-            error: (note) => null,
-          )
-          ?.join('') ??
-      '';
-
   final personalizations = [
     for (final to in subscribers)
       sendgrid.Personalization([sendgrid.Address(to)])
@@ -270,7 +216,7 @@ $issueUrl
 Reported by $issueReporterUsername
 
 Matches keyword: $match
-$symbolizedCrashesText
+
 You are getting this mail because you are subscribed to label ${subscription.label}.
 --
 Sent by dart-github-label-notifier.web.app
@@ -279,7 +225,6 @@ Sent by dart-github-label-notifier.web.app
 <p><strong><a href="$issueUrl">${escape(issueTitle)}</a>&nbsp;(${escape(repositoryName)}#${escape(issueNumber.toString())})</strong></p>
 <p>Reported by <a href="$issueReporterUrl">${escape(issueReporterUsername)}</a></p>
 <p>Matches keyword: <b>$match</b></p>
-$symbolizedCrashesHtml
 <p>You are getting this mail because you are subscribed to label ${subscription.label}</p>
 <hr>
 <p>Sent by <a href="https://dart-github-label-notifier.web.app/">GitHub Label Notifier</a></p>
@@ -292,18 +237,7 @@ $symbolizedCrashesHtml
 }
 
 Future<void> onIssueCommentCreated(Map<String, dynamic> event) async {
-  final body = event['comment']['body'];
-
-  if (Bot.isCommand(body)) {
-    final response = await http.post(
-      Uri.http(symbolizerServer, 'command'),
-      body: jsonEncode(event),
-    );
-    if (response.statusCode != HttpStatus.ok) {
-      throw WebHookError(HttpStatus.internalServerError,
-          'Failed to process ${event['comment']['html_url']}: ${response.body}');
-    }
-  }
+  // Do nothing.
 }
 
 class WebHookError {
@@ -324,23 +258,6 @@ String getRequiredHeaderValue(Request request, String header) {
           HttpStatus.badRequest, 'Missing $header header value.'));
 }
 
-Future<SymbolizationResult> _trySymbolize(Map<String, dynamic> body) async {
-  try {
-    final response = await http
-        .post(
-          Uri.http(symbolizerServer, 'symbolize'),
-          body: jsonEncode(body),
-        )
-        .timeout(const Duration(seconds: 20));
-    return SymbolizationResult.fromJson(jsonDecode(response.body));
-  } catch (e, st) {
-    return SymbolizationResult.error(
-        error: SymbolizationNote(
-            kind: SymbolizationNoteKind.exceptionWhileSymbolizing,
-            message: '$e\n$st'));
-  }
-}
-
 Future<http.Response> Function(Uri url,
     {Object? body,
     Encoding? encoding,
@@ -350,4 +267,15 @@ Future<http.Response> Function(Uri url,
     final newUrl = url.replace(scheme: 'http', host: replacementHost);
     return http.post(newUrl, body: body, encoding: encoding, headers: headers);
   };
+}
+
+final _androidCrashMarker =
+    '*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***';
+
+final _iosCrashMarker = RegExp(
+    r'(Incident Identifier:\s+([A-F0-9]+-?)+)|(Exception Type:\s+EXC_CRASH)');
+
+/// Returns [true] if the given text is likely to contain a crash.
+bool _containsCrash(String text) {
+  return text.contains(_androidCrashMarker) || text.contains(_iosCrashMarker);
 }

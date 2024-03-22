@@ -8,13 +8,21 @@ library symbolizer.ndk;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
+final _log = Logger('tools');
+
 class Ndk {
+  final LlvmTools llvmTools;
+
+  Ndk({required this.llvmTools});
+
   /// Return information about .text section from the given [object] file.
   Future<SectionInfo> getTextSectionInfo(String object) async {
     final result =
-        await _run(_readelfBinary, ['--elf-output-style=GNU', '-l', object]);
+        await _run(llvmTools.readobj, ['--elf-output-style=GNU', '-l', object]);
     for (var match in _loadCommandPattern.allMatches(result)) {
       if (match.namedGroup('flags')!.trim() == 'R E') {
         // Found .text section
@@ -31,7 +39,7 @@ class Ndk {
   /// Return build-id of the given [object] file.
   Future<String> getBuildId(String object) async {
     final result =
-        await _run(_readelfBinary, ['--elf-output-style=GNU', '-n', object]);
+        await _run(llvmTools.readobj, ['--elf-output-style=GNU', '-n', object]);
     final match = _buildIdPattern.firstMatch(result);
     if (match == null) {
       throw 'Failed to extract build-id from $object';
@@ -45,7 +53,7 @@ class Ndk {
       {required String object,
       required List<String> addresses,
       String? arch}) async {
-    final result = await _run(_llvmSymbolizerBinary, [
+    final result = await _run(llvmTools.symbolizer, [
       if (arch != null) '--default-arch=$arch',
       '--obj',
       object,
@@ -69,7 +77,7 @@ class Ndk {
     required String arch,
   }) async* {
     final process =
-        await Process.start(_llvmObjdumpBinary, ['--arch=$arch', '-d', object]);
+        await Process.start(llvmTools.objdump, ['--arch=$arch', '-d', object]);
 
     await for (var line in process.stdout
         .transform(utf8.decoder)
@@ -102,14 +110,81 @@ class SectionInfo {
   });
 }
 
-final _platform = Platform.isLinux ? 'linux' : 'darwin';
-final _ndkDir = 'tools/android-ndk';
-final _llvmSymbolizerBinary =
-    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-symbolizer';
-final _llvmObjdumpBinary =
-    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-objdump';
-final _readelfBinary =
-    '$_ndkDir/toolchains/llvm/prebuilt/$_platform-x86_64/bin/llvm-readobj';
+class LlvmTools {
+  final String symbolizer;
+  final String objdump;
+  final String readobj;
+
+  LlvmTools._({
+    required this.symbolizer,
+    required this.readobj,
+    required this.objdump,
+  });
+
+  @override
+  String toString() => 'LlvmTools($symbolizer, $objdump, $readobj)';
+
+  static LlvmTools? _at(String root) {
+    _log.info(
+        'checking for llvm-{symbolizer,readobj,objdump} in ${root.isEmpty ? '\$PATH' : root}');
+    final tools = LlvmTools._(
+        symbolizer: p.join(root, 'llvm-symbolizer'),
+        readobj: p.join(root, 'llvm-readobj'),
+        objdump: p.join(root, 'llvm-objdump'));
+    return tools._checkOperational() ? tools : null;
+  }
+
+  bool _checkOperational() {
+    bool checkBinary(String path) {
+      try {
+        final result = Process.runSync(path, ['--help']);
+        return result.exitCode == 0 && result.stdout.startsWith('OVERVIEW: ');
+      } catch (_) {
+        return false;
+      }
+    }
+
+    return checkBinary(symbolizer) &&
+        checkBinary(objdump) &&
+        checkBinary(readobj);
+  }
+
+  static LlvmTools? findTools() {
+    final homeDir = Platform.environment['HOME'] ?? '';
+    return LlvmTools._at('') ??
+        _ndkTools('tools/android-ndk') ??
+        _tryFindNdkAt(p.join(homeDir, 'Library/Android/sdk/ndk')) ??
+        _tryFindNdkAt(p.join(homeDir, 'Android/Sdk/ndk'));
+  }
+
+  static LlvmTools? _tryFindNdkAt(String path) {
+    try {
+      final ndksDir = Directory(path);
+      int majorVersion(String v) {
+        return int.tryParse(v.split('.').first) ?? 0;
+      }
+
+      final ndkVersions = [
+        for (var entry in ndksDir.listSync())
+          if (entry is Directory) p.basename(entry.path),
+      ]..sort((a, b) => majorVersion(b).compareTo(majorVersion(a)));
+
+      return ndkVersions
+          .map((name) => _ndkTools(p.join(path, name)))
+          .whereType<LlvmTools>()
+          .firstOrNull;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static LlvmTools? _ndkTools(String path) {
+    final platform = Platform.isLinux ? 'linux' : 'darwin';
+    return LlvmTools._at(
+        '$path/toolchains/llvm/prebuilt/$platform-x86_64/bin/');
+  }
+}
+
 final _buildIdPattern = RegExp(r'Build ID:\s+(?<id>[0-9a-f]+)');
 final _loadCommandPattern = RegExp(
     r'^\s+LOAD\s+(?<offset>0x[0-9a-f]+)\s+(?<vma>0x[0-9a-f]+)\s+(?<phys>0x[0-9a-f]+)\s+(?<filesz>0x[0-9a-f]+)\s+(?<memsz>0x[0-9a-f]+)\s+(?<flags>[^0]+)\s+0x[0-9a-f]+\s*$',

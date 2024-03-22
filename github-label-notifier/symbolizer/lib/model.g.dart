@@ -1,39 +1,39 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of symbolizer.model;
+part of 'model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_EngineVariant _$$_EngineVariantFromJson(Map<String, dynamic> json) =>
-    _$_EngineVariant(
+_$EngineVariantImpl _$$EngineVariantImplFromJson(Map<String, dynamic> json) =>
+    _$EngineVariantImpl(
       os: json['os'] as String,
       arch: json['arch'] as String?,
       mode: json['mode'] as String?,
     );
 
-Map<String, dynamic> _$$_EngineVariantToJson(_$_EngineVariant instance) =>
+Map<String, dynamic> _$$EngineVariantImplToJson(_$EngineVariantImpl instance) =>
     <String, dynamic>{
       'os': instance.os,
       'arch': instance.arch,
       'mode': instance.mode,
     };
 
-_$_EngineBuild _$$_EngineBuildFromJson(Map<String, dynamic> json) =>
-    _$_EngineBuild(
+_$EngineBuildImpl _$$EngineBuildImplFromJson(Map<String, dynamic> json) =>
+    _$EngineBuildImpl(
       engineHash: json['engineHash'] as String,
       variant: EngineVariant.fromJson(json['variant'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_EngineBuildToJson(_$_EngineBuild instance) =>
+Map<String, dynamic> _$$EngineBuildImplToJson(_$EngineBuildImpl instance) =>
     <String, dynamic>{
       'engineHash': instance.engineHash,
       'variant': instance.variant,
     };
 
-_$IosCrashFrame _$$IosCrashFrameFromJson(Map<String, dynamic> json) =>
-    _$IosCrashFrame(
+_$IosCrashFrameImpl _$$IosCrashFrameImplFromJson(Map<String, dynamic> json) =>
+    _$IosCrashFrameImpl(
       no: json['no'] as String,
       binary: json['binary'] as String,
       pc: json['pc'] as int,
@@ -43,7 +43,7 @@ _$IosCrashFrame _$$IosCrashFrameFromJson(Map<String, dynamic> json) =>
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$IosCrashFrameToJson(_$IosCrashFrame instance) =>
+Map<String, dynamic> _$$IosCrashFrameImplToJson(_$IosCrashFrameImpl instance) =>
     <String, dynamic>{
       'no': instance.no,
       'binary': instance.binary,
@@ -54,8 +54,9 @@ Map<String, dynamic> _$$IosCrashFrameToJson(_$IosCrashFrame instance) =>
       'runtimeType': instance.$type,
     };
 
-_$AndroidCrashFrame _$$AndroidCrashFrameFromJson(Map<String, dynamic> json) =>
-    _$AndroidCrashFrame(
+_$AndroidCrashFrameImpl _$$AndroidCrashFrameImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AndroidCrashFrameImpl(
       no: json['no'] as String,
       pc: json['pc'] as int,
       binary: json['binary'] as String,
@@ -64,7 +65,8 @@ _$AndroidCrashFrame _$$AndroidCrashFrameFromJson(Map<String, dynamic> json) =>
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$AndroidCrashFrameToJson(_$AndroidCrashFrame instance) =>
+Map<String, dynamic> _$$AndroidCrashFrameImplToJson(
+        _$AndroidCrashFrameImpl instance) =>
     <String, dynamic>{
       'no': instance.no,
       'pc': instance.pc,
@@ -74,8 +76,9 @@ Map<String, dynamic> _$$AndroidCrashFrameToJson(_$AndroidCrashFrame instance) =>
       'runtimeType': instance.$type,
     };
 
-_$CustomCrashFrame _$$CustomCrashFrameFromJson(Map<String, dynamic> json) =>
-    _$CustomCrashFrame(
+_$CustomCrashFrameImpl _$$CustomCrashFrameImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CustomCrashFrameImpl(
       no: json['no'] as String,
       pc: json['pc'] as int,
       binary: json['binary'] as String,
@@ -85,7 +88,8 @@ _$CustomCrashFrame _$$CustomCrashFrameFromJson(Map<String, dynamic> json) =>
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$CustomCrashFrameToJson(_$CustomCrashFrame instance) =>
+Map<String, dynamic> _$$CustomCrashFrameImplToJson(
+        _$CustomCrashFrameImpl instance) =>
     <String, dynamic>{
       'no': instance.no,
       'pc': instance.pc,
@@ -96,15 +100,17 @@ Map<String, dynamic> _$$CustomCrashFrameToJson(_$CustomCrashFrame instance) =>
       'runtimeType': instance.$type,
     };
 
-_$DartvmCrashFrame _$$DartvmCrashFrameFromJson(Map<String, dynamic> json) =>
-    _$DartvmCrashFrame(
+_$DartvmCrashFrameImpl _$$DartvmCrashFrameImplFromJson(
+        Map<String, dynamic> json) =>
+    _$DartvmCrashFrameImpl(
       pc: json['pc'] as int,
       binary: json['binary'] as String,
       offset: json['offset'] as int,
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$DartvmCrashFrameToJson(_$DartvmCrashFrame instance) =>
+Map<String, dynamic> _$$DartvmCrashFrameImplToJson(
+        _$DartvmCrashFrameImpl instance) =>
     <String, dynamic>{
       'pc': instance.pc,
       'binary': instance.binary,
@@ -112,7 +118,7 @@ Map<String, dynamic> _$$DartvmCrashFrameToJson(_$DartvmCrashFrame instance) =>
       'runtimeType': instance.$type,
     };
 
-_$_Crash _$$_CrashFromJson(Map<String, dynamic> json) => _$_Crash(
+_$CrashImpl _$$CrashImplFromJson(Map<String, dynamic> json) => _$CrashImpl(
       engineVariant:
           EngineVariant.fromJson(json['engineVariant'] as Map<String, dynamic>),
       frames: (json['frames'] as List<dynamic>)
@@ -122,16 +128,17 @@ _$_Crash _$$_CrashFromJson(Map<String, dynamic> json) => _$_Crash(
       androidMajorVersion: json['androidMajorVersion'] as int?,
     );
 
-Map<String, dynamic> _$$_CrashToJson(_$_Crash instance) => <String, dynamic>{
+Map<String, dynamic> _$$CrashImplToJson(_$CrashImpl instance) =>
+    <String, dynamic>{
       'engineVariant': instance.engineVariant,
       'frames': instance.frames,
       'format': instance.format,
       'androidMajorVersion': instance.androidMajorVersion,
     };
 
-_$SymbolizationResultOk _$$SymbolizationResultOkFromJson(
+_$SymbolizationResultOkImpl _$$SymbolizationResultOkImplFromJson(
         Map<String, dynamic> json) =>
-    _$SymbolizationResultOk(
+    _$SymbolizationResultOkImpl(
       results: (json['results'] as List<dynamic>)
           .map((e) =>
               CrashSymbolizationResult.fromJson(e as Map<String, dynamic>))
@@ -139,30 +146,30 @@ _$SymbolizationResultOk _$$SymbolizationResultOkFromJson(
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$SymbolizationResultOkToJson(
-        _$SymbolizationResultOk instance) =>
+Map<String, dynamic> _$$SymbolizationResultOkImplToJson(
+        _$SymbolizationResultOkImpl instance) =>
     <String, dynamic>{
       'results': instance.results.map((e) => e.toJson()).toList(),
       'runtimeType': instance.$type,
     };
 
-_$SymbolizationResultError _$$SymbolizationResultErrorFromJson(
+_$SymbolizationResultErrorImpl _$$SymbolizationResultErrorImplFromJson(
         Map<String, dynamic> json) =>
-    _$SymbolizationResultError(
+    _$SymbolizationResultErrorImpl(
       error: SymbolizationNote.fromJson(json['error'] as Map<String, dynamic>),
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$SymbolizationResultErrorToJson(
-        _$SymbolizationResultError instance) =>
+Map<String, dynamic> _$$SymbolizationResultErrorImplToJson(
+        _$SymbolizationResultErrorImpl instance) =>
     <String, dynamic>{
       'error': instance.error.toJson(),
       'runtimeType': instance.$type,
     };
 
-_$_CrashSymbolizationResult _$$_CrashSymbolizationResultFromJson(
+_$CrashSymbolizationResultImpl _$$CrashSymbolizationResultImplFromJson(
         Map<String, dynamic> json) =>
-    _$_CrashSymbolizationResult(
+    _$CrashSymbolizationResultImpl(
       crash: Crash.fromJson(json['crash'] as Map<String, dynamic>),
       engineBuild: json['engineBuild'] == null
           ? null
@@ -175,8 +182,8 @@ _$_CrashSymbolizationResult _$$_CrashSymbolizationResultFromJson(
           const [],
     );
 
-Map<String, dynamic> _$$_CrashSymbolizationResultToJson(
-        _$_CrashSymbolizationResult instance) =>
+Map<String, dynamic> _$$CrashSymbolizationResultImplToJson(
+        _$CrashSymbolizationResultImpl instance) =>
     <String, dynamic>{
       'crash': instance.crash.toJson(),
       'engineBuild': instance.engineBuild?.toJson(),
@@ -184,14 +191,15 @@ Map<String, dynamic> _$$_CrashSymbolizationResultToJson(
       'notes': instance.notes.map((e) => e.toJson()).toList(),
     };
 
-_$_SymbolizationNote _$$_SymbolizationNoteFromJson(Map<String, dynamic> json) =>
-    _$_SymbolizationNote(
+_$SymbolizationNoteImpl _$$SymbolizationNoteImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SymbolizationNoteImpl(
       kind: $enumDecode(_$SymbolizationNoteKindEnumMap, json['kind']),
       message: json['message'] as String?,
     );
 
-Map<String, dynamic> _$$_SymbolizationNoteToJson(
-        _$_SymbolizationNote instance) =>
+Map<String, dynamic> _$$SymbolizationNoteImplToJson(
+        _$SymbolizationNoteImpl instance) =>
     <String, dynamic>{
       'kind': _$SymbolizationNoteKindEnumMap[instance.kind]!,
       'message': instance.message,
@@ -213,16 +221,12 @@ const _$SymbolizationNoteKindEnumMap = {
   SymbolizationNoteKind.exceptionWhileParsing: 'exceptionWhileParsing',
 };
 
-_$_ServerConfig _$$_ServerConfigFromJson(Map<String, dynamic> json) =>
-    _$_ServerConfig(
+_$ServerConfigImpl _$$ServerConfigImplFromJson(Map<String, dynamic> json) =>
+    _$ServerConfigImpl(
       githubToken: json['githubToken'] as String,
-      sendgridToken: json['sendgridToken'] as String,
-      failureEmail: json['failureEmail'] as String,
     );
 
-Map<String, dynamic> _$$_ServerConfigToJson(_$_ServerConfig instance) =>
+Map<String, dynamic> _$$ServerConfigImplToJson(_$ServerConfigImpl instance) =>
     <String, dynamic>{
       'githubToken': instance.githubToken,
-      'sendgridToken': instance.sendgridToken,
-      'failureEmail': instance.failureEmail,
     };

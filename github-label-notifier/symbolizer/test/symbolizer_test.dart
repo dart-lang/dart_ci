@@ -9,7 +9,6 @@ import 'package:github/github.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
-import 'package:symbolizer/bot.dart';
 import 'package:symbolizer/config.dart';
 import 'package:symbolizer/model.dart';
 import 'package:symbolizer/ndk.dart';
@@ -49,7 +48,7 @@ void main() {
     final files = Directory('test/data').listSync();
 
     setUpAll(() {
-      final ndk = Ndk();
+      final ndk = Ndk(llvmTools: LlvmTools.findTools()!);
       final symbols =
           SymbolsCache(path: 'symbols-cache', ndk: ndk, sizeThreshold: 100);
       final github = GitHub(auth: Authentication.withToken(config.githubToken));
@@ -63,7 +62,8 @@ void main() {
       final expectationFile = File('test/data/$testName.expected.txt');
       test(testName, () async {
         final input = await inputFile.readAsString();
-        final overrides = Bot.parseCommand(0, input)?.overrides;
+        final overrides =
+            SymbolizationOverrides.tryParse(input.split('\n').first);
         final result = await symbolizer.symbolize(input, overrides: overrides);
         final roundTrip =
             SymbolizationResult.fromJson(jsonDecode(jsonEncode(result)));

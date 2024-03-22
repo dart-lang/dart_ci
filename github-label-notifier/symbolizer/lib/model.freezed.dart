@@ -1,9 +1,9 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of symbolizer.model;
+part of 'model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,7 +12,7 @@ part of symbolizer.model;
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 EngineVariant _$EngineVariantFromJson(Map<String, dynamic> json) {
   return _EngineVariant.fromJson(json);
@@ -34,79 +34,81 @@ mixin _$EngineVariant {
 abstract class $EngineVariantCopyWith<$Res> {
   factory $EngineVariantCopyWith(
           EngineVariant value, $Res Function(EngineVariant) then) =
-      _$EngineVariantCopyWithImpl<$Res>;
+      _$EngineVariantCopyWithImpl<$Res, EngineVariant>;
+  @useResult
   $Res call({String os, String? arch, String? mode});
 }
 
 /// @nodoc
-class _$EngineVariantCopyWithImpl<$Res>
+class _$EngineVariantCopyWithImpl<$Res, $Val extends EngineVariant>
     implements $EngineVariantCopyWith<$Res> {
   _$EngineVariantCopyWithImpl(this._value, this._then);
 
-  final EngineVariant _value;
   // ignore: unused_field
-  final $Res Function(EngineVariant) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? os = freezed,
+    Object? os = null,
     Object? arch = freezed,
     Object? mode = freezed,
   }) {
     return _then(_value.copyWith(
-      os: os == freezed
+      os: null == os
           ? _value.os
           : os // ignore: cast_nullable_to_non_nullable
               as String,
-      arch: arch == freezed
+      arch: freezed == arch
           ? _value.arch
           : arch // ignore: cast_nullable_to_non_nullable
               as String?,
-      mode: mode == freezed
+      mode: freezed == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as String?,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_EngineVariantCopyWith<$Res>
+abstract class _$$EngineVariantImplCopyWith<$Res>
     implements $EngineVariantCopyWith<$Res> {
-  factory _$$_EngineVariantCopyWith(
-          _$_EngineVariant value, $Res Function(_$_EngineVariant) then) =
-      __$$_EngineVariantCopyWithImpl<$Res>;
+  factory _$$EngineVariantImplCopyWith(
+          _$EngineVariantImpl value, $Res Function(_$EngineVariantImpl) then) =
+      __$$EngineVariantImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String os, String? arch, String? mode});
 }
 
 /// @nodoc
-class __$$_EngineVariantCopyWithImpl<$Res>
-    extends _$EngineVariantCopyWithImpl<$Res>
-    implements _$$_EngineVariantCopyWith<$Res> {
-  __$$_EngineVariantCopyWithImpl(
-      _$_EngineVariant _value, $Res Function(_$_EngineVariant) _then)
-      : super(_value, (v) => _then(v as _$_EngineVariant));
+class __$$EngineVariantImplCopyWithImpl<$Res>
+    extends _$EngineVariantCopyWithImpl<$Res, _$EngineVariantImpl>
+    implements _$$EngineVariantImplCopyWith<$Res> {
+  __$$EngineVariantImplCopyWithImpl(
+      _$EngineVariantImpl _value, $Res Function(_$EngineVariantImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_EngineVariant get _value => super._value as _$_EngineVariant;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? os = freezed,
+    Object? os = null,
     Object? arch = freezed,
     Object? mode = freezed,
   }) {
-    return _then(_$_EngineVariant(
-      os: os == freezed
+    return _then(_$EngineVariantImpl(
+      os: null == os
           ? _value.os
           : os // ignore: cast_nullable_to_non_nullable
               as String,
-      arch: arch == freezed
+      arch: freezed == arch
           ? _value.arch
           : arch // ignore: cast_nullable_to_non_nullable
               as String?,
-      mode: mode == freezed
+      mode: freezed == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -116,11 +118,12 @@ class __$$_EngineVariantCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_EngineVariant implements _EngineVariant {
-  _$_EngineVariant({required this.os, required this.arch, required this.mode});
+class _$EngineVariantImpl implements _EngineVariant {
+  _$EngineVariantImpl(
+      {required this.os, required this.arch, required this.mode});
 
-  factory _$_EngineVariant.fromJson(Map<String, dynamic> json) =>
-      _$$_EngineVariantFromJson(json);
+  factory _$EngineVariantImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EngineVariantImplFromJson(json);
 
   @override
   final String os;
@@ -135,31 +138,28 @@ class _$_EngineVariant implements _EngineVariant {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_EngineVariant &&
-            const DeepCollectionEquality().equals(other.os, os) &&
-            const DeepCollectionEquality().equals(other.arch, arch) &&
-            const DeepCollectionEquality().equals(other.mode, mode));
+            other is _$EngineVariantImpl &&
+            (identical(other.os, os) || other.os == os) &&
+            (identical(other.arch, arch) || other.arch == arch) &&
+            (identical(other.mode, mode) || other.mode == mode));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(os),
-      const DeepCollectionEquality().hash(arch),
-      const DeepCollectionEquality().hash(mode));
+  int get hashCode => Object.hash(runtimeType, os, arch, mode);
 
   @JsonKey(ignore: true)
   @override
-  _$$_EngineVariantCopyWith<_$_EngineVariant> get copyWith =>
-      __$$_EngineVariantCopyWithImpl<_$_EngineVariant>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$EngineVariantImplCopyWith<_$EngineVariantImpl> get copyWith =>
+      __$$EngineVariantImplCopyWithImpl<_$EngineVariantImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_EngineVariantToJson(
+    return _$$EngineVariantImplToJson(
       this,
     );
   }
@@ -169,10 +169,10 @@ abstract class _EngineVariant implements EngineVariant {
   factory _EngineVariant(
       {required final String os,
       required final String? arch,
-      required final String? mode}) = _$_EngineVariant;
+      required final String? mode}) = _$EngineVariantImpl;
 
   factory _EngineVariant.fromJson(Map<String, dynamic> json) =
-      _$_EngineVariant.fromJson;
+      _$EngineVariantImpl.fromJson;
 
   @override
   String get os;
@@ -182,7 +182,7 @@ abstract class _EngineVariant implements EngineVariant {
   String? get mode;
   @override
   @JsonKey(ignore: true)
-  _$$_EngineVariantCopyWith<_$_EngineVariant> get copyWith =>
+  _$$EngineVariantImplCopyWith<_$EngineVariantImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -205,52 +205,58 @@ mixin _$EngineBuild {
 abstract class $EngineBuildCopyWith<$Res> {
   factory $EngineBuildCopyWith(
           EngineBuild value, $Res Function(EngineBuild) then) =
-      _$EngineBuildCopyWithImpl<$Res>;
+      _$EngineBuildCopyWithImpl<$Res, EngineBuild>;
+  @useResult
   $Res call({String engineHash, EngineVariant variant});
 
   $EngineVariantCopyWith<$Res> get variant;
 }
 
 /// @nodoc
-class _$EngineBuildCopyWithImpl<$Res> implements $EngineBuildCopyWith<$Res> {
+class _$EngineBuildCopyWithImpl<$Res, $Val extends EngineBuild>
+    implements $EngineBuildCopyWith<$Res> {
   _$EngineBuildCopyWithImpl(this._value, this._then);
 
-  final EngineBuild _value;
   // ignore: unused_field
-  final $Res Function(EngineBuild) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? engineHash = freezed,
-    Object? variant = freezed,
+    Object? engineHash = null,
+    Object? variant = null,
   }) {
     return _then(_value.copyWith(
-      engineHash: engineHash == freezed
+      engineHash: null == engineHash
           ? _value.engineHash
           : engineHash // ignore: cast_nullable_to_non_nullable
               as String,
-      variant: variant == freezed
+      variant: null == variant
           ? _value.variant
           : variant // ignore: cast_nullable_to_non_nullable
               as EngineVariant,
-    ));
+    ) as $Val);
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $EngineVariantCopyWith<$Res> get variant {
     return $EngineVariantCopyWith<$Res>(_value.variant, (value) {
-      return _then(_value.copyWith(variant: value));
+      return _then(_value.copyWith(variant: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_EngineBuildCopyWith<$Res>
+abstract class _$$EngineBuildImplCopyWith<$Res>
     implements $EngineBuildCopyWith<$Res> {
-  factory _$$_EngineBuildCopyWith(
-          _$_EngineBuild value, $Res Function(_$_EngineBuild) then) =
-      __$$_EngineBuildCopyWithImpl<$Res>;
+  factory _$$EngineBuildImplCopyWith(
+          _$EngineBuildImpl value, $Res Function(_$EngineBuildImpl) then) =
+      __$$EngineBuildImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String engineHash, EngineVariant variant});
 
   @override
@@ -258,26 +264,25 @@ abstract class _$$_EngineBuildCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_EngineBuildCopyWithImpl<$Res> extends _$EngineBuildCopyWithImpl<$Res>
-    implements _$$_EngineBuildCopyWith<$Res> {
-  __$$_EngineBuildCopyWithImpl(
-      _$_EngineBuild _value, $Res Function(_$_EngineBuild) _then)
-      : super(_value, (v) => _then(v as _$_EngineBuild));
+class __$$EngineBuildImplCopyWithImpl<$Res>
+    extends _$EngineBuildCopyWithImpl<$Res, _$EngineBuildImpl>
+    implements _$$EngineBuildImplCopyWith<$Res> {
+  __$$EngineBuildImplCopyWithImpl(
+      _$EngineBuildImpl _value, $Res Function(_$EngineBuildImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_EngineBuild get _value => super._value as _$_EngineBuild;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? engineHash = freezed,
-    Object? variant = freezed,
+    Object? engineHash = null,
+    Object? variant = null,
   }) {
-    return _then(_$_EngineBuild(
-      engineHash: engineHash == freezed
+    return _then(_$EngineBuildImpl(
+      engineHash: null == engineHash
           ? _value.engineHash
           : engineHash // ignore: cast_nullable_to_non_nullable
               as String,
-      variant: variant == freezed
+      variant: null == variant
           ? _value.variant
           : variant // ignore: cast_nullable_to_non_nullable
               as EngineVariant,
@@ -287,11 +292,11 @@ class __$$_EngineBuildCopyWithImpl<$Res> extends _$EngineBuildCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_EngineBuild implements _EngineBuild {
-  _$_EngineBuild({required this.engineHash, required this.variant});
+class _$EngineBuildImpl implements _EngineBuild {
+  _$EngineBuildImpl({required this.engineHash, required this.variant});
 
-  factory _$_EngineBuild.fromJson(Map<String, dynamic> json) =>
-      _$$_EngineBuildFromJson(json);
+  factory _$EngineBuildImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EngineBuildImplFromJson(json);
 
   @override
   final String engineHash;
@@ -304,30 +309,28 @@ class _$_EngineBuild implements _EngineBuild {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_EngineBuild &&
-            const DeepCollectionEquality()
-                .equals(other.engineHash, engineHash) &&
-            const DeepCollectionEquality().equals(other.variant, variant));
+            other is _$EngineBuildImpl &&
+            (identical(other.engineHash, engineHash) ||
+                other.engineHash == engineHash) &&
+            (identical(other.variant, variant) || other.variant == variant));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(engineHash),
-      const DeepCollectionEquality().hash(variant));
+  int get hashCode => Object.hash(runtimeType, engineHash, variant);
 
   @JsonKey(ignore: true)
   @override
-  _$$_EngineBuildCopyWith<_$_EngineBuild> get copyWith =>
-      __$$_EngineBuildCopyWithImpl<_$_EngineBuild>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$EngineBuildImplCopyWith<_$EngineBuildImpl> get copyWith =>
+      __$$EngineBuildImplCopyWithImpl<_$EngineBuildImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_EngineBuildToJson(
+    return _$$EngineBuildImplToJson(
       this,
     );
   }
@@ -336,10 +339,10 @@ class _$_EngineBuild implements _EngineBuild {
 abstract class _EngineBuild implements EngineBuild {
   factory _EngineBuild(
       {required final String engineHash,
-      required final EngineVariant variant}) = _$_EngineBuild;
+      required final EngineVariant variant}) = _$EngineBuildImpl;
 
   factory _EngineBuild.fromJson(Map<String, dynamic> json) =
-      _$_EngineBuild.fromJson;
+      _$EngineBuildImpl.fromJson;
 
   @override
   String get engineHash;
@@ -347,7 +350,7 @@ abstract class _EngineBuild implements EngineBuild {
   EngineVariant get variant;
   @override
   @JsonKey(ignore: true)
-  _$$_EngineBuildCopyWith<_$_EngineBuild> get copyWith =>
+  _$$EngineBuildImplCopyWith<_$EngineBuildImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -390,16 +393,16 @@ mixin _$CrashFrame {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String no, String binary, int pc, String symbol,
+    TResult? Function(String no, String binary, int pc, String symbol,
             int? offset, String location)?
         ios,
-    TResult Function(
+    TResult? Function(
             String no, int pc, String binary, String rest, String? buildId)?
         android,
-    TResult Function(String no, int pc, String binary, int? offset,
+    TResult? Function(String no, int pc, String binary, int? offset,
             String? location, String? symbol)?
         custom,
-    TResult Function(int pc, String binary, int offset)? dartvm,
+    TResult? Function(int pc, String binary, int offset)? dartvm,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -427,10 +430,10 @@ mixin _$CrashFrame {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(IosCrashFrame value)? ios,
-    TResult Function(AndroidCrashFrame value)? android,
-    TResult Function(CustomCrashFrame value)? custom,
-    TResult Function(DartvmCrashFrame value)? dartvm,
+    TResult? Function(IosCrashFrame value)? ios,
+    TResult? Function(AndroidCrashFrame value)? android,
+    TResult? Function(CustomCrashFrame value)? custom,
+    TResult? Function(DartvmCrashFrame value)? dartvm,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -452,43 +455,48 @@ mixin _$CrashFrame {
 abstract class $CrashFrameCopyWith<$Res> {
   factory $CrashFrameCopyWith(
           CrashFrame value, $Res Function(CrashFrame) then) =
-      _$CrashFrameCopyWithImpl<$Res>;
+      _$CrashFrameCopyWithImpl<$Res, CrashFrame>;
+  @useResult
   $Res call({String binary, int pc});
 }
 
 /// @nodoc
-class _$CrashFrameCopyWithImpl<$Res> implements $CrashFrameCopyWith<$Res> {
+class _$CrashFrameCopyWithImpl<$Res, $Val extends CrashFrame>
+    implements $CrashFrameCopyWith<$Res> {
   _$CrashFrameCopyWithImpl(this._value, this._then);
 
-  final CrashFrame _value;
   // ignore: unused_field
-  final $Res Function(CrashFrame) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? binary = freezed,
-    Object? pc = freezed,
+    Object? binary = null,
+    Object? pc = null,
   }) {
     return _then(_value.copyWith(
-      binary: binary == freezed
+      binary: null == binary
           ? _value.binary
           : binary // ignore: cast_nullable_to_non_nullable
               as String,
-      pc: pc == freezed
+      pc: null == pc
           ? _value.pc
           : pc // ignore: cast_nullable_to_non_nullable
               as int,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$IosCrashFrameCopyWith<$Res>
+abstract class _$$IosCrashFrameImplCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory _$$IosCrashFrameCopyWith(
-          _$IosCrashFrame value, $Res Function(_$IosCrashFrame) then) =
-      __$$IosCrashFrameCopyWithImpl<$Res>;
+  factory _$$IosCrashFrameImplCopyWith(
+          _$IosCrashFrameImpl value, $Res Function(_$IosCrashFrameImpl) then) =
+      __$$IosCrashFrameImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {String no,
       String binary,
@@ -499,46 +507,45 @@ abstract class _$$IosCrashFrameCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$IosCrashFrameCopyWithImpl<$Res> extends _$CrashFrameCopyWithImpl<$Res>
-    implements _$$IosCrashFrameCopyWith<$Res> {
-  __$$IosCrashFrameCopyWithImpl(
-      _$IosCrashFrame _value, $Res Function(_$IosCrashFrame) _then)
-      : super(_value, (v) => _then(v as _$IosCrashFrame));
+class __$$IosCrashFrameImplCopyWithImpl<$Res>
+    extends _$CrashFrameCopyWithImpl<$Res, _$IosCrashFrameImpl>
+    implements _$$IosCrashFrameImplCopyWith<$Res> {
+  __$$IosCrashFrameImplCopyWithImpl(
+      _$IosCrashFrameImpl _value, $Res Function(_$IosCrashFrameImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$IosCrashFrame get _value => super._value as _$IosCrashFrame;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? no = freezed,
-    Object? binary = freezed,
-    Object? pc = freezed,
-    Object? symbol = freezed,
+    Object? no = null,
+    Object? binary = null,
+    Object? pc = null,
+    Object? symbol = null,
     Object? offset = freezed,
-    Object? location = freezed,
+    Object? location = null,
   }) {
-    return _then(_$IosCrashFrame(
-      no: no == freezed
+    return _then(_$IosCrashFrameImpl(
+      no: null == no
           ? _value.no
           : no // ignore: cast_nullable_to_non_nullable
               as String,
-      binary: binary == freezed
+      binary: null == binary
           ? _value.binary
           : binary // ignore: cast_nullable_to_non_nullable
               as String,
-      pc: pc == freezed
+      pc: null == pc
           ? _value.pc
           : pc // ignore: cast_nullable_to_non_nullable
               as int,
-      symbol: symbol == freezed
+      symbol: null == symbol
           ? _value.symbol
           : symbol // ignore: cast_nullable_to_non_nullable
               as String,
-      offset: offset == freezed
+      offset: freezed == offset
           ? _value.offset
           : offset // ignore: cast_nullable_to_non_nullable
               as int?,
-      location: location == freezed
+      location: null == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String,
@@ -548,8 +555,8 @@ class __$$IosCrashFrameCopyWithImpl<$Res> extends _$CrashFrameCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$IosCrashFrame implements IosCrashFrame {
-  _$IosCrashFrame(
+class _$IosCrashFrameImpl implements IosCrashFrame {
+  _$IosCrashFrameImpl(
       {required this.no,
       required this.binary,
       required this.pc,
@@ -559,8 +566,8 @@ class _$IosCrashFrame implements IosCrashFrame {
       final String? $type})
       : $type = $type ?? 'ios';
 
-  factory _$IosCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$$IosCrashFrameFromJson(json);
+  factory _$IosCrashFrameImpl.fromJson(Map<String, dynamic> json) =>
+      _$$IosCrashFrameImplFromJson(json);
 
   @override
   final String no;
@@ -586,33 +593,29 @@ class _$IosCrashFrame implements IosCrashFrame {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$IosCrashFrame &&
-            const DeepCollectionEquality().equals(other.no, no) &&
-            const DeepCollectionEquality().equals(other.binary, binary) &&
-            const DeepCollectionEquality().equals(other.pc, pc) &&
-            const DeepCollectionEquality().equals(other.symbol, symbol) &&
-            const DeepCollectionEquality().equals(other.offset, offset) &&
-            const DeepCollectionEquality().equals(other.location, location));
+            other is _$IosCrashFrameImpl &&
+            (identical(other.no, no) || other.no == no) &&
+            (identical(other.binary, binary) || other.binary == binary) &&
+            (identical(other.pc, pc) || other.pc == pc) &&
+            (identical(other.symbol, symbol) || other.symbol == symbol) &&
+            (identical(other.offset, offset) || other.offset == offset) &&
+            (identical(other.location, location) ||
+                other.location == location));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(no),
-      const DeepCollectionEquality().hash(binary),
-      const DeepCollectionEquality().hash(pc),
-      const DeepCollectionEquality().hash(symbol),
-      const DeepCollectionEquality().hash(offset),
-      const DeepCollectionEquality().hash(location));
+  int get hashCode =>
+      Object.hash(runtimeType, no, binary, pc, symbol, offset, location);
 
   @JsonKey(ignore: true)
   @override
-  _$$IosCrashFrameCopyWith<_$IosCrashFrame> get copyWith =>
-      __$$IosCrashFrameCopyWithImpl<_$IosCrashFrame>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$IosCrashFrameImplCopyWith<_$IosCrashFrameImpl> get copyWith =>
+      __$$IosCrashFrameImplCopyWithImpl<_$IosCrashFrameImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -634,16 +637,16 @@ class _$IosCrashFrame implements IosCrashFrame {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String no, String binary, int pc, String symbol,
+    TResult? Function(String no, String binary, int pc, String symbol,
             int? offset, String location)?
         ios,
-    TResult Function(
+    TResult? Function(
             String no, int pc, String binary, String rest, String? buildId)?
         android,
-    TResult Function(String no, int pc, String binary, int? offset,
+    TResult? Function(String no, int pc, String binary, int? offset,
             String? location, String? symbol)?
         custom,
-    TResult Function(int pc, String binary, int offset)? dartvm,
+    TResult? Function(int pc, String binary, int offset)? dartvm,
   }) {
     return ios?.call(no, binary, pc, symbol, offset, location);
   }
@@ -683,10 +686,10 @@ class _$IosCrashFrame implements IosCrashFrame {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(IosCrashFrame value)? ios,
-    TResult Function(AndroidCrashFrame value)? android,
-    TResult Function(CustomCrashFrame value)? custom,
-    TResult Function(DartvmCrashFrame value)? dartvm,
+    TResult? Function(IosCrashFrame value)? ios,
+    TResult? Function(AndroidCrashFrame value)? android,
+    TResult? Function(CustomCrashFrame value)? custom,
+    TResult? Function(DartvmCrashFrame value)? dartvm,
   }) {
     return ios?.call(this);
   }
@@ -708,7 +711,7 @@ class _$IosCrashFrame implements IosCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$IosCrashFrameToJson(
+    return _$$IosCrashFrameImplToJson(
       this,
     );
   }
@@ -721,10 +724,10 @@ abstract class IosCrashFrame implements CrashFrame {
       required final int pc,
       required final String symbol,
       required final int? offset,
-      required final String location}) = _$IosCrashFrame;
+      required final String location}) = _$IosCrashFrameImpl;
 
   factory IosCrashFrame.fromJson(Map<String, dynamic> json) =
-      _$IosCrashFrame.fromJson;
+      _$IosCrashFrameImpl.fromJson;
 
   String get no;
   @override
@@ -738,57 +741,56 @@ abstract class IosCrashFrame implements CrashFrame {
   String get location;
   @override
   @JsonKey(ignore: true)
-  _$$IosCrashFrameCopyWith<_$IosCrashFrame> get copyWith =>
+  _$$IosCrashFrameImplCopyWith<_$IosCrashFrameImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$AndroidCrashFrameCopyWith<$Res>
+abstract class _$$AndroidCrashFrameImplCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory _$$AndroidCrashFrameCopyWith(
-          _$AndroidCrashFrame value, $Res Function(_$AndroidCrashFrame) then) =
-      __$$AndroidCrashFrameCopyWithImpl<$Res>;
+  factory _$$AndroidCrashFrameImplCopyWith(_$AndroidCrashFrameImpl value,
+          $Res Function(_$AndroidCrashFrameImpl) then) =
+      __$$AndroidCrashFrameImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({String no, int pc, String binary, String rest, String? buildId});
 }
 
 /// @nodoc
-class __$$AndroidCrashFrameCopyWithImpl<$Res>
-    extends _$CrashFrameCopyWithImpl<$Res>
-    implements _$$AndroidCrashFrameCopyWith<$Res> {
-  __$$AndroidCrashFrameCopyWithImpl(
-      _$AndroidCrashFrame _value, $Res Function(_$AndroidCrashFrame) _then)
-      : super(_value, (v) => _then(v as _$AndroidCrashFrame));
+class __$$AndroidCrashFrameImplCopyWithImpl<$Res>
+    extends _$CrashFrameCopyWithImpl<$Res, _$AndroidCrashFrameImpl>
+    implements _$$AndroidCrashFrameImplCopyWith<$Res> {
+  __$$AndroidCrashFrameImplCopyWithImpl(_$AndroidCrashFrameImpl _value,
+      $Res Function(_$AndroidCrashFrameImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$AndroidCrashFrame get _value => super._value as _$AndroidCrashFrame;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? no = freezed,
-    Object? pc = freezed,
-    Object? binary = freezed,
-    Object? rest = freezed,
+    Object? no = null,
+    Object? pc = null,
+    Object? binary = null,
+    Object? rest = null,
     Object? buildId = freezed,
   }) {
-    return _then(_$AndroidCrashFrame(
-      no: no == freezed
+    return _then(_$AndroidCrashFrameImpl(
+      no: null == no
           ? _value.no
           : no // ignore: cast_nullable_to_non_nullable
               as String,
-      pc: pc == freezed
+      pc: null == pc
           ? _value.pc
           : pc // ignore: cast_nullable_to_non_nullable
               as int,
-      binary: binary == freezed
+      binary: null == binary
           ? _value.binary
           : binary // ignore: cast_nullable_to_non_nullable
               as String,
-      rest: rest == freezed
+      rest: null == rest
           ? _value.rest
           : rest // ignore: cast_nullable_to_non_nullable
               as String,
-      buildId: buildId == freezed
+      buildId: freezed == buildId
           ? _value.buildId
           : buildId // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -798,8 +800,8 @@ class __$$AndroidCrashFrameCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AndroidCrashFrame implements AndroidCrashFrame {
-  _$AndroidCrashFrame(
+class _$AndroidCrashFrameImpl implements AndroidCrashFrame {
+  _$AndroidCrashFrameImpl(
       {required this.no,
       required this.pc,
       required this.binary,
@@ -808,8 +810,8 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
       final String? $type})
       : $type = $type ?? 'android';
 
-  factory _$AndroidCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$$AndroidCrashFrameFromJson(json);
+  factory _$AndroidCrashFrameImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AndroidCrashFrameImplFromJson(json);
 
   @override
   final String no;
@@ -833,31 +835,27 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AndroidCrashFrame &&
-            const DeepCollectionEquality().equals(other.no, no) &&
-            const DeepCollectionEquality().equals(other.pc, pc) &&
-            const DeepCollectionEquality().equals(other.binary, binary) &&
-            const DeepCollectionEquality().equals(other.rest, rest) &&
-            const DeepCollectionEquality().equals(other.buildId, buildId));
+            other is _$AndroidCrashFrameImpl &&
+            (identical(other.no, no) || other.no == no) &&
+            (identical(other.pc, pc) || other.pc == pc) &&
+            (identical(other.binary, binary) || other.binary == binary) &&
+            (identical(other.rest, rest) || other.rest == rest) &&
+            (identical(other.buildId, buildId) || other.buildId == buildId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(no),
-      const DeepCollectionEquality().hash(pc),
-      const DeepCollectionEquality().hash(binary),
-      const DeepCollectionEquality().hash(rest),
-      const DeepCollectionEquality().hash(buildId));
+  int get hashCode => Object.hash(runtimeType, no, pc, binary, rest, buildId);
 
   @JsonKey(ignore: true)
   @override
-  _$$AndroidCrashFrameCopyWith<_$AndroidCrashFrame> get copyWith =>
-      __$$AndroidCrashFrameCopyWithImpl<_$AndroidCrashFrame>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$AndroidCrashFrameImplCopyWith<_$AndroidCrashFrameImpl> get copyWith =>
+      __$$AndroidCrashFrameImplCopyWithImpl<_$AndroidCrashFrameImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -879,16 +877,16 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String no, String binary, int pc, String symbol,
+    TResult? Function(String no, String binary, int pc, String symbol,
             int? offset, String location)?
         ios,
-    TResult Function(
+    TResult? Function(
             String no, int pc, String binary, String rest, String? buildId)?
         android,
-    TResult Function(String no, int pc, String binary, int? offset,
+    TResult? Function(String no, int pc, String binary, int? offset,
             String? location, String? symbol)?
         custom,
-    TResult Function(int pc, String binary, int offset)? dartvm,
+    TResult? Function(int pc, String binary, int offset)? dartvm,
   }) {
     return android?.call(no, pc, binary, rest, buildId);
   }
@@ -928,10 +926,10 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(IosCrashFrame value)? ios,
-    TResult Function(AndroidCrashFrame value)? android,
-    TResult Function(CustomCrashFrame value)? custom,
-    TResult Function(DartvmCrashFrame value)? dartvm,
+    TResult? Function(IosCrashFrame value)? ios,
+    TResult? Function(AndroidCrashFrame value)? android,
+    TResult? Function(CustomCrashFrame value)? custom,
+    TResult? Function(DartvmCrashFrame value)? dartvm,
   }) {
     return android?.call(this);
   }
@@ -953,7 +951,7 @@ class _$AndroidCrashFrame implements AndroidCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AndroidCrashFrameToJson(
+    return _$$AndroidCrashFrameImplToJson(
       this,
     );
   }
@@ -965,10 +963,10 @@ abstract class AndroidCrashFrame implements CrashFrame {
       required final int pc,
       required final String binary,
       required final String rest,
-      required final String? buildId}) = _$AndroidCrashFrame;
+      required final String? buildId}) = _$AndroidCrashFrameImpl;
 
   factory AndroidCrashFrame.fromJson(Map<String, dynamic> json) =
-      _$AndroidCrashFrame.fromJson;
+      _$AndroidCrashFrameImpl.fromJson;
 
   String get no;
   @override
@@ -981,17 +979,18 @@ abstract class AndroidCrashFrame implements CrashFrame {
   String? get buildId;
   @override
   @JsonKey(ignore: true)
-  _$$AndroidCrashFrameCopyWith<_$AndroidCrashFrame> get copyWith =>
+  _$$AndroidCrashFrameImplCopyWith<_$AndroidCrashFrameImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$CustomCrashFrameCopyWith<$Res>
+abstract class _$$CustomCrashFrameImplCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory _$$CustomCrashFrameCopyWith(
-          _$CustomCrashFrame value, $Res Function(_$CustomCrashFrame) then) =
-      __$$CustomCrashFrameCopyWithImpl<$Res>;
+  factory _$$CustomCrashFrameImplCopyWith(_$CustomCrashFrameImpl value,
+          $Res Function(_$CustomCrashFrameImpl) then) =
+      __$$CustomCrashFrameImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {String no,
       int pc,
@@ -1002,47 +1001,45 @@ abstract class _$$CustomCrashFrameCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CustomCrashFrameCopyWithImpl<$Res>
-    extends _$CrashFrameCopyWithImpl<$Res>
-    implements _$$CustomCrashFrameCopyWith<$Res> {
-  __$$CustomCrashFrameCopyWithImpl(
-      _$CustomCrashFrame _value, $Res Function(_$CustomCrashFrame) _then)
-      : super(_value, (v) => _then(v as _$CustomCrashFrame));
+class __$$CustomCrashFrameImplCopyWithImpl<$Res>
+    extends _$CrashFrameCopyWithImpl<$Res, _$CustomCrashFrameImpl>
+    implements _$$CustomCrashFrameImplCopyWith<$Res> {
+  __$$CustomCrashFrameImplCopyWithImpl(_$CustomCrashFrameImpl _value,
+      $Res Function(_$CustomCrashFrameImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$CustomCrashFrame get _value => super._value as _$CustomCrashFrame;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? no = freezed,
-    Object? pc = freezed,
-    Object? binary = freezed,
+    Object? no = null,
+    Object? pc = null,
+    Object? binary = null,
     Object? offset = freezed,
     Object? location = freezed,
     Object? symbol = freezed,
   }) {
-    return _then(_$CustomCrashFrame(
-      no: no == freezed
+    return _then(_$CustomCrashFrameImpl(
+      no: null == no
           ? _value.no
           : no // ignore: cast_nullable_to_non_nullable
               as String,
-      pc: pc == freezed
+      pc: null == pc
           ? _value.pc
           : pc // ignore: cast_nullable_to_non_nullable
               as int,
-      binary: binary == freezed
+      binary: null == binary
           ? _value.binary
           : binary // ignore: cast_nullable_to_non_nullable
               as String,
-      offset: offset == freezed
+      offset: freezed == offset
           ? _value.offset
           : offset // ignore: cast_nullable_to_non_nullable
               as int?,
-      location: location == freezed
+      location: freezed == location
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String?,
-      symbol: symbol == freezed
+      symbol: freezed == symbol
           ? _value.symbol
           : symbol // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -1052,8 +1049,8 @@ class __$$CustomCrashFrameCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CustomCrashFrame implements CustomCrashFrame {
-  _$CustomCrashFrame(
+class _$CustomCrashFrameImpl implements CustomCrashFrame {
+  _$CustomCrashFrameImpl(
       {required this.no,
       required this.pc,
       required this.binary,
@@ -1063,8 +1060,8 @@ class _$CustomCrashFrame implements CustomCrashFrame {
       final String? $type})
       : $type = $type ?? 'custom';
 
-  factory _$CustomCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$$CustomCrashFrameFromJson(json);
+  factory _$CustomCrashFrameImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CustomCrashFrameImplFromJson(json);
 
   @override
   final String no;
@@ -1088,33 +1085,30 @@ class _$CustomCrashFrame implements CustomCrashFrame {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CustomCrashFrame &&
-            const DeepCollectionEquality().equals(other.no, no) &&
-            const DeepCollectionEquality().equals(other.pc, pc) &&
-            const DeepCollectionEquality().equals(other.binary, binary) &&
-            const DeepCollectionEquality().equals(other.offset, offset) &&
-            const DeepCollectionEquality().equals(other.location, location) &&
-            const DeepCollectionEquality().equals(other.symbol, symbol));
+            other is _$CustomCrashFrameImpl &&
+            (identical(other.no, no) || other.no == no) &&
+            (identical(other.pc, pc) || other.pc == pc) &&
+            (identical(other.binary, binary) || other.binary == binary) &&
+            (identical(other.offset, offset) || other.offset == offset) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.symbol, symbol) || other.symbol == symbol));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(no),
-      const DeepCollectionEquality().hash(pc),
-      const DeepCollectionEquality().hash(binary),
-      const DeepCollectionEquality().hash(offset),
-      const DeepCollectionEquality().hash(location),
-      const DeepCollectionEquality().hash(symbol));
+  int get hashCode =>
+      Object.hash(runtimeType, no, pc, binary, offset, location, symbol);
 
   @JsonKey(ignore: true)
   @override
-  _$$CustomCrashFrameCopyWith<_$CustomCrashFrame> get copyWith =>
-      __$$CustomCrashFrameCopyWithImpl<_$CustomCrashFrame>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$CustomCrashFrameImplCopyWith<_$CustomCrashFrameImpl> get copyWith =>
+      __$$CustomCrashFrameImplCopyWithImpl<_$CustomCrashFrameImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1136,16 +1130,16 @@ class _$CustomCrashFrame implements CustomCrashFrame {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String no, String binary, int pc, String symbol,
+    TResult? Function(String no, String binary, int pc, String symbol,
             int? offset, String location)?
         ios,
-    TResult Function(
+    TResult? Function(
             String no, int pc, String binary, String rest, String? buildId)?
         android,
-    TResult Function(String no, int pc, String binary, int? offset,
+    TResult? Function(String no, int pc, String binary, int? offset,
             String? location, String? symbol)?
         custom,
-    TResult Function(int pc, String binary, int offset)? dartvm,
+    TResult? Function(int pc, String binary, int offset)? dartvm,
   }) {
     return custom?.call(no, pc, binary, offset, location, symbol);
   }
@@ -1185,10 +1179,10 @@ class _$CustomCrashFrame implements CustomCrashFrame {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(IosCrashFrame value)? ios,
-    TResult Function(AndroidCrashFrame value)? android,
-    TResult Function(CustomCrashFrame value)? custom,
-    TResult Function(DartvmCrashFrame value)? dartvm,
+    TResult? Function(IosCrashFrame value)? ios,
+    TResult? Function(AndroidCrashFrame value)? android,
+    TResult? Function(CustomCrashFrame value)? custom,
+    TResult? Function(DartvmCrashFrame value)? dartvm,
   }) {
     return custom?.call(this);
   }
@@ -1210,7 +1204,7 @@ class _$CustomCrashFrame implements CustomCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CustomCrashFrameToJson(
+    return _$$CustomCrashFrameImplToJson(
       this,
     );
   }
@@ -1223,10 +1217,10 @@ abstract class CustomCrashFrame implements CrashFrame {
       required final String binary,
       required final int? offset,
       required final String? location,
-      required final String? symbol}) = _$CustomCrashFrame;
+      required final String? symbol}) = _$CustomCrashFrameImpl;
 
   factory CustomCrashFrame.fromJson(Map<String, dynamic> json) =
-      _$CustomCrashFrame.fromJson;
+      _$CustomCrashFrameImpl.fromJson;
 
   String get no;
   @override
@@ -1238,47 +1232,46 @@ abstract class CustomCrashFrame implements CrashFrame {
   String? get symbol;
   @override
   @JsonKey(ignore: true)
-  _$$CustomCrashFrameCopyWith<_$CustomCrashFrame> get copyWith =>
+  _$$CustomCrashFrameImplCopyWith<_$CustomCrashFrameImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DartvmCrashFrameCopyWith<$Res>
+abstract class _$$DartvmCrashFrameImplCopyWith<$Res>
     implements $CrashFrameCopyWith<$Res> {
-  factory _$$DartvmCrashFrameCopyWith(
-          _$DartvmCrashFrame value, $Res Function(_$DartvmCrashFrame) then) =
-      __$$DartvmCrashFrameCopyWithImpl<$Res>;
+  factory _$$DartvmCrashFrameImplCopyWith(_$DartvmCrashFrameImpl value,
+          $Res Function(_$DartvmCrashFrameImpl) then) =
+      __$$DartvmCrashFrameImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({int pc, String binary, int offset});
 }
 
 /// @nodoc
-class __$$DartvmCrashFrameCopyWithImpl<$Res>
-    extends _$CrashFrameCopyWithImpl<$Res>
-    implements _$$DartvmCrashFrameCopyWith<$Res> {
-  __$$DartvmCrashFrameCopyWithImpl(
-      _$DartvmCrashFrame _value, $Res Function(_$DartvmCrashFrame) _then)
-      : super(_value, (v) => _then(v as _$DartvmCrashFrame));
+class __$$DartvmCrashFrameImplCopyWithImpl<$Res>
+    extends _$CrashFrameCopyWithImpl<$Res, _$DartvmCrashFrameImpl>
+    implements _$$DartvmCrashFrameImplCopyWith<$Res> {
+  __$$DartvmCrashFrameImplCopyWithImpl(_$DartvmCrashFrameImpl _value,
+      $Res Function(_$DartvmCrashFrameImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$DartvmCrashFrame get _value => super._value as _$DartvmCrashFrame;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? pc = freezed,
-    Object? binary = freezed,
-    Object? offset = freezed,
+    Object? pc = null,
+    Object? binary = null,
+    Object? offset = null,
   }) {
-    return _then(_$DartvmCrashFrame(
-      pc: pc == freezed
+    return _then(_$DartvmCrashFrameImpl(
+      pc: null == pc
           ? _value.pc
           : pc // ignore: cast_nullable_to_non_nullable
               as int,
-      binary: binary == freezed
+      binary: null == binary
           ? _value.binary
           : binary // ignore: cast_nullable_to_non_nullable
               as String,
-      offset: offset == freezed
+      offset: null == offset
           ? _value.offset
           : offset // ignore: cast_nullable_to_non_nullable
               as int,
@@ -1288,16 +1281,16 @@ class __$$DartvmCrashFrameCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DartvmCrashFrame implements DartvmCrashFrame {
-  _$DartvmCrashFrame(
+class _$DartvmCrashFrameImpl implements DartvmCrashFrame {
+  _$DartvmCrashFrameImpl(
       {required this.pc,
       required this.binary,
       required this.offset,
       final String? $type})
       : $type = $type ?? 'dartvm';
 
-  factory _$DartvmCrashFrame.fromJson(Map<String, dynamic> json) =>
-      _$$DartvmCrashFrameFromJson(json);
+  factory _$DartvmCrashFrameImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DartvmCrashFrameImplFromJson(json);
 
   /// Absolute PC of the frame.
   @override
@@ -1320,27 +1313,25 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DartvmCrashFrame &&
-            const DeepCollectionEquality().equals(other.pc, pc) &&
-            const DeepCollectionEquality().equals(other.binary, binary) &&
-            const DeepCollectionEquality().equals(other.offset, offset));
+            other is _$DartvmCrashFrameImpl &&
+            (identical(other.pc, pc) || other.pc == pc) &&
+            (identical(other.binary, binary) || other.binary == binary) &&
+            (identical(other.offset, offset) || other.offset == offset));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(pc),
-      const DeepCollectionEquality().hash(binary),
-      const DeepCollectionEquality().hash(offset));
+  int get hashCode => Object.hash(runtimeType, pc, binary, offset);
 
   @JsonKey(ignore: true)
   @override
-  _$$DartvmCrashFrameCopyWith<_$DartvmCrashFrame> get copyWith =>
-      __$$DartvmCrashFrameCopyWithImpl<_$DartvmCrashFrame>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$DartvmCrashFrameImplCopyWith<_$DartvmCrashFrameImpl> get copyWith =>
+      __$$DartvmCrashFrameImplCopyWithImpl<_$DartvmCrashFrameImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1362,16 +1353,16 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String no, String binary, int pc, String symbol,
+    TResult? Function(String no, String binary, int pc, String symbol,
             int? offset, String location)?
         ios,
-    TResult Function(
+    TResult? Function(
             String no, int pc, String binary, String rest, String? buildId)?
         android,
-    TResult Function(String no, int pc, String binary, int? offset,
+    TResult? Function(String no, int pc, String binary, int? offset,
             String? location, String? symbol)?
         custom,
-    TResult Function(int pc, String binary, int offset)? dartvm,
+    TResult? Function(int pc, String binary, int offset)? dartvm,
   }) {
     return dartvm?.call(pc, binary, offset);
   }
@@ -1411,10 +1402,10 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(IosCrashFrame value)? ios,
-    TResult Function(AndroidCrashFrame value)? android,
-    TResult Function(CustomCrashFrame value)? custom,
-    TResult Function(DartvmCrashFrame value)? dartvm,
+    TResult? Function(IosCrashFrame value)? ios,
+    TResult? Function(AndroidCrashFrame value)? android,
+    TResult? Function(CustomCrashFrame value)? custom,
+    TResult? Function(DartvmCrashFrame value)? dartvm,
   }) {
     return dartvm?.call(this);
   }
@@ -1436,7 +1427,7 @@ class _$DartvmCrashFrame implements DartvmCrashFrame {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DartvmCrashFrameToJson(
+    return _$$DartvmCrashFrameImplToJson(
       this,
     );
   }
@@ -1446,10 +1437,10 @@ abstract class DartvmCrashFrame implements CrashFrame {
   factory DartvmCrashFrame(
       {required final int pc,
       required final String binary,
-      required final int offset}) = _$DartvmCrashFrame;
+      required final int offset}) = _$DartvmCrashFrameImpl;
 
   factory DartvmCrashFrame.fromJson(Map<String, dynamic> json) =
-      _$DartvmCrashFrame.fromJson;
+      _$DartvmCrashFrameImpl.fromJson;
 
   @override
 
@@ -1464,7 +1455,7 @@ abstract class DartvmCrashFrame implements CrashFrame {
   int get offset;
   @override
   @JsonKey(ignore: true)
-  _$$DartvmCrashFrameCopyWith<_$DartvmCrashFrame> get copyWith =>
+  _$$DartvmCrashFrameImplCopyWith<_$DartvmCrashFrameImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1487,7 +1478,8 @@ mixin _$Crash {
 /// @nodoc
 abstract class $CrashCopyWith<$Res> {
   factory $CrashCopyWith(Crash value, $Res Function(Crash) then) =
-      _$CrashCopyWithImpl<$Res>;
+      _$CrashCopyWithImpl<$Res, Crash>;
+  @useResult
   $Res call(
       {EngineVariant engineVariant,
       List<CrashFrame> frames,
@@ -1498,53 +1490,59 @@ abstract class $CrashCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CrashCopyWithImpl<$Res> implements $CrashCopyWith<$Res> {
+class _$CrashCopyWithImpl<$Res, $Val extends Crash>
+    implements $CrashCopyWith<$Res> {
   _$CrashCopyWithImpl(this._value, this._then);
 
-  final Crash _value;
   // ignore: unused_field
-  final $Res Function(Crash) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? engineVariant = freezed,
-    Object? frames = freezed,
-    Object? format = freezed,
+    Object? engineVariant = null,
+    Object? frames = null,
+    Object? format = null,
     Object? androidMajorVersion = freezed,
   }) {
     return _then(_value.copyWith(
-      engineVariant: engineVariant == freezed
+      engineVariant: null == engineVariant
           ? _value.engineVariant
           : engineVariant // ignore: cast_nullable_to_non_nullable
               as EngineVariant,
-      frames: frames == freezed
+      frames: null == frames
           ? _value.frames
           : frames // ignore: cast_nullable_to_non_nullable
               as List<CrashFrame>,
-      format: format == freezed
+      format: null == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
               as String,
-      androidMajorVersion: androidMajorVersion == freezed
+      androidMajorVersion: freezed == androidMajorVersion
           ? _value.androidMajorVersion
           : androidMajorVersion // ignore: cast_nullable_to_non_nullable
               as int?,
-    ));
+    ) as $Val);
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $EngineVariantCopyWith<$Res> get engineVariant {
     return $EngineVariantCopyWith<$Res>(_value.engineVariant, (value) {
-      return _then(_value.copyWith(engineVariant: value));
+      return _then(_value.copyWith(engineVariant: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_CrashCopyWith<$Res> implements $CrashCopyWith<$Res> {
-  factory _$$_CrashCopyWith(_$_Crash value, $Res Function(_$_Crash) then) =
-      __$$_CrashCopyWithImpl<$Res>;
+abstract class _$$CrashImplCopyWith<$Res> implements $CrashCopyWith<$Res> {
+  factory _$$CrashImplCopyWith(
+          _$CrashImpl value, $Res Function(_$CrashImpl) then) =
+      __$$CrashImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {EngineVariant engineVariant,
       List<CrashFrame> frames,
@@ -1556,35 +1554,35 @@ abstract class _$$_CrashCopyWith<$Res> implements $CrashCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_CrashCopyWithImpl<$Res> extends _$CrashCopyWithImpl<$Res>
-    implements _$$_CrashCopyWith<$Res> {
-  __$$_CrashCopyWithImpl(_$_Crash _value, $Res Function(_$_Crash) _then)
-      : super(_value, (v) => _then(v as _$_Crash));
+class __$$CrashImplCopyWithImpl<$Res>
+    extends _$CrashCopyWithImpl<$Res, _$CrashImpl>
+    implements _$$CrashImplCopyWith<$Res> {
+  __$$CrashImplCopyWithImpl(
+      _$CrashImpl _value, $Res Function(_$CrashImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_Crash get _value => super._value as _$_Crash;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? engineVariant = freezed,
-    Object? frames = freezed,
-    Object? format = freezed,
+    Object? engineVariant = null,
+    Object? frames = null,
+    Object? format = null,
     Object? androidMajorVersion = freezed,
   }) {
-    return _then(_$_Crash(
-      engineVariant: engineVariant == freezed
+    return _then(_$CrashImpl(
+      engineVariant: null == engineVariant
           ? _value.engineVariant
           : engineVariant // ignore: cast_nullable_to_non_nullable
               as EngineVariant,
-      frames: frames == freezed
+      frames: null == frames
           ? _value._frames
           : frames // ignore: cast_nullable_to_non_nullable
               as List<CrashFrame>,
-      format: format == freezed
+      format: null == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
               as String,
-      androidMajorVersion: androidMajorVersion == freezed
+      androidMajorVersion: freezed == androidMajorVersion
           ? _value.androidMajorVersion
           : androidMajorVersion // ignore: cast_nullable_to_non_nullable
               as int?,
@@ -1594,22 +1592,23 @@ class __$$_CrashCopyWithImpl<$Res> extends _$CrashCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Crash implements _Crash {
-  _$_Crash(
+class _$CrashImpl implements _Crash {
+  _$CrashImpl(
       {required this.engineVariant,
       required final List<CrashFrame> frames,
       required this.format,
       this.androidMajorVersion})
       : _frames = frames;
 
-  factory _$_Crash.fromJson(Map<String, dynamic> json) =>
-      _$$_CrashFromJson(json);
+  factory _$CrashImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CrashImplFromJson(json);
 
   @override
   final EngineVariant engineVariant;
   final List<CrashFrame> _frames;
   @override
   List<CrashFrame> get frames {
+    if (_frames is EqualUnmodifiableListView) return _frames;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_frames);
   }
@@ -1625,35 +1624,36 @@ class _$_Crash implements _Crash {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Crash &&
-            const DeepCollectionEquality()
-                .equals(other.engineVariant, engineVariant) &&
+            other is _$CrashImpl &&
+            (identical(other.engineVariant, engineVariant) ||
+                other.engineVariant == engineVariant) &&
             const DeepCollectionEquality().equals(other._frames, _frames) &&
-            const DeepCollectionEquality().equals(other.format, format) &&
-            const DeepCollectionEquality()
-                .equals(other.androidMajorVersion, androidMajorVersion));
+            (identical(other.format, format) || other.format == format) &&
+            (identical(other.androidMajorVersion, androidMajorVersion) ||
+                other.androidMajorVersion == androidMajorVersion));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(engineVariant),
+      engineVariant,
       const DeepCollectionEquality().hash(_frames),
-      const DeepCollectionEquality().hash(format),
-      const DeepCollectionEquality().hash(androidMajorVersion));
+      format,
+      androidMajorVersion);
 
   @JsonKey(ignore: true)
   @override
-  _$$_CrashCopyWith<_$_Crash> get copyWith =>
-      __$$_CrashCopyWithImpl<_$_Crash>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$CrashImplCopyWith<_$CrashImpl> get copyWith =>
+      __$$CrashImplCopyWithImpl<_$CrashImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_CrashToJson(
+    return _$$CrashImplToJson(
       this,
     );
   }
@@ -1664,9 +1664,9 @@ abstract class _Crash implements Crash {
       {required final EngineVariant engineVariant,
       required final List<CrashFrame> frames,
       required final String format,
-      final int? androidMajorVersion}) = _$_Crash;
+      final int? androidMajorVersion}) = _$CrashImpl;
 
-  factory _Crash.fromJson(Map<String, dynamic> json) = _$_Crash.fromJson;
+  factory _Crash.fromJson(Map<String, dynamic> json) = _$CrashImpl.fromJson;
 
   @override
   EngineVariant get engineVariant;
@@ -1678,7 +1678,7 @@ abstract class _Crash implements Crash {
   int? get androidMajorVersion;
   @override
   @JsonKey(ignore: true)
-  _$$_CrashCopyWith<_$_Crash> get copyWith =>
+  _$$CrashImplCopyWith<_$CrashImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1705,8 +1705,8 @@ mixin _$SymbolizationResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(List<CrashSymbolizationResult> results)? ok,
-    TResult Function(SymbolizationNote error)? error,
+    TResult? Function(List<CrashSymbolizationResult> results)? ok,
+    TResult? Function(SymbolizationNote error)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1724,8 +1724,8 @@ mixin _$SymbolizationResult {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(SymbolizationResultOk value)? ok,
-    TResult Function(SymbolizationResultError value)? error,
+    TResult? Function(SymbolizationResultOk value)? ok,
+    TResult? Function(SymbolizationResultError value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1742,44 +1742,45 @@ mixin _$SymbolizationResult {
 abstract class $SymbolizationResultCopyWith<$Res> {
   factory $SymbolizationResultCopyWith(
           SymbolizationResult value, $Res Function(SymbolizationResult) then) =
-      _$SymbolizationResultCopyWithImpl<$Res>;
+      _$SymbolizationResultCopyWithImpl<$Res, SymbolizationResult>;
 }
 
 /// @nodoc
-class _$SymbolizationResultCopyWithImpl<$Res>
+class _$SymbolizationResultCopyWithImpl<$Res, $Val extends SymbolizationResult>
     implements $SymbolizationResultCopyWith<$Res> {
   _$SymbolizationResultCopyWithImpl(this._value, this._then);
 
-  final SymbolizationResult _value;
   // ignore: unused_field
-  final $Res Function(SymbolizationResult) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 }
 
 /// @nodoc
-abstract class _$$SymbolizationResultOkCopyWith<$Res> {
-  factory _$$SymbolizationResultOkCopyWith(_$SymbolizationResultOk value,
-          $Res Function(_$SymbolizationResultOk) then) =
-      __$$SymbolizationResultOkCopyWithImpl<$Res>;
+abstract class _$$SymbolizationResultOkImplCopyWith<$Res> {
+  factory _$$SymbolizationResultOkImplCopyWith(
+          _$SymbolizationResultOkImpl value,
+          $Res Function(_$SymbolizationResultOkImpl) then) =
+      __$$SymbolizationResultOkImplCopyWithImpl<$Res>;
+  @useResult
   $Res call({List<CrashSymbolizationResult> results});
 }
 
 /// @nodoc
-class __$$SymbolizationResultOkCopyWithImpl<$Res>
-    extends _$SymbolizationResultCopyWithImpl<$Res>
-    implements _$$SymbolizationResultOkCopyWith<$Res> {
-  __$$SymbolizationResultOkCopyWithImpl(_$SymbolizationResultOk _value,
-      $Res Function(_$SymbolizationResultOk) _then)
-      : super(_value, (v) => _then(v as _$SymbolizationResultOk));
+class __$$SymbolizationResultOkImplCopyWithImpl<$Res>
+    extends _$SymbolizationResultCopyWithImpl<$Res, _$SymbolizationResultOkImpl>
+    implements _$$SymbolizationResultOkImplCopyWith<$Res> {
+  __$$SymbolizationResultOkImplCopyWithImpl(_$SymbolizationResultOkImpl _value,
+      $Res Function(_$SymbolizationResultOkImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$SymbolizationResultOk get _value => super._value as _$SymbolizationResultOk;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? results = freezed,
+    Object? results = null,
   }) {
-    return _then(_$SymbolizationResultOk(
-      results: results == freezed
+    return _then(_$SymbolizationResultOkImpl(
+      results: null == results
           ? _value._results
           : results // ignore: cast_nullable_to_non_nullable
               as List<CrashSymbolizationResult>,
@@ -1790,19 +1791,20 @@ class __$$SymbolizationResultOkCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$SymbolizationResultOk implements SymbolizationResultOk {
-  _$SymbolizationResultOk(
+class _$SymbolizationResultOkImpl implements SymbolizationResultOk {
+  _$SymbolizationResultOkImpl(
       {required final List<CrashSymbolizationResult> results,
       final String? $type})
       : _results = results,
         $type = $type ?? 'ok';
 
-  factory _$SymbolizationResultOk.fromJson(Map<String, dynamic> json) =>
-      _$$SymbolizationResultOkFromJson(json);
+  factory _$SymbolizationResultOkImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SymbolizationResultOkImplFromJson(json);
 
   final List<CrashSymbolizationResult> _results;
   @override
   List<CrashSymbolizationResult> get results {
+    if (_results is EqualUnmodifiableListView) return _results;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_results);
   }
@@ -1816,10 +1818,10 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SymbolizationResultOk &&
+            other is _$SymbolizationResultOkImpl &&
             const DeepCollectionEquality().equals(other._results, _results));
   }
 
@@ -1830,9 +1832,10 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
 
   @JsonKey(ignore: true)
   @override
-  _$$SymbolizationResultOkCopyWith<_$SymbolizationResultOk> get copyWith =>
-      __$$SymbolizationResultOkCopyWithImpl<_$SymbolizationResultOk>(
-          this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$SymbolizationResultOkImplCopyWith<_$SymbolizationResultOkImpl>
+      get copyWith => __$$SymbolizationResultOkImplCopyWithImpl<
+          _$SymbolizationResultOkImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1846,8 +1849,8 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(List<CrashSymbolizationResult> results)? ok,
-    TResult Function(SymbolizationNote error)? error,
+    TResult? Function(List<CrashSymbolizationResult> results)? ok,
+    TResult? Function(SymbolizationNote error)? error,
   }) {
     return ok?.call(results);
   }
@@ -1877,8 +1880,8 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(SymbolizationResultOk value)? ok,
-    TResult Function(SymbolizationResultError value)? error,
+    TResult? Function(SymbolizationResultOk value)? ok,
+    TResult? Function(SymbolizationResultError value)? error,
   }) {
     return ok?.call(this);
   }
@@ -1898,7 +1901,7 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SymbolizationResultOkToJson(
+    return _$$SymbolizationResultOkImplToJson(
       this,
     );
   }
@@ -1907,45 +1910,46 @@ class _$SymbolizationResultOk implements SymbolizationResultOk {
 abstract class SymbolizationResultOk implements SymbolizationResult {
   factory SymbolizationResultOk(
           {required final List<CrashSymbolizationResult> results}) =
-      _$SymbolizationResultOk;
+      _$SymbolizationResultOkImpl;
 
   factory SymbolizationResultOk.fromJson(Map<String, dynamic> json) =
-      _$SymbolizationResultOk.fromJson;
+      _$SymbolizationResultOkImpl.fromJson;
 
   List<CrashSymbolizationResult> get results;
   @JsonKey(ignore: true)
-  _$$SymbolizationResultOkCopyWith<_$SymbolizationResultOk> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SymbolizationResultOkImplCopyWith<_$SymbolizationResultOkImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$SymbolizationResultErrorCopyWith<$Res> {
-  factory _$$SymbolizationResultErrorCopyWith(_$SymbolizationResultError value,
-          $Res Function(_$SymbolizationResultError) then) =
-      __$$SymbolizationResultErrorCopyWithImpl<$Res>;
+abstract class _$$SymbolizationResultErrorImplCopyWith<$Res> {
+  factory _$$SymbolizationResultErrorImplCopyWith(
+          _$SymbolizationResultErrorImpl value,
+          $Res Function(_$SymbolizationResultErrorImpl) then) =
+      __$$SymbolizationResultErrorImplCopyWithImpl<$Res>;
+  @useResult
   $Res call({SymbolizationNote error});
 
   $SymbolizationNoteCopyWith<$Res> get error;
 }
 
 /// @nodoc
-class __$$SymbolizationResultErrorCopyWithImpl<$Res>
-    extends _$SymbolizationResultCopyWithImpl<$Res>
-    implements _$$SymbolizationResultErrorCopyWith<$Res> {
-  __$$SymbolizationResultErrorCopyWithImpl(_$SymbolizationResultError _value,
-      $Res Function(_$SymbolizationResultError) _then)
-      : super(_value, (v) => _then(v as _$SymbolizationResultError));
+class __$$SymbolizationResultErrorImplCopyWithImpl<$Res>
+    extends _$SymbolizationResultCopyWithImpl<$Res,
+        _$SymbolizationResultErrorImpl>
+    implements _$$SymbolizationResultErrorImplCopyWith<$Res> {
+  __$$SymbolizationResultErrorImplCopyWithImpl(
+      _$SymbolizationResultErrorImpl _value,
+      $Res Function(_$SymbolizationResultErrorImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$SymbolizationResultError get _value =>
-      super._value as _$SymbolizationResultError;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? error = freezed,
+    Object? error = null,
   }) {
-    return _then(_$SymbolizationResultError(
-      error: error == freezed
+    return _then(_$SymbolizationResultErrorImpl(
+      error: null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as SymbolizationNote,
@@ -1953,6 +1957,7 @@ class __$$SymbolizationResultErrorCopyWithImpl<$Res>
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $SymbolizationNoteCopyWith<$Res> get error {
     return $SymbolizationNoteCopyWith<$Res>(_value.error, (value) {
       return _then(_value.copyWith(error: value));
@@ -1963,12 +1968,12 @@ class __$$SymbolizationResultErrorCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$SymbolizationResultError implements SymbolizationResultError {
-  _$SymbolizationResultError({required this.error, final String? $type})
+class _$SymbolizationResultErrorImpl implements SymbolizationResultError {
+  _$SymbolizationResultErrorImpl({required this.error, final String? $type})
       : $type = $type ?? 'error';
 
-  factory _$SymbolizationResultError.fromJson(Map<String, dynamic> json) =>
-      _$$SymbolizationResultErrorFromJson(json);
+  factory _$SymbolizationResultErrorImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SymbolizationResultErrorImplFromJson(json);
 
   @override
   final SymbolizationNote error;
@@ -1982,24 +1987,23 @@ class _$SymbolizationResultError implements SymbolizationResultError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SymbolizationResultError &&
-            const DeepCollectionEquality().equals(other.error, error));
+            other is _$SymbolizationResultErrorImpl &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(error));
+  int get hashCode => Object.hash(runtimeType, error);
 
   @JsonKey(ignore: true)
   @override
-  _$$SymbolizationResultErrorCopyWith<_$SymbolizationResultError>
-      get copyWith =>
-          __$$SymbolizationResultErrorCopyWithImpl<_$SymbolizationResultError>(
-              this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$SymbolizationResultErrorImplCopyWith<_$SymbolizationResultErrorImpl>
+      get copyWith => __$$SymbolizationResultErrorImplCopyWithImpl<
+          _$SymbolizationResultErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2013,8 +2017,8 @@ class _$SymbolizationResultError implements SymbolizationResultError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(List<CrashSymbolizationResult> results)? ok,
-    TResult Function(SymbolizationNote error)? error,
+    TResult? Function(List<CrashSymbolizationResult> results)? ok,
+    TResult? Function(SymbolizationNote error)? error,
   }) {
     return error?.call(this.error);
   }
@@ -2044,8 +2048,8 @@ class _$SymbolizationResultError implements SymbolizationResultError {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(SymbolizationResultOk value)? ok,
-    TResult Function(SymbolizationResultError value)? error,
+    TResult? Function(SymbolizationResultOk value)? ok,
+    TResult? Function(SymbolizationResultError value)? error,
   }) {
     return error?.call(this);
   }
@@ -2065,7 +2069,7 @@ class _$SymbolizationResultError implements SymbolizationResultError {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SymbolizationResultErrorToJson(
+    return _$$SymbolizationResultErrorImplToJson(
       this,
     );
   }
@@ -2073,14 +2077,14 @@ class _$SymbolizationResultError implements SymbolizationResultError {
 
 abstract class SymbolizationResultError implements SymbolizationResult {
   factory SymbolizationResultError({required final SymbolizationNote error}) =
-      _$SymbolizationResultError;
+      _$SymbolizationResultErrorImpl;
 
   factory SymbolizationResultError.fromJson(Map<String, dynamic> json) =
-      _$SymbolizationResultError.fromJson;
+      _$SymbolizationResultErrorImpl.fromJson;
 
   SymbolizationNote get error;
   @JsonKey(ignore: true)
-  _$$SymbolizationResultErrorCopyWith<_$SymbolizationResultError>
+  _$$SymbolizationResultErrorImplCopyWith<_$SymbolizationResultErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -2108,7 +2112,8 @@ mixin _$CrashSymbolizationResult {
 abstract class $CrashSymbolizationResultCopyWith<$Res> {
   factory $CrashSymbolizationResultCopyWith(CrashSymbolizationResult value,
           $Res Function(CrashSymbolizationResult) then) =
-      _$CrashSymbolizationResultCopyWithImpl<$Res>;
+      _$CrashSymbolizationResultCopyWithImpl<$Res, CrashSymbolizationResult>;
+  @useResult
   $Res call(
       {Crash crash,
       EngineBuild? engineBuild,
@@ -2120,68 +2125,74 @@ abstract class $CrashSymbolizationResultCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CrashSymbolizationResultCopyWithImpl<$Res>
+class _$CrashSymbolizationResultCopyWithImpl<$Res,
+        $Val extends CrashSymbolizationResult>
     implements $CrashSymbolizationResultCopyWith<$Res> {
   _$CrashSymbolizationResultCopyWithImpl(this._value, this._then);
 
-  final CrashSymbolizationResult _value;
   // ignore: unused_field
-  final $Res Function(CrashSymbolizationResult) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? crash = freezed,
+    Object? crash = null,
     Object? engineBuild = freezed,
     Object? symbolized = freezed,
-    Object? notes = freezed,
+    Object? notes = null,
   }) {
     return _then(_value.copyWith(
-      crash: crash == freezed
+      crash: null == crash
           ? _value.crash
           : crash // ignore: cast_nullable_to_non_nullable
               as Crash,
-      engineBuild: engineBuild == freezed
+      engineBuild: freezed == engineBuild
           ? _value.engineBuild
           : engineBuild // ignore: cast_nullable_to_non_nullable
               as EngineBuild?,
-      symbolized: symbolized == freezed
+      symbolized: freezed == symbolized
           ? _value.symbolized
           : symbolized // ignore: cast_nullable_to_non_nullable
               as String?,
-      notes: notes == freezed
+      notes: null == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as List<SymbolizationNote>,
-    ));
+    ) as $Val);
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $CrashCopyWith<$Res> get crash {
     return $CrashCopyWith<$Res>(_value.crash, (value) {
-      return _then(_value.copyWith(crash: value));
+      return _then(_value.copyWith(crash: value) as $Val);
     });
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $EngineBuildCopyWith<$Res>? get engineBuild {
     if (_value.engineBuild == null) {
       return null;
     }
 
     return $EngineBuildCopyWith<$Res>(_value.engineBuild!, (value) {
-      return _then(_value.copyWith(engineBuild: value));
+      return _then(_value.copyWith(engineBuild: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_CrashSymbolizationResultCopyWith<$Res>
+abstract class _$$CrashSymbolizationResultImplCopyWith<$Res>
     implements $CrashSymbolizationResultCopyWith<$Res> {
-  factory _$$_CrashSymbolizationResultCopyWith(
-          _$_CrashSymbolizationResult value,
-          $Res Function(_$_CrashSymbolizationResult) then) =
-      __$$_CrashSymbolizationResultCopyWithImpl<$Res>;
+  factory _$$CrashSymbolizationResultImplCopyWith(
+          _$CrashSymbolizationResultImpl value,
+          $Res Function(_$CrashSymbolizationResultImpl) then) =
+      __$$CrashSymbolizationResultImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {Crash crash,
       EngineBuild? engineBuild,
@@ -2195,38 +2206,37 @@ abstract class _$$_CrashSymbolizationResultCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_CrashSymbolizationResultCopyWithImpl<$Res>
-    extends _$CrashSymbolizationResultCopyWithImpl<$Res>
-    implements _$$_CrashSymbolizationResultCopyWith<$Res> {
-  __$$_CrashSymbolizationResultCopyWithImpl(_$_CrashSymbolizationResult _value,
-      $Res Function(_$_CrashSymbolizationResult) _then)
-      : super(_value, (v) => _then(v as _$_CrashSymbolizationResult));
+class __$$CrashSymbolizationResultImplCopyWithImpl<$Res>
+    extends _$CrashSymbolizationResultCopyWithImpl<$Res,
+        _$CrashSymbolizationResultImpl>
+    implements _$$CrashSymbolizationResultImplCopyWith<$Res> {
+  __$$CrashSymbolizationResultImplCopyWithImpl(
+      _$CrashSymbolizationResultImpl _value,
+      $Res Function(_$CrashSymbolizationResultImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_CrashSymbolizationResult get _value =>
-      super._value as _$_CrashSymbolizationResult;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? crash = freezed,
+    Object? crash = null,
     Object? engineBuild = freezed,
     Object? symbolized = freezed,
-    Object? notes = freezed,
+    Object? notes = null,
   }) {
-    return _then(_$_CrashSymbolizationResult(
-      crash: crash == freezed
+    return _then(_$CrashSymbolizationResultImpl(
+      crash: null == crash
           ? _value.crash
           : crash // ignore: cast_nullable_to_non_nullable
               as Crash,
-      engineBuild: engineBuild == freezed
+      engineBuild: freezed == engineBuild
           ? _value.engineBuild
           : engineBuild // ignore: cast_nullable_to_non_nullable
               as EngineBuild?,
-      symbolized: symbolized == freezed
+      symbolized: freezed == symbolized
           ? _value.symbolized
           : symbolized // ignore: cast_nullable_to_non_nullable
               as String?,
-      notes: notes == freezed
+      notes: null == notes
           ? _value._notes
           : notes // ignore: cast_nullable_to_non_nullable
               as List<SymbolizationNote>,
@@ -2237,16 +2247,16 @@ class __$$_CrashSymbolizationResultCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
-  _$_CrashSymbolizationResult(
+class _$CrashSymbolizationResultImpl implements _CrashSymbolizationResult {
+  _$CrashSymbolizationResultImpl(
       {required this.crash,
       required this.engineBuild,
       required this.symbolized,
       final List<SymbolizationNote> notes = const []})
       : _notes = notes;
 
-  factory _$_CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =>
-      _$$_CrashSymbolizationResultFromJson(json);
+  factory _$CrashSymbolizationResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CrashSymbolizationResultImplFromJson(json);
 
   @override
   final Crash crash;
@@ -2260,6 +2270,7 @@ class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
   @override
   @JsonKey()
   List<SymbolizationNote> get notes {
+    if (_notes is EqualUnmodifiableListView) return _notes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_notes);
   }
@@ -2270,36 +2281,33 @@ class _$_CrashSymbolizationResult implements _CrashSymbolizationResult {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_CrashSymbolizationResult &&
-            const DeepCollectionEquality().equals(other.crash, crash) &&
-            const DeepCollectionEquality()
-                .equals(other.engineBuild, engineBuild) &&
-            const DeepCollectionEquality()
-                .equals(other.symbolized, symbolized) &&
+            other is _$CrashSymbolizationResultImpl &&
+            (identical(other.crash, crash) || other.crash == crash) &&
+            (identical(other.engineBuild, engineBuild) ||
+                other.engineBuild == engineBuild) &&
+            (identical(other.symbolized, symbolized) ||
+                other.symbolized == symbolized) &&
             const DeepCollectionEquality().equals(other._notes, _notes));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(crash),
-      const DeepCollectionEquality().hash(engineBuild),
-      const DeepCollectionEquality().hash(symbolized),
+  int get hashCode => Object.hash(runtimeType, crash, engineBuild, symbolized,
       const DeepCollectionEquality().hash(_notes));
 
   @JsonKey(ignore: true)
   @override
-  _$$_CrashSymbolizationResultCopyWith<_$_CrashSymbolizationResult>
-      get copyWith => __$$_CrashSymbolizationResultCopyWithImpl<
-          _$_CrashSymbolizationResult>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$CrashSymbolizationResultImplCopyWith<_$CrashSymbolizationResultImpl>
+      get copyWith => __$$CrashSymbolizationResultImplCopyWithImpl<
+          _$CrashSymbolizationResultImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_CrashSymbolizationResultToJson(
+    return _$$CrashSymbolizationResultImplToJson(
       this,
     );
   }
@@ -2310,10 +2318,10 @@ abstract class _CrashSymbolizationResult implements CrashSymbolizationResult {
       {required final Crash crash,
       required final EngineBuild? engineBuild,
       required final String? symbolized,
-      final List<SymbolizationNote> notes}) = _$_CrashSymbolizationResult;
+      final List<SymbolizationNote> notes}) = _$CrashSymbolizationResultImpl;
 
   factory _CrashSymbolizationResult.fromJson(Map<String, dynamic> json) =
-      _$_CrashSymbolizationResult.fromJson;
+      _$CrashSymbolizationResultImpl.fromJson;
 
   @override
   Crash get crash;
@@ -2327,7 +2335,7 @@ abstract class _CrashSymbolizationResult implements CrashSymbolizationResult {
   List<SymbolizationNote> get notes;
   @override
   @JsonKey(ignore: true)
-  _$$_CrashSymbolizationResultCopyWith<_$_CrashSymbolizationResult>
+  _$$CrashSymbolizationResultImplCopyWith<_$CrashSymbolizationResultImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -2350,69 +2358,71 @@ mixin _$SymbolizationNote {
 abstract class $SymbolizationNoteCopyWith<$Res> {
   factory $SymbolizationNoteCopyWith(
           SymbolizationNote value, $Res Function(SymbolizationNote) then) =
-      _$SymbolizationNoteCopyWithImpl<$Res>;
+      _$SymbolizationNoteCopyWithImpl<$Res, SymbolizationNote>;
+  @useResult
   $Res call({SymbolizationNoteKind kind, String? message});
 }
 
 /// @nodoc
-class _$SymbolizationNoteCopyWithImpl<$Res>
+class _$SymbolizationNoteCopyWithImpl<$Res, $Val extends SymbolizationNote>
     implements $SymbolizationNoteCopyWith<$Res> {
   _$SymbolizationNoteCopyWithImpl(this._value, this._then);
 
-  final SymbolizationNote _value;
   // ignore: unused_field
-  final $Res Function(SymbolizationNote) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? kind = freezed,
+    Object? kind = null,
     Object? message = freezed,
   }) {
     return _then(_value.copyWith(
-      kind: kind == freezed
+      kind: null == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
               as SymbolizationNoteKind,
-      message: message == freezed
+      message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_SymbolizationNoteCopyWith<$Res>
+abstract class _$$SymbolizationNoteImplCopyWith<$Res>
     implements $SymbolizationNoteCopyWith<$Res> {
-  factory _$$_SymbolizationNoteCopyWith(_$_SymbolizationNote value,
-          $Res Function(_$_SymbolizationNote) then) =
-      __$$_SymbolizationNoteCopyWithImpl<$Res>;
+  factory _$$SymbolizationNoteImplCopyWith(_$SymbolizationNoteImpl value,
+          $Res Function(_$SymbolizationNoteImpl) then) =
+      __$$SymbolizationNoteImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call({SymbolizationNoteKind kind, String? message});
 }
 
 /// @nodoc
-class __$$_SymbolizationNoteCopyWithImpl<$Res>
-    extends _$SymbolizationNoteCopyWithImpl<$Res>
-    implements _$$_SymbolizationNoteCopyWith<$Res> {
-  __$$_SymbolizationNoteCopyWithImpl(
-      _$_SymbolizationNote _value, $Res Function(_$_SymbolizationNote) _then)
-      : super(_value, (v) => _then(v as _$_SymbolizationNote));
+class __$$SymbolizationNoteImplCopyWithImpl<$Res>
+    extends _$SymbolizationNoteCopyWithImpl<$Res, _$SymbolizationNoteImpl>
+    implements _$$SymbolizationNoteImplCopyWith<$Res> {
+  __$$SymbolizationNoteImplCopyWithImpl(_$SymbolizationNoteImpl _value,
+      $Res Function(_$SymbolizationNoteImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_SymbolizationNote get _value => super._value as _$_SymbolizationNote;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? kind = freezed,
+    Object? kind = null,
     Object? message = freezed,
   }) {
-    return _then(_$_SymbolizationNote(
-      kind: kind == freezed
+    return _then(_$SymbolizationNoteImpl(
+      kind: null == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
               as SymbolizationNoteKind,
-      message: message == freezed
+      message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -2422,11 +2432,11 @@ class __$$_SymbolizationNoteCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_SymbolizationNote implements _SymbolizationNote {
-  _$_SymbolizationNote({required this.kind, this.message});
+class _$SymbolizationNoteImpl implements _SymbolizationNote {
+  _$SymbolizationNoteImpl({required this.kind, this.message});
 
-  factory _$_SymbolizationNote.fromJson(Map<String, dynamic> json) =>
-      _$$_SymbolizationNoteFromJson(json);
+  factory _$SymbolizationNoteImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SymbolizationNoteImplFromJson(json);
 
   @override
   final SymbolizationNoteKind kind;
@@ -2439,30 +2449,28 @@ class _$_SymbolizationNote implements _SymbolizationNote {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SymbolizationNote &&
-            const DeepCollectionEquality().equals(other.kind, kind) &&
-            const DeepCollectionEquality().equals(other.message, message));
+            other is _$SymbolizationNoteImpl &&
+            (identical(other.kind, kind) || other.kind == kind) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(kind),
-      const DeepCollectionEquality().hash(message));
+  int get hashCode => Object.hash(runtimeType, kind, message);
 
   @JsonKey(ignore: true)
   @override
-  _$$_SymbolizationNoteCopyWith<_$_SymbolizationNote> get copyWith =>
-      __$$_SymbolizationNoteCopyWithImpl<_$_SymbolizationNote>(
+  @pragma('vm:prefer-inline')
+  _$$SymbolizationNoteImplCopyWith<_$SymbolizationNoteImpl> get copyWith =>
+      __$$SymbolizationNoteImplCopyWithImpl<_$SymbolizationNoteImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_SymbolizationNoteToJson(
+    return _$$SymbolizationNoteImplToJson(
       this,
     );
   }
@@ -2471,10 +2479,10 @@ class _$_SymbolizationNote implements _SymbolizationNote {
 abstract class _SymbolizationNote implements SymbolizationNote {
   factory _SymbolizationNote(
       {required final SymbolizationNoteKind kind,
-      final String? message}) = _$_SymbolizationNote;
+      final String? message}) = _$SymbolizationNoteImpl;
 
   factory _SymbolizationNote.fromJson(Map<String, dynamic> json) =
-      _$_SymbolizationNote.fromJson;
+      _$SymbolizationNoteImpl.fromJson;
 
   @override
   SymbolizationNoteKind get kind;
@@ -2482,7 +2490,7 @@ abstract class _SymbolizationNote implements SymbolizationNote {
   String? get message;
   @override
   @JsonKey(ignore: true)
-  _$$_SymbolizationNoteCopyWith<_$_SymbolizationNote> get copyWith =>
+  _$$SymbolizationNoteImplCopyWith<_$SymbolizationNoteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -2509,7 +2517,8 @@ mixin _$BotCommand {
 abstract class $BotCommandCopyWith<$Res> {
   factory $BotCommandCopyWith(
           BotCommand value, $Res Function(BotCommand) then) =
-      _$BotCommandCopyWithImpl<$Res>;
+      _$BotCommandCopyWithImpl<$Res, BotCommand>;
+  @useResult
   $Res call(
       {SymbolizationOverrides overrides,
       bool symbolizeThis,
@@ -2519,50 +2528,55 @@ abstract class $BotCommandCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$BotCommandCopyWithImpl<$Res> implements $BotCommandCopyWith<$Res> {
+class _$BotCommandCopyWithImpl<$Res, $Val extends BotCommand>
+    implements $BotCommandCopyWith<$Res> {
   _$BotCommandCopyWithImpl(this._value, this._then);
 
-  final BotCommand _value;
   // ignore: unused_field
-  final $Res Function(BotCommand) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? overrides = freezed,
-    Object? symbolizeThis = freezed,
-    Object? worklist = freezed,
+    Object? overrides = null,
+    Object? symbolizeThis = null,
+    Object? worklist = null,
   }) {
     return _then(_value.copyWith(
-      overrides: overrides == freezed
+      overrides: null == overrides
           ? _value.overrides
           : overrides // ignore: cast_nullable_to_non_nullable
               as SymbolizationOverrides,
-      symbolizeThis: symbolizeThis == freezed
+      symbolizeThis: null == symbolizeThis
           ? _value.symbolizeThis
           : symbolizeThis // ignore: cast_nullable_to_non_nullable
               as bool,
-      worklist: worklist == freezed
+      worklist: null == worklist
           ? _value.worklist
           : worklist // ignore: cast_nullable_to_non_nullable
               as Set<String>,
-    ));
+    ) as $Val);
   }
 
   @override
+  @pragma('vm:prefer-inline')
   $SymbolizationOverridesCopyWith<$Res> get overrides {
     return $SymbolizationOverridesCopyWith<$Res>(_value.overrides, (value) {
-      return _then(_value.copyWith(overrides: value));
+      return _then(_value.copyWith(overrides: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_BotCommandCopyWith<$Res>
+abstract class _$$BotCommandImplCopyWith<$Res>
     implements $BotCommandCopyWith<$Res> {
-  factory _$$_BotCommandCopyWith(
-          _$_BotCommand value, $Res Function(_$_BotCommand) then) =
-      __$$_BotCommandCopyWithImpl<$Res>;
+  factory _$$BotCommandImplCopyWith(
+          _$BotCommandImpl value, $Res Function(_$BotCommandImpl) then) =
+      __$$BotCommandImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {SymbolizationOverrides overrides,
       bool symbolizeThis,
@@ -2573,31 +2587,30 @@ abstract class _$$_BotCommandCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_BotCommandCopyWithImpl<$Res> extends _$BotCommandCopyWithImpl<$Res>
-    implements _$$_BotCommandCopyWith<$Res> {
-  __$$_BotCommandCopyWithImpl(
-      _$_BotCommand _value, $Res Function(_$_BotCommand) _then)
-      : super(_value, (v) => _then(v as _$_BotCommand));
+class __$$BotCommandImplCopyWithImpl<$Res>
+    extends _$BotCommandCopyWithImpl<$Res, _$BotCommandImpl>
+    implements _$$BotCommandImplCopyWith<$Res> {
+  __$$BotCommandImplCopyWithImpl(
+      _$BotCommandImpl _value, $Res Function(_$BotCommandImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_BotCommand get _value => super._value as _$_BotCommand;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? overrides = freezed,
-    Object? symbolizeThis = freezed,
-    Object? worklist = freezed,
+    Object? overrides = null,
+    Object? symbolizeThis = null,
+    Object? worklist = null,
   }) {
-    return _then(_$_BotCommand(
-      overrides: overrides == freezed
+    return _then(_$BotCommandImpl(
+      overrides: null == overrides
           ? _value.overrides
           : overrides // ignore: cast_nullable_to_non_nullable
               as SymbolizationOverrides,
-      symbolizeThis: symbolizeThis == freezed
+      symbolizeThis: null == symbolizeThis
           ? _value.symbolizeThis
           : symbolizeThis // ignore: cast_nullable_to_non_nullable
               as bool,
-      worklist: worklist == freezed
+      worklist: null == worklist
           ? _value._worklist
           : worklist // ignore: cast_nullable_to_non_nullable
               as Set<String>,
@@ -2607,8 +2620,8 @@ class __$$_BotCommandCopyWithImpl<$Res> extends _$BotCommandCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_BotCommand implements _BotCommand {
-  _$_BotCommand(
+class _$BotCommandImpl implements _BotCommand {
+  _$BotCommandImpl(
       {required this.overrides,
       required this.symbolizeThis,
       required final Set<String> worklist})
@@ -2632,6 +2645,7 @@ class _$_BotCommand implements _BotCommand {
   /// is either in `issue-id` or in `issuecomment-id` format.
   @override
   Set<String> get worklist {
+    if (_worklist is EqualUnmodifiableSetView) return _worklist;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableSetView(_worklist);
   }
@@ -2642,34 +2656,33 @@ class _$_BotCommand implements _BotCommand {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_BotCommand &&
-            const DeepCollectionEquality().equals(other.overrides, overrides) &&
-            const DeepCollectionEquality()
-                .equals(other.symbolizeThis, symbolizeThis) &&
+            other is _$BotCommandImpl &&
+            (identical(other.overrides, overrides) ||
+                other.overrides == overrides) &&
+            (identical(other.symbolizeThis, symbolizeThis) ||
+                other.symbolizeThis == symbolizeThis) &&
             const DeepCollectionEquality().equals(other._worklist, _worklist));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(overrides),
-      const DeepCollectionEquality().hash(symbolizeThis),
+  int get hashCode => Object.hash(runtimeType, overrides, symbolizeThis,
       const DeepCollectionEquality().hash(_worklist));
 
   @JsonKey(ignore: true)
   @override
-  _$$_BotCommandCopyWith<_$_BotCommand> get copyWith =>
-      __$$_BotCommandCopyWithImpl<_$_BotCommand>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$BotCommandImplCopyWith<_$BotCommandImpl> get copyWith =>
+      __$$BotCommandImplCopyWithImpl<_$BotCommandImpl>(this, _$identity);
 }
 
 abstract class _BotCommand implements BotCommand {
   factory _BotCommand(
       {required final SymbolizationOverrides overrides,
       required final bool symbolizeThis,
-      required final Set<String> worklist}) = _$_BotCommand;
+      required final Set<String> worklist}) = _$BotCommandImpl;
 
   @override
 
@@ -2688,7 +2701,7 @@ abstract class _BotCommand implements BotCommand {
   Set<String> get worklist;
   @override
   @JsonKey(ignore: true)
-  _$$_BotCommandCopyWith<_$_BotCommand> get copyWith =>
+  _$$BotCommandImplCopyWith<_$BotCommandImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -2711,7 +2724,8 @@ mixin _$SymbolizationOverrides {
 abstract class $SymbolizationOverridesCopyWith<$Res> {
   factory $SymbolizationOverridesCopyWith(SymbolizationOverrides value,
           $Res Function(SymbolizationOverrides) then) =
-      _$SymbolizationOverridesCopyWithImpl<$Res>;
+      _$SymbolizationOverridesCopyWithImpl<$Res, SymbolizationOverrides>;
+  @useResult
   $Res call(
       {String? engineHash,
       String? flutterVersion,
@@ -2723,64 +2737,69 @@ abstract class $SymbolizationOverridesCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SymbolizationOverridesCopyWithImpl<$Res>
+class _$SymbolizationOverridesCopyWithImpl<$Res,
+        $Val extends SymbolizationOverrides>
     implements $SymbolizationOverridesCopyWith<$Res> {
   _$SymbolizationOverridesCopyWithImpl(this._value, this._then);
 
-  final SymbolizationOverrides _value;
   // ignore: unused_field
-  final $Res Function(SymbolizationOverrides) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? engineHash = freezed,
     Object? flutterVersion = freezed,
     Object? arch = freezed,
     Object? mode = freezed,
-    Object? force = freezed,
+    Object? force = null,
     Object? format = freezed,
     Object? os = freezed,
   }) {
     return _then(_value.copyWith(
-      engineHash: engineHash == freezed
+      engineHash: freezed == engineHash
           ? _value.engineHash
           : engineHash // ignore: cast_nullable_to_non_nullable
               as String?,
-      flutterVersion: flutterVersion == freezed
+      flutterVersion: freezed == flutterVersion
           ? _value.flutterVersion
           : flutterVersion // ignore: cast_nullable_to_non_nullable
               as String?,
-      arch: arch == freezed
+      arch: freezed == arch
           ? _value.arch
           : arch // ignore: cast_nullable_to_non_nullable
               as String?,
-      mode: mode == freezed
+      mode: freezed == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as String?,
-      force: force == freezed
+      force: null == force
           ? _value.force
           : force // ignore: cast_nullable_to_non_nullable
               as bool,
-      format: format == freezed
+      format: freezed == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
               as String?,
-      os: os == freezed
+      os: freezed == os
           ? _value.os
           : os // ignore: cast_nullable_to_non_nullable
               as String?,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_SymbolizationOverridesCopyWith<$Res>
+abstract class _$$SymbolizationOverridesImplCopyWith<$Res>
     implements $SymbolizationOverridesCopyWith<$Res> {
-  factory _$$_SymbolizationOverridesCopyWith(_$_SymbolizationOverrides value,
-          $Res Function(_$_SymbolizationOverrides) then) =
-      __$$_SymbolizationOverridesCopyWithImpl<$Res>;
+  factory _$$SymbolizationOverridesImplCopyWith(
+          _$SymbolizationOverridesImpl value,
+          $Res Function(_$SymbolizationOverridesImpl) then) =
+      __$$SymbolizationOverridesImplCopyWithImpl<$Res>;
   @override
+  @useResult
   $Res call(
       {String? engineHash,
       String? flutterVersion,
@@ -2792,53 +2811,52 @@ abstract class _$$_SymbolizationOverridesCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_SymbolizationOverridesCopyWithImpl<$Res>
-    extends _$SymbolizationOverridesCopyWithImpl<$Res>
-    implements _$$_SymbolizationOverridesCopyWith<$Res> {
-  __$$_SymbolizationOverridesCopyWithImpl(_$_SymbolizationOverrides _value,
-      $Res Function(_$_SymbolizationOverrides) _then)
-      : super(_value, (v) => _then(v as _$_SymbolizationOverrides));
+class __$$SymbolizationOverridesImplCopyWithImpl<$Res>
+    extends _$SymbolizationOverridesCopyWithImpl<$Res,
+        _$SymbolizationOverridesImpl>
+    implements _$$SymbolizationOverridesImplCopyWith<$Res> {
+  __$$SymbolizationOverridesImplCopyWithImpl(
+      _$SymbolizationOverridesImpl _value,
+      $Res Function(_$SymbolizationOverridesImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_SymbolizationOverrides get _value =>
-      super._value as _$_SymbolizationOverrides;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? engineHash = freezed,
     Object? flutterVersion = freezed,
     Object? arch = freezed,
     Object? mode = freezed,
-    Object? force = freezed,
+    Object? force = null,
     Object? format = freezed,
     Object? os = freezed,
   }) {
-    return _then(_$_SymbolizationOverrides(
-      engineHash: engineHash == freezed
+    return _then(_$SymbolizationOverridesImpl(
+      engineHash: freezed == engineHash
           ? _value.engineHash
           : engineHash // ignore: cast_nullable_to_non_nullable
               as String?,
-      flutterVersion: flutterVersion == freezed
+      flutterVersion: freezed == flutterVersion
           ? _value.flutterVersion
           : flutterVersion // ignore: cast_nullable_to_non_nullable
               as String?,
-      arch: arch == freezed
+      arch: freezed == arch
           ? _value.arch
           : arch // ignore: cast_nullable_to_non_nullable
               as String?,
-      mode: mode == freezed
+      mode: freezed == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as String?,
-      force: force == freezed
+      force: null == force
           ? _value.force
           : force // ignore: cast_nullable_to_non_nullable
               as bool,
-      format: format == freezed
+      format: freezed == format
           ? _value.format
           : format // ignore: cast_nullable_to_non_nullable
               as String?,
-      os: os == freezed
+      os: freezed == os
           ? _value.os
           : os // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -2848,8 +2866,8 @@ class __$$_SymbolizationOverridesCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_SymbolizationOverrides implements _SymbolizationOverrides {
-  _$_SymbolizationOverrides(
+class _$SymbolizationOverridesImpl implements _SymbolizationOverrides {
+  _$SymbolizationOverridesImpl(
       {this.engineHash,
       this.flutterVersion,
       this.arch,
@@ -2880,37 +2898,31 @@ class _$_SymbolizationOverrides implements _SymbolizationOverrides {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SymbolizationOverrides &&
-            const DeepCollectionEquality()
-                .equals(other.engineHash, engineHash) &&
-            const DeepCollectionEquality()
-                .equals(other.flutterVersion, flutterVersion) &&
-            const DeepCollectionEquality().equals(other.arch, arch) &&
-            const DeepCollectionEquality().equals(other.mode, mode) &&
-            const DeepCollectionEquality().equals(other.force, force) &&
-            const DeepCollectionEquality().equals(other.format, format) &&
-            const DeepCollectionEquality().equals(other.os, os));
+            other is _$SymbolizationOverridesImpl &&
+            (identical(other.engineHash, engineHash) ||
+                other.engineHash == engineHash) &&
+            (identical(other.flutterVersion, flutterVersion) ||
+                other.flutterVersion == flutterVersion) &&
+            (identical(other.arch, arch) || other.arch == arch) &&
+            (identical(other.mode, mode) || other.mode == mode) &&
+            (identical(other.force, force) || other.force == force) &&
+            (identical(other.format, format) || other.format == format) &&
+            (identical(other.os, os) || other.os == os));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(engineHash),
-      const DeepCollectionEquality().hash(flutterVersion),
-      const DeepCollectionEquality().hash(arch),
-      const DeepCollectionEquality().hash(mode),
-      const DeepCollectionEquality().hash(force),
-      const DeepCollectionEquality().hash(format),
-      const DeepCollectionEquality().hash(os));
+      runtimeType, engineHash, flutterVersion, arch, mode, force, format, os);
 
   @JsonKey(ignore: true)
   @override
-  _$$_SymbolizationOverridesCopyWith<_$_SymbolizationOverrides> get copyWith =>
-      __$$_SymbolizationOverridesCopyWithImpl<_$_SymbolizationOverrides>(
-          this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$SymbolizationOverridesImplCopyWith<_$SymbolizationOverridesImpl>
+      get copyWith => __$$SymbolizationOverridesImplCopyWithImpl<
+          _$SymbolizationOverridesImpl>(this, _$identity);
 }
 
 abstract class _SymbolizationOverrides implements SymbolizationOverrides {
@@ -2921,7 +2933,7 @@ abstract class _SymbolizationOverrides implements SymbolizationOverrides {
       final String? mode,
       final bool force,
       final String? format,
-      final String? os}) = _$_SymbolizationOverrides;
+      final String? os}) = _$SymbolizationOverridesImpl;
 
   @override
   String? get engineHash;
@@ -2939,8 +2951,8 @@ abstract class _SymbolizationOverrides implements SymbolizationOverrides {
   String? get os;
   @override
   @JsonKey(ignore: true)
-  _$$_SymbolizationOverridesCopyWith<_$_SymbolizationOverrides> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SymbolizationOverridesImplCopyWith<_$SymbolizationOverridesImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) {
@@ -2950,8 +2962,6 @@ ServerConfig _$ServerConfigFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ServerConfig {
   String get githubToken => throw _privateConstructorUsedError;
-  String get sendgridToken => throw _privateConstructorUsedError;
-  String get failureEmail => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2963,80 +2973,63 @@ mixin _$ServerConfig {
 abstract class $ServerConfigCopyWith<$Res> {
   factory $ServerConfigCopyWith(
           ServerConfig value, $Res Function(ServerConfig) then) =
-      _$ServerConfigCopyWithImpl<$Res>;
-  $Res call({String githubToken, String sendgridToken, String failureEmail});
+      _$ServerConfigCopyWithImpl<$Res, ServerConfig>;
+  @useResult
+  $Res call({String githubToken});
 }
 
 /// @nodoc
-class _$ServerConfigCopyWithImpl<$Res> implements $ServerConfigCopyWith<$Res> {
+class _$ServerConfigCopyWithImpl<$Res, $Val extends ServerConfig>
+    implements $ServerConfigCopyWith<$Res> {
   _$ServerConfigCopyWithImpl(this._value, this._then);
 
-  final ServerConfig _value;
   // ignore: unused_field
-  final $Res Function(ServerConfig) _then;
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? githubToken = freezed,
-    Object? sendgridToken = freezed,
-    Object? failureEmail = freezed,
+    Object? githubToken = null,
   }) {
     return _then(_value.copyWith(
-      githubToken: githubToken == freezed
+      githubToken: null == githubToken
           ? _value.githubToken
           : githubToken // ignore: cast_nullable_to_non_nullable
               as String,
-      sendgridToken: sendgridToken == freezed
-          ? _value.sendgridToken
-          : sendgridToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      failureEmail: failureEmail == freezed
-          ? _value.failureEmail
-          : failureEmail // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_ServerConfigCopyWith<$Res>
+abstract class _$$ServerConfigImplCopyWith<$Res>
     implements $ServerConfigCopyWith<$Res> {
-  factory _$$_ServerConfigCopyWith(
-          _$_ServerConfig value, $Res Function(_$_ServerConfig) then) =
-      __$$_ServerConfigCopyWithImpl<$Res>;
+  factory _$$ServerConfigImplCopyWith(
+          _$ServerConfigImpl value, $Res Function(_$ServerConfigImpl) then) =
+      __$$ServerConfigImplCopyWithImpl<$Res>;
   @override
-  $Res call({String githubToken, String sendgridToken, String failureEmail});
+  @useResult
+  $Res call({String githubToken});
 }
 
 /// @nodoc
-class __$$_ServerConfigCopyWithImpl<$Res>
-    extends _$ServerConfigCopyWithImpl<$Res>
-    implements _$$_ServerConfigCopyWith<$Res> {
-  __$$_ServerConfigCopyWithImpl(
-      _$_ServerConfig _value, $Res Function(_$_ServerConfig) _then)
-      : super(_value, (v) => _then(v as _$_ServerConfig));
+class __$$ServerConfigImplCopyWithImpl<$Res>
+    extends _$ServerConfigCopyWithImpl<$Res, _$ServerConfigImpl>
+    implements _$$ServerConfigImplCopyWith<$Res> {
+  __$$ServerConfigImplCopyWithImpl(
+      _$ServerConfigImpl _value, $Res Function(_$ServerConfigImpl) _then)
+      : super(_value, _then);
 
-  @override
-  _$_ServerConfig get _value => super._value as _$_ServerConfig;
-
+  @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? githubToken = freezed,
-    Object? sendgridToken = freezed,
-    Object? failureEmail = freezed,
+    Object? githubToken = null,
   }) {
-    return _then(_$_ServerConfig(
-      githubToken: githubToken == freezed
+    return _then(_$ServerConfigImpl(
+      githubToken: null == githubToken
           ? _value.githubToken
           : githubToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      sendgridToken: sendgridToken == freezed
-          ? _value.sendgridToken
-          : sendgridToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      failureEmail: failureEmail == freezed
-          ? _value.failureEmail
-          : failureEmail // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -3044,78 +3037,58 @@ class __$$_ServerConfigCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_ServerConfig implements _ServerConfig {
-  _$_ServerConfig(
-      {required this.githubToken,
-      required this.sendgridToken,
-      required this.failureEmail});
+class _$ServerConfigImpl implements _ServerConfig {
+  _$ServerConfigImpl({required this.githubToken});
 
-  factory _$_ServerConfig.fromJson(Map<String, dynamic> json) =>
-      _$$_ServerConfigFromJson(json);
+  factory _$ServerConfigImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ServerConfigImplFromJson(json);
 
   @override
   final String githubToken;
-  @override
-  final String sendgridToken;
-  @override
-  final String failureEmail;
 
   @override
   String toString() {
-    return 'ServerConfig(githubToken: $githubToken, sendgridToken: $sendgridToken, failureEmail: $failureEmail)';
+    return 'ServerConfig(githubToken: $githubToken)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServerConfig &&
-            const DeepCollectionEquality()
-                .equals(other.githubToken, githubToken) &&
-            const DeepCollectionEquality()
-                .equals(other.sendgridToken, sendgridToken) &&
-            const DeepCollectionEquality()
-                .equals(other.failureEmail, failureEmail));
+            other is _$ServerConfigImpl &&
+            (identical(other.githubToken, githubToken) ||
+                other.githubToken == githubToken));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(githubToken),
-      const DeepCollectionEquality().hash(sendgridToken),
-      const DeepCollectionEquality().hash(failureEmail));
+  int get hashCode => Object.hash(runtimeType, githubToken);
 
   @JsonKey(ignore: true)
   @override
-  _$$_ServerConfigCopyWith<_$_ServerConfig> get copyWith =>
-      __$$_ServerConfigCopyWithImpl<_$_ServerConfig>(this, _$identity);
+  @pragma('vm:prefer-inline')
+  _$$ServerConfigImplCopyWith<_$ServerConfigImpl> get copyWith =>
+      __$$ServerConfigImplCopyWithImpl<_$ServerConfigImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ServerConfigToJson(
+    return _$$ServerConfigImplToJson(
       this,
     );
   }
 }
 
 abstract class _ServerConfig implements ServerConfig {
-  factory _ServerConfig(
-      {required final String githubToken,
-      required final String sendgridToken,
-      required final String failureEmail}) = _$_ServerConfig;
+  factory _ServerConfig({required final String githubToken}) =
+      _$ServerConfigImpl;
 
   factory _ServerConfig.fromJson(Map<String, dynamic> json) =
-      _$_ServerConfig.fromJson;
+      _$ServerConfigImpl.fromJson;
 
   @override
   String get githubToken;
   @override
-  String get sendgridToken;
-  @override
-  String get failureEmail;
-  @override
   @JsonKey(ignore: true)
-  _$$_ServerConfigCopyWith<_$_ServerConfig> get copyWith =>
+  _$$ServerConfigImplCopyWith<_$ServerConfigImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

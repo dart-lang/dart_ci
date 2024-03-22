@@ -173,7 +173,7 @@ class Symbolizer {
       } catch (e) {
         return _failedToSymbolize(
             crash, SymbolizationNoteKind.exceptionWhileLookingByBuildId,
-            error: '($buildId) $e');
+            error: 'build-id: $buildId\n$e');
       }
     }
 

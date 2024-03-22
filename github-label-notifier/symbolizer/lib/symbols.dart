@@ -123,7 +123,7 @@ class SymbolsCache {
         return engineBuild;
       }
     }
-    throw 'Failed to find build with matching buildId ($buildId)';
+    throw 'Failed to find build with matching buildId';
   }
 
   File get _cacheStateFile => File(p.join(_path, 'cache.json'));
@@ -162,7 +162,7 @@ class SymbolsCache {
   }
 
   String _cacheDirectoryFor(EngineBuild build, {String suffix = ''}) =>
-      'symbols-cache/${build.engineHash}-${build.variant.toArtifactPath()}'
+      '$_path/${build.engineHash}-${build.variant.toArtifactPath()}'
       '${suffix.isNotEmpty ? '-' : ''}$suffix';
 
   Future<String> _getImpl(String targetDir, EngineBuild build,
