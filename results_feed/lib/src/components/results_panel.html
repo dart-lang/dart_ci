@@ -78,9 +78,14 @@
                 target="_blank">
               history
             </a>
-            <a *ngIf="buildbucketID(change.patchset, configuration) != null"
+            <a *ngIf="buildbucketID(change.patchset, configuration) != null && change.result != 'flaky'"
                target="_blank"
                href="https://logs.chromium.org/logs/dart/buildbucket/cr-buildbucket/{{buildbucketID(change.patchset, configuration)}}/+/u/test_results/new_test_failures__logs_">
+              log
+            </a>
+            <a *ngIf="buildbucketID(change.patchset, configuration) != null && change.result == 'flaky'"
+                target="_blank"
+                href="https://logs.chromium.org/logs/dart/buildbucket/cr-buildbucket/{{buildbucketID(change.patchset, configuration)}}/+/u/find_ignored_flaky_test_failure_logs/raw_io.output_text">
               log
             </a>
             <a href="{{getTestSource(change, true)}}" target="_blank">source</a>
