@@ -164,8 +164,8 @@ class ExpandedResultInfo extends StatelessWidget {
   const ExpandedResultInfo({
     required this.changeGroups,
     required this.name,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Map<ChangeInResult, List<Result>> changeGroups;
   final String name;

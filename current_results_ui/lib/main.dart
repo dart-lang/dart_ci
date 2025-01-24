@@ -16,7 +16,7 @@ void main() {
 }
 
 class CurrentResultsApp extends StatelessWidget {
-  const CurrentResultsApp({Key? key}) : super(key: key);
+  const CurrentResultsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class CurrentResultsApp extends StatelessWidget {
 /// TabBar, and to the TabController object created by that
 /// DefaultTabController widget.
 class Providers extends StatelessWidget {
-  const Providers({Key? key}) : super(key: key);
+  const Providers({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ class Providers extends StatelessWidget {
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
-  const CurrentResultsScaffold({Key? key}) : super(key: key);
+  const CurrentResultsScaffold({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -241,14 +241,10 @@ class TextPopup extends StatelessWidget {
 
 class NoTransitionPageRoute extends MaterialPageRoute {
   NoTransitionPageRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-    bool maintainState = true,
-  }) : super(
-          builder: builder,
-          settings: settings,
-          maintainState: maintainState,
-        );
+    required super.builder,
+    super.settings,
+    super.maintainState = true,
+  });
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
