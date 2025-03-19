@@ -167,7 +167,7 @@ Future<Uri?> computeTestSource(
   String root;
   if (isCo19(suite)) {
     revision = await findDepsRevision(revision, suite);
-    root = "https://github.com/dart-lang/co19/blob/$revision/";
+    root = "https://github.com/dart-lang/co19/blob/master/$revision/";
   } else if (isExternalPackage(suite)) {
     final package = parts.first;
     revision = await findDepsRevision(revision, package);
@@ -176,7 +176,7 @@ Future<Uri?> computeTestSource(
   } else {
     root = useGob
         ? "https://dart.googlesource.com/sdk/+/$revision/"
-        : "https://github.com/dart-lang/sdk/blob/$revision/";
+        : "https://github.com/dart-lang/sdk/blob/main/$revision/";
   }
   return findTestFile(testName, Uri.parse(root), suite, parts);
 }
