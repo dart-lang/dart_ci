@@ -242,6 +242,9 @@ Widget _link(String text, Function onClick) {
 }
 
 Function _openTestSource(String revision, String name) {
+  if (revision == '') {
+    revision = 'main';
+  }
   return () {
     url_launcher.launchUrl(
       Uri.https('dart-ci.appspot.com', '/test/$revision/$name'),
