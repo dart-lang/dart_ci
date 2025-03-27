@@ -18,23 +18,29 @@ class QueryService extends QueryServiceBase {
 
   @override
   Future<GetResultsResponse> getResults(
-          ServiceCall call, GetResultsRequest request) =>
-      Future.value(current.results(request));
+    ServiceCall call,
+    GetResultsRequest request,
+  ) => Future.value(current.results(request));
 
   @override
   Future<ListTestsResponse> listTests(
-          ServiceCall call, ListTestsRequest request) =>
-      Future.value(current.listTests(request));
+    ServiceCall call,
+    ListTestsRequest request,
+  ) => Future.value(current.listTests(request));
 
   @override
   Future<ListTestsResponse> listTestPathCompletions(
-      ServiceCall call, ListTestsRequest request) async {
+    ServiceCall call,
+    ListTestsRequest request,
+  ) async {
     throw UnimplementedError();
   }
 
   @override
   Future<ListConfigurationsResponse> listConfigurations(
-      ServiceCall call, ListConfigurationsRequest request) async {
+    ServiceCall call,
+    ListConfigurationsRequest request,
+  ) async {
     throw UnimplementedError;
   }
 
@@ -46,8 +52,9 @@ class QueryService extends QueryServiceBase {
     final configurations = <String>{};
     for (final message in messages) {
       if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
-        final match =
-            latestObjectPattern.firstMatch(message.attributes['objectId']!);
+        final match = latestObjectPattern.firstMatch(
+          message.attributes['objectId']!,
+        );
         if (match != null) {
           configurations.add(match[1]!);
         }
@@ -56,8 +63,9 @@ class QueryService extends QueryServiceBase {
     for (final configuration in configurations) {
       final lines = await bucket.latestResults(configuration);
       current.add(lines);
-      response.updates
-          .add(ConfigurationUpdate()..configuration = configuration);
+      response.updates.add(
+        ConfigurationUpdate()..configuration = configuration,
+      );
     }
     current.dropResultsOlderThan(maximumAge);
     current.collectTestNames();

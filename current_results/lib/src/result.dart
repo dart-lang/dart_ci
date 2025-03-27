@@ -15,24 +15,33 @@ class Result {
   final Duration time;
   final List<String> experiments;
 
-  Result(this.name, this.configuration, this.commitHash, this.result,
-      this.flaky, this.expected, this.time, this.experiments);
+  Result(
+    this.name,
+    this.configuration,
+    this.commitHash,
+    this.result,
+    this.flaky,
+    this.expected,
+    this.time,
+    this.experiments,
+  );
 
   Result.fromApi(api.Result other)
-      : this(
-            unique(other.name),
-            unique(other.configuration),
-            unique(other.commitHash),
-            unique(other.result),
-            other.flaky,
-            unique(other.expected),
-            Duration(milliseconds: other.timeMs),
-            other.experiments.isEmpty
-                ? const []
-                : other.experiments.map(unique).toList(growable: false));
+    : this(
+        unique(other.name),
+        unique(other.configuration),
+        unique(other.commitHash),
+        unique(other.result),
+        other.flaky,
+        unique(other.expected),
+        Duration(milliseconds: other.timeMs),
+        other.experiments.isEmpty
+            ? const []
+            : other.experiments.map(unique).toList(growable: false),
+      );
 
   Result.nameOnly(String name)
-      : this(name, '', '', '', false, '', Duration(), []);
+    : this(name, '', '', '', false, '', Duration(), []);
 
   static final uniqueStrings = <String>{};
 
@@ -40,28 +49,29 @@ class Result {
       uniqueStrings.lookup(string) ??
       (uniqueStrings.add(string) ? string : string);
 
-  query_api.Result toQueryResult() => query_api.Result()
-    ..name = name
-    ..configuration = configuration
-    ..result = result
-    ..timeMs = time.inMilliseconds
-    ..expected = expected
-    ..flaky = flaky
-    ..experiments.addAll(experiments)
-    ..revision = commitHash;
+  query_api.Result toQueryResult() =>
+      query_api.Result()
+        ..name = name
+        ..configuration = configuration
+        ..result = result
+        ..timeMs = time.inMilliseconds
+        ..expected = expected
+        ..flaky = flaky
+        ..experiments.addAll(experiments)
+        ..revision = commitHash;
 
   static query_api.Result toApi(Result result) => result.toQueryResult();
 
   Map<String, dynamic> toMap() => {
-        'name': name,
-        'configuration': configuration,
-        'commitHash': commitHash,
-        'result': result,
-        'flaky': flaky,
-        'expected': expected,
-        'timeMs': time.inMilliseconds,
-        'experiments': experiments,
-      };
+    'name': name,
+    'configuration': configuration,
+    'commitHash': commitHash,
+    'result': result,
+    'flaky': flaky,
+    'expected': expected,
+    'timeMs': time.inMilliseconds,
+    'experiments': experiments,
+  };
 
   @override
   String toString() => toMap().toString();

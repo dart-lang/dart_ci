@@ -14,20 +14,29 @@ class ResultsBucket {
   ResultsBucket(this._bucket);
 
   Future<List<String>> configurationDirectories() async {
-    final mainDirectories = await _bucket
-        .list(prefix: 'configuration/main/')
-        .where((entry) => entry.isDirectory)
-        .map((entry) => entry.name)
-        .toSet();
+    final mainDirectories =
+        await _bucket
+            .list(prefix: 'configuration/main/')
+            .where((entry) => entry.isDirectory)
+            .map((entry) => entry.name)
+            .toSet();
     // Once all builders have run once on the main branch, this search
     // for results from the master branch can be removed.
-    final masterDirectories = await _bucket
-        .list(prefix: 'configuration/master/')
-        .where((entry) => entry.isDirectory)
-        .map((entry) => entry.name)
-        .where((name) => !mainDirectories.contains(
-            name.replaceFirst('configuration/master/', 'configuration/main/')))
-        .toList();
+    final masterDirectories =
+        await _bucket
+            .list(prefix: 'configuration/master/')
+            .where((entry) => entry.isDirectory)
+            .map((entry) => entry.name)
+            .where(
+              (name) =>
+                  !mainDirectories.contains(
+                    name.replaceFirst(
+                      'configuration/master/',
+                      'configuration/main/',
+                    ),
+                  ),
+            )
+            .toList();
     return [...mainDirectories, ...masterDirectories];
   }
 
@@ -38,16 +47,18 @@ class ResultsBucket {
 
   Future<List<String>> latestResults(String configurationDirectory) async {
     try {
-      final revision = await _bucket
-          .read('${configurationDirectory}latest')
-          .transform(ascii.decoder)
-          .transform(LineSplitter())
-          .single;
-      final results = await _bucket
-          .read('$configurationDirectory$revision/results.json')
-          .transform(utf8.decoder)
-          .transform(LineSplitter())
-          .toList();
+      final revision =
+          await _bucket
+              .read('${configurationDirectory}latest')
+              .transform(ascii.decoder)
+              .transform(LineSplitter())
+              .single;
+      final results =
+          await _bucket
+              .read('$configurationDirectory$revision/results.json')
+              .transform(utf8.decoder)
+              .transform(LineSplitter())
+              .toList();
       return results;
     } catch (e) {
       print('Error reading results from $configurationDirectory:');

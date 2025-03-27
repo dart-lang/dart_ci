@@ -8,27 +8,31 @@
 
 set -e
 
-if [ -z "$GOOGLEAPIS_PATH" ]
-then
-  echo Set the variable \'GOOGLEAPIS_PATH\' to a checkout of \
-    \'https://github.com/googleapis/googleapis/\'!
-  exit 1
-fi
+GOOGLEAPIS_GIT=https://github.com/googleapis/googleapis
+GOOGLEAPIS_PATH=third_party/googleapis
 
-if [ -z "$PROTOBUF_PATH" ]
-then
-  echo Set the variable \'PROTOBUF_PATH\' to a checkout of \
-    \'https://github.com/protocolbuffers/protobuf.git\'!
-  exit 1
-fi
+PROTOBUF_GIT=https://github.com/protocolbuffers/protobuf
+PROTOBUF_PATH=third_party/protobuf
 
-protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/duration.proto
-protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/empty.proto
-protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/field_mask.proto
-protoc --dart_out=lib/src/generated -I$PROTOBUF_PATH/src $PROTOBUF_PATH/src/google/protobuf/timestamp.proto
-protoc --dart_out=grpc:lib/src/generated -I$GOOGLEAPIS_PATH $GOOGLEAPIS_PATH/google/pubsub/v1/pubsub.proto
-protoc --dart_out=grpc:lib/src/generated -I$GOOGLEAPIS_PATH $GOOGLEAPIS_PATH/google/pubsub/v1/schema.proto
+git -C $GOOGLEAPIS_PATH pull || git clone $GOOGLEAPIS_GIT $GOOGLEAPIS_PATH
+git -C $PROTOBUF_PATH pull || git clone $PROTOBUF_GIT $PROTOBUF_PATH
 
-protoc --dart_out=lib/src/generated ../common/result.proto -I../common
-protoc --dart_out=grpc:lib/src/generated -Ilib/protos -Ithird_party/proto lib/protos/query.proto
-dart format lib/src/generated/query* lib/src/generated/result*
+protoc \
+  -I$GOOGLEAPIS_PATH \
+  -I$PROTOBUF_PATH/src \
+  -I../common \
+  -Ilib/protos \
+  --include_imports \
+  --include_source_info \
+  --dart_out=grpc:lib/src/generated \
+  --descriptor_set_out endpoints/generated/api_descriptor.pb \
+  $PROTOBUF_PATH/src/google/protobuf/duration.proto \
+  $PROTOBUF_PATH/src/google/protobuf/empty.proto \
+  $PROTOBUF_PATH/src/google/protobuf/field_mask.proto \
+  $PROTOBUF_PATH/src/google/protobuf/timestamp.proto \
+  $GOOGLEAPIS_PATH/google/pubsub/v1/pubsub.proto \
+  $GOOGLEAPIS_PATH/google/pubsub/v1/schema.proto \
+  ../common/result.proto \
+  lib/protos/query.proto
+
+dart format lib/src/generated/

@@ -1,0 +1,9 @@
+# Do not check in third_party dependencies.
+third_party/
+
+# Do not check in generated files.
+lib/src/generated
+endpoints/generated/
+
+# IDE files
+.vscode/

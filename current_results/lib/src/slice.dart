@@ -26,8 +26,12 @@ int isAfterPrefix(Result a, Result prefix) {
 /// [startResult] and begin with [prefixResult].
 /// If [experiments] is not empty, only results with one of the contained
 /// experiment names are included.
-Iterable<Result> getResultRange(List<Result> sorted, Result startResult,
-    Result prefixResult, Set<String> experiments) {
+Iterable<Result> getResultRange(
+  List<Result> sorted,
+  Result startResult,
+  Result prefixResult,
+  Set<String> experiments,
+) {
   final start = lowerBound<Result>(sorted, startResult, compare: compareNames);
   if (start >= sorted.length) return [];
   if (!sorted[start].name.startsWith(prefixResult.name)) return [];
@@ -37,8 +41,11 @@ Iterable<Result> getResultRange(List<Result> sorted, Result startResult,
   }
   var range = sorted.getRange(start, end);
   if (experiments.isNotEmpty) {
-    range = range.where((result) => experiments
-        .any((experiment) => result.experiments.contains(experiment)));
+    range = range.where(
+      (result) => experiments.any(
+        (experiment) => result.experiments.contains(experiment),
+      ),
+    );
   }
   return range;
 }
@@ -70,15 +77,20 @@ class Slice {
     String? configuration;
     final results = <Result>[];
     for (final line in lines) {
-      final result = Result.fromApi(api.Result()
-        ..mergeFromProto3Json(json.decode(line),
-            supportNamesWithUnderscores: true));
+      final result = Result.fromApi(
+        api.Result()..mergeFromProto3Json(
+          json.decode(line),
+          supportNamesWithUnderscores: true,
+        ),
+      );
       if (result.result == 'skipped') continue;
       if (configuration == null) {
         configuration = result.configuration;
       } else if (result.configuration != configuration) {
-        print('Loaded results list with multiple configurations: '
-            'first result ${results.first}');
+        print(
+          'Loaded results list with multiple configurations: '
+          'first result ${results.first}',
+        );
         return;
       }
       _experimentNames.addAll(result.experiments);
@@ -93,8 +105,10 @@ class Slice {
     _lastFetched[configuration] = DateTime.now();
     _size += sorted.length;
 
-    print('latest results of $configuration: ${sorted.length} results '
-        '(total: $_size)');
+    print(
+      'latest results of $configuration: ${sorted.length} results '
+      '(total: $_size)',
+    );
   }
 
   void collectTestNames() {
@@ -145,8 +159,10 @@ class Slice {
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
     final pageStart =
         query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
-    final filterTerms =
-        query.filter.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty);
+    final filterTerms = query.filter
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty);
     final configurationNames = <String>{};
     var hasConfigurationFilter = false;
     final experimentNames = <String>{};
@@ -163,13 +179,15 @@ class Slice {
         final category = parts.first;
         filter = parts.last;
         if (category == 'experiment') {
-          final matches = _experimentNames
-              .where((experiment) => experiment.startsWith(filter));
+          final matches = _experimentNames.where(
+            (experiment) => experiment.startsWith(filter),
+          );
           experimentNames.addAll(matches);
           hasExperimentFilter = true;
         } else if (category == 'configuration') {
-          final matches = _stored.keys
-              .where((configuration) => configuration.startsWith(filter));
+          final matches = _stored.keys.where(
+            (configuration) => configuration.startsWith(filter),
+          );
           configurationNames.addAll(matches);
           hasConfigurationFilter = true;
         } else if (category == 'test') {
@@ -180,12 +198,14 @@ class Slice {
       } else {
         // Try to find a matching experiment or configuration, or default
         // to treating the term as a test prefix.
-        final matchingExperiments = _experimentNames
-            .where((experiment) => experiment.startsWith(filter))
-            .toSet();
-        final matchingConfigurations = _stored.keys
-            .where((configuration) => configuration.startsWith(filter))
-            .toSet();
+        final matchingExperiments =
+            _experimentNames
+                .where((experiment) => experiment.startsWith(filter))
+                .toSet();
+        final matchingConfigurations =
+            _stored.keys
+                .where((configuration) => configuration.startsWith(filter))
+                .toSet();
         if (matchingExperiments.isNotEmpty) {
           experimentNames.addAll(matchingExperiments);
           hasExperimentFilter = true;
@@ -220,13 +240,19 @@ class Slice {
     final response = query_api.GetResultsResponse();
     for (final prefix in testFilters) {
       var sortedResults = getSortedResults(
-          prefix, configurations, experimentNames, pageStart,
-          needed: limit - response.results.length);
+        prefix,
+        configurations,
+        experimentNames,
+        pageStart,
+        needed: limit - response.results.length,
+      );
       response.results.addAll(sortedResults.map(Result.toApi));
       if (response.results.length == limit) {
-        response.nextPageToken = PageStart(
-                response.results.last.name, response.results.last.configuration)
-            .encode();
+        response.nextPageToken =
+            PageStart(
+              response.results.last.name,
+              response.results.last.configuration,
+            ).encode();
         break;
       }
     }
@@ -240,9 +266,13 @@ class Slice {
   /// experiment names are included.
   /// If [pageStart] is not null, test names before pageStart.name are
   /// filtered out.
-  List<Result> getSortedResults(String prefix, List<String> configurations,
-      Set<String> experimentFilters, PageStart? pageStart,
-      {required int needed}) {
+  List<Result> getSortedResults(
+    String prefix,
+    List<String> configurations,
+    Set<String> experimentFilters,
+    PageStart? pageStart, {
+    required int needed,
+  }) {
     final prefixResult = Result.nameOnly(prefix);
     final Result startResult;
     if (pageStart == null || pageStart.test.compareTo(prefixResult.name) <= 0) {
@@ -256,8 +286,12 @@ class Slice {
     var results = <Result>[];
 
     for (final configuration in configurations) {
-      var configurationRange = getResultRange(_stored[configuration]!,
-          startResult, prefixResult, experimentFilters);
+      var configurationRange = getResultRange(
+        _stored[configuration]!,
+        startResult,
+        prefixResult,
+        experimentFilters,
+      );
 
       if (configurationRange.isEmpty) continue;
       if (pageStart != null &&
@@ -272,9 +306,11 @@ class Slice {
         results.addAll(configurationRange.take(needed - results.length));
       } else {
         results =
-            merge(results, configurationRange, (Result result) => result.name)
-                .take(needed)
-                .toList();
+            merge(
+              results,
+              configurationRange,
+              (Result result) => result.name,
+            ).take(needed).toList();
       }
     }
     return results;
@@ -321,9 +357,8 @@ class PageStart {
   }
 
   String encode() {
-    return base64UrlEncode(ascii.encode(jsonEncode({
-      'test': test,
-      'configuration': configuration,
-    })));
+    return base64UrlEncode(
+      ascii.encode(jsonEncode({'test': test, 'configuration': configuration})),
+    );
   }
 }

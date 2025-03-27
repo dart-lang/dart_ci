@@ -22,7 +22,10 @@ class SingleUseIterable<T> extends IterableBase<T> {
 }
 
 Iterable<T> merge<T, S extends Comparable>(
-    Iterable<T> a, Iterable<T> b, S Function(T) orderedBy) sync* {
+  Iterable<T> a,
+  Iterable<T> b,
+  S Function(T) orderedBy,
+) sync* {
   final ita = a.iterator;
   final itb = b.iterator;
   if (!ita.moveNext()) {

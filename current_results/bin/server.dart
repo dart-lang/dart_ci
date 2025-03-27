@@ -15,9 +15,9 @@ import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
 
 void main() async {
-  final client = await clientViaApplicationDefaultCredentials(scopes: [
-    'https://www.googleapis.com/auth/devstorage.read_only',
-  ]);
+  final client = await clientViaApplicationDefaultCredentials(
+    scopes: ['https://www.googleapis.com/auth/devstorage.read_only'],
+  );
   final bucket = Storage(client, 'dart-ci').bucket('dart-test-results');
   final resultsBucket = ResultsBucket(bucket);
   var port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -38,11 +38,13 @@ Future<void> startServer(int port, ResultsBucket bucket) async {
 Future<Slice> loadData(ResultsBucket bucket) async {
   final result = Slice();
   final configurationDirectories = await bucket.configurationDirectories();
-  await Pool(10).forEach(configurationDirectories,
-      (String configurationDirectory) async {
+  await Pool(10).forEach(configurationDirectories, (
+    String configurationDirectory,
+  ) async {
     try {
-      final resultsDate =
-          await bucket.latestResultsDate(configurationDirectory);
+      final resultsDate = await bucket.latestResultsDate(
+        configurationDirectory,
+      );
       if (DateTime.now().difference(resultsDate) <= maximumAge) {
         final results = await bucket.latestResults(configurationDirectory);
         result.add(results);
