@@ -17,6 +17,9 @@ PROTOBUF_PATH=third_party/protobuf
 git -C $GOOGLEAPIS_PATH pull || git clone $GOOGLEAPIS_GIT $GOOGLEAPIS_PATH
 git -C $PROTOBUF_PATH pull || git clone $PROTOBUF_GIT $PROTOBUF_PATH
 
+mkdir -p endpoints/generated
+mkdir -p lib/src/generated
+
 protoc \
   -I$GOOGLEAPIS_PATH \
   -I$PROTOBUF_PATH/src \
