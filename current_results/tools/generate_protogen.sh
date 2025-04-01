@@ -6,7 +6,7 @@
 
 # Generate the required Dart files for protobufs
 
-set -e
+set -ex
 
 GOOGLEAPIS_GIT=https://github.com/googleapis/googleapis
 GOOGLEAPIS_PATH=third_party/googleapis

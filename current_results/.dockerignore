@@ -3,6 +3,7 @@ Dockerfile
 build/
 endpoints/
 third_party/
+tools/
 
 .dart_tool/
 .dockerignore

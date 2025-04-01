@@ -8,6 +8,15 @@ This service is the backend for https://dart-current-results.web.app/
 which provides a filterable view of the current test status across
 all configurations.
 
+The current results service is a gRPC server written in Dart, running
+on GCE. Cloud Endpoints is used to configure access to the server's API,
+and the ESPv2 proxy is used to manage the API and provide a REST translation of
+the API.
+
+The results service listens for new Dart CI results uploaded to cloud storage,
+and loads them into an in-memory database of all current CI results.
+Queries on these results are supported the by the API.
+
 ## Build and deploy
 
 The service takes about forty seconds to load all the existing
@@ -23,30 +32,25 @@ new version.
 Pre-requisites:
 - Install the protoc compiler: https://developers.google.com/protocol-buffers/docs/downloads
 - Install https://pub.dev/packages/protoc_plugin/install
-- A copy of https://github.com/googleapis/googleapis
-- A copy of https://github.com/protocolbuffers/protobuf
+
 
 To generate the required Dart files for the protos, run
-`tools/generate_protogen.sh` with the environment variables
-`GOOGLEAPIS_PATH` and `PROTOBUF_PATH` set to the location of the checkouts
-mentioned above.
+`tools/generate_protogen.sh`.
 
 ### Deployment
-To build the server and deploy to production, run
+There are three deployment scripts, one for the initial deployment of the
+current results service to a cloud project, and one for redeploying the
+current results server, and one for redeploying the Cloud Endpoints
+configuration and the ESPv2 proxy. Three deployment scripts, there
+are three deployment scripts.
 
-```
-gcloud builds submit --project=dart-ci --tag gcr.io/dart-ci/current_results
-```
-When that build has completed successfully, run
-```
-gcloud compute ssh current-results-server --project=dart-ci --zone=us-central1-a --command="docker kill current-results; docker rm current-results; docker pull gcr.io/dart-ci/current_results"
-gcloud compute ssh current-results-server --project=dart-ci --zone=us-central1-a --command="docker run -d --net=bridge_net --publish=8080:8080 --name=current-results gcr.io/dart-ci/current_results"
-```
+These scripts should be run with the current directory set to the
+current_results directory in a checkout of the dart.googlesource.com/dart_ci
+repository, with the version you wish to deploy checked out.
 
-There is also a REST proxy which provides the public REST api for this backend server.
-Instructions on deploying this ESPv2 proxy (https://github.com/GoogleCloudPlatform/esp-v2)
-are in internal team documentation. The connection between the public REST api and the gRPC api
-is configured in the lib/protos/query.proto file in this repository.
+* initial_configuration.sh (only needed once to setup a new project)
+* deploy_service.sh
+* deploy_endpoints_configuration.sh
 
 ## Services
 

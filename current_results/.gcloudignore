@@ -1,0 +1,7 @@
+.dart_tool/
+.git/
+endpoints/
+third_party/
+tools/
+
+.vscode/
