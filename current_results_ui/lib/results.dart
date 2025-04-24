@@ -44,6 +44,7 @@ class ResultsPanel extends StatelessWidget {
 
         return ListView.builder(
           controller: ScrollController(),
+          primary: true,
           itemCount: filteredNames.length,
           itemBuilder: (BuildContext context, int index) {
             final name = filteredNames[index];
