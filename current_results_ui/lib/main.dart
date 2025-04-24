@@ -203,35 +203,16 @@ class TextPopup extends StatelessWidget {
           message: 'Results query as text',
           waitDuration: const Duration(milliseconds: 500),
           child: TextButton(
-            child: const Text('Text'),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                final text = [resultTextHeader]
-                    .followedBy(results.names
-                        .expand((name) => results.grouped[name]!.values)
-                        .expand((list) => list)
-                        .map(resultAsCommaSeparated))
-                    .join('\n');
-                return AlertDialog(
-                  title: const Text('Results query as text'),
-                  content: SelectableText(text),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('Copy and dismiss'),
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: text));
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Dismiss'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                );
-              },
-            ),
+            child: const Text('Copy to clipboard as text'),
+            onPressed: () {
+              final text = [resultTextHeader]
+                  .followedBy(results.names
+                      .expand((name) => results.grouped[name]!.values)
+                      .expand((list) => list)
+                      .map(resultAsCommaSeparated))
+                  .join('\n');
+              Clipboard.setData(ClipboardData(text: text));
+            },
           ),
         );
       },
