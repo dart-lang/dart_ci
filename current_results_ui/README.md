@@ -19,13 +19,20 @@ prefixes allowed).
 
 ## Deployment
 
-It is written for deployment in Flutter web, but may work on other platforms.
+The app is deployed to the dart_ci Firebase project as a [hosted web app].
 
-It is deployed to the  the dart_ci Firebase
-hosted web app at https://dart-current-results.app.web/
 
-It is built and deployed with the Flutter master channel.
+It is built and deployed automatically with the Flutter master channel using the
+[community flutter cloud builder]. The builder's docker images need to manually
+updated using the instructions in the builder's readme.
 
-Build and deploy with
+To build and deploy local changes manually (not recommended), run the following
+command at the root of the checkout:
 
-    gcloud --project=dart-ci builds submit
+```
+gcloud --project=dart-ci builds submit \
+  --config=current_results_ui/cloudbuild.yaml
+```
+
+[hosted web app]: https://dart-current-results.app.web/
+[community flutter cloud builder]: https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/flutter
