@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -10,9 +11,48 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'filter.dart';
 import 'query.dart';
 import 'results.dart';
+import 'src/auth_service.dart'; // Import AuthService
 
-void main() {
-  runApp(const Providers());
+Future<void> main() async { // Make main async
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter binding is initialized
+  try {
+    // Initialize Firebase using default options
+    // IMPORTANT: You'll need to configure Firebase for your web app
+    // (e.g., add the firebase config script to index.html or use FlutterFire CLI)
+    await Firebase.initializeApp();
+    print('Firebase initialized successfully.'); // Optional: Add a success log
+    runApp(const Providers()); // Run the main app if initialization succeeds
+  } catch (e) {
+    // Handle Firebase initialization error
+    print('Failed to initialize Firebase: $e');
+    // Run an error app if initialization fails
+    runApp(FirebaseErrorApp(error: e.toString()));
+  }
+}
+
+// Simple widget to display an error if Firebase fails to initialize
+class FirebaseErrorApp extends StatelessWidget {
+  final String error;
+  const FirebaseErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Initialization Error')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Failed to initialize Firebase. Please check your configuration and ensure you have added the necessary platform-specific setup.\n\nError: $error',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CurrentResultsApp extends StatelessWidget {
@@ -68,10 +108,13 @@ class Providers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => QueryResults(),
-      child: DefaultTabController(
-        length: 3,
+    // Wrap the existing providers with the AuthService provider at the top level
+    return ChangeNotifierProvider<AuthService>(
+      create: (_) => AuthService(), // Create AuthService instance
+      child: ChangeNotifierProvider<QueryResults>( // Existing QueryResults provider
+        create: (_) => QueryResults(),
+        child: DefaultTabController(
+          length: 3,
         initialIndex: 0,
         child: Builder(
           // ChangeNotifierProvider.value in a Builder is needed to make
@@ -82,8 +125,8 @@ class Providers extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ); // Closes ChangeNotifierProvider<QueryResults>
+  } // Closes ChangeNotifierProvider<AuthService>
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
@@ -113,6 +156,70 @@ class CurrentResultsScaffold extends StatelessWidget {
                       Uri.https('github.com', '/dart-lang/dart_ci/issues'));
                 },
               ),
+            ),
+            // Add the Consumer<AuthService> for the login/logout button
+            Consumer<AuthService>(
+              builder: (context, authService, child) {
+                // Handle error messages post-frame
+                if (authService.errorMessage != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Authentication Error: ${authService.errorMessage}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    // Clear the error message after showing it
+                    // Use a method on AuthService if available, or manage here if needed
+                    // Assuming AuthService has a method like clearError()
+                    authService.clearError(); // Need to add this method to AuthService
+                  });
+                }
+
+                // Show loading indicator
+                if (authService.isLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.0),
+                    child: SizedBox(
+                      width: 20, // Consistent size for the indicator area
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2.0, color: Colors.white),
+                    ),
+                  );
+                }
+
+                // Show Login/Logout button based on auth state
+                if (authService.isAuthenticated) {
+                  // Logged in state
+                  return TextButton(
+                    style: TextButton.styleFrom(foregroundColor: Colors.white),
+                    onPressed: () async {
+                       await authService.signOut();
+                       // Optional: Show confirmation SnackBar
+                       // ScaffoldMessenger.of(context).showSnackBar(
+                       //   SnackBar(content: Text('Signed out successfully.')),
+                       // );
+                    },
+                    child: Tooltip(
+                      message: 'Sign out',
+                      child: Text('Logout (${authService.user?.email ?? '...'})'),
+                    ),
+                  );
+                } else {
+                  // Logged out state
+                  return TextButton(
+                     style: TextButton.styleFrom(foregroundColor: Colors.white),
+                    onPressed: () async {
+                      await authService.signInWithGoogle();
+                      // Error handling is done via the errorMessage check above
+                    },
+                    child: const Tooltip(
+                      message: 'Sign in with Google',
+                      child: Text('Login'),
+                    )
+                  );
+                }
+              },
             ),
           ],
           bottom: TabBar(
