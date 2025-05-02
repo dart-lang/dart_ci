@@ -43,7 +43,6 @@ class ResultsPanel extends StatelessWidget {
         final filteredNames = queryResults.names.where(filter).toList();
 
         return ListView.builder(
-          controller: ScrollController(),
           primary: true,
           itemCount: filteredNames.length,
           itemBuilder: (BuildContext context, int index) {
