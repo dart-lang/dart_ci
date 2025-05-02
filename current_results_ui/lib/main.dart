@@ -11,12 +11,10 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'filter.dart';
 import 'query.dart';
 import 'results.dart';
-import 'src/auth_service.dart'; // Import AuthService
+import 'src/auth_service.dart';
 
 Future<void> main() async {
-  // Make main async
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Ensure Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(
         options: FirebaseOptions(
@@ -28,9 +26,8 @@ Future<void> main() async {
       storageBucket: "dart-ci.appspot.com",
       messagingSenderId: "410721018617",
     ));
-    runApp(const Providers()); // Run the main app if initialization succeeds
+    runApp(const Providers());
   } catch (e) {
-    // Handle Firebase initialization error
     print('Failed to initialize Firebase: $e');
     // Run an error app if initialization fails
     runApp(FirebaseErrorApp(error: e.toString()));
@@ -178,11 +175,7 @@ class CurrentResultsScaffold extends StatelessWidget {
                         backgroundColor: Colors.red,
                       ),
                     );
-                    // Clear the error message after showing it
-                    // Use a method on AuthService if available, or manage here if needed
-                    // Assuming AuthService has a method like clearError()
-                    authService
-                        .clearError(); // Need to add this method to AuthService
+                    authService.clearError();
                   });
                 }
 
