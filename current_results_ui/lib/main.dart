@@ -13,14 +13,21 @@ import 'query.dart';
 import 'results.dart';
 import 'src/auth_service.dart'; // Import AuthService
 
-Future<void> main() async { // Make main async
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter binding is initialized
+Future<void> main() async {
+  // Make main async
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure Flutter binding is initialized
   try {
-    // Initialize Firebase using default options
-    // IMPORTANT: You'll need to configure Firebase for your web app
-    // (e.g., add the firebase config script to index.html or use FlutterFire CLI)
-    await Firebase.initializeApp();
-    print('Firebase initialized successfully.'); // Optional: Add a success log
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+      apiKey: "AIzaSyCOWP8dDmOzMdU3evqU-77HhvDAHD0kFU8",
+      appId: "1:410721018617:web:4fd4f4d82de23478f53828",
+      authDomain: "dart-ci.firebaseapp.com",
+      databaseURL: "https://dart-ci.firebaseio.com",
+      projectId: "dart-ci",
+      storageBucket: "dart-ci.appspot.com",
+      messagingSenderId: "410721018617",
+    ));
     runApp(const Providers()); // Run the main app if initialization succeeds
   } catch (e) {
     // Handle Firebase initialization error
@@ -110,22 +117,23 @@ class Providers extends StatelessWidget {
   Widget build(BuildContext context) {
     // Wrap the existing providers with the AuthService provider at the top level
     return ChangeNotifierProvider<AuthService>(
-      create: (_) => AuthService(), // Create AuthService instance
-      child: ChangeNotifierProvider<QueryResults>( // Existing QueryResults provider
-        create: (_) => QueryResults(),
-        child: DefaultTabController(
-          length: 3,
-        initialIndex: 0,
-        child: Builder(
-          // ChangeNotifierProvider.value in a Builder is needed to make
-          // the TabController available for widgets to observe.
-          builder: (context) => ChangeNotifierProvider<TabController>.value(
-            value: DefaultTabController.of(context),
-            child: const CurrentResultsApp(),
+        create: (_) => AuthService(), // Create AuthService instance
+        child: ChangeNotifierProvider<QueryResults>(
+          // Existing QueryResults provider
+          create: (_) => QueryResults(),
+          child: DefaultTabController(
+            length: 3,
+            initialIndex: 0,
+            child: Builder(
+              // ChangeNotifierProvider.value in a Builder is needed to make
+              // the TabController available for widgets to observe.
+              builder: (context) => ChangeNotifierProvider<TabController>.value(
+                value: DefaultTabController.of(context),
+                child: const CurrentResultsApp(),
+              ),
+            ),
           ),
-        ),
-      ),
-    ); // Closes ChangeNotifierProvider<QueryResults>
+        )); // Closes ChangeNotifierProvider<QueryResults>
   } // Closes ChangeNotifierProvider<AuthService>
 }
 
@@ -165,14 +173,16 @@ class CurrentResultsScaffold extends StatelessWidget {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Authentication Error: ${authService.errorMessage}'),
+                        content: Text(
+                            'Authentication Error: ${authService.errorMessage}'),
                         backgroundColor: Colors.red,
                       ),
                     );
                     // Clear the error message after showing it
                     // Use a method on AuthService if available, or manage here if needed
                     // Assuming AuthService has a method like clearError()
-                    authService.clearError(); // Need to add this method to AuthService
+                    authService
+                        .clearError(); // Need to add this method to AuthService
                   });
                 }
 
@@ -183,7 +193,8 @@ class CurrentResultsScaffold extends StatelessWidget {
                     child: SizedBox(
                       width: 20, // Consistent size for the indicator area
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2.0, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.0, color: Colors.white),
                     ),
                   );
                 }
@@ -191,33 +202,22 @@ class CurrentResultsScaffold extends StatelessWidget {
                 // Show Login/Logout button based on auth state
                 if (authService.isAuthenticated) {
                   // Logged in state
-                  return TextButton(
-                    style: TextButton.styleFrom(foregroundColor: Colors.white),
-                    onPressed: () async {
-                       await authService.signOut();
-                       // Optional: Show confirmation SnackBar
-                       // ScaffoldMessenger.of(context).showSnackBar(
-                       //   SnackBar(content: Text('Signed out successfully.')),
-                       // );
-                    },
-                    child: Tooltip(
+                  return Tooltip(
                       message: 'Sign out',
-                      child: Text('Logout (${authService.user?.email ?? '...'})'),
-                    ),
-                  );
+                      child: IconButton(
+                          icon: Icon(Icons.logout),
+                          onPressed: () {
+                            authService.signOut();
+                          }));
                 } else {
                   // Logged out state
-                  return TextButton(
-                     style: TextButton.styleFrom(foregroundColor: Colors.white),
-                    onPressed: () async {
-                      await authService.signInWithGoogle();
-                      // Error handling is done via the errorMessage check above
-                    },
-                    child: const Tooltip(
+                  return Tooltip(
                       message: 'Sign in with Google',
-                      child: Text('Login'),
-                    )
-                  );
+                      child: IconButton(
+                          icon: Icon(Icons.login),
+                          onPressed: () {
+                            authService.signInWithGoogle();
+                          }));
                 }
               },
             ),
