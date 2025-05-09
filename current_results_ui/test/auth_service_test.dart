@@ -2,16 +2,15 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_current_results/src/auth_service.dart'; // Adjust import path if needed
+import 'package:flutter_current_results/src/auth_service.dart';
 import 'package:mockito/annotations.dart';
 
-// Generate mocks for Firebase Auth classes
 @GenerateMocks([FirebaseAuth, UserCredential, User, GoogleAuthProvider])
-import 'auth_service_test.mocks.dart'; // Import generated mocks
+import 'auth_service_test.mocks.dart';
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;
@@ -26,6 +25,8 @@ void main() {
   }
 
   setUp(() {
+    FirebaseFirestore.instance.settings = const Settings(
+        host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
     mockFirebaseAuth = MockFirebaseAuth();
     mockUser = MockUser();
     mockUserCredential = MockUserCredential();
@@ -61,7 +62,6 @@ void main() {
     // Reset listener count
     notifyCount = 0;
     authService.addListener(listener);
-
   });
 
   tearDown(() {
@@ -203,9 +203,9 @@ void main() {
   */
 
   // Placeholder test because mocks are not fully functional without setup
-   test('Placeholder test for mock setup', (){
-     expect(true, isTrue);
-     print("NOTE: AuthService tests require firebase_auth_mocks or dependency injection setup for FirebaseAuth.");
-   });
-
+  test('Placeholder test for mock setup', () {
+    expect(true, isTrue);
+    print(
+        "NOTE: AuthService tests require firebase_auth_mocks or dependency injection setup for FirebaseAuth.");
+  });
 }
