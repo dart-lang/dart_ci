@@ -55,7 +55,7 @@ Crashed: DartWorker
 47 App                            0x10607fcd0 Precompiled__RawReceivePortImpl_1026248__handleMessage_1026248_2313 + 56
 48 App                            0x1060061e4 Precompiled_Stub_InvokeDartCode + 268
 49 Flutter                        0x101ca8ad0 dart::DartEntry::InvokeFunction(dart::Function const&, dart::Array const&, dart::Array const&, unsigned long) + 181 (dart_entry.cc:181)
-50 Flutter                        0x101cb000c dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >) + 37 (dart_entry.cc:37)
+50 Flutter                        0x101cb000c dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message>>) + 37 (dart_entry.cc:37)
 51 Flutter                        0x101cbae1c dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool) + 233 (message_handler.cc:233)
 52 Flutter                        0x101cbaacc dart::MessageHandlerTask::Run() + 449 (message_handler.cc:449)
 53 Flutter                        0x101d4092c dart::ThreadPool::Worker::Main(unsigned long) + 2338 (memory:2338)

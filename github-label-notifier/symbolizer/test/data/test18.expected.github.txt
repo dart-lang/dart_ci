@@ -1,7 +1,7 @@
 crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 symbolized using symbols for `defa8be2b10650dad50dfee9324ed8d16eeec13f` `ios-arm64-release`
 ```
 #00 000000010604661c Flutter Flutter + 4089372
-                             std::__1::unique_ptr<bssl::SSL_HANDSHAKE, bssl::internal::Deleter<bssl::SSL_HANDSHAKE> >::get() const
+                             std::__1::unique_ptr<bssl::SSL_HANDSHAKE, bssl::internal::Deleter<bssl::SSL_HANDSHAKE>>::get() const
                              /opt/s/w/ir/cache/osx_sdk/XCode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/memory:2625:19
                              SSL_in_init
                              third_party/boringssl/src/ssl/ssl_lib.cc:2673:0
@@ -19,7 +19,7 @@ crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 sym
                              dart::bin::TrustEvaluateHandler(long long, _Dart_CObject*)
                              third_party/dart/runtime/bin/security_context_macos.cc:178:0
 #02 000000010613e080 Flutter Flutter + 5103744
-                             dart::NativeMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)
+                             dart::NativeMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message>>)
                              third_party/dart/runtime/vm/native_message_handler.cc:43:3
 #03 000000010613c7bc Flutter Flutter + 5097404
                              dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)

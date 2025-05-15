@@ -148,7 +148,7 @@ backtrace:
 
       when(commit.sha).thenReturn('abcdef123456');
       when(repositories.getCommit(
-              RepositorySlug('flutter', 'engine'), 'abcdef'))
+              RepositorySlug('flutter', 'flutter'), 'abcdef'))
           .thenAnswer((_) async => commit);
       when(github.repositories).thenReturn(repositories);
 
@@ -181,7 +181,7 @@ backtrace:
 
       when(commit.sha).thenReturn('abcdef123456');
       when(repositories.getCommit(
-              RepositorySlug('flutter', 'engine'), 'abcdef'))
+              RepositorySlug('flutter', 'flutter'), 'abcdef'))
           .thenAnswer((_) async => commit);
       when(github.repositories).thenReturn(repositories);
 
@@ -216,7 +216,7 @@ backtrace:
 
       when(commit.sha).thenReturn('abcdef123456');
       when(repositories.getCommit(
-              RepositorySlug('flutter', 'engine'), 'abcdef'))
+              RepositorySlug('flutter', 'flutter'), 'abcdef'))
           .thenAnswer((_) async => commit);
       when(github.repositories).thenReturn(repositories);
 

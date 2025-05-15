@@ -93,8 +93,16 @@ class Symbolizer {
     }
     if (engineHash != null) {
       // Try to expand short hash into full hash.
-      final engineCommit = await github.repositories
-          .getCommit(RepositorySlug('flutter', 'engine'), engineHash);
+      var engineCommit;
+      try {
+        engineCommit = await github.repositories
+            .getCommit(RepositorySlug('flutter', 'flutter'), engineHash);
+      } catch (e) {
+        print(
+            'Got $e while looking for a commit in flutter/flutter, trying pre-monorepo flutter/engine');
+        engineCommit = await github.repositories
+            .getCommit(RepositorySlug('flutter', 'engine'), engineHash);
+      }
       engineHash = engineCommit.sha;
     }
     if (engineHash == null) {
