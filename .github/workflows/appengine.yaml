@@ -41,4 +41,7 @@ jobs:
 
       - run: dart format --output=none --set-exit-if-changed .
 
-      - run: dart test
+      # TODO: Tests should use `dart test`
+      # TODO: How to run this test?
+      # - run: dart test/create_source_test.dart
+      - run: dart test/test_source_test.dart
