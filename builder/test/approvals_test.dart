@@ -2,6 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+@Tags(['requires_auth'])
+library;
+
 import 'package:builder/src/builder.dart';
 import 'package:builder/src/commits_cache.dart';
 import 'package:builder/src/firestore.dart';

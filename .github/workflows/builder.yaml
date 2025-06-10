@@ -41,4 +41,5 @@ jobs:
 
       - run: dart format --output=none --set-exit-if-changed .
 
-      - run: dart test
+      # Skip the tests that require auth, at least for now.
+      - run: dart test -x requires_auth
