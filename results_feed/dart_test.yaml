@@ -1,2 +1,7 @@
 tags:
   requires_auth: {}
+
+override_platforms:
+  chrome:
+    settings:
+      headless: true
