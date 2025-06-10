@@ -1,23 +1,23 @@
-name: package:builder
+name: package:current_results
 permissions: read-all
 
 on:
   # Run CI on all PRs (against any branch) and on pushes to the main branch.
   pull_request:
     paths:
-      - '.github/workflows/builder.yaml'
-      - 'builder/**'
+      - '.github/workflows/current_results.yaml'
+      - 'current_results/**'
   push:
     branches: [ main ]
     paths:
-      - '.github/workflows/builder.yaml'
-      - 'builder/**'
+      - '.github/workflows/current_results.yaml'
+      - 'current_results/**'
   schedule:
     - cron: '0 0 * * 0' # weekly
 
 defaults:
   run:
-    working-directory: builder
+    working-directory: current_results
 
 jobs:
   build:
