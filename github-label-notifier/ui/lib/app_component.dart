@@ -6,9 +6,6 @@ import 'dart:async';
 
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-import 'package:angular_components/material_button/material_button.dart';
-import 'package:angular_components/material_icon/material_icon.dart';
-import 'package:angular_components/material_select/material_dropdown_select.dart';
 
 import 'src/services/github_service.dart';
 import 'src/services/subscription_service.dart';
