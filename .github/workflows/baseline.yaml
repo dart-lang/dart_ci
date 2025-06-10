@@ -41,4 +41,5 @@ jobs:
 
       - run: dart format --output=none --set-exit-if-changed .
 
-      - run: dart test
+      # TODO: Install gsutil and un-skip tests that require it
+      - run: dart test -x requires_gsutil
