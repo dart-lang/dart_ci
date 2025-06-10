@@ -44,4 +44,4 @@ jobs:
       - run: dart analyze --fatal-infos
 
       # TODO: Write tests
-      # - run: dart run build_runner test -- -p chrome
+      # - run: dart pub run build_runner test -- -p chrome

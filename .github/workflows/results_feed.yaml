@@ -43,4 +43,4 @@ jobs:
 
       - run: dart analyze --fatal-infos
 
-      - run: dart run build_runner test -- -p chrome -x requires_auth
+      - run: dart pub run build_runner test -- -p chrome -x requires_auth
