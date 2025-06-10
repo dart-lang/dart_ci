@@ -35,7 +35,7 @@ jobs:
         with:
           sdk: ${{ matrix.sdk }}
 
-      - run: dat pub get
+      - run: dart pub get
 
       - run: dart format --output=none --set-exit-if-changed .
 
