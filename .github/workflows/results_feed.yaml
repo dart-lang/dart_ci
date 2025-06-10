@@ -33,7 +33,7 @@ jobs:
       - name: Cache build_runner results
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
         with:
-          path: /results_feed/.dart_tool/build
+          path: results_feed/.dart_tool/build
           key: ${{ matrix.os }}-${ matrix.sdk }}
       - name: Cache Pub hosted dependencies
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684

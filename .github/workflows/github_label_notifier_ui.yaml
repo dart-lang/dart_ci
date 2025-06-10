@@ -33,7 +33,7 @@ jobs:
       - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
         name: Cache build_runner results
         with:
-          path: /current_results/.dart_tool/build
+          path: github-label-notifier/ui/.dart_tool/build
           key: ${{ matrix.os }}-${ matrix.sdk }}
       - name: Cache Pub hosted dependencies
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
