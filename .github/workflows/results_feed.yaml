@@ -1,23 +1,23 @@
-name: package:github_label_notifier_ui
+name: package:dart_results_feed
 permissions: read-all
 
 on:
   # Run CI on all PRs (against any branch) and on pushes to the main branch.
   pull_request:
     paths:
-      - '.github/workflows/github_label_notifier_ui.yaml'
-      - 'github-label-notifier/ui/**'
+      - '.github/workflows/results_feed.yaml'
+      - 'github-results_feed/**'
   push:
     branches: [ main ]
     paths:
-      - '.github/workflows/github_label_notifier_ui.yaml'
-      - 'github-label-notifier/ui/**'
+      - '.github/workflows/results_feed.yaml'
+      - 'results_feed/**'
   schedule:
     - cron: '0 0 * * 0' # weekly
 
 defaults:
   run:
-    working-directory: github-label-notifier/ui
+    working-directory: results_feed
 
 jobs:
   build:
@@ -43,5 +43,4 @@ jobs:
 
       - run: dart analyze --fatal-infos
 
-      # TODO: Write tests
-      # - run: dart run build_runner test -- -p chrome
+      - run: dart run build_runner test -- -p chrome -x requires_auth

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 @TestOn('browser')
+@Tags(['requires_auth'])
 import 'package:angular/di.dart';
 import 'package:angular_test/angular_test.dart';
 import 'package:dart_results_feed/src/components/try_results_component.dart';
