@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         sdk:
-          - 2.18.0 # min pubspec SDK
+          - 2.19.0 # min pubspec SDK
           - stable
         os:
           - ubuntu-latest
@@ -43,4 +43,5 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed .
         if: ${{ matrix.sdk == 'stable' }}
 
-      - run: dart test
+      # TODO: Get these running, need to install firebase
+      # - run: test.sh
