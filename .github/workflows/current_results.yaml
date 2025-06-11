@@ -42,9 +42,9 @@ jobs:
 
       - run: dart pub global activate protoc_plugin
 
-      - run: ./tools/generate_protogen.sh
-
       - run: dart pub get
+
+      - run: ./tools/generate_protogen.sh
 
       - run: dart analyze --fatal-infos
 
