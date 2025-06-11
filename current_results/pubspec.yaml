@@ -13,7 +13,7 @@ dependencies:
   googleapis_auth: ^1.4.1
   grpc: ^4.0.1
   pool: ^1.5.1
-  protobuf: ^4.0.0
+  protobuf: ^4.1.0
   shelf: ^1.4.0
 
 dev_dependencies:
