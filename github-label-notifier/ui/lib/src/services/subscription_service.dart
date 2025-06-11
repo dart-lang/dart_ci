@@ -137,11 +137,11 @@ class SubscriptionsService {
   Future<firebase.App> _ensureApp() async {
     if (_app == null) {
       _app = firebase.initializeApp(
-          apiKey: "AIzaSyBFKKpPdV3xPQU4jPYiMvUnUfhB5pDDMRI",
-          authDomain: "dart-ci.firebaseapp.com",
-          databaseURL: "https://dart-ci.firebaseio.com",
-          projectId: "dart-ci",
-          storageBucket: "dart-ci.appspot.com");
+          apiKey: 'AIzaSyBFKKpPdV3xPQU4jPYiMvUnUfhB5pDDMRI',
+          authDomain: 'dart-ci.firebaseapp.com',
+          databaseURL: 'https://dart-ci.firebaseio.com',
+          projectId: 'dart-ci',
+          storageBucket: 'dart-ci.appspot.com');
       await _app.auth().setPersistence(firebase.Persistence.LOCAL);
     }
     return _app;
@@ -159,7 +159,7 @@ class SubscriptionsService {
 
     final currentUser = app.auth().currentUser;
     final userId = currentUser.uid;
-    return app.firestore().doc('github-label-subscriptions/${userId}');
+    return app.firestore().doc('github-label-subscriptions/$userId');
   }
 }
 

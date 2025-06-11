@@ -2,7 +2,7 @@ name: src
 description: UI for managing label subscriptions for GitHub Label Notifier.
 
 environment:
-  sdk: '>=2.2.0 <3.0.0'
+  sdk: '>=2.2.0 <2.12.0' # Pre-null safety only
 
 dependencies:
   angular: any

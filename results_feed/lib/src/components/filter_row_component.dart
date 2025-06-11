@@ -49,6 +49,7 @@ class FilterRowComponent implements OnInit {
 
   FilterRowComponent(this.service, this.buildService);
 
+  @override
   void ngOnInit() async {
     final configurations = await buildService.configurations;
     selectionOptions = [testSuggestion]

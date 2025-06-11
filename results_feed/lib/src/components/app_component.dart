@@ -9,7 +9,6 @@ import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:angular_components/material_button/material_button.dart';
 import 'package:angular_router/angular_router.dart';
-import 'package:dart_results_feed/src/components/results_filter_component.dart';
 
 import 'commit_component.dart';
 import 'filter_row_component.dart';
