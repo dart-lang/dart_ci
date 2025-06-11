@@ -36,8 +36,6 @@ jobs:
         with:
           path: "~/.pub-cache/hosted"
           key: "${{ matrix.os }}-${{ matrix.sdk }}"
-      # We need the flutter SDK in order to run the counter app for integration
-      # testing.
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.flutterSdk }}
