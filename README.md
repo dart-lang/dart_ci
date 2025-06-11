@@ -2,15 +2,15 @@
 
 ## Tools used by Dart's continuous integration (CI) testing infrastructure.
 
-The repository is based at dart.googlesource.com/dart_ci. It is mirrored to github.com/dart-lang/dart_ci.  Do not land pull requests on Github.
+The repository is based at github.com/dart-lang/dart_ci. It is mirrored to dart.googlesource.com/dart_ci. Changes need to be landed as pull requests in this repo.
 
 ### Results Feed
 
 The results feed is an angular Dart application that displays changed results from the CI and from CQ runs (try-jobs). The code is in the results_feed directory. It is deployed to ci.dart.dev, using Firebase hosting.
 
-### Cloud functions
+### Current results server and UI
 
-The automated testing of Dart on the CI and CQ publishes results to Cloud Pubsub, and cloud functions triggered by those Pubsub messages process the data and store it in Firestore.  These functions are located in the functions directory, and are deployed on the dart-ci Google Cloud project.
+A Flutter Web application that displays current test results fetched from a server that keeps all the latest test results in memory.
 
 ### Github Label Notifier
 

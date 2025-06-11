@@ -45,7 +45,7 @@ configuration and the ESPv2 proxy. Three deployment scripts, there
 are three deployment scripts.
 
 These scripts should be run with the current directory set to the
-current_results directory in a checkout of the dart.googlesource.com/dart_ci
+current_results directory in a checkout of the dart-lang/dart_ci
 repository, with the version you wish to deploy checked out.
 
 * initial_configuration.sh (only needed once to setup a new project)
