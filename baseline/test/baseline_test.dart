@@ -76,7 +76,7 @@ main() {
       '--dry-run',
       '--ignore-unmapped',
     ], testData);
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline ignored config mapping', () async {
     final newBuilderStableResults = [
@@ -101,7 +101,7 @@ main() {
           newBuilderStableResults,
       ...testData,
     });
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline default config mapping', () async {
     final newBuilderDevResults = [
@@ -145,7 +145,7 @@ main() {
       'configuration/dev/config3/0/results.json': [newBuilderDevResults[2]],
       'configuration/dev/config4/0/results.json': [newBuilderDevResults[3]],
     });
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline dry-run', () async {
     await baselineTest([
@@ -156,7 +156,7 @@ main() {
           'config3:new-config3,config4:new-config4',
       '--dry-run',
     ], testData);
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline', () async {
     final newBuilderStableResults = [
@@ -202,7 +202,7 @@ main() {
       ],
       ...testData,
     });
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline with suite filter', () async {
     final newBuilderStableResults = [
@@ -236,7 +236,7 @@ main() {
       ],
       ...testData,
     });
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline merge configs', () async {
     final newBuilderStableResults = [
@@ -268,7 +268,7 @@ main() {
           newBuilderStableResults,
       ...testData,
     });
-  });
+  }, tags: ['requires_gsutil']);
 
   test('baseline split configs', () async {
     final newBuilderStableResults = [
@@ -301,7 +301,7 @@ main() {
       ],
       ...testData,
     });
-  });
+  }, tags: ['requires_gsutil']);
 }
 
 Future<void> baselineTest(

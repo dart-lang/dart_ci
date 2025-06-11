@@ -58,11 +58,10 @@ void main() async {
     throw 'This test must run in an emulated environment via test.sh script';
   }
 
-  // Mock SendGrid server which simply records all requests it recieves.
+  // Mock SendGrid server which simply records all requests it receives.
   late HttpServer sendgridMockServer;
   final sendgridRequests = <SendgridRequest>[];
 
-  late HttpServer symbolizerServer;
   final symbolizerCommands = <String>[];
 
   late int notifierPort;
@@ -211,35 +210,6 @@ void main() async {
             'login': 'hest',
             'html_url': 'https://github.com/hest',
           },
-        },
-        'repository': {
-          'full_name': 'dart-lang/webhook-test',
-        },
-      };
-
-  Map<String, dynamic> makeIssueCommentEvent(
-          {int number = 1,
-          String repositoryName = 'dart-lang/webhook-test',
-          String issueBody =
-              'This is an amazing ../third_party/dart/runtime/vm solution',
-          String commentBody = 'comment body goes here',
-          String authorAssociation = 'NONE'}) =>
-      {
-        'action': 'created',
-        'issue': {
-          'html_url':
-              'https://github.com/dart-lang/webhook-test/issues/$number',
-          'number': number,
-          'title': 'TEST ISSUE TITLE',
-          'body': issueBody,
-          'user': {
-            'login': 'hest',
-            'html_url': 'https://github.com/hest',
-          },
-        },
-        'comment': {
-          'body': commentBody,
-          'author_association': authorAssociation,
         },
         'repository': {
           'full_name': 'dart-lang/webhook-test',

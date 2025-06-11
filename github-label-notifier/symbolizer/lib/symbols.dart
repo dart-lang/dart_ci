@@ -179,7 +179,7 @@ class SymbolsCache {
 
     // Download symbols into a temporary directory, once we successfully
     // unpack them we will rename this directory.
-    final tempDir = Directory(dir.path + "-temp");
+    final tempDir = Directory('${dir.path}-temp');
     tempDir.createSync();
     try {
       await downloader(tempDir, build);

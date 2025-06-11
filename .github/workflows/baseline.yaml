@@ -1,0 +1,45 @@
+name: package:baseline
+permissions: read-all
+
+on:
+  # Run CI on all PRs (against any branch) and on pushes to the main branch.
+  pull_request:
+    paths:
+      - '.github/workflows/baseline.yaml'
+      - 'baseline/**'
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/baseline.yaml'
+      - 'baseline/**'
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+defaults:
+  run:
+    working-directory: baseline
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - 2.19.6
+        os:
+          - ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - run: dart pub get
+
+      - run: dart analyze --fatal-infos
+
+      - run: dart format --output=none --set-exit-if-changed .
+
+      # TODO: Install gsutil and un-skip tests that require it
+      - run: dart test -x requires_gsutil

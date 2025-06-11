@@ -79,7 +79,7 @@ main() {
         ConfigurationMapping.strict('foo', {
           'foo': ['bar']
         }),
-        'bar');
+        ['bar']);
     expect(
         () => ConfigurationMapping.strict('oof', {
               'foo': ['bar']
@@ -92,7 +92,7 @@ main() {
         ConfigurationMapping.relaxed('foo', {
           'foo': ['bar']
         }),
-        'bar');
+        ['bar']);
     expect(
         ConfigurationMapping.relaxed('oof', {
           'foo': ['bar']
@@ -105,11 +105,11 @@ main() {
         ConfigurationMapping.none('foo', {
           'foo': ['bar']
         }),
-        'foo');
+        ['foo']);
     expect(
         ConfigurationMapping.none('oof', {
           'foo': ['bar']
         }),
-        'oof');
+        ['oof']);
   });
 }

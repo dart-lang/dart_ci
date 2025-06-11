@@ -93,7 +93,7 @@ class Symbolizer {
     }
     if (engineHash != null) {
       // Try to expand short hash into full hash.
-      var engineCommit;
+      RepositoryCommit engineCommit;
       try {
         engineCommit = await github.repositories
             .getCommit(RepositorySlug('flutter', 'flutter'), engineHash);
