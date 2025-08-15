@@ -5,6 +5,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_current_results/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -17,15 +18,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(
-        options: FirebaseOptions(
-      apiKey: "AIzaSyCOWP8dDmOzMdU3evqU-77HhvDAHD0kFU8",
-      appId: "1:410721018617:web:4fd4f4d82de23478f53828",
-      authDomain: "dart-ci.firebaseapp.com",
-      databaseURL: "https://dart-ci.firebaseio.com",
-      projectId: "dart-ci",
-      storageBucket: "dart-ci.appspot.com",
-      messagingSenderId: "410721018617",
-    ));
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     runApp(const Providers());
   } catch (e) {
     print('Failed to initialize Firebase: $e');
@@ -143,6 +137,7 @@ class CurrentResultsScaffold extends StatelessWidget {
       alignment: Alignment.topLeft,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           leading: const Center(
             child: FetchingProgress(),
           ),
@@ -186,8 +181,7 @@ class CurrentResultsScaffold extends StatelessWidget {
                     child: SizedBox(
                       width: 20, // Consistent size for the indicator area
                       height: 20,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2.0, color: Colors.white),
+                      child: CircularProgressIndicator(strokeWidth: 2.0),
                     ),
                   );
                 }
@@ -334,7 +328,7 @@ class NoTransitionPageRoute extends MaterialPageRoute {
   }
 }
 
-void pushRoute(context, {Iterable<String>? terms, int? tab}) {
+void pushRoute(BuildContext context, {Iterable<String>? terms, int? tab}) {
   if (terms == null && tab == null) {
     throw ArgumentError('pushRoute calls must have a named argument');
   }
