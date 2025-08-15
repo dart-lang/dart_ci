@@ -69,8 +69,10 @@ class CurrentResultsApp extends StatelessWidget {
         final parameters = settings.name!.substring(1).split('&');
 
         final terms = parameters
-            .firstWhere((parameter) => parameter.startsWith('filter='),
-                orElse: () => 'filter=')
+            .firstWhere(
+              (parameter) => parameter.startsWith('filter='),
+              orElse: () => 'filter=',
+            )
             .split('=')[1];
         final filter = Filter(terms);
         final showAll = parameters.contains('showAll');
@@ -78,8 +80,8 @@ class CurrentResultsApp extends StatelessWidget {
         final tab = showAll
             ? 2
             : flakes
-                ? 1
-                : 0;
+            ? 1
+            : 0;
         return NoTransitionPageRoute(
           builder: (context) {
             Provider.of<QueryResults>(context, listen: false).fetch(filter);
@@ -108,23 +110,24 @@ class Providers extends StatelessWidget {
   Widget build(BuildContext context) {
     // Wrap the existing providers with the AuthService provider at the top level
     return ChangeNotifierProvider<AuthService>(
-        create: (_) => AuthService(), // Create AuthService instance
-        child: ChangeNotifierProvider<QueryResults>(
-          // Existing QueryResults provider
-          create: (_) => QueryResults(),
-          child: DefaultTabController(
-            length: 3,
-            initialIndex: 0,
-            child: Builder(
-              // ChangeNotifierProvider.value in a Builder is needed to make
-              // the TabController available for widgets to observe.
-              builder: (context) => ChangeNotifierProvider<TabController>.value(
-                value: DefaultTabController.of(context),
-                child: const CurrentResultsApp(),
-              ),
+      create: (_) => AuthService(), // Create AuthService instance
+      child: ChangeNotifierProvider<QueryResults>(
+        // Existing QueryResults provider
+        create: (_) => QueryResults(),
+        child: DefaultTabController(
+          length: 3,
+          initialIndex: 0,
+          child: Builder(
+            // ChangeNotifierProvider.value in a Builder is needed to make
+            // the TabController available for widgets to observe.
+            builder: (context) => ChangeNotifierProvider<TabController>.value(
+              value: DefaultTabController.of(context),
+              child: const CurrentResultsApp(),
             ),
           ),
-        )); // Closes ChangeNotifierProvider<QueryResults>
+        ),
+      ),
+    ); // Closes ChangeNotifierProvider<QueryResults>
   } // Closes ChangeNotifierProvider<AuthService>
 }
 
@@ -138,9 +141,7 @@ class CurrentResultsScaffold extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leading: const Center(
-            child: FetchingProgress(),
-          ),
+          leading: const Center(child: FetchingProgress()),
           title: const Text(
             'Current Results',
             style: TextStyle(fontSize: 24.0),
@@ -153,7 +154,8 @@ class CurrentResultsScaffold extends StatelessWidget {
                 splashRadius: 20,
                 onPressed: () {
                   url_launcher.launchUrl(
-                      Uri.https('github.com', '/dart-lang/dart_ci/issues'));
+                    Uri.https('github.com', '/dart-lang/dart_ci/issues'),
+                  );
                 },
               ),
             ),
@@ -166,7 +168,8 @@ class CurrentResultsScaffold extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                            'Authentication Error: ${authService.errorMessage}'),
+                          'Authentication Error: ${authService.errorMessage}',
+                        ),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -190,21 +193,25 @@ class CurrentResultsScaffold extends StatelessWidget {
                 if (authService.isAuthenticated) {
                   // Logged in state
                   return Tooltip(
-                      message: 'Sign out',
-                      child: IconButton(
-                          icon: Icon(Icons.logout),
-                          onPressed: () {
-                            authService.signOut();
-                          }));
+                    message: 'Sign out',
+                    child: IconButton(
+                      icon: Icon(Icons.logout),
+                      onPressed: () {
+                        authService.signOut();
+                      },
+                    ),
+                  );
                 } else {
                   // Logged out state
                   return Tooltip(
-                      message: 'Sign in with Google',
-                      child: IconButton(
-                          icon: Icon(Icons.login),
-                          onPressed: () {
-                            authService.signInWithGoogle();
-                          }));
+                    message: 'Sign in with Google',
+                    child: IconButton(
+                      icon: Icon(Icons.login),
+                      onPressed: () {
+                        authService.signInWithGoogle();
+                      },
+                    ),
+                  );
                 }
               },
             ),
@@ -229,21 +236,17 @@ class CurrentResultsScaffold extends StatelessWidget {
           TextPopup(),
         ],
         body: const SelectionArea(
-            child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: FilterUI(),
-            ),
-            Divider(
-              color: Colors.black12,
-              height: 20,
-            ),
-            Expanded(
-              child: ResultsPanel(),
-            ),
-          ],
-        )),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: FilterUI(),
+              ),
+              Divider(color: Colors.black12, height: 20),
+              Expanded(child: ResultsPanel()),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -256,11 +259,13 @@ class ApiPortalLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       child: const Text('API portal'),
-      onPressed: () => url_launcher.launchUrl(Uri.https(
-        'endpointsportal.dart-ci.cloud.goog',
-        '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-            '/routes/v1/results/get',
-      )),
+      onPressed: () => url_launcher.launchUrl(
+        Uri.https(
+          'endpointsportal.dart-ci.cloud.goog',
+          '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
+              '/routes/v1/results/get',
+        ),
+      ),
     );
   }
 }
@@ -300,10 +305,12 @@ class TextPopup extends StatelessWidget {
             child: const Text('Copy to clipboard as text'),
             onPressed: () {
               final text = [resultTextHeader]
-                  .followedBy(results.names
-                      .expand((name) => results.grouped[name]!.values)
-                      .expand((list) => list)
-                      .map(resultAsCommaSeparated))
+                  .followedBy(
+                    results.names
+                        .expand((name) => results.grouped[name]!.values)
+                        .expand((list) => list)
+                        .map(resultAsCommaSeparated),
+                  )
                   .join('\n');
               Clipboard.setData(ClipboardData(text: text));
             },
@@ -322,8 +329,12 @@ class NoTransitionPageRoute extends MaterialPageRoute {
   });
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }
@@ -334,15 +345,9 @@ void pushRoute(BuildContext context, {Iterable<String>? terms, int? tab}) {
   }
   tab ??= Provider.of<TabController>(context, listen: false).index;
   terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
-  final tabItems = [
-    if (tab == 2) 'showAll',
-    if (tab == 1) 'flaky',
-  ];
+  final tabItems = [if (tab == 2) 'showAll', if (tab == 1) 'flaky'];
   Navigator.pushNamed(
     context,
-    [
-      '/filter=${terms.join(',')}',
-      ...tabItems,
-    ].join('&'),
+    ['/filter=${terms.join(',')}', ...tabItems].join('&'),
   );
 }

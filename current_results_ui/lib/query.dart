@@ -91,7 +91,7 @@ Stream<GetResultsResponse> fetchResults(Filter filter) async* {
     final resultsQuery = Uri.https(apiHost, 'v1/results', {
       'filter': filter.terms.join(','),
       'pageSize': '$fetchLimit',
-      'pageToken': pageToken
+      'pageToken': pageToken,
     });
     final response = await client.get(resultsQuery);
     final results = GetResultsResponse.create()
@@ -112,16 +112,16 @@ class ChangeInResult {
   String get kind => flaky
       ? 'flaky'
       : matches
-          ? 'pass'
-          : 'fail';
+      ? 'pass'
+      : 'fail';
 
   ChangeInResult(Result result)
-      : this._(result.result, result.expected, result.flaky);
+    : this._(result.result, result.expected, result.flaky);
 
   ChangeInResult._(this.result, this.expected, this.flaky)
-      : text = flaky
-            ? "flaky (latest result $result expected $expected)"
-            : "$result (expected $expected)";
+    : text = flaky
+          ? "flaky (latest result $result expected $expected)"
+          : "$result (expected $expected)";
 
   @override
   String toString() => text;
@@ -135,14 +135,14 @@ class ChangeInResult {
 }
 
 String resultAsCommaSeparated(Result result) => [
-      result.name,
-      result.configuration,
-      result.result,
-      result.expected,
-      result.flaky,
-      result.timeMs,
-      result.revision,
-    ].join(',');
+  result.name,
+  result.configuration,
+  result.result,
+  result.expected,
+  result.flaky,
+  result.timeMs,
+  result.revision,
+].join(',');
 
 String resultTextHeader =
     "name,configuration,result,expected,flaky,timeMs,revision";
@@ -173,8 +173,10 @@ class TestCounts extends Counts {
   void addResult(ChangeInResult change, Result result) {
     if (currentTest != result.name) {
       if (currentTest.compareTo(result.name) > 0) {
-        print('Results are not sorted by test name: '
-            '$currentTest, ${result.name}');
+        print(
+          'Results are not sorted by test name: '
+          '$currentTest, ${result.name}',
+        );
         return;
       }
       currentFlaky = false;

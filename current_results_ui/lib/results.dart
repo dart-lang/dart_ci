@@ -65,7 +65,7 @@ class ExpandableResult extends StatefulWidget {
   final bool oddRow;
 
   ExpandableResult(this.name, this.changeGroups, this.counts, this.oddRow)
-      : super(key: Key(name));
+    : super(key: Key(name));
 
   @override
   State<ExpandableResult> createState() => _ExpandableResultState();
@@ -107,8 +107,10 @@ class _ExpandableResultState extends State<ExpandableResult> {
                         color: item.color,
                         shape: BoxShape.circle,
                       ),
-                      child: Text(item.text,
-                          style: const TextStyle(fontSize: 14.0)),
+                      child: Text(
+                        item.text,
+                        style: const TextStyle(fontSize: 14.0),
+                      ),
                     ),
                     const SizedBox(width: 4),
                   ],
@@ -133,8 +135,9 @@ class _ExpandableResultState extends State<ExpandableResult> {
                     splashRadius: 20,
                     onPressed: () => url_launcher.launchUrl(
                       Uri(
-                          path: '/',
-                          fragment: 'showLatestFailures=false&test=$name'),
+                        path: '/',
+                        fragment: 'showLatestFailures=false&test=$name',
+                      ),
                     ),
                   ),
                 ),
@@ -149,10 +152,13 @@ class _ExpandableResultState extends State<ExpandableResult> {
             duration: const Duration(milliseconds: 200),
             alignment: Alignment.topLeft,
             firstChild: const Row(),
-            secondChild:
-                ExpandedResultInfo(changeGroups: changeGroups, name: name),
-            crossFadeState:
-                expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            secondChild: ExpandedResultInfo(
+              changeGroups: changeGroups,
+              name: name,
+            ),
+            crossFadeState: expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
           ),
         ),
       ],
@@ -180,8 +186,10 @@ class ExpandedResultInfo extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   margin: const EdgeInsets.symmetric(vertical: 2),
                   decoration: BoxDecoration(
                     color: resultColors[change.kind],
@@ -190,17 +198,14 @@ class ExpandedResultInfo extends StatelessWidget {
                   child: Text(change.text),
                 ),
                 const SizedBox(width: 5),
-                Flexible(
-                  child: Text(
-                    result.configuration,
-                    maxLines: 1,
-                  ),
-                ),
+                Flexible(child: Text(result.configuration, maxLines: 1)),
                 if (change.kind == 'fail')
                   Padding(
                     padding: const EdgeInsets.only(left: 5),
-                    child:
-                        _link("log", _openTestLog(result.configuration, name)),
+                    child: _link(
+                      "log",
+                      _openTestLog(result.configuration, name),
+                    ),
                   ),
                 const SizedBox(width: 5),
                 _link("source", _openTestSource(result.revision, result.name)),
@@ -235,9 +240,13 @@ List<CountItem> countItems(Counts counts) {
 }
 
 Widget _link(String text, Function onClick) {
-  final link = Text(text,
-      style: const TextStyle(
-          color: Colors.blue, decoration: TextDecoration.underline));
+  final link = Text(
+    text,
+    style: const TextStyle(
+      color: Colors.blue,
+      decoration: TextDecoration.underline,
+    ),
+  );
   return InkWell(onTap: onClick as void Function()?, child: link);
 }
 
@@ -318,10 +327,7 @@ class Summary extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          typeText,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        Text(typeText, style: const TextStyle(fontWeight: FontWeight.bold)),
         Pill(resultColors['fail']!, counts.countFailing, 'failing'),
         Pill(resultColors['flaky']!, counts.countFlaky, 'flaky'),
         Pill(Colors.black26, counts.count, 'total'),

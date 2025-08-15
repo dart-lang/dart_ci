@@ -11,12 +11,7 @@ import 'dart:async';
 
 import 'auth_service_test.mocks.dart';
 
-@GenerateMocks([
-  FirebaseAuth,
-  User,
-  UserCredential,
-  GoogleAuthProvider,
-])
+@GenerateMocks([FirebaseAuth, User, UserCredential, GoogleAuthProvider])
 void main() {
   late MockFirebaseAuth mockAuth;
   late MockUser mockUser;
@@ -30,8 +25,9 @@ void main() {
     mockUserCredential = MockUserCredential();
     authStateController = StreamController<User?>.broadcast();
 
-    when(mockAuth.authStateChanges())
-        .thenAnswer((_) => authStateController.stream);
+    when(
+      mockAuth.authStateChanges(),
+    ).thenAnswer((_) => authStateController.stream);
     when(mockUser.email).thenReturn('test@example.com');
     when(mockUser.displayName).thenReturn('Test User');
     when(mockUser.uid).thenReturn('test_uid');
@@ -52,8 +48,9 @@ void main() {
     });
 
     test('signInWithGoogle success', () async {
-      when(mockAuth.signInWithPopup(any))
-          .thenAnswer((_) async => mockUserCredential);
+      when(
+        mockAuth.signInWithPopup(any),
+      ).thenAnswer((_) async => mockUserCredential);
 
       final completer = Completer<void>();
       authService.addListener(() {
@@ -72,8 +69,9 @@ void main() {
     });
 
     test('signInWithGoogle failure', () async {
-      when(mockAuth.signInWithPopup(any))
-          .thenThrow(FirebaseAuthException(code: 'error'));
+      when(
+        mockAuth.signInWithPopup(any),
+      ).thenThrow(FirebaseAuthException(code: 'error'));
 
       await authService.signInWithGoogle();
 
@@ -110,8 +108,9 @@ void main() {
 
     test('isLoading is true during signInWithGoogle and false after', () async {
       final signInCompleter = Completer<UserCredential>();
-      when(mockAuth.signInWithPopup(any))
-          .thenAnswer((_) => signInCompleter.future);
+      when(
+        mockAuth.signInWithPopup(any),
+      ).thenAnswer((_) => signInCompleter.future);
 
       final signInFuture = authService.signInWithGoogle();
 
@@ -123,7 +122,7 @@ void main() {
       await signInFuture;
       authStateController.add(null);
       await Future.delayed(Duration.zero);
-      
+
       expect(authService.isLoading, isFalse);
     });
 

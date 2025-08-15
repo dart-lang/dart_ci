@@ -61,5 +61,4 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://dart-ci.firebaseio.com',
     storageBucket: 'dart-ci.appspot.com',
   );
-
 }
