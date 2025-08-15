@@ -127,8 +127,8 @@ class Providers extends StatelessWidget {
           ),
         ),
       ),
-    ); // Closes ChangeNotifierProvider<QueryResults>
-  } // Closes ChangeNotifierProvider<AuthService>
+    );
+  }
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
