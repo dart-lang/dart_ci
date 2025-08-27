@@ -10,4 +10,4 @@
 current_results/lib/src/generated/google
 functions/node_modules
 github-label-notifier/functions/node_modules
-
+**/test/**.mocks.dart

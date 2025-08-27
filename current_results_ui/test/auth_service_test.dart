@@ -66,18 +66,24 @@ void main() {
 
       expect(authService.user, mockUser);
       expect(authService.isAuthenticated, isTrue);
+      expect(authService.errorMessage, isNull);
     });
 
     test('signInWithGoogle failure', () async {
+      final exception = FirebaseAuthException(
+        code: 'test-error',
+        message: 'A test error occurred.',
+      );
       when(
         mockAuth.signInWithPopup(any),
-      ).thenThrow(FirebaseAuthException(code: 'error'));
+      ).thenThrow(exception);
 
       await authService.signInWithGoogle();
 
       expect(authService.user, isNull);
       expect(authService.isAuthenticated, isFalse);
       expect(authService.errorMessage, isNotNull);
+      expect(authService.errorMessage, contains(exception.message));
     });
 
     test('signOut', () async {
@@ -104,6 +110,7 @@ void main() {
 
       expect(authService.user, isNull);
       expect(authService.isAuthenticated, isFalse);
+      expect(authService.errorMessage, isNull);
     });
 
     test('isLoading is true during signInWithGoogle and false after', () async {
