@@ -1,0 +1,52 @@
+name: package:flutter_current_results
+permissions: read-all
+
+on:
+  # Run CI on all PRs (against any branch) and on pushes to the main branch.
+  pull_request:
+    paths:
+      - '.github/workflows/current_results_ui.yaml'
+      - 'current_results_ui/**'
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/current_results_ui.yaml'
+      - 'current_results_ui/**'
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+defaults:
+  run:
+    working-directory: current_results_ui
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        flutterSdk:
+          - stable
+        os:
+          - ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "${{ matrix.os }}-${{ matrix.sdk }}"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.flutterSdk }}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+
+      - run: flutter pub get
+
+      - run: flutter analyze --fatal-infos
+
+      - run: dart format --output=none --set-exit-if-changed .
+
+      # TODO: Write tests
+      # - run: flutter test

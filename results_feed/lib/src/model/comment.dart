@@ -57,8 +57,11 @@ class Comment implements Comparable {
     commentHtml = formatComment(comment);
   }
 
-  String approvedText() =>
-      (approved == null) ? '' : approved ? 'approved' : 'disapproved';
+  String approvedText() => (approved == null)
+      ? ''
+      : approved
+          ? 'approved'
+          : 'disapproved';
 
   @override
   int compareTo(Object other) => created.compareTo((other as Comment).created);

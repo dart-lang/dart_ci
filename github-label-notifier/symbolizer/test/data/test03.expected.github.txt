@@ -24,13 +24,13 @@ crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 sym
                                          flutter/shell/common/shell.cc:449:7
                                          std::__1::__compressed_pair_elem<flutter::Shell::NotifyLowMemoryWarning() const::$_12, 0, false>::__compressed_pair_elem<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, 0u>(std::__1::piecewise_construct_t, std::__1::tuple<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&>, std::__1::__tuple_indices<0u>)
                                          third_party/libcxx/include/memory:2155:9
-                                         std::__1::__compressed_pair<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12> >::__compressed_pair<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&>(std::__1::piecewise_construct_t, std::__1::tuple<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&>, std::__1::tuple<std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&>)
+                                         std::__1::__compressed_pair<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>>::__compressed_pair<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&>(std::__1::piecewise_construct_t, std::__1::tuple<flutter::Shell::NotifyLowMemoryWarning() const::$_12&&>, std::__1::tuple<std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&>)
                                          third_party/libcxx/include/memory:2256:9
                                          std::__1::__function::__alloc_func<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>, void ()>::__alloc_func(flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&)
                                          third_party/libcxx/include/functional:1524:11
                                          std::__1::__function::__func<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>, void ()>::__func(flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>&&)
                                          third_party/libcxx/include/functional:1652:11
-                                         std::__1::__function::__value_func<void ()>::__value_func<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12> >(flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12> const&)
+                                         std::__1::__function::__value_func<void ()>::__value_func<flutter::Shell::NotifyLowMemoryWarning() const::$_12, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12>>(flutter::Shell::NotifyLowMemoryWarning() const::$_12&&, std::__1::allocator<flutter::Shell::NotifyLowMemoryWarning() const::$_12> const&)
                                          third_party/libcxx/include/functional:1773:45
                                          std::__1::__function::__value_func<void ()>::__value_func<flutter::Shell::NotifyLowMemoryWarning() const::$_12, void>(flutter::Shell::NotifyLowMemoryWarning() const::$_12&&)
                                          third_party/libcxx/include/functional:1782:11
@@ -39,7 +39,7 @@ crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1042 sym
                                          flutter::Shell::NotifyLowMemoryWarning() const
                                          flutter/shell/common/shell.cc:449:7
 #06 0103dfc3 <...>/lib/arm/libflutter.so (offset 0x102f000)
-                                         flutter::Shell::OnPlatformViewCreated(std::__1::unique_ptr<flutter::Surface, std::__1::default_delete<flutter::Surface> >)
+                                         flutter::Shell::OnPlatformViewCreated(std::__1::unique_ptr<flutter::Surface, std::__1::default_delete<flutter::Surface>>)
                                          flutter/shell/common/shell.cc:712:3
 #07 00047507 /system/lib/libc.so (__pthread_start(void*)+22)
 #08 0001af75 /system/lib/libc.so (__start_thread+32)

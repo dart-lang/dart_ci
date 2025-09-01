@@ -68,7 +68,9 @@ class ResultsFilterComponent {
   ResultsFilterComponent(this.service);
 
   String get selectedType => filter.showLatestFailures
-      ? filter.showUnapprovedOnly ? unapprovedFailures : activeFailures
+      ? filter.showUnapprovedOnly
+          ? unapprovedFailures
+          : activeFailures
       : allResults;
 
   void select(String type) {

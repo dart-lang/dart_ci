@@ -1,0 +1,47 @@
+name: package:symbolizer
+permissions: read-all
+
+on:
+  # Run CI on all PRs (against any branch) and on pushes to the main branch.
+  pull_request:
+    paths:
+      - '.github/workflows/symbolizer.yaml'
+      - 'github-label-notifier/symbolizer/**'
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/symbolizer.yaml'
+      - 'github-label-notifier/symbolizer/**'
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+defaults:
+  run:
+    working-directory: github-label-notifier/symbolizer
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - 3.3.0 # min pubspec SDK
+          - stable
+        os:
+          - ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - run: dart pub get
+
+      - run: dart analyze --fatal-infos
+
+      - run: dart format --output=none --set-exit-if-changed .
+        if: ${{ matrix.sdk == 'stable' }}
+
+      # TODO: Get these running, needs some LLVM related tools installed
+      # - run: dart test

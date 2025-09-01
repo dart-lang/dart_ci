@@ -97,7 +97,7 @@ crash from https://github.com/flutter/flutter/issues/12345#issuecomment-1001 sym
                              third_party/dart/runtime/vm/dart_entry.cc:37:10
                              dart::DartLibraryCalls::HandleMessage(dart::Object const&, dart::Instance const&)
                              third_party/dart/runtime/vm/dart_entry.cc:792:0
-                             dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message> >)
+                             dart::IsolateMessageHandler::HandleMessage(std::__1::unique_ptr<dart::Message, std::__1::default_delete<dart::Message>>)
                              third_party/dart/runtime/vm/isolate.cc:1401:0
 #51 0000000101cbae1c Flutter Flutter + 5369372 (message_handler.cc:23)
                              dart::MessageHandler::HandleMessages(dart::MonitorLocker*, bool, bool)

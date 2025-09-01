@@ -155,12 +155,10 @@ const noteMessage = <SymbolizationNoteKind, String>{
 
 @freezed
 class SymbolizationResult with _$SymbolizationResult {
-  @JsonSerializable(explicitToJson: true)
   factory SymbolizationResult.ok({
     required List<CrashSymbolizationResult> results,
   }) = SymbolizationResultOk;
 
-  @JsonSerializable(explicitToJson: true)
   factory SymbolizationResult.error({
     required SymbolizationNote error,
   }) = SymbolizationResultError;
@@ -172,7 +170,6 @@ class SymbolizationResult with _$SymbolizationResult {
 /// Result of symbolizing an engine crash.
 @freezed
 class CrashSymbolizationResult with _$CrashSymbolizationResult {
-  @JsonSerializable(explicitToJson: true)
   factory CrashSymbolizationResult({
     required Crash crash,
     required EngineBuild? engineBuild,

@@ -7,6 +7,7 @@
 ///
 ///    symbolize <input-file>|<github-uri> [overrides]
 ///
+library;
 
 import 'dart:io';
 
