@@ -91,4 +91,17 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
+
+  testWidgets('shows sign-out button when user is already logged in on start',
+      (WidgetTester tester) async {
+    // This test simulates the scenario where the user was already logged in
+    // from a previous session.
+    mockAuthService.setAuthenticated(true);
+    await tester.pumpWidget(createTestWidget());
+
+    // The sign-out button should be immediately visible, without needing
+    // to wait for any async operations.
+    expect(find.widgetWithIcon(IconButton, Icons.logout), findsOneWidget);
+    expect(find.widgetWithIcon(IconButton, Icons.login), findsNothing);
+  });
 }

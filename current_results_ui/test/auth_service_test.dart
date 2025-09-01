@@ -25,6 +25,7 @@ void main() {
     mockUserCredential = MockUserCredential();
     authStateController = StreamController<User?>.broadcast();
 
+    when(mockAuth.currentUser).thenReturn(null);
     when(
       mockAuth.authStateChanges(),
     ).thenAnswer((_) => authStateController.stream);
@@ -38,6 +39,7 @@ void main() {
   });
 
   tearDown(() {
+    authService.dispose();
     authStateController.close();
   });
 
@@ -52,17 +54,9 @@ void main() {
         mockAuth.signInWithPopup(any),
       ).thenAnswer((_) async => mockUserCredential);
 
-      final completer = Completer<void>();
-      authService.addListener(() {
-        if (authService.user != null && !completer.isCompleted) {
-          completer.complete();
-        }
-      });
-
-      authService.signInWithGoogle();
+      final signInFuture = authService.signInWithGoogle();
       authStateController.add(mockUser);
-
-      await completer.future;
+      await signInFuture;
 
       expect(authService.user, mockUser);
       expect(authService.isAuthenticated, isTrue);
@@ -87,26 +81,18 @@ void main() {
     });
 
     test('signOut', () async {
+      // Start as authenticated
       when(mockAuth.currentUser).thenReturn(mockUser);
-      authService = AuthService(auth: mockAuth);
       authStateController.add(mockUser);
-      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero); // Allow stream to process
 
       expect(authService.isAuthenticated, isTrue);
 
       when(mockAuth.signOut()).thenAnswer((_) async {});
 
-      final completer = Completer<void>();
-      authService.addListener(() {
-        if (!authService.isAuthenticated && !completer.isCompleted) {
-          completer.complete();
-        }
-      });
-
-      await authService.signOut();
+      final signOutFuture = authService.signOut();
       authStateController.add(null);
-
-      await completer.future;
+      await signOutFuture;
 
       expect(authService.user, isNull);
       expect(authService.isAuthenticated, isFalse);
@@ -127,15 +113,13 @@ void main() {
       authStateController.add(mockUser);
 
       await signInFuture;
-      authStateController.add(null);
-      await Future.delayed(Duration.zero);
 
       expect(authService.isLoading, isFalse);
     });
 
     test('isLoading is true during signOut and false after', () async {
+      // Start as authenticated
       when(mockAuth.currentUser).thenReturn(mockUser);
-      authService = AuthService(auth: mockAuth);
       authStateController.add(mockUser);
       await Future.delayed(Duration.zero);
 
@@ -147,12 +131,8 @@ void main() {
       expect(authService.isLoading, isTrue);
 
       signOutCompleter.complete();
-      await signOutFuture;
-
-      expect(authService.isLoading, isTrue);
-
       authStateController.add(null);
-      await Future.delayed(Duration.zero);
+      await signOutFuture;
 
       expect(authService.isLoading, isFalse);
     });
