@@ -18,8 +18,9 @@ class AuthService with ChangeNotifier {
 
   AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance {
     _user = _auth.currentUser;
-    _authStateSubscription =
-        _auth.authStateChanges().listen(_onAuthStateChanged);
+    _authStateSubscription = _auth.authStateChanges().listen(
+      _onAuthStateChanged,
+    );
   }
 
   @override
@@ -76,9 +77,7 @@ class AuthService with ChangeNotifier {
 
     try {
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      await _auth.signInWithPopup(
-        googleProvider,
-      );
+      await _auth.signInWithPopup(googleProvider);
       // The user state will be updated by the authStateChanges listener,
       // which will also complete the completer.
     } on FirebaseAuthException catch (e) {

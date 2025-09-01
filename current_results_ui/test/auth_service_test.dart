@@ -68,9 +68,7 @@ void main() {
         code: 'test-error',
         message: 'A test error occurred.',
       );
-      when(
-        mockAuth.signInWithPopup(any),
-      ).thenThrow(exception);
+      when(mockAuth.signInWithPopup(any)).thenThrow(exception);
 
       await authService.signInWithGoogle();
 
