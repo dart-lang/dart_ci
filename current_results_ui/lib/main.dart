@@ -23,12 +23,10 @@ Future<void> main() async {
     runApp(const Providers());
   } catch (e) {
     print('Failed to initialize Firebase: $e');
-    // Run an error app if initialization fails
     runApp(FirebaseErrorApp(error: e.toString()));
   }
 }
 
-// Simple widget to display an error if Firebase fails to initialize
 class FirebaseErrorApp extends StatelessWidget {
   final String error;
   const FirebaseErrorApp({super.key, required this.error});
@@ -108,11 +106,9 @@ class Providers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Wrap the existing providers with the AuthService provider at the top level
     return ChangeNotifierProvider<AuthService>(
-      create: (_) => AuthService(), // Create AuthService instance
+      create: (_) => AuthService(),
       child: ChangeNotifierProvider<QueryResults>(
-        // Existing QueryResults provider
         create: (_) => QueryResults(),
         child: DefaultTabController(
           length: 3,
@@ -159,10 +155,8 @@ class CurrentResultsScaffold extends StatelessWidget {
                 },
               ),
             ),
-            // Add the Consumer<AuthService> for the login/logout button
             Consumer<AuthService>(
               builder: (context, authService, child) {
-                // Handle error messages post-frame
                 if (authService.errorMessage != null) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -177,7 +171,6 @@ class CurrentResultsScaffold extends StatelessWidget {
                   });
                 }
 
-                // Show loading indicator
                 if (authService.isLoading) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -189,9 +182,7 @@ class CurrentResultsScaffold extends StatelessWidget {
                   );
                 }
 
-                // Show Login/Logout button based on auth state
                 if (authService.isAuthenticated) {
-                  // Logged in state
                   return Tooltip(
                     message: 'Sign out',
                     child: IconButton(
@@ -202,7 +193,6 @@ class CurrentResultsScaffold extends StatelessWidget {
                     ),
                   );
                 } else {
-                  // Logged out state
                   return Tooltip(
                     message: 'Sign in with Google',
                     child: IconButton(
