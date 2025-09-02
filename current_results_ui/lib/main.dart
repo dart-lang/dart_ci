@@ -172,13 +172,13 @@ class CurrentResultsScaffold extends StatelessWidget {
                 }
 
                 if (authService.isLoading) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.0),
-                    child: SizedBox(
-                      width: 20, // Consistent size for the indicator area
-                      height: 20,
+                  return const IconButton(
+                    icon: SizedBox(
+                      width: 24,
+                      height: 24,
                       child: CircularProgressIndicator(strokeWidth: 2.0),
                     ),
+                    onPressed: null, // Disabled
                   );
                 }
 
