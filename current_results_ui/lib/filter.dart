@@ -60,15 +60,17 @@ class _FilterUIState extends State<FilterUI> {
                       children: [
                         for (final term in filter.terms)
                           InputChip(
-                              label: Text(term),
-                              onDeleted: () {
-                                pushRoute(context,
-                                    terms:
-                                        filter.terms.where((t) => t != term));
-                              },
-                              onPressed: () {
-                                controller.text = term;
-                              }),
+                            label: Text(term),
+                            onDeleted: () {
+                              pushRoute(
+                                context,
+                                terms: filter.terms.where((t) => t != term),
+                              );
+                            },
+                            onPressed: () {
+                              controller.text = term;
+                            },
+                          ),
                       ],
                     ),
                   ),
@@ -80,18 +82,22 @@ class _FilterUIState extends State<FilterUI> {
               child: TextField(
                 controller: controller,
                 decoration: const InputDecoration(
-                    hintText: 'Test, configuration or experiment prefix'),
+                  hintText: 'Test, configuration or experiment prefix',
+                ),
                 onSubmitted: (value) {
                   if (value.trim().isEmpty) return;
                   final newTerms = value.split(',').map((s) => s.trim());
-                  bool isNotReplacedByNewTerm(String term) =>
-                      !newTerms.any((newTerm) =>
-                          term.startsWith(newTerm) || newTerm.startsWith(term));
+                  bool isNotReplacedByNewTerm(String term) => !newTerms.any(
+                    (newTerm) =>
+                        term.startsWith(newTerm) || newTerm.startsWith(term),
+                  );
                   controller.text = '';
-                  pushRoute(context,
-                      terms: filter.terms
-                          .where(isNotReplacedByNewTerm)
-                          .followedBy(newTerms));
+                  pushRoute(
+                    context,
+                    terms: filter.terms
+                        .where(isNotReplacedByNewTerm)
+                        .followedBy(newTerms),
+                  );
                 },
               ),
             ),

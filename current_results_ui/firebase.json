@@ -1,11 +1,36 @@
 {
-  "hosting": {
-    "target": "current-results",
-    "public": "build/web",
-    "rewrites": [
-    {
-      "source": "**",
-      "destination": "/index.html"
-    }]
-  }
+    "emulators": {
+        "auth": {
+            "port": 9099
+        },
+        "firestore": {
+            "port": 8080
+        },
+        "ui": {
+            "enabled": true,
+            "port": 4000
+        }
+    },
+    "hosting": {
+        "target": "current-results",
+        "public": "build/web",
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    },
+    "flutter": {
+        "platforms": {
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "dart-ci",
+                    "configurations": {
+                        "web": "1:410721018617:web:4fd4f4d82de23478f53828"
+                    }
+                }
+            }
+        }
+    }
 }

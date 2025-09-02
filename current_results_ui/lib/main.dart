@@ -2,17 +2,53 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_current_results/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'filter.dart';
 import 'query.dart';
 import 'results.dart';
+import 'src/auth_service.dart';
 
-void main() {
-  runApp(const Providers());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    runApp(const Providers());
+  } catch (e) {
+    print('Failed to initialize Firebase: $e');
+    runApp(FirebaseErrorApp(error: e.toString()));
+  }
+}
+
+class FirebaseErrorApp extends StatelessWidget {
+  final String error;
+  const FirebaseErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Initialization Error')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Failed to initialize Firebase. Please check your configuration and ensure you have added the necessary platform-specific setup.\n\nError: $error',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CurrentResultsApp extends StatelessWidget {
@@ -31,8 +67,10 @@ class CurrentResultsApp extends StatelessWidget {
         final parameters = settings.name!.substring(1).split('&');
 
         final terms = parameters
-            .firstWhere((parameter) => parameter.startsWith('filter='),
-                orElse: () => 'filter=')
+            .firstWhere(
+              (parameter) => parameter.startsWith('filter='),
+              orElse: () => 'filter=',
+            )
             .split('=')[1];
         final filter = Filter(terms);
         final showAll = parameters.contains('showAll');
@@ -40,8 +78,8 @@ class CurrentResultsApp extends StatelessWidget {
         final tab = showAll
             ? 2
             : flakes
-                ? 1
-                : 0;
+            ? 1
+            : 0;
         return NoTransitionPageRoute(
           builder: (context) {
             Provider.of<QueryResults>(context, listen: false).fetch(filter);
@@ -68,17 +106,20 @@ class Providers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => QueryResults(),
-      child: DefaultTabController(
-        length: 3,
-        initialIndex: 0,
-        child: Builder(
-          // ChangeNotifierProvider.value in a Builder is needed to make
-          // the TabController available for widgets to observe.
-          builder: (context) => ChangeNotifierProvider<TabController>.value(
-            value: DefaultTabController.of(context),
-            child: const CurrentResultsApp(),
+    return ChangeNotifierProvider<AuthService>(
+      create: (_) => AuthService(),
+      child: ChangeNotifierProvider<QueryResults>(
+        create: (_) => QueryResults(),
+        child: DefaultTabController(
+          length: 3,
+          initialIndex: 0,
+          child: Builder(
+            // ChangeNotifierProvider.value in a Builder is needed to make
+            // the TabController available for widgets to observe.
+            builder: (context) => ChangeNotifierProvider<TabController>.value(
+              value: DefaultTabController.of(context),
+              child: const CurrentResultsApp(),
+            ),
           ),
         ),
       ),
@@ -95,9 +136,8 @@ class CurrentResultsScaffold extends StatelessWidget {
       alignment: Alignment.topLeft,
       child: Scaffold(
         appBar: AppBar(
-          leading: const Center(
-            child: FetchingProgress(),
-          ),
+          centerTitle: true,
+          leading: const Center(child: FetchingProgress()),
           title: const Text(
             'Current Results',
             style: TextStyle(fontSize: 24.0),
@@ -110,9 +150,60 @@ class CurrentResultsScaffold extends StatelessWidget {
                 splashRadius: 20,
                 onPressed: () {
                   url_launcher.launchUrl(
-                      Uri.https('github.com', '/dart-lang/dart_ci/issues'));
+                    Uri.https('github.com', '/dart-lang/dart_ci/issues'),
+                  );
                 },
               ),
+            ),
+            Consumer<AuthService>(
+              builder: (context, authService, child) {
+                if (authService.errorMessage != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Authentication Error: ${authService.errorMessage}',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    authService.clearError();
+                  });
+                }
+
+                if (authService.isLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.0),
+                    child: SizedBox(
+                      width: 20, // Consistent size for the indicator area
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2.0),
+                    ),
+                  );
+                }
+
+                if (authService.isAuthenticated) {
+                  return Tooltip(
+                    message: 'Sign out',
+                    child: IconButton(
+                      icon: Icon(Icons.logout),
+                      onPressed: () {
+                        authService.signOut();
+                      },
+                    ),
+                  );
+                } else {
+                  return Tooltip(
+                    message: 'Sign in with Google',
+                    child: IconButton(
+                      icon: Icon(Icons.login),
+                      onPressed: () {
+                        authService.signInWithGoogle();
+                      },
+                    ),
+                  );
+                }
+              },
             ),
           ],
           bottom: TabBar(
@@ -135,21 +226,17 @@ class CurrentResultsScaffold extends StatelessWidget {
           TextPopup(),
         ],
         body: const SelectionArea(
-            child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: FilterUI(),
-            ),
-            Divider(
-              color: Colors.black12,
-              height: 20,
-            ),
-            Expanded(
-              child: ResultsPanel(),
-            ),
-          ],
-        )),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: FilterUI(),
+              ),
+              Divider(color: Colors.black12, height: 20),
+              Expanded(child: ResultsPanel()),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -162,11 +249,13 @@ class ApiPortalLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       child: const Text('API portal'),
-      onPressed: () => url_launcher.launchUrl(Uri.https(
-        'endpointsportal.dart-ci.cloud.goog',
-        '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-            '/routes/v1/results/get',
-      )),
+      onPressed: () => url_launcher.launchUrl(
+        Uri.https(
+          'endpointsportal.dart-ci.cloud.goog',
+          '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
+              '/routes/v1/results/get',
+        ),
+      ),
     );
   }
 }
@@ -206,10 +295,12 @@ class TextPopup extends StatelessWidget {
             child: const Text('Copy to clipboard as text'),
             onPressed: () {
               final text = [resultTextHeader]
-                  .followedBy(results.names
-                      .expand((name) => results.grouped[name]!.values)
-                      .expand((list) => list)
-                      .map(resultAsCommaSeparated))
+                  .followedBy(
+                    results.names
+                        .expand((name) => results.grouped[name]!.values)
+                        .expand((list) => list)
+                        .map(resultAsCommaSeparated),
+                  )
                   .join('\n');
               Clipboard.setData(ClipboardData(text: text));
             },
@@ -228,27 +319,25 @@ class NoTransitionPageRoute extends MaterialPageRoute {
   });
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }
 
-void pushRoute(context, {Iterable<String>? terms, int? tab}) {
+void pushRoute(BuildContext context, {Iterable<String>? terms, int? tab}) {
   if (terms == null && tab == null) {
     throw ArgumentError('pushRoute calls must have a named argument');
   }
   tab ??= Provider.of<TabController>(context, listen: false).index;
   terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
-  final tabItems = [
-    if (tab == 2) 'showAll',
-    if (tab == 1) 'flaky',
-  ];
+  final tabItems = [if (tab == 2) 'showAll', if (tab == 1) 'flaky'];
   Navigator.pushNamed(
     context,
-    [
-      '/filter=${terms.join(',')}',
-      ...tabItems,
-    ].join('&'),
+    ['/filter=${terms.join(',')}', ...tabItems].join('&'),
   );
 }
