@@ -7,6 +7,26 @@ A web UI displaying current test results for Dart CI
 This web app displays results from the Current Results API in the dart-ci
 project.
 
+## Development
+
+Before running the application, you may need to generate mock files for tests and ensure the code is correctly formatted.
+
+### Code Generation
+
+This project uses `build_runner` to generate mock files for testing. To generate these files, run the following command:
+
+```sh
+dart run build_runner build --delete-conflicting-outputs
+```
+
+### Code Formatting
+
+To ensure consistent code style, format the code using the following command:
+
+```sh
+dart format .
+```
+
 ## Usage
 
 The page is visible at
