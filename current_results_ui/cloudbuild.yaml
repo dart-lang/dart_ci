@@ -1,7 +1,7 @@
 steps:
 - name: gcr.io/dart_ci/flutter:master
   dir: current_results_ui
-  args: ['build', 'web']
+  args: ['build', 'web', '--wasm']
 - name: gcr.io/dart_ci/firebase
   dir: current_results_ui
   args: ['deploy', '--project=dart-ci', '--only=hosting:current-results']
