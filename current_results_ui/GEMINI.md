@@ -49,7 +49,7 @@ flutter pub get
 To run the application locally in a Chrome browser, use the following command:
 
 ```sh
-flutter run -d chrome
+flutter run -d chrome --wasm
 ```
 
 ### 3. Generate Mocks
