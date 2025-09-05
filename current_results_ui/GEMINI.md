@@ -69,7 +69,7 @@ Deployment is handled automatically by Google Cloud Build, as configured in `clo
 *   **Copyright Headers:** All new Dart source files (`.dart`) must include the following copyright header at the top of the file. The year should always be the current year (e.g., 2025 for work done in 2025, 2026 for work done in 2026, and so on).
 
     ```dart
-    // Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+    // Copyright (c) 2025, the Dart project authors. Please see the AUTHORS file
     // for details. All rights reserved. Use of this source code is governed by a
     // BSD-style license that can be found in the LICENSE file.
     ```
