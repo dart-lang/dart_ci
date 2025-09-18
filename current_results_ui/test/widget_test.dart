@@ -4,12 +4,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_current_results/filter.dart';
+import 'package:flutter_current_results/model/review.dart';
+import 'package:flutter_current_results/query.dart';
+import 'package:flutter_current_results/src/auth_service.dart';
+import 'package:flutter_current_results/src/data/try_query_results.dart';
+import 'package:flutter_current_results/src/generated/query.pb.dart';
+import 'package:flutter_current_results/src/widgets/results_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_current_results/main.dart';
-import 'package:flutter_current_results/query.dart';
-import 'package:flutter_current_results/src/auth_service.dart';
+
+import 'try_query_results_test.mocks.dart';
 
 class MockAuthService extends Mock implements AuthService {
   @override
@@ -43,12 +48,10 @@ class MockAuthService extends Mock implements AuthService {
 void main() {
   late MockAuthService mockAuthService;
   late QueryResultsBase queryResults;
-  late TabController tabController;
 
   setUp(() {
     mockAuthService = MockAuthService();
     queryResults = QueryResults(Filter(''));
-    tabController = TabController(length: 3, vsync: const TestVSync());
   });
 
   Widget createTestWidget() {
@@ -56,10 +59,9 @@ void main() {
       providers: [
         ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
         ChangeNotifierProvider<QueryResultsBase>.value(value: queryResults),
-        ChangeNotifierProvider<TabController>.value(value: tabController),
       ],
       child: MaterialApp(
-        home: CurrentResultsScaffold(tabController: tabController),
+        home: ResultsView(title: 'Test Results', filter: Filter('')),
       ),
     );
   }
@@ -104,5 +106,68 @@ void main() {
     // to wait for any async operations.
     expect(find.widgetWithIcon(IconButton, Icons.logout), findsOneWidget);
     expect(find.widgetWithIcon(IconButton, Icons.login), findsNothing);
+  });
+
+  testWidgets('ResultsView updates with TryQueryResults data', (
+    WidgetTester tester,
+  ) async {
+    final mockResultsService = MockResultsService();
+    final result = Result()
+      ..name = 'test1'
+      ..configuration = 'config1'
+      ..result = 'Fail'
+      ..expected = 'Pass'
+      ..flaky = false;
+    final change = ChangeInResult(result);
+    when(
+      mockResultsService.fetchChanges(123, 1),
+    ).thenAnswer((_) async => [(change, result)]);
+    when(mockResultsService.fetchReviewInfo(123)).thenAnswer(
+      (_) async => Review(
+        id: '1',
+        subject: 'Subject',
+        patchsets: [
+          Patchset(
+            id: '1',
+            description: 'description',
+            number: 1,
+            patchsetGroup: 1,
+          ),
+        ],
+      ),
+    );
+    final tryQueryResults = TryQueryResults(
+      cl: 123,
+      patchset: 1,
+      resultsService: mockResultsService,
+      filter: Filter(''),
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
+          ChangeNotifierProvider<TryQueryResults>.value(value: tryQueryResults),
+          ChangeNotifierProvider<QueryResultsBase>.value(
+            value: tryQueryResults,
+          ),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Consumer<TryQueryResults>(
+              builder: (context, value, child) => ResultsView(
+                title: 'Try Results',
+                filter: value.filter,
+                showInstructionsOnEmptyQuery: false,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Try Results'), findsOneWidget);
+    expect(find.text('test1'), findsOneWidget);
   });
 }

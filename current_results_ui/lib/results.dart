@@ -3,8 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'instructions.dart';
@@ -368,6 +369,75 @@ class Pill extends StatelessWidget {
         ),
         child: Text(nf.format(count), style: const TextStyle(fontSize: 14.0)),
       ),
+    );
+  }
+}
+
+class ApiPortalLink extends StatelessWidget {
+  const ApiPortalLink({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: const Text('API portal'),
+      onPressed: () => url_launcher.launchUrl(
+        Uri.https(
+          'endpointsportal.dart-ci.cloud.goog',
+          '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
+              '/routes/v1/results/get',
+        ),
+      ),
+    );
+  }
+}
+
+class JsonLink extends StatelessWidget {
+  const JsonLink({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResultsBase>(
+      builder: (context, results, child) {
+        return TextButton(
+          child: const Text('JSON'),
+          onPressed: () => url_launcher.launchUrl(
+            Uri.https(apiHost, 'v1/results', {
+              'filter': results.filter.terms.join(','),
+              'pageSize': '4000',
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TextPopup extends StatelessWidget {
+  const TextPopup({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QueryResultsBase>(
+      builder: (context, QueryResultsBase results, child) {
+        return Tooltip(
+          message: 'Results query as text',
+          waitDuration: const Duration(milliseconds: 500),
+          child: TextButton(
+            child: const Text('Copy to clipboard as text'),
+            onPressed: () {
+              final text = [resultTextHeader]
+                  .followedBy(
+                    results.names
+                        .expand((name) => results.grouped[name]!.values)
+                        .expand((list) => list)
+                        .map(resultAsCommaSeparated),
+                  )
+                  .join('\n');
+              Clipboard.setData(ClipboardData(text: text));
+            },
+          ),
+        );
+      },
     );
   }
 }
