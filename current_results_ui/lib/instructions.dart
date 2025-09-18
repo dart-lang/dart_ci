@@ -1,10 +1,13 @@
-// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Instructions extends StatelessWidget {
+  const Instructions({super.key});
+
   @override
   Widget build(context) {
     return SingleChildScrollView(
@@ -47,7 +50,12 @@ class Instructions extends StatelessWidget {
             const SizedBox(height: 12),
             InkWell(
               onTap: () {
-                Navigator.pushNamed(context, '/filter=${example['terms']}');
+                GoRouter.of(context).go(
+                  Uri(
+                    path: '/',
+                    queryParameters: {'filter': example['terms']},
+                  ).toString(),
+                );
               },
               child: Text.rich(
                 TextSpan(

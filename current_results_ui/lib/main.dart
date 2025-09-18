@@ -1,4 +1,4 @@
-// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -6,6 +6,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_current_results/firebase_options.dart';
+import 'package:flutter_current_results/src/routing.dart';
+import 'package:flutter_current_results/src/widgets/app_bar_actions.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -13,6 +16,8 @@ import 'filter.dart';
 import 'query.dart';
 import 'results.dart';
 import 'src/auth_service.dart';
+import 'src/platform_specific/url_strategy_stub.dart'
+    if (dart.library.js_interop) 'src/platform_specific/url_strategy_web.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +25,8 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    runApp(const Providers());
+    configureUrlStrategy();
+    runApp(const CurrentResultsApp());
   } catch (e) {
     print('Failed to initialize Firebase: $e');
     runApp(FirebaseErrorApp(error: e.toString()));
@@ -39,10 +45,12 @@ class FirebaseErrorApp extends StatelessWidget {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Failed to initialize Firebase. Please check your configuration and ensure you have added the necessary platform-specific setup.\n\nError: $error',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
+            child: SelectionArea(
+              child: Text(
+                'Failed to initialize Firebase. Please check your configuration and ensure you have added the necessary platform-specific setup.\n\nError: $error',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
             ),
           ),
         ),
@@ -50,85 +58,92 @@ class FirebaseErrorApp extends StatelessWidget {
     );
   }
 }
+
+final _router = createRouter();
 
 class CurrentResultsApp extends StatelessWidget {
   const CurrentResultsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Current Results',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.compact,
+    return AppProviders(
+      child: MaterialApp.router(
+        title: 'Current Results',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.compact,
+        ),
+        routerConfig: _router,
       ),
-      initialRoute: '/',
-      onGenerateRoute: (RouteSettings settings) {
-        final parameters = settings.name!.substring(1).split('&');
-
-        final terms = parameters
-            .firstWhere(
-              (parameter) => parameter.startsWith('filter='),
-              orElse: () => 'filter=',
-            )
-            .split('=')[1];
-        final filter = Filter(terms);
-        final showAll = parameters.contains('showAll');
-        final flakes = parameters.contains('flaky');
-        final tab = showAll
-            ? 2
-            : flakes
-            ? 1
-            : 0;
-        return NoTransitionPageRoute(
-          builder: (context) {
-            Provider.of<QueryResults>(context, listen: false).fetch(filter);
-            // Not allowed to set state of tab controller in this builder.
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Provider.of<TabController>(context, listen: false).index = tab;
-            });
-            return const CurrentResultsScaffold();
-          },
-          settings: settings,
-          maintainState: false,
-        );
-      },
     );
   }
 }
 
-/// Provides access to an QueryResults object which notifies when new
-/// results are fetched, a DefaultTabController widget used by the
-/// TabBar, and to the TabController object created by that
-/// DefaultTabController widget.
-class Providers extends StatelessWidget {
-  const Providers({super.key});
+class AppProviders extends StatelessWidget {
+  final Widget child;
+  const AppProviders({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AuthService>(
-      create: (_) => AuthService(),
-      child: ChangeNotifierProvider<QueryResults>(
-        create: (_) => QueryResults(),
-        child: DefaultTabController(
-          length: 3,
-          initialIndex: 0,
-          child: Builder(
-            // ChangeNotifierProvider.value in a Builder is needed to make
-            // the TabController available for widgets to observe.
-            builder: (context) => ChangeNotifierProvider<TabController>.value(
-              value: DefaultTabController.of(context),
-              child: const CurrentResultsApp(),
-            ),
-          ),
-        ),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthService>(create: (_) => AuthService()),
+        ChangeNotifierProvider<QueryResults>(create: (_) => QueryResults()),
+      ],
+      child: child,
+    );
+  }
+}
+
+class CurrentResultsScreen extends StatefulWidget {
+  final Filter filter;
+  final int initialTabIndex;
+  const CurrentResultsScreen({
+    super.key,
+    required this.filter,
+    this.initialTabIndex = 0,
+  });
+
+  @override
+  State<CurrentResultsScreen> createState() => _CurrentResultsScreenState();
+}
+
+class _CurrentResultsScreenState extends State<CurrentResultsScreen>
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<QueryResults>(context, listen: false).fetch(widget.filter);
+    _tabController = TabController(
+      initialIndex: widget.initialTabIndex,
+      length: 3,
+      vsync: this,
+    );
+  }
+
+  @override
+  void didUpdateWidget(CurrentResultsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.filter != oldWidget.filter) {
+      Provider.of<QueryResults>(context, listen: false).fetch(widget.filter);
+    }
+    _tabController.index = widget.initialTabIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<TabController>.value(
+      value: _tabController,
+      child: CurrentResultsScaffold(tabController: _tabController),
     );
   }
 }
 
 class CurrentResultsScaffold extends StatelessWidget {
-  const CurrentResultsScaffold({super.key});
+  final TabController tabController;
+  const CurrentResultsScaffold({super.key, required this.tabController});
 
   @override
   Widget build(BuildContext context) {
@@ -142,79 +157,28 @@ class CurrentResultsScaffold extends StatelessWidget {
             'Current Results',
             style: TextStyle(fontSize: 24.0),
           ),
-          actions: [
-            Tooltip(
-              message: 'Send feeback!',
-              child: IconButton(
-                icon: const Icon(Icons.bug_report),
-                splashRadius: 20,
-                onPressed: () {
-                  url_launcher.launchUrl(
-                    Uri.https('github.com', '/dart-lang/dart_ci/issues'),
-                  );
-                },
-              ),
-            ),
-            Consumer<AuthService>(
-              builder: (context, authService, child) {
-                if (authService.errorMessage != null) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Authentication Error: ${authService.errorMessage}',
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    authService.clearError();
-                  });
-                }
-
-                if (authService.isLoading) {
-                  return const IconButton(
-                    icon: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2.0),
-                    ),
-                    onPressed: null, // Disabled
-                  );
-                }
-
-                if (authService.isAuthenticated) {
-                  return Tooltip(
-                    message: 'Sign out',
-                    child: IconButton(
-                      icon: Icon(Icons.logout),
-                      onPressed: () {
-                        authService.signOut();
-                      },
-                    ),
-                  );
-                } else {
-                  return Tooltip(
-                    message: 'Sign in with Google',
-                    child: IconButton(
-                      icon: Icon(Icons.login),
-                      onPressed: () {
-                        authService.signInWithGoogle();
-                      },
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+          actions: buildAppBarActions(context),
           bottom: TabBar(
+            controller: tabController,
             tabs: const [
               Tab(text: 'FAILURES'),
               Tab(text: 'FLAKES'),
               Tab(text: 'ALL'),
             ],
             onTap: (int tab) {
-              // We cannot compare to the previous value, it is gone.
-              pushRoute(context, tab: tab);
+              final uri = GoRouter.of(
+                context,
+              ).routeInformationProvider.value.uri;
+              final newUri = uri.replace(
+                queryParameters: {
+                  for (final entry in uri.queryParameters.entries)
+                    if (entry.key != 'showAll' && entry.key != 'flaky')
+                      entry.key: entry.value,
+                  if (tab == 2) 'showAll': 'true',
+                  if (tab == 1) 'flaky': 'true',
+                },
+              );
+              GoRouter.of(context).go(newUri.toString());
             },
           ),
         ),
@@ -243,7 +207,7 @@ class CurrentResultsScaffold extends StatelessWidget {
 }
 
 class ApiPortalLink extends StatelessWidget {
-  const ApiPortalLink();
+  const ApiPortalLink({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +225,7 @@ class ApiPortalLink extends StatelessWidget {
 }
 
 class JsonLink extends StatelessWidget {
-  const JsonLink();
+  const JsonLink({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +246,7 @@ class JsonLink extends StatelessWidget {
 }
 
 class TextPopup extends StatelessWidget {
-  const TextPopup();
+  const TextPopup({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -309,35 +273,4 @@ class TextPopup extends StatelessWidget {
       },
     );
   }
-}
-
-class NoTransitionPageRoute extends MaterialPageRoute {
-  NoTransitionPageRoute({
-    required super.builder,
-    super.settings,
-    super.maintainState = true,
-  });
-
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return child;
-  }
-}
-
-void pushRoute(BuildContext context, {Iterable<String>? terms, int? tab}) {
-  if (terms == null && tab == null) {
-    throw ArgumentError('pushRoute calls must have a named argument');
-  }
-  tab ??= Provider.of<TabController>(context, listen: false).index;
-  terms ??= Provider.of<QueryResults>(context, listen: false).filter.terms;
-  final tabItems = [if (tab == 2) 'showAll', if (tab == 1) 'flaky'];
-  Navigator.pushNamed(
-    context,
-    ['/filter=${terms.join(',')}', ...tabItems].join('&'),
-  );
 }
