@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_current_results/filter.dart';
 import 'package:flutter_current_results/instructions.dart';
 import 'package:flutter_current_results/main.dart';
 import 'package:flutter_current_results/query.dart';
@@ -10,17 +11,18 @@ import 'package:flutter_current_results/src/auth_service.dart';
 import 'package:flutter_current_results/src/generated/query.pb.dart';
 import 'package:flutter_current_results/src/routing.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 
 import 'routing_test.mocks.dart';
 
-class FakeQueryResults extends QueryResults {
+class FakeQueryResults extends QueryResultsBase {
+  FakeQueryResults() : super(Filter(''));
+
   @override
-  void fetchCurrentResults() async {
-    // Do nothing to prevent network calls in tests.
-    await Future.microtask(() => onResults(GetResultsResponse()));
-    onDone();
+  Stream<Iterable<(ChangeInResult, Result)>> createResultsStream() {
+    return Stream.value([]);
   }
 }
 
@@ -28,28 +30,35 @@ class FakeQueryResults extends QueryResults {
 void main() {
   late MockAuthService mockAuthService;
   late FakeQueryResults fakeQueryResults;
-  late TabController tabController;
+  late GoRouter router;
 
   setUp(() {
     mockAuthService = MockAuthService();
     fakeQueryResults = FakeQueryResults();
-    tabController = TabController(length: 3, vsync: const TestVSync());
+    router = createRouter();
   });
 
-  testWidgets('Routing works for filter parameter', (
-    WidgetTester tester,
-  ) async {
-    final router = createRouter();
+  Future<void> pumpTestWidget(WidgetTester tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<QueryResults>.value(value: fakeQueryResults),
-          ChangeNotifierProvider<TabController>.value(value: tabController),
+          ChangeNotifierProvider<QueryResultsBase>.value(
+            value: fakeQueryResults,
+          ),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: DefaultTabController(
+          length: 3,
+          child: MaterialApp.router(routerConfig: router),
+        ),
       ),
     );
+  }
+
+  testWidgets('Routing works for filter parameter', (
+    WidgetTester tester,
+  ) async {
+    await pumpTestWidget(tester);
 
     router.push('/?filter=test-filter');
     await tester.pumpAndSettle();
@@ -63,17 +72,7 @@ void main() {
   });
 
   testWidgets('Routing works for flaky parameter', (WidgetTester tester) async {
-    final router = createRouter();
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<QueryResults>.value(value: fakeQueryResults),
-          ChangeNotifierProvider<TabController>.value(value: tabController),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
+    await pumpTestWidget(tester);
 
     router.push('/?flaky=true');
     await tester.pumpAndSettle();
@@ -88,17 +87,7 @@ void main() {
   testWidgets('Routing works for showAll parameter', (
     WidgetTester tester,
   ) async {
-    final router = createRouter();
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<QueryResults>.value(value: fakeQueryResults),
-          ChangeNotifierProvider<TabController>.value(value: tabController),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
+    await pumpTestWidget(tester);
 
     router.push('/?showAll=true');
     await tester.pumpAndSettle();
@@ -113,17 +102,7 @@ void main() {
   testWidgets('Routing works for combined parameters', (
     WidgetTester tester,
   ) async {
-    final router = createRouter();
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<QueryResults>.value(value: fakeQueryResults),
-          ChangeNotifierProvider<TabController>.value(value: tabController),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
+    await pumpTestWidget(tester);
 
     router.push('/?filter=test-filter&showAll=true');
     await tester.pumpAndSettle();
@@ -136,17 +115,7 @@ void main() {
   });
 
   testWidgets('Routing works for default route', (WidgetTester tester) async {
-    final router = createRouter();
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<QueryResults>.value(value: fakeQueryResults),
-          ChangeNotifierProvider<TabController>.value(value: tabController),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
+    await pumpTestWidget(tester);
 
     router.push('/');
     await tester.pumpAndSettle();
