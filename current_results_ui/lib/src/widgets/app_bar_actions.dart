@@ -10,17 +10,15 @@ import '../auth_service.dart';
 
 List<Widget> buildAppBarActions(BuildContext context) {
   return [
-    Tooltip(
-      message: 'Send feeback!',
-      child: IconButton(
-        icon: const Icon(Icons.bug_report),
-        splashRadius: 20,
-        onPressed: () {
-          url_launcher.launchUrl(
-            Uri.https('github.com', '/dart-lang/dart_ci/issues'),
-          );
-        },
-      ),
+    IconButton(
+      icon: const Icon(Icons.bug_report),
+      tooltip: 'Send feeback!',
+      splashRadius: 20,
+      onPressed: () {
+        url_launcher.launchUrl(
+          Uri.https('github.com', '/dart-lang/dart_ci/issues'),
+        );
+      },
     ),
     Consumer<AuthService>(
       builder: (context, authService, child) {
@@ -50,24 +48,20 @@ List<Widget> buildAppBarActions(BuildContext context) {
         }
 
         if (authService.isAuthenticated) {
-          return Tooltip(
-            message: 'Sign out',
-            child: IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                authService.signOut();
-              },
-            ),
+          return IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign out',
+            onPressed: () {
+              authService.signOut();
+            },
           );
         } else {
-          return Tooltip(
-            message: 'Sign in with Google',
-            child: IconButton(
-              icon: const Icon(Icons.login),
-              onPressed: () {
-                authService.signInWithGoogle();
-              },
-            ),
+          return IconButton(
+            icon: const Icon(Icons.login),
+            tooltip: 'Sign in with Google',
+            onPressed: () {
+              authService.signInWithGoogle();
+            },
           );
         }
       },
