@@ -3,8 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:collection';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_current_results/results.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -17,111 +19,171 @@ const String apiHost = 'current-results-qvyo5rktwa-uc.a.run.app';
 const int fetchLimit = 3000;
 const int maxFetchedResults = 100 * fetchLimit;
 
-class QueryResults extends ChangeNotifier {
-  Filter filter = Filter('');
-  StreamSubscription<GetResultsResponse>? fetcher;
-  List<String> names = [];
-  Map<String, Counts> counts = {};
-  Map<String, Map<ChangeInResult, List<Result>>> grouped = {};
+abstract class QueryResultsBase extends ChangeNotifier {
+  Filter _filter;
+  StreamSubscription<Iterable<(ChangeInResult, Result)>>? _streamFetcher;
+  bool get isDone => _streamFetcher == null;
+  final bool supportsEmptyQuery;
+
+  SplayTreeMap<String, Counts> counts = SplayTreeMap();
+  SplayTreeMap<String, SplayTreeMap<ChangeInResult, List<Result>>> grouped =
+      SplayTreeMap();
   TestCounts testCounts = TestCounts();
   Counts resultCounts = Counts();
   int fetchedResultsCount = 0;
-  bool get noQuery => filter.terms.isEmpty;
 
-  QueryResults();
-
-  void fetch(Filter newFilter) {
-    if (filter != newFilter) {
-      filter = newFilter;
-      fetchCurrentResults();
+  QueryResultsBase(
+    this._filter, {
+    bool fetchInitialResults = false,
+    this.supportsEmptyQuery = false,
+  }) {
+    if (fetchInitialResults) {
+      _fetchResults();
     }
   }
 
-  @override
-  void dispose() {
-    fetcher?.cancel();
-    super.dispose();
+  bool get hasQuery => _filter.terms.isNotEmpty;
+
+  List<String> get names => grouped.keys.toList();
+
+  Filter get filter => _filter;
+
+  set filter(Filter newFilter) {
+    if (_filter != newFilter) {
+      _filter = newFilter;
+      Future.microtask(fetch);
+    }
   }
 
-  GetResultsResponse resultsObject = GetResultsResponse.create();
-
-  void fetchCurrentResults() async {
-    fetcher?.cancel();
-    fetcher = null;
-    names = [];
-    counts = {};
-    grouped = {};
+  void fetch() {
+    _streamFetcher?.cancel();
+    _streamFetcher = null;
+    counts.clear();
+    grouped.clear();
     testCounts = TestCounts();
     resultCounts = Counts();
     fetchedResultsCount = 0;
-    if (noQuery) return;
-    fetcher = fetchResults(filter).listen(onResults, onDone: onDone);
+    notifyListeners();
+    if (hasQuery || supportsEmptyQuery) {
+      _fetchResults();
+    }
   }
 
-  void onResults(GetResultsResponse response) {
-    final results = response.results;
-    fetchedResultsCount += results.length;
-    if (fetchedResultsCount >= maxFetchedResults) {
-      fetcher?.cancel();
-      fetcher = null;
-    }
-    for (final result in results) {
-      final change = ChangeInResult(result);
+  void _fetchResults() {
+    _streamFetcher = createResultsStream().listen(
+      _processResults,
+      onDone: () {
+        _streamFetcher = null;
+        notifyListeners();
+      },
+    );
+  }
+
+  @visibleForOverriding
+  Stream<Iterable<(ChangeInResult, Result)>> createResultsStream();
+
+  void _processResults(Iterable<(ChangeInResult, Result)> results) {
+    for (final (change, result) in results) {
       grouped
-          .putIfAbsent(result.name, () => <ChangeInResult, List<Result>>{})
-          .putIfAbsent(change, () => <Result>[])
+          .putIfAbsent(result.name, SplayTreeMap.new)
+          .putIfAbsent(change, () => [])
           .add(result);
       counts.putIfAbsent(result.name, () => Counts()).addResult(change, result);
       testCounts.addResult(change, result);
       resultCounts.addResult(change, result);
     }
-    names = grouped.keys.toList()..sort();
     notifyListeners();
   }
 
-  void onDone() {
-    fetcher = null;
+  @override
+  void dispose() {
+    _streamFetcher?.cancel();
+    super.dispose();
   }
 }
 
-Stream<GetResultsResponse> fetchResults(Filter filter) async* {
-  final client = http.Client();
-  var pageToken = '';
-  do {
-    final resultsQuery = Uri.https(apiHost, 'v1/results', {
-      'filter': filter.terms.join(','),
-      'pageSize': '$fetchLimit',
-      'pageToken': pageToken,
-    });
-    final response = await client.get(resultsQuery);
-    final results = GetResultsResponse.create()
-      ..mergeFromProto3Json(json.decode(response.body));
-    yield results;
-    pageToken = results.nextPageToken;
-  } while (pageToken.isNotEmpty);
+class QueryResults extends QueryResultsBase {
+  final http.Client _client;
+
+  QueryResults(super.filter, {http.Client? client})
+    : _client = client ?? http.Client();
+
+  @override
+  Stream<Iterable<(ChangeInResult, Result)>> createResultsStream() {
+    return _streamPagedResults().transform(
+      StreamTransformer.fromHandlers(
+        handleData: (response, sink) {
+          fetchedResultsCount += response.results.length;
+          sink.add(
+            response.results.map((result) => (ChangeInResult(result), result)),
+          );
+          if (fetchedResultsCount >= maxFetchedResults) {
+            sink.close();
+          }
+        },
+      ),
+    );
+  }
+
+  Stream<GetResultsResponse> _streamPagedResults() async* {
+    var pageToken = '';
+    do {
+      final resultsQuery = Uri.https(apiHost, 'v1/results', {
+        'filter': filter.terms.join(','),
+        'pageSize': '$fetchLimit',
+        'pageToken': pageToken,
+      });
+      final response = await _client.get(resultsQuery);
+      final results = GetResultsResponse.create()
+        ..mergeFromProto3Json(json.decode(response.body));
+      yield results;
+      pageToken = results.nextPageToken;
+    } while (pageToken.isNotEmpty);
+  }
 }
 
-class ChangeInResult {
-  final String result;
-  final String expected;
+class ChangeInResult implements Comparable<ChangeInResult> {
+  static final _cache = <String, ChangeInResult>{};
+
+  final bool matches;
   final bool flaky;
   final String text;
 
-  bool get matches => result == expected;
-
-  String get kind => flaky
-      ? 'flaky'
+  ResultKind get kind => flaky
+      ? ResultKind.flaky
       : matches
-      ? 'pass'
-      : 'fail';
+      ? ResultKind.pass
+      : ResultKind.fail;
 
-  ChangeInResult(Result result)
-    : this._(result.result, result.expected, result.flaky);
+  factory ChangeInResult(Result result) {
+    return ChangeInResult._create(
+      result: result.result,
+      expected: result.expected,
+      isFlaky: result.flaky,
+    );
+  }
 
-  ChangeInResult._(this.result, this.expected, this.flaky)
-    : text = flaky
-          ? "flaky (latest result $result expected $expected)"
-          : "$result (expected $expected)";
+  factory ChangeInResult._create({
+    required String result,
+    required String expected,
+    required bool isFlaky,
+  }) {
+    final bool matches = result == expected;
+    final String text;
+
+    if (isFlaky) {
+      text = 'flaky (latest result $result expected $expected)';
+    } else {
+      text = matches ? result : '$result (expected $expected)';
+    }
+
+    return _cache.putIfAbsent(
+      text,
+      () => ChangeInResult._(text, matches, isFlaky),
+    );
+  }
+
+  ChangeInResult._(this.text, this.matches, this.flaky);
 
   @override
   String toString() => text;
@@ -132,6 +194,18 @@ class ChangeInResult {
 
   @override
   int get hashCode => text.hashCode;
+
+  @override
+  int compareTo(ChangeInResult other) {
+    if (matches != other.matches) {
+      return matches ? 1 : -1;
+    }
+
+    if (flaky != other.flaky) {
+      return flaky ? -1 : 1;
+    }
+    return text.compareTo(other.text);
+  }
 }
 
 String resultAsCommaSeparated(Result result) => [

@@ -11,22 +11,27 @@ import 'instructions.dart';
 import 'query.dart';
 import 'src/generated/query.pb.dart';
 
-const Color lightCoral = Color.fromARGB(255, 240, 128, 128);
-const Color gold = Color.fromARGB(255, 255, 215, 0);
-const Map<String, Color> resultColors = {
-  'pass': Colors.lightGreen,
-  'flaky': gold,
-  'fail': lightCoral,
-};
+const Color _lightCoral = Color.fromARGB(255, 240, 128, 128);
+const Color _gold = Color.fromARGB(255, 255, 215, 0);
+
+enum ResultKind {
+  pass(Colors.lightGreen),
+  fail(_lightCoral),
+  flaky(_gold);
+
+  const ResultKind(this.color);
+  final Color color;
+}
 
 class ResultsPanel extends StatelessWidget {
-  const ResultsPanel({super.key});
+  final bool showInstructionsOnEmptyQuery;
+  const ResultsPanel({super.key, this.showInstructionsOnEmptyQuery = true});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<QueryResults, TabController>(
-      builder: (context, QueryResults queryResults, tabController, child) {
-        if (queryResults.noQuery) {
+    return Consumer<QueryResultsBase>(
+      builder: (context, queryResults, child) {
+        if (!queryResults.hasQuery && showInstructionsOnEmptyQuery) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Instructions(),
@@ -34,6 +39,7 @@ class ResultsPanel extends StatelessWidget {
         }
 
         final counts = queryResults.counts;
+        final tabController = DefaultTabController.of(context);
 
         bool isFailed(String name) => counts[name]!.countFailing > 0;
         bool isFlaky(String name) => counts[name]!.countFlaky > 0;
@@ -192,14 +198,14 @@ class ExpandedResultInfo extends StatelessWidget {
                   ),
                   margin: const EdgeInsets.symmetric(vertical: 2),
                   decoration: BoxDecoration(
-                    color: resultColors[change.kind],
+                    color: change.kind.color,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(change.text),
                 ),
                 const SizedBox(width: 5),
                 Flexible(child: Text(result.configuration, maxLines: 1)),
-                if (change.kind == 'fail')
+                if (change.kind == ResultKind.fail)
                   Padding(
                     padding: const EdgeInsets.only(left: 5),
                     child: _link(
@@ -231,11 +237,11 @@ class CountItem {
 List<CountItem> countItems(Counts counts) {
   return [
     if (counts.countPassing > 0)
-      CountItem(counts.countPassing, resultColors['pass']!),
+      CountItem(counts.countPassing, ResultKind.pass.color),
     if (counts.countFailing > 0)
-      CountItem(counts.countFailing, resultColors['fail']!),
+      CountItem(counts.countFailing, ResultKind.fail.color),
     if (counts.countFlaky > 0)
-      CountItem(counts.countFlaky, resultColors['flaky']!),
+      CountItem(counts.countFlaky, ResultKind.flaky.color),
   ];
 }
 
@@ -271,7 +277,7 @@ class ResultsSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
+    return Consumer<QueryResultsBase>(
       builder: (context, results, child) {
         return Summary("Results:", results.resultCounts);
       },
@@ -284,9 +290,9 @@ class FetchingProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
+    return Consumer<QueryResultsBase>(
       builder: (context, results, child) {
-        if (results.fetcher == null) {
+        if (results.isDone) {
           return const SizedBox();
         } else {
           return const SizedBox(
@@ -308,7 +314,7 @@ class TestSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
+    return Consumer<QueryResultsBase>(
       builder: (context, results, child) {
         return Summary("Tests:", results.testCounts);
       },
@@ -328,8 +334,8 @@ class Summary extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(typeText, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Pill(resultColors['fail']!, counts.countFailing, 'failing'),
-        Pill(resultColors['flaky']!, counts.countFlaky, 'flaky'),
+        Pill(ResultKind.fail.color, counts.countFailing, 'failing'),
+        Pill(ResultKind.flaky.color, counts.countFlaky, 'flaky'),
         Pill(Colors.black26, counts.count, 'total'),
         SizedBox.fromSize(size: const Size.fromWidth(8.0)),
       ],

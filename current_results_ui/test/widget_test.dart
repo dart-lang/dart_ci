@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_current_results/filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
@@ -41,12 +42,12 @@ class MockAuthService extends Mock implements AuthService {
 
 void main() {
   late MockAuthService mockAuthService;
-  late QueryResults queryResults;
+  late QueryResultsBase queryResults;
   late TabController tabController;
 
   setUp(() {
     mockAuthService = MockAuthService();
-    queryResults = QueryResults();
+    queryResults = QueryResults(Filter(''));
     tabController = TabController(length: 3, vsync: const TestVSync());
   });
 
@@ -54,7 +55,7 @@ void main() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-        ChangeNotifierProvider<QueryResults>.value(value: queryResults),
+        ChangeNotifierProvider<QueryResultsBase>.value(value: queryResults),
         ChangeNotifierProvider<TabController>.value(value: tabController),
       ],
       child: MaterialApp(

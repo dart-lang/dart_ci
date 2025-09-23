@@ -52,7 +52,7 @@ class _FilterUIState extends State<FilterUI> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
+    return Consumer<QueryResultsBase>(
       builder: (context, results, child) {
         final filter = results.filter;
         return Column(

@@ -88,7 +88,9 @@ class AppProviders extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthService>(create: (_) => AuthService()),
-        ChangeNotifierProvider<QueryResults>(create: (_) => QueryResults()),
+        ChangeNotifierProvider<QueryResultsBase>(
+          create: (_) => QueryResults(Filter('')),
+        ),
       ],
       child: child,
     );
@@ -115,7 +117,8 @@ class _CurrentResultsScreenState extends State<CurrentResultsScreen>
   @override
   void initState() {
     super.initState();
-    Provider.of<QueryResults>(context, listen: false).fetch(widget.filter);
+    Provider.of<QueryResultsBase>(context, listen: false).filter =
+        widget.filter;
     _tabController = TabController(
       initialIndex: widget.initialTabIndex,
       length: 3,
@@ -127,7 +130,8 @@ class _CurrentResultsScreenState extends State<CurrentResultsScreen>
   void didUpdateWidget(CurrentResultsScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.filter != oldWidget.filter) {
-      Provider.of<QueryResults>(context, listen: false).fetch(widget.filter);
+      Provider.of<QueryResultsBase>(context, listen: false).filter =
+          widget.filter;
     }
     _tabController.index = widget.initialTabIndex;
   }
@@ -229,7 +233,7 @@ class JsonLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
+    return Consumer<QueryResultsBase>(
       builder: (context, results, child) {
         return TextButton(
           child: const Text('JSON'),
@@ -250,8 +254,8 @@ class TextPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QueryResults>(
-      builder: (context, QueryResults results, child) {
+    return Consumer<QueryResultsBase>(
+      builder: (context, QueryResultsBase results, child) {
         return Tooltip(
           message: 'Results query as text',
           waitDuration: const Duration(milliseconds: 500),
