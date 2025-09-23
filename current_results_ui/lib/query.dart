@@ -31,7 +31,7 @@ class QueryResults extends ChangeNotifier {
   QueryResults();
 
   void fetch(Filter newFilter) {
-    if (!filter.hasSameTerms(newFilter)) {
+    if (filter != newFilter) {
       filter = newFilter;
       fetchCurrentResults();
     }

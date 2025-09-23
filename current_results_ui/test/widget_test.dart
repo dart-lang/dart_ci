@@ -42,10 +42,12 @@ class MockAuthService extends Mock implements AuthService {
 void main() {
   late MockAuthService mockAuthService;
   late QueryResults queryResults;
+  late TabController tabController;
 
   setUp(() {
     mockAuthService = MockAuthService();
     queryResults = QueryResults();
+    tabController = TabController(length: 3, vsync: const TestVSync());
   });
 
   Widget createTestWidget() {
@@ -53,13 +55,11 @@ void main() {
       providers: [
         ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
         ChangeNotifierProvider<QueryResults>.value(value: queryResults),
-        ChangeNotifierProvider<TabController>(
-          create: (_) => TabController(length: 3, vsync: const TestVSync()),
-          builder: (context, child) =>
-              DefaultTabController(length: 3, child: child!),
-        ),
+        ChangeNotifierProvider<TabController>.value(value: tabController),
       ],
-      child: const MaterialApp(home: CurrentResultsScaffold()),
+      child: MaterialApp(
+        home: CurrentResultsScaffold(tabController: tabController),
+      ),
     );
   }
 

@@ -4,10 +4,10 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'query.dart';
-import 'main.dart';
 
 class Filter {
   final List<String> terms;
@@ -18,12 +18,16 @@ class Filter {
     return List.unmodifiable(termString.split(',').map((s) => s.trim()));
   }
 
-  bool hasSameTerms(Filter other) =>
-      const ListEquality().equals(terms, other.terms);
+  @override
+  bool operator ==(Object other) =>
+      other is Filter && const ListEquality().equals(terms, other.terms);
+
+  @override
+  int get hashCode => const ListEquality().hash(terms);
 }
 
 class FilterUI extends StatefulWidget {
-  const FilterUI();
+  const FilterUI({super.key});
 
   @override
   State<FilterUI> createState() => _FilterUIState();
@@ -36,6 +40,14 @@ class _FilterUIState extends State<FilterUI> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void _updateFilter(Iterable<String> newTerms) {
+    final uri = GoRouter.of(context).routeInformationProvider.value.uri;
+    final newUri = uri.replace(
+      queryParameters: {...uri.queryParameters, 'filter': newTerms.join(',')},
+    );
+    GoRouter.of(context).go(newUri.toString());
   }
 
   @override
@@ -62,9 +74,8 @@ class _FilterUIState extends State<FilterUI> {
                           InputChip(
                             label: Text(term),
                             onDeleted: () {
-                              pushRoute(
-                                context,
-                                terms: filter.terms.where((t) => t != term),
+                              _updateFilter(
+                                filter.terms.where((t) => t != term),
                               );
                             },
                             onPressed: () {
@@ -92,9 +103,8 @@ class _FilterUIState extends State<FilterUI> {
                         term.startsWith(newTerm) || newTerm.startsWith(term),
                   );
                   controller.text = '';
-                  pushRoute(
-                    context,
-                    terms: filter.terms
+                  _updateFilter(
+                    filter.terms
                         .where(isNotReplacedByNewTerm)
                         .followedBy(newTerms),
                   );

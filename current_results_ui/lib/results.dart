@@ -1,4 +1,4 @@
-// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -20,7 +20,7 @@ const Map<String, Color> resultColors = {
 };
 
 class ResultsPanel extends StatelessWidget {
-  const ResultsPanel();
+  const ResultsPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +267,7 @@ Function _openTestLog(String configuration, String name) {
 }
 
 class ResultsSummary extends StatelessWidget {
-  const ResultsSummary() : super();
+  const ResultsSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -280,7 +280,7 @@ class ResultsSummary extends StatelessWidget {
 }
 
 class FetchingProgress extends StatelessWidget {
-  const FetchingProgress() : super();
+  const FetchingProgress({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +304,7 @@ class FetchingProgress extends StatelessWidget {
 }
 
 class TestSummary extends StatelessWidget {
-  const TestSummary() : super();
+  const TestSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +320,7 @@ class Summary extends StatelessWidget {
   final String typeText;
   final Counts counts;
 
-  const Summary(this.typeText, this.counts);
+  const Summary(this.typeText, this.counts, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +344,7 @@ class Pill extends StatelessWidget {
   final int count;
   final String tooltip;
 
-  const Pill(this.color, this.count, this.tooltip);
+  const Pill(this.color, this.count, this.tooltip, {super.key});
 
   @override
   Widget build(BuildContext context) {
