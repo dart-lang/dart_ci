@@ -39,7 +39,7 @@ class ResultsPanel extends StatelessWidget {
         }
 
         final counts = queryResults.counts;
-        final tabController = DefaultTabController.of(context);
+        final tabController = Provider.of<TabController>(context);
 
         bool isFailed(String name) => counts[name]!.countFailing > 0;
         bool isFlaky(String name) => counts[name]!.countFlaky > 0;
