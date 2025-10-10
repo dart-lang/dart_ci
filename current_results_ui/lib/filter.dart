@@ -26,12 +26,18 @@ class Filter {
   int get hashCode => const ListEquality().hash(terms);
 }
 
-class FilterUI extends StatelessWidget {
+class FilterUI extends StatefulWidget {
   const FilterUI({super.key});
 
   @override
+  State<FilterUI> createState() => _FilterUIState();
+}
+
+class _FilterUIState extends State<FilterUI> {
+  final controller = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    final controller = TextEditingController();
     final results = context.watch<QueryResultsBase>();
     final filter = results.filter;
 
