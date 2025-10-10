@@ -7,7 +7,7 @@ analyzer:
 
 linter:
   rules:
-    # Disabled - currently one violation.
+    # Disabled - TODO(athom): enable after results_feed port is finished.
     avoid_print: false
     directives_ordering: true
     prefer_relative_imports: true
