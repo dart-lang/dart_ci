@@ -38,7 +38,7 @@ class ResultsView extends StatefulWidget {
 }
 
 class _ResultsViewState extends State<ResultsView>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -60,7 +60,6 @@ class _ResultsViewState extends State<ResultsView>
       Provider.of<QueryResultsBase>(context, listen: false).filter =
           widget.filter;
     }
-    _tabController.index = widget.initialTabIndex;
   }
 
   @override
