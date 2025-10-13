@@ -72,60 +72,57 @@ class _ResultsViewState extends State<ResultsView>
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TabController>.value(
       value: _tabController,
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            leading: const Center(child: FetchingProgress()),
-            title: widget.titleBuilder(context, widget.title),
-            actions: buildAppBarActions(context),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: const [
-                Tab(text: 'FAILURES'),
-                Tab(text: 'FLAKES'),
-                Tab(text: 'ALL'),
-              ],
-              onTap: (int tab) {
-                final uri = GoRouter.of(
-                  context,
-                ).routeInformationProvider.value.uri;
-                final newUri = uri.replace(
-                  queryParameters: {
-                    ...uri.queryParameters,
-                    'showAll': tab == 2 ? 'true' : null,
-                    'flaky': tab == 1 ? 'true' : null,
-                  }..removeWhere((key, value) => value == null),
-                );
-                GoRouter.of(context).go(newUri.toString());
-              },
-            ),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          leading: const Center(child: FetchingProgress()),
+          title: widget.titleBuilder(context, widget.title),
+          actions: buildAppBarActions(context),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'FAILURES'),
+              Tab(text: 'FLAKES'),
+              Tab(text: 'ALL'),
+            ],
+            onTap: (int tab) {
+              final uri = GoRouter.of(
+                context,
+              ).routeInformationProvider.value.uri;
+              final newUri = uri.replace(
+                queryParameters: {
+                  ...uri.queryParameters,
+                  'showAll': tab == 2 ? 'true' : null,
+                  'flaky': tab == 1 ? 'true' : null,
+                }..removeWhere((key, value) => value == null),
+              );
+              GoRouter.of(context).go(newUri.toString());
+            },
           ),
-          persistentFooterButtons: const [
-            ResultsSummary(),
-            TestSummary(),
-            ApiPortalLink(),
-            JsonLink(),
-            TextPopup(),
-          ],
-          body: SelectionArea(
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.0),
-                  child: FilterUI(),
+        ),
+        persistentFooterButtons: const [
+          ResultsSummary(),
+          TestSummary(),
+          ApiPortalLink(),
+          JsonLink(),
+          TextPopup(),
+        ],
+        body: SelectionArea(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: FilterUI(),
+              ),
+              const Divider(color: Colors.black12, height: 20),
+              Expanded(
+                child: ResultsPanel(
+                  showInstructionsOnEmptyQuery:
+                      widget.showInstructionsOnEmptyQuery,
                 ),
-                const Divider(color: Colors.black12, height: 20),
-                Expanded(
-                  child: ResultsPanel(
-                    showInstructionsOnEmptyQuery:
-                        widget.showInstructionsOnEmptyQuery,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
