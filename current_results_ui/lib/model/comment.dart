@@ -9,6 +9,8 @@ class Comment {
   final String author;
   final DateTime created;
   final String comment;
+  // Currently, this can be empty (no action taken, approved, "disapproved").
+  // TOOD(athom): Evaluate to merge "no action" and "disapproval".
   final bool? approved;
   final List<String> tryResults;
 
