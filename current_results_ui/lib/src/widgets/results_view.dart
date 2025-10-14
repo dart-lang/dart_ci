@@ -38,7 +38,6 @@ class ResultsView extends StatefulWidget {
 class _ResultsViewState extends State<ResultsView>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  late final VoidCallback _routerListener;
   late final RouterDelegate _routerDelegate;
 
   @override
@@ -47,27 +46,27 @@ class _ResultsViewState extends State<ResultsView>
     Provider.of<QueryResultsBase>(context, listen: false).filter =
         widget.filter;
 
-    int getIndexFromRoute() {
-      final uri = GoRouter.of(context).routeInformationProvider.value.uri;
-      return uri.queryParameters.containsKey('showAll')
-          ? 2
-          : uri.queryParameters.containsKey('flaky')
-          ? 1
-          : 0;
-    }
-
     _tabController = TabController(
-      initialIndex: getIndexFromRoute(),
+      initialIndex: _getIndexFromRoute(context),
       length: 3,
       vsync: this,
     );
 
-    _routerListener = () {
-      _tabController.index = getIndexFromRoute();
-    };
-
     _routerDelegate = GoRouter.of(context).routerDelegate;
-    _routerDelegate.addListener(_routerListener);
+    _routerDelegate.addListener(_onRouteChanged);
+  }
+
+  void _onRouteChanged() {
+    _tabController.index = _getIndexFromRoute(context);
+  }
+
+  static int _getIndexFromRoute(BuildContext context) {
+    final uri = GoRouter.of(context).routeInformationProvider.value.uri;
+    return uri.queryParameters.containsKey('showAll')
+        ? 2
+        : uri.queryParameters.containsKey('flaky')
+        ? 1
+        : 0;
   }
 
   @override
@@ -82,7 +81,7 @@ class _ResultsViewState extends State<ResultsView>
   @override
   void dispose() {
     _tabController.dispose();
-    _routerDelegate.removeListener(_routerListener);
+    _routerDelegate.removeListener(_onRouteChanged);
     super.dispose();
   }
 
