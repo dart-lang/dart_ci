@@ -5,10 +5,10 @@
 import 'dart:convert';
 
 import 'package:flutter_current_results/filter.dart';
+import 'package:flutter_current_results/query.dart';
 import 'package:flutter_current_results/results.dart';
 import 'package:flutter_current_results/src/generated/query.pb.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_current_results/query.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -70,6 +70,78 @@ void main() {
       final change1 = ChangeInResult(result1);
       final change2 = ChangeInResult(result2);
       expect(identical(change1, change2), isTrue);
+    });
+
+    test('new test passes', () {
+      final change = ChangeInResult.create(
+        result: 'Pass',
+        expected: 'Pass',
+        previousResult: '',
+        isFlaky: false,
+      );
+      expect(change.text, 'new test => Pass');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isTrue);
+    });
+
+    test('new test fails', () {
+      final change = ChangeInResult.create(
+        result: 'Fail',
+        expected: 'Pass',
+        previousResult: '',
+        isFlaky: false,
+      );
+      expect(change.text, 'new test => Fail (expected Pass)');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isFalse);
+    });
+
+    test('unchanged passing result', () {
+      final change = ChangeInResult.create(
+        result: 'Pass',
+        expected: 'Pass',
+        previousResult: 'Pass',
+        isFlaky: false,
+      );
+      expect(change.text, 'Pass');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isTrue);
+    });
+
+    test('unchanged failing result', () {
+      final change = ChangeInResult.create(
+        result: 'Fail',
+        expected: 'Pass',
+        previousResult: 'Fail',
+        isFlaky: false,
+      );
+      expect(change.text, 'Fail (expected Pass)');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isFalse);
+    });
+
+    test('now passing', () {
+      final change = ChangeInResult.create(
+        result: 'Pass',
+        expected: 'Pass',
+        previousResult: 'Fail',
+        isFlaky: false,
+      );
+      expect(change.text, 'Fail -> Pass');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isTrue);
+    });
+
+    test('now failing', () {
+      final change = ChangeInResult.create(
+        result: 'Fail',
+        expected: 'Pass',
+        previousResult: 'Pass',
+        isFlaky: false,
+      );
+      expect(change.text, 'Pass -> Fail (expected Pass)');
+      expect(change.flaky, isFalse);
+      expect(change.matches, isFalse);
     });
   });
 

@@ -7,8 +7,10 @@ analyzer:
 
 linter:
   rules:
-    # Disabled - currently one violation.
+    # Disabled - TODO(athom): enable after results_feed port is finished.
     avoid_print: false
+    directives_ordering: true
+    prefer_relative_imports: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:collection';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter_current_results/results.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'src/generated/query.pb.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
 import 'filter.dart';
+import 'results.dart';
+import 'src/generated/query.pb.dart';
 
 const String apiHost = 'current-results-qvyo5rktwa-uc.a.run.app';
 // Current endpoints proxy is limited to 1 MB response size,
@@ -156,17 +156,18 @@ class ChangeInResult implements Comparable<ChangeInResult> {
       : ResultKind.fail;
 
   factory ChangeInResult(Result result) {
-    return ChangeInResult._create(
+    return ChangeInResult.create(
       result: result.result,
       expected: result.expected,
       isFlaky: result.flaky,
     );
   }
 
-  factory ChangeInResult._create({
+  factory ChangeInResult.create({
     required String result,
     required String expected,
     required bool isFlaky,
+    String? previousResult,
   }) {
     final bool matches = result == expected;
     final String text;
@@ -174,7 +175,21 @@ class ChangeInResult implements Comparable<ChangeInResult> {
     if (isFlaky) {
       text = 'flaky (latest result $result expected $expected)';
     } else {
-      text = matches ? result : '$result (expected $expected)';
+      final String resultText = matches
+          ? result
+          : '$result (expected $expected)';
+
+      if (previousResult != null) {
+        if (previousResult.isNotEmpty) {
+          text = previousResult == result
+              ? resultText
+              : '$previousResult -> $resultText';
+        } else {
+          text = 'new test => $resultText';
+        }
+      } else {
+        text = resultText;
+      }
     }
 
     return _cache.putIfAbsent(
