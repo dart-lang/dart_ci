@@ -19,7 +19,6 @@ Widget defaultTitleBuilder(BuildContext context, String title) {
 
 class ResultsView extends StatefulWidget {
   final String title;
-  final int initialTabIndex;
   final TitleBuilder titleBuilder;
   final bool showInstructionsOnEmptyQuery;
   final Filter filter;
@@ -28,7 +27,6 @@ class ResultsView extends StatefulWidget {
     super.key,
     required this.title,
     required this.filter,
-    this.initialTabIndex = 0,
     this.titleBuilder = defaultTitleBuilder,
     this.showInstructionsOnEmptyQuery = true,
   });
@@ -40,17 +38,36 @@ class ResultsView extends StatefulWidget {
 class _ResultsViewState extends State<ResultsView>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  late final VoidCallback _routerListener;
+  late final RouterDelegate _routerDelegate;
 
   @override
   void initState() {
     super.initState();
     Provider.of<QueryResultsBase>(context, listen: false).filter =
         widget.filter;
+
+    int getIndexFromRoute() {
+      final uri = GoRouter.of(context).routeInformationProvider.value.uri;
+      return uri.queryParameters.containsKey('showAll')
+          ? 2
+          : uri.queryParameters.containsKey('flaky')
+          ? 1
+          : 0;
+    }
+
     _tabController = TabController(
-      initialIndex: widget.initialTabIndex,
+      initialIndex: getIndexFromRoute(),
       length: 3,
       vsync: this,
     );
+
+    _routerListener = () {
+      _tabController.index = getIndexFromRoute();
+    };
+
+    _routerDelegate = GoRouter.of(context).routerDelegate;
+    _routerDelegate.addListener(_routerListener);
   }
 
   @override
@@ -65,6 +82,7 @@ class _ResultsViewState extends State<ResultsView>
   @override
   void dispose() {
     _tabController.dispose();
+    _routerDelegate.removeListener(_routerListener);
     super.dispose();
   }
 

@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../filter.dart';
 import '../query.dart';
-import '../src/services/results_service.dart';
 import '../src/widgets/results_view.dart';
 import '../try_results_screen.dart';
 import 'data/try_query_results.dart';
@@ -24,21 +23,15 @@ typedef TryQueryResultsFactory =
 GoRouter createRouter({
   QueryResultsFactory queryResultsProvider = QueryResults.new,
   TryQueryResultsFactory tryQueryResultsProvider = TryQueryResults.new,
-  ResultsService? resultsService,
 }) => GoRouter(
   routes: [
     GoRoute(
       path: '/',
       builder: (context, state) {
         final filter = Filter(state.uri.queryParameters['filter'] ?? '');
-        final tab = _initialTabIndexFromQueryParams(state.uri.queryParameters);
         return ChangeNotifierProvider<QueryResultsBase>(
           create: (_) => queryResultsProvider(filter),
-          child: ResultsView(
-            title: 'Current Results',
-            filter: filter,
-            initialTabIndex: tab,
-          ),
+          child: ResultsView(title: 'Current Results', filter: filter),
         );
       },
     ),
@@ -48,7 +41,6 @@ GoRouter createRouter({
         final cl = int.tryParse(state.pathParameters['cl']!);
         final patchset = int.tryParse(state.pathParameters['patchset']!);
         final filter = Filter(state.uri.queryParameters['filter'] ?? '');
-        final tab = _initialTabIndexFromQueryParams(state.uri.queryParameters);
 
         if (cl != null && patchset != null) {
           return MultiProvider(
@@ -64,10 +56,7 @@ GoRouter createRouter({
                 update: (_, tryResults, _) => tryResults,
               ),
             ],
-            child: TryResultsScreen(
-              initialTabIndex: tab,
-              resultsService: resultsService,
-            ),
+            child: TryResultsScreen(),
           );
         }
         // TODO: Should create a proper error screen here.
@@ -76,11 +65,3 @@ GoRouter createRouter({
     ),
   ],
 );
-
-int _initialTabIndexFromQueryParams(Map<String, String> queryParameters) {
-  return queryParameters.containsKey('showAll')
-      ? 2
-      : queryParameters.containsKey('flaky')
-      ? 1
-      : 0;
-}

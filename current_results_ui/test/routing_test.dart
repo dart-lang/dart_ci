@@ -14,7 +14,6 @@ import 'package:flutter_current_results/src/generated/query.pb.dart';
 import 'package:flutter_current_results/src/routing.dart';
 import 'package:flutter_current_results/src/services/results_service.dart';
 import 'package:flutter_current_results/src/widgets/results_view.dart';
-import 'package:flutter_current_results/try_results_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -68,7 +67,6 @@ void main() {
                 filter: filter,
                 resultsService: mockResultsService,
               ),
-      resultsService: mockResultsService,
     );
   });
 
@@ -91,7 +89,8 @@ void main() {
 
     final resultsScreen = tester.widget<ResultsView>(find.byType(ResultsView));
     expect(resultsScreen.filter.terms, equals(['test-filter']));
-    expect(resultsScreen.initialTabIndex, equals(0));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(0));
     expect(find.byType(Instructions), findsNothing);
   });
 
@@ -103,7 +102,8 @@ void main() {
 
     final resultsScreen = tester.widget<ResultsView>(find.byType(ResultsView));
     expect(resultsScreen.filter.terms, isEmpty);
-    expect(resultsScreen.initialTabIndex, equals(1));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(1));
   });
 
   testWidgets('Routing works for showAll parameter', (
@@ -116,7 +116,8 @@ void main() {
 
     final resultsScreen = tester.widget<ResultsView>(find.byType(ResultsView));
     expect(resultsScreen.filter.terms, isEmpty);
-    expect(resultsScreen.initialTabIndex, equals(2));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(2));
   });
 
   testWidgets('Routing works for combined parameters', (
@@ -129,7 +130,8 @@ void main() {
 
     final resultsScreen = tester.widget<ResultsView>(find.byType(ResultsView));
     expect(resultsScreen.filter.terms, equals(['test-filter']));
-    expect(resultsScreen.initialTabIndex, equals(2));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(2));
   });
 
   testWidgets('Routing works for default route', (WidgetTester tester) async {
@@ -140,7 +142,8 @@ void main() {
 
     final resultsScreen = tester.widget<ResultsView>(find.byType(ResultsView));
     expect(resultsScreen.filter.terms, isEmpty);
-    expect(resultsScreen.initialTabIndex, equals(0));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(0));
     expect(find.byType(Instructions), findsOneWidget);
   });
 
@@ -150,10 +153,8 @@ void main() {
     router.push('/cl/1234/5');
     await tester.pumpAndSettle();
 
-    final resultsScreen = tester.widget<TryResultsScreen>(
-      find.byType(TryResultsScreen),
-    );
-    expect(resultsScreen.initialTabIndex, equals(0));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(0));
     expect(queryResults.cl, equals(1234));
     expect(queryResults.patchset, equals(5));
     expect(queryResults.filter.terms, isEmpty);
@@ -167,10 +168,8 @@ void main() {
     router.push('/cl/1234/5?filter=my-filter');
     await tester.pumpAndSettle();
 
-    final resultsScreen = tester.widget<TryResultsScreen>(
-      find.byType(TryResultsScreen),
-    );
-    expect(resultsScreen.initialTabIndex, equals(0));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(0));
     expect(queryResults.cl, equals(1234));
     expect(queryResults.patchset, equals(5));
     expect(queryResults.filter.terms, equals(['my-filter']));
@@ -184,10 +183,8 @@ void main() {
     router.push('/cl/1234/5?flaky=true');
     await tester.pumpAndSettle();
 
-    final resultsScreen = tester.widget<TryResultsScreen>(
-      find.byType(TryResultsScreen),
-    );
-    expect(resultsScreen.initialTabIndex, equals(1));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(1));
     expect(queryResults.cl, equals(1234));
     expect(queryResults.patchset, equals(5));
     expect(queryResults.filter.terms, isEmpty);
@@ -201,10 +198,8 @@ void main() {
     router.push('/cl/1234/5?showAll=true');
     await tester.pumpAndSettle();
 
-    final resultsScreen = tester.widget<TryResultsScreen>(
-      find.byType(TryResultsScreen),
-    );
-    expect(resultsScreen.initialTabIndex, equals(2));
+    final tabBar = tester.widget<TabBar>(find.byType(TabBar));
+    expect(tabBar.controller?.index, equals(2));
     expect(queryResults.cl, equals(1234));
     expect(queryResults.patchset, equals(5));
     expect(queryResults.filter.terms, isEmpty);

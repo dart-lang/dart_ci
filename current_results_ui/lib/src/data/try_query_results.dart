@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import '../../filter.dart';
+import '../../model/review.dart';
 import '../../query.dart';
 import '../generated/query.pb.dart';
 import '../services/results_service.dart';
@@ -26,4 +27,6 @@ class TryQueryResults extends QueryResultsBase {
   Stream<Iterable<(ChangeInResult, Result)>> createResultsStream() async* {
     yield await _resultsService.fetchChanges(cl, patchset);
   }
+
+  Future<Review> fetchReviewInfo() async => _resultsService.fetchReviewInfo(cl);
 }

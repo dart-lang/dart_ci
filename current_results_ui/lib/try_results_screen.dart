@@ -8,18 +8,10 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'model/review.dart';
 import 'src/data/try_query_results.dart';
-import 'src/services/results_service.dart';
 import 'src/widgets/results_view.dart';
 
 class TryResultsScreen extends StatefulWidget {
-  final int initialTabIndex;
-  final ResultsService _resultsService;
-
-  TryResultsScreen({
-    super.key,
-    this.initialTabIndex = 0,
-    ResultsService? resultsService,
-  }) : _resultsService = resultsService ?? ResultsService();
+  const TryResultsScreen({super.key});
 
   @override
   State<TryResultsScreen> createState() => _TryResultsScreenState();
@@ -31,12 +23,12 @@ class _TryResultsScreenState extends State<TryResultsScreen> {
   @override
   void initState() {
     super.initState();
-    final queryResults = Provider.of<TryQueryResults>(context, listen: false);
-    _fetchData(queryResults.cl);
+    _fetchData();
   }
 
-  Future<void> _fetchData(int cl) async {
-    final reviewInfo = await widget._resultsService.fetchReviewInfo(cl);
+  Future<void> _fetchData() async {
+    final queryResults = Provider.of<TryQueryResults>(context, listen: false);
+    final reviewInfo = await queryResults.fetchReviewInfo();
     if (mounted) {
       setState(() {
         _reviewInfo = reviewInfo;
@@ -50,7 +42,6 @@ class _TryResultsScreenState extends State<TryResultsScreen> {
     return ResultsView(
       title: _reviewInfo?.subject ?? 'Try Results',
       filter: queryResults.filter,
-      initialTabIndex: widget.initialTabIndex,
       showInstructionsOnEmptyQuery: false,
       titleBuilder: (context, title) {
         return InkWell(

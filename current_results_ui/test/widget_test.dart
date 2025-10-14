@@ -3,14 +3,15 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_current_results/filter.dart';
 import 'package:flutter_current_results/model/review.dart';
 import 'package:flutter_current_results/query.dart';
 import 'package:flutter_current_results/src/auth_service.dart';
 import 'package:flutter_current_results/src/data/try_query_results.dart';
 import 'package:flutter_current_results/src/generated/query.pb.dart';
-import 'package:flutter_current_results/src/widgets/results_view.dart';
+import 'package:flutter_current_results/src/routing.dart';
+import 'package:flutter_current_results/try_results_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -46,23 +47,31 @@ class MockAuthService extends Mock implements AuthService {
 }
 
 void main() {
+  late GoRouter router;
   late MockAuthService mockAuthService;
-  late QueryResultsBase queryResults;
+  late MockResultsService mockResultsService;
 
   setUp(() {
     mockAuthService = MockAuthService();
-    queryResults = QueryResults(Filter(''));
+    mockResultsService = MockResultsService();
   });
 
   Widget createTestWidget() {
+    router = createRouter(
+      tryQueryResultsProvider:
+          ({required cl, required filter, required patchset}) =>
+              TryQueryResults(
+                cl: cl,
+                patchset: patchset,
+                filter: filter,
+                resultsService: mockResultsService,
+              ),
+    );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-        ChangeNotifierProvider<QueryResultsBase>.value(value: queryResults),
       ],
-      child: MaterialApp(
-        home: ResultsView(title: 'Test Results', filter: Filter('')),
-      ),
+      child: MaterialApp.router(routerConfig: router),
     );
   }
 
@@ -97,8 +106,6 @@ void main() {
   testWidgets('shows sign-out button when user is already logged in on start', (
     WidgetTester tester,
   ) async {
-    // This test simulates the scenario where the user was already logged in
-    // from a previous session.
     mockAuthService.setAuthenticated(true);
     await tester.pumpWidget(createTestWidget());
 
@@ -111,7 +118,6 @@ void main() {
   testWidgets('ResultsView updates with TryQueryResults data', (
     WidgetTester tester,
   ) async {
-    final mockResultsService = MockResultsService();
     final result = Result()
       ..name = 'test1'
       ..configuration = 'config1'
@@ -136,38 +142,12 @@ void main() {
         ],
       ),
     );
-    final tryQueryResults = TryQueryResults(
-      cl: 123,
-      patchset: 1,
-      resultsService: mockResultsService,
-      filter: Filter(''),
-    );
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AuthService>.value(value: mockAuthService),
-          ChangeNotifierProvider<TryQueryResults>.value(value: tryQueryResults),
-          ChangeNotifierProvider<QueryResultsBase>.value(
-            value: tryQueryResults,
-          ),
-        ],
-        child: MaterialApp(
-          home: Scaffold(
-            body: Consumer<TryQueryResults>(
-              builder: (context, value, child) => ResultsView(
-                title: 'Try Results',
-                filter: value.filter,
-                showInstructionsOnEmptyQuery: false,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(createTestWidget());
+    router.go('/cl/123/1');
     await tester.pumpAndSettle();
 
-    expect(find.text('Try Results'), findsOneWidget);
+    expect(find.byType(TryResultsScreen), findsOneWidget);
     expect(find.text('test1'), findsOneWidget);
   });
 }
