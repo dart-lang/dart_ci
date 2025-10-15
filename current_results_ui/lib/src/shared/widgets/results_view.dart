@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../filter.dart';
-import '../../query.dart';
-import '../../results.dart';
+import '../../data/models/filter.dart';
+import '../../features/results_overview/data/results_repository.dart';
+import '../../features/results_overview/presentation/widgets/filter_ui.dart';
 import 'app_bar_actions.dart';
+import 'results_widgets.dart';
 
 typedef TitleBuilder = Widget Function(BuildContext context, String title);
 

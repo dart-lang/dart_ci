@@ -1,4 +1,4 @@
-// Copyright (c) 2020, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -9,9 +9,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import 'filter.dart';
-import 'results.dart';
-import 'src/generated/query.pb.dart';
+import '../../../data/models/filter.dart';
+import '../../../shared/generated/query.pb.dart';
+import '../../../shared/widgets/results_widgets.dart';
 
 const String apiHost = 'current-results-qvyo5rktwa-uc.a.run.app';
 // Current endpoints proxy is limited to 1 MB response size,
@@ -165,11 +165,15 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
   factory ChangeInResult.create({
     required String result,
+
     required String expected,
+
     required bool isFlaky,
+
     String? previousResult,
   }) {
     final bool matches = result == expected;
+
     final String text;
 
     if (isFlaky) {
@@ -194,6 +198,7 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
     return _cache.putIfAbsent(
       text,
+
       () => ChangeInResult._(text, matches, isFlaky),
     );
   }

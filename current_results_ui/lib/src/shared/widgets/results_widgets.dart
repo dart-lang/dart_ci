@@ -1,4 +1,4 @@
-// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
+// Copyright (c) 2025, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -8,9 +8,9 @@ import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-import 'instructions.dart';
-import 'query.dart';
-import 'src/generated/query.pb.dart';
+import '../../features/results_overview/data/results_repository.dart';
+import '../../features/results_overview/presentation/widgets/instructions.dart';
+import '../generated/query.pb.dart';
 
 const Color _lightCoral = Color.fromARGB(255, 240, 128, 128);
 const Color _gold = Color.fromARGB(255, 255, 215, 0);

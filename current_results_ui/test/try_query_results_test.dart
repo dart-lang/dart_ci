@@ -2,11 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:flutter_current_results/filter.dart';
-import 'package:flutter_current_results/query.dart';
-import 'package:flutter_current_results/src/data/try_query_results.dart';
-import 'package:flutter_current_results/src/generated/query.pb.dart';
-import 'package:flutter_current_results/src/services/results_service.dart';
+import 'package:flutter_current_results/src/data/models/filter.dart';
+import 'package:flutter_current_results/src/data/services/results_service.dart';
+import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
+import 'package:flutter_current_results/src/features/try_results/data/try_results_repository.dart';
+import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
