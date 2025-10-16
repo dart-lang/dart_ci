@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/models/filter.dart';
 import '../../features/results_overview/data/results_repository.dart';
-import '../../features/results_overview/presentation/widgets/filter_ui.dart';
+import '../../features/results_overview/widgets/filter_ui.dart';
 import 'app_bar_actions.dart';
 import 'results_widgets.dart';
 

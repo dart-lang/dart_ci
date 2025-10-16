@@ -5,8 +5,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'firebase_options.dart';
 import 'src/app/app.dart';
+import 'src/app/firebase_options.dart';
 import 'src/shared/platform/url_strategy_stub.dart'
     if (dart.library.js_interop) 'src/shared/platform/url_strategy_web.dart';
 

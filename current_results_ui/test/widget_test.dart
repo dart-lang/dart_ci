@@ -8,7 +8,7 @@ import 'package:flutter_current_results/src/app/auth_service.dart';
 import 'package:flutter_current_results/src/data/models/review.dart';
 import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
 import 'package:flutter_current_results/src/features/try_results/data/try_results_repository.dart';
-import 'package:flutter_current_results/src/features/try_results/presentation/try_results_screen.dart';
+import 'package:flutter_current_results/src/features/try_results/widgets/try_results_screen.dart';
 import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

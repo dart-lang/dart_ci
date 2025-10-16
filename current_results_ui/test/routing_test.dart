@@ -10,7 +10,7 @@ import 'package:flutter_current_results/src/app/auth_service.dart';
 import 'package:flutter_current_results/src/data/models/review.dart';
 import 'package:flutter_current_results/src/data/services/results_service.dart';
 import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
-import 'package:flutter_current_results/src/features/results_overview/presentation/widgets/instructions.dart';
+import 'package:flutter_current_results/src/features/results_overview/widgets/instructions.dart';
 import 'package:flutter_current_results/src/features/try_results/data/try_results_repository.dart';
 import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
 import 'package:flutter_current_results/src/shared/widgets/results_view.dart';

@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import '../../features/results_overview/data/results_repository.dart';
-import '../../features/results_overview/presentation/widgets/instructions.dart';
+import '../../features/results_overview/widgets/instructions.dart';
 import '../generated/query.pb.dart';
 
 const Color _lightCoral = Color.fromARGB(255, 240, 128, 128);

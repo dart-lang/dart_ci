@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../data/models/filter.dart';
 import '../features/results_overview/data/results_repository.dart';
 import '../features/try_results/data/try_results_repository.dart';
-import '../features/try_results/presentation/try_results_screen.dart';
+import '../features/try_results/widgets/try_results_screen.dart';
 import '../shared/widgets/results_view.dart';
 
 typedef QueryResultsFactory = QueryResultsBase Function(Filter filter);

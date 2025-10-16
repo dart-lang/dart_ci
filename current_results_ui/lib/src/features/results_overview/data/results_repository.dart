@@ -165,15 +165,11 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
   factory ChangeInResult.create({
     required String result,
-
     required String expected,
-
     required bool isFlaky,
-
     String? previousResult,
   }) {
     final bool matches = result == expected;
-
     final String text;
 
     if (isFlaky) {
@@ -198,7 +194,6 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
     return _cache.putIfAbsent(
       text,
-
       () => ChangeInResult._(text, matches, isFlaky),
     );
   }
