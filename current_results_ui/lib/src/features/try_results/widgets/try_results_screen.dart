@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-import 'model/review.dart';
-import 'src/data/try_query_results.dart';
-import 'src/widgets/results_view.dart';
+import '../../../data/models/review.dart';
+import '../../../shared/widgets/results_view.dart';
+import '../data/try_results_repository.dart';
 
 class TryResultsScreen extends StatefulWidget {
   const TryResultsScreen({super.key});

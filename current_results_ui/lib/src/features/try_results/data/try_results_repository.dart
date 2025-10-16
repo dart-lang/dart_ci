@@ -4,11 +4,11 @@
 
 import 'dart:async';
 
-import '../../filter.dart';
-import '../../model/review.dart';
-import '../../query.dart';
-import '../generated/query.pb.dart';
-import '../services/results_service.dart';
+import '../../../data/models/filter.dart';
+import '../../../data/models/review.dart';
+import '../../../data/services/results_service.dart';
+import '../../../shared/generated/query.pb.dart';
+import '../../results_overview/data/results_repository.dart';
 
 class TryQueryResults extends QueryResultsBase {
   final int cl;

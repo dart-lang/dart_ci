@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../filter.dart';
-import '../query.dart';
-import '../src/widgets/results_view.dart';
-import '../try_results_screen.dart';
-import 'data/try_query_results.dart';
+import '../data/models/filter.dart';
+import '../features/results_overview/data/results_repository.dart';
+import '../features/try_results/data/try_results_repository.dart';
+import '../features/try_results/widgets/try_results_screen.dart';
+import '../shared/widgets/results_view.dart';
 
 typedef QueryResultsFactory = QueryResultsBase Function(Filter filter);
 typedef TryQueryResultsFactory =

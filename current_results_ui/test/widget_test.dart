@@ -3,13 +3,13 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_current_results/model/review.dart';
-import 'package:flutter_current_results/query.dart';
-import 'package:flutter_current_results/src/auth_service.dart';
-import 'package:flutter_current_results/src/data/try_query_results.dart';
-import 'package:flutter_current_results/src/generated/query.pb.dart';
-import 'package:flutter_current_results/src/routing.dart';
-import 'package:flutter_current_results/try_results_screen.dart';
+import 'package:flutter_current_results/src/app/app_router.dart';
+import 'package:flutter_current_results/src/app/auth_service.dart';
+import 'package:flutter_current_results/src/data/models/review.dart';
+import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
+import 'package:flutter_current_results/src/features/try_results/data/try_results_repository.dart';
+import 'package:flutter_current_results/src/features/try_results/widgets/try_results_screen.dart';
+import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';

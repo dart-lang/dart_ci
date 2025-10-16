@@ -1,30 +1,12 @@
-// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
+// Copyright (c) 2025, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import 'query.dart';
-
-class Filter {
-  final List<String> terms;
-  Filter(String termString) : terms = _parse(termString);
-
-  static List<String> _parse(String termString) {
-    if (termString.trim() == '') return List.unmodifiable([]);
-    return List.unmodifiable(termString.split(',').map((s) => s.trim()));
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      other is Filter && const ListEquality().equals(terms, other.terms);
-
-  @override
-  int get hashCode => const ListEquality().hash(terms);
-}
+import '../data/results_repository.dart';
 
 class FilterUI extends StatefulWidget {
   const FilterUI({super.key});

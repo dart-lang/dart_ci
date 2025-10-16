@@ -2,11 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../../model/comment.dart';
-import '../../model/review.dart';
-import '../../model/try_build.dart';
-import '../../query.dart';
-import '../generated/query.pb.dart';
+import '../../features/results_overview/data/results_repository.dart';
+import '../../shared/generated/query.pb.dart';
+import '../models/comment.dart';
+import '../models/review.dart';
+import '../models/try_build.dart';
 import 'firestore_service.dart';
 
 class ResultsService {

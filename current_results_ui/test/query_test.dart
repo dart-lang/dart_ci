@@ -4,10 +4,10 @@
 
 import 'dart:convert';
 
-import 'package:flutter_current_results/filter.dart';
-import 'package:flutter_current_results/query.dart';
-import 'package:flutter_current_results/results.dart';
-import 'package:flutter_current_results/src/generated/query.pb.dart';
+import 'package:flutter_current_results/src/data/models/filter.dart';
+import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
+import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
+import 'package:flutter_current_results/src/shared/widgets/results_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
