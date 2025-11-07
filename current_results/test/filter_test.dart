@@ -57,13 +57,14 @@ void filterTest(
         ..pageToken = ''
         ..pageSize = 0,
     );
-    final actualResults = groupBy<query_api.Result, String>(
-      response.results,
-      (result) => result.configuration,
-    ).map(
-      (configuration, results) =>
-          MapEntry(configuration, results.map((r) => r.name).toSet()),
-    );
+    final actualResults =
+        groupBy<query_api.Result, String>(
+          response.results,
+          (result) => result.configuration,
+        ).map(
+          (configuration, results) =>
+              MapEntry(configuration, results.map((r) => r.name).toSet()),
+        );
 
     expect(actualResults, equals(expectedResults));
   });

@@ -49,16 +49,15 @@ class Result {
       uniqueStrings.lookup(string) ??
       (uniqueStrings.add(string) ? string : string);
 
-  query_api.Result toQueryResult() =>
-      query_api.Result()
-        ..name = name
-        ..configuration = configuration
-        ..result = result
-        ..timeMs = time.inMilliseconds
-        ..expected = expected
-        ..flaky = flaky
-        ..experiments.addAll(experiments)
-        ..revision = commitHash;
+  query_api.Result toQueryResult() => query_api.Result()
+    ..name = name
+    ..configuration = configuration
+    ..result = result
+    ..timeMs = time.inMilliseconds
+    ..expected = expected
+    ..flaky = flaky
+    ..experiments.addAll(experiments)
+    ..revision = commitHash;
 
   static query_api.Result toApi(Result result) => result.toQueryResult();
 

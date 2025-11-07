@@ -157,8 +157,9 @@ class Slice {
 
   query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
     final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
-    final pageStart =
-        query.pageToken.isEmpty ? null : PageStart.parse(query.pageToken);
+    final pageStart = query.pageToken.isEmpty
+        ? null
+        : PageStart.parse(query.pageToken);
     final filterTerms = query.filter
         .split(',')
         .map((s) => s.trim())
@@ -198,14 +199,12 @@ class Slice {
       } else {
         // Try to find a matching experiment or configuration, or default
         // to treating the term as a test prefix.
-        final matchingExperiments =
-            _experimentNames
-                .where((experiment) => experiment.startsWith(filter))
-                .toSet();
-        final matchingConfigurations =
-            _stored.keys
-                .where((configuration) => configuration.startsWith(filter))
-                .toSet();
+        final matchingExperiments = _experimentNames
+            .where((experiment) => experiment.startsWith(filter))
+            .toSet();
+        final matchingConfigurations = _stored.keys
+            .where((configuration) => configuration.startsWith(filter))
+            .toSet();
         if (matchingExperiments.isNotEmpty) {
           experimentNames.addAll(matchingExperiments);
           hasExperimentFilter = true;
@@ -248,11 +247,10 @@ class Slice {
       );
       response.results.addAll(sortedResults.map(Result.toApi));
       if (response.results.length == limit) {
-        response.nextPageToken =
-            PageStart(
-              response.results.last.name,
-              response.results.last.configuration,
-            ).encode();
+        response.nextPageToken = PageStart(
+          response.results.last.name,
+          response.results.last.configuration,
+        ).encode();
         break;
       }
     }
@@ -305,12 +303,11 @@ class Slice {
         // Optimization
         results.addAll(configurationRange.take(needed - results.length));
       } else {
-        results =
-            merge(
-              results,
-              configurationRange,
-              (Result result) => result.name,
-            ).take(needed).toList();
+        results = merge(
+          results,
+          configurationRange,
+          (Result result) => result.name,
+        ).take(needed).toList();
       }
     }
     return results;

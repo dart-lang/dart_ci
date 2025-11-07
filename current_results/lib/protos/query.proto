@@ -85,6 +85,7 @@ message Result {
   int32 time_ms = 6;
   repeated string experiments = 7;
   string revision = 8;
+  optional string id = 9;
 }
 
 message ListTestsRequest {

@@ -78,10 +78,9 @@ void main() {
     expect((a.iterator..moveNext()).iterable, a.skip(1));
     expect([].iterator.iterable, []);
     expect(
-      () =>
-          a.iterator.iterable
-            ..toList()
-            ..toList(),
+      () => a.iterator.iterable
+        ..toList()
+        ..toList(),
       throwsStateError,
     );
     expect(a.getRange(1, 2).iterator.iterable.single, 2);

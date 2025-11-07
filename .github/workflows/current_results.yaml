@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         sdk:
-          - 3.7.0 # min pubspec SDK
+          - 3.9.0 # min pubspec SDK
           - stable
         os:
           - ubuntu-latest
