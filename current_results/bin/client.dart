@@ -35,10 +35,9 @@ abstract class GrpcCommand extends Command<void> {
     final channel = ClientChannel(
       globalResults!['host'],
       port: int.parse(globalResults!['port']),
-      options:
-          globalResults!['insecure'] == true
-              ? const ChannelOptions(credentials: ChannelCredentials.insecure())
-              : const ChannelOptions(credentials: ChannelCredentials.secure()),
+      options: globalResults!['insecure'] == true
+          ? const ChannelOptions(credentials: ChannelCredentials.insecure())
+          : const ChannelOptions(credentials: ChannelCredentials.secure()),
     );
 
     final client = QueryClient(channel);
@@ -108,10 +107,9 @@ class ListTestsCommand extends GrpcCommand {
 
   @override
   Future<void> runWithClient(QueryClient client) async {
-    final query =
-        ListTestsRequest()
-          ..prefix = argResults!['prefix']
-          ..limit = int.parse(argResults!['limit']);
+    final query = ListTestsRequest()
+      ..prefix = argResults!['prefix']
+      ..limit = int.parse(argResults!['limit']);
     final result = await client.listTests(query);
     print(jsonEncode(result.toProto3Json()));
   }
