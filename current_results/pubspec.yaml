@@ -3,7 +3,7 @@ description: Cache and serve the most recent test results from Dart CI.
 publish_to: none
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.9.0
 
 dependencies:
   args: ^2.4.2
