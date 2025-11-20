@@ -23,10 +23,10 @@ class BuilderTest {
   BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
     builder = Build(
-        BuildInfo.fromResult(
-            firstChange, <String>{firstChange[fConfiguration]}),
-        commitsCache,
-        firestore);
+      BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]}),
+      commitsCache,
+      firestore,
+    );
   }
 
   Future<void> update() async {
@@ -46,8 +46,9 @@ class BuilderTest {
 class FirestoreServiceFake implements FirestoreService {
   Map<String, Map<String, dynamic>> commits = Map.from(fakeFirestoreCommits);
   Map<String, Map<String, dynamic>> results = Map.from(fakeFirestoreResults);
-  List<Map<String, dynamic>> fakeTryResults =
-      List.from(fakeFirestoreTryResults);
+  List<Map<String, dynamic>> fakeTryResults = List.from(
+    fakeFirestoreTryResults,
+  );
   int addedResultIdCounter = 1;
 
   @override
@@ -78,7 +79,8 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<Commit> getLastCommit() => getCommitByIndex(
-      commits.values.map<int>((commit) => commit[fIndex]).reduce(max));
+    commits.values.map<int>((commit) => commit[fIndex]).reduce(max),
+  );
 
   @override
   Future<void> addCommit(String id, Map<String, dynamic> data) async {
@@ -87,7 +89,10 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<String?> findResult(
-      Map<String, dynamic> change, int startIndex, int endIndex) {
+    Map<String, dynamic> change,
+    int startIndex,
+    int endIndex,
+  ) {
     String? resultId;
     int? resultEndIndex;
     for (final entry in results.entries) {
@@ -110,15 +115,19 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<List<SafeDocument>> findActiveResults(
-      String? name, String? configuration) async {
+    String? name,
+    String? configuration,
+  ) async {
     return [
       for (final id in results.keys)
         if (results[id]![fName] == name &&
             results[id]![fActiveConfigurations] != null &&
             results[id]![fActiveConfigurations].contains(configuration))
-          SafeDocument(Document()
-            ..fields = taggedMap(Map.from(results[id]!))
-            ..name = id)
+          SafeDocument(
+            Document()
+              ..fields = taggedMap(Map.from(results[id]!))
+              ..name = id,
+          ),
     ];
   }
 
@@ -134,12 +143,18 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<bool> updateResult(
-      String resultId, String? configuration, int startIndex, int endIndex,
-      {required bool failure}) {
+    String resultId,
+    String? configuration,
+    int startIndex,
+    int endIndex, {
+    required bool failure,
+  }) {
     final result = Map<String, dynamic>.from(results[resultId]!);
 
-    result[fBlamelistStartIndex] =
-        max<int>(startIndex, result[fBlamelistStartIndex]);
+    result[fBlamelistStartIndex] = max<int>(
+      startIndex,
+      result[fBlamelistStartIndex],
+    );
 
     result[fBlamelistEndIndex] = min<int>(endIndex, result[fBlamelistEndIndex]);
     if (!result[fConfigurations].contains(configuration)) {
@@ -162,7 +177,9 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<void> removeActiveConfiguration(
-      SafeDocument activeResult, String? configuration) async {
+    SafeDocument activeResult,
+    String? configuration,
+  ) async {
     final result = Map<String, dynamic>.from(results[activeResult.name]!);
     result[fActiveConfigurations] = List.from(result[fActiveConfigurations])
       ..remove(configuration);
@@ -176,10 +193,12 @@ class FirestoreServiceFake implements FirestoreService {
   @override
   Future<List<Map<String, Value>>> findRevertedChanges(int index) async {
     return results.values
-        .where((change) =>
-            change[fPinnedIndex] == index ||
-            (change[fBlamelistStartIndex] == index &&
-                change[fBlamelistEndIndex] == index))
+        .where(
+          (change) =>
+              change[fPinnedIndex] == index ||
+              (change[fBlamelistStartIndex] == index &&
+                  change[fBlamelistEndIndex] == index),
+        )
         .map(taggedMap)
         .toList();
   }
@@ -188,25 +207,38 @@ class FirestoreServiceFake implements FirestoreService {
   Future<List<SafeDocument>> tryApprovals(int review) async {
     return fakeTryResults
         .where(
-            (result) => result[fReview] == review && result[fApproved] == true)
+          (result) => result[fReview] == review && result[fApproved] == true,
+        )
         .map(taggedMap)
-        .map((fields) => SafeDocument(Document()
-          ..fields = fields
-          ..name = ''))
+        .map(
+          (fields) => SafeDocument(
+            Document()
+              ..fields = fields
+              ..name = '',
+          ),
+        )
         .toList();
   }
 
   @override
   Future<List<SafeDocument>> tryResults(
-      int review, String configuration) async {
+    int review,
+    String configuration,
+  ) async {
     return fakeTryResults
-        .where((result) =>
-            result[fReview] == review &&
-            result[fConfigurations].contains(configuration))
+        .where(
+          (result) =>
+              result[fReview] == review &&
+              result[fConfigurations].contains(configuration),
+        )
         .map(taggedMap)
-        .map((fields) => SafeDocument(Document()
-          ..fields = fields
-          ..name = ''))
+        .map(
+          (fields) => SafeDocument(
+            Document()
+              ..fields = fields
+              ..name = '',
+          ),
+        )
         .toList();
   }
 
@@ -224,8 +256,14 @@ class FirestoreServiceFake implements FirestoreService {
   Future<void> storeReview(String review, Map<String, Value> data) async {}
 
   @override
-  Future<void> storePatchset(String review, int patchset, String kind,
-      String? description, int patchsetGroup, int number) async {}
+  Future<void> storePatchset(
+    String review,
+    int patchset,
+    String kind,
+    String? description,
+    int patchsetGroup,
+    int number,
+  ) async {}
 }
 
 class HttpClientMock extends BaseClient {

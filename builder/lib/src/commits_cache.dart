@@ -77,11 +77,14 @@ class CommitsCache {
     final response = await httpClient.get(url);
     final protectedJson = response.body;
     if (!protectedJson.startsWith(prefix)) {
-      throw Exception('Gerrit response missing prefix $prefix: $protectedJson.'
-          'Requested URL: $url');
+      throw Exception(
+        'Gerrit response missing prefix $prefix: $protectedJson.'
+        'Requested URL: $url',
+      );
     }
     final commits = List.castFrom<dynamic, Map<String, dynamic>>(
-        jsonDecode(protectedJson.substring(prefix.length))['log']);
+      jsonDecode(protectedJson.substring(prefix.length))['log'],
+    );
     if (commits.isEmpty) {
       print('Found no new commits between $lastHash and $branch');
     }
@@ -135,7 +138,7 @@ class CommitsCache {
 }
 
 class TestingCommitsCache extends CommitsCache {
-  TestingCommitsCache(firestore, httpClient) : super(firestore, httpClient);
+  TestingCommitsCache(super.firestore, super.httpClient);
 
   @override
   Future<void> _getNewCommits() {
@@ -159,7 +162,7 @@ const months = {
   'Sep': '09',
   'Oct': '10',
   'Nov': '11',
-  'Dec': '12'
+  'Dec': '12',
 };
 
 DateTime parseGitilesDateTime(String gitiles) {
@@ -171,8 +174,9 @@ DateTime parseGitilesDateTime(String gitiles) {
 }
 
 final reviewRegExp = RegExp(
-    '^Reviewed-on: https://dart-review.googlesource.com/c/sdk/\\+/(\\d+)\$',
-    multiLine: true);
+  '^Reviewed-on: https://dart-review.googlesource.com/c/sdk/\\+/(\\d+)\$',
+  multiLine: true,
+);
 
 int? _review(Map<String, dynamic> commit) {
   final match = reviewRegExp.firstMatch(commit['message']);
@@ -180,14 +184,18 @@ int? _review(Map<String, dynamic> commit) {
   return null;
 }
 
-final revertRegExp =
-    RegExp('^This reverts commit ([\\da-f]+)\\.\$', multiLine: true);
+final revertRegExp = RegExp(
+  '^This reverts commit ([\\da-f]+)\\.\$',
+  multiLine: true,
+);
 
 String? _revert(Map<String, dynamic> commit) =>
     revertRegExp.firstMatch(commit['message'])?.group(1);
 
-final relandRegExp =
-    RegExp('^This is a reland of ([\\da-f]+)\\.?\$', multiLine: true);
+final relandRegExp = RegExp(
+  '^This is a reland of ([\\da-f]+)\\.?\$',
+  multiLine: true,
+);
 
 String? _reland(Map<String, dynamic> commit) =>
     relandRegExp.firstMatch(commit['message'])?.group(1);

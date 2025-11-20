@@ -65,7 +65,7 @@ Map<String, dynamic> landedCommit = Map.unmodifiable({
   'index': landedCommitIndex,
   'title': 'A commit used for testing tryjob approvals, with index 54',
   'hash': landedCommitHash,
-  'review': 44445
+  'review': 44445,
 });
 
 /// Changes
@@ -95,7 +95,7 @@ const Map<String, dynamic> existingCommitChange = {
   'previous_commit_hash': previousCommitHash,
   'previous_commit_time': 1563576211,
   'previous_build_number': '306',
-  'changed': true
+  'changed': true,
 };
 
 const Map<String, dynamic> landedCommitChange = {
@@ -118,7 +118,7 @@ const Map<String, dynamic> landedCommitChange = {
   'previous_commit_hash': existingCommitHash,
   'previous_commit_time': 1563576211,
   'previous_build_number': '306',
-  'changed': true
+  'changed': true,
 };
 
 /// Results
@@ -133,7 +133,7 @@ const Map<String, dynamic> activeFailureResult = {
   'expected': 'Pass',
   'previous_result': 'Pass',
   'blamelist_start_index': 67195,
-  'blamelist_end_index': 67195
+  'blamelist_end_index': 67195,
 };
 
 // A result on existingCommit that is overridden by the new result in
@@ -144,11 +144,11 @@ Map<String, dynamic> activeResult = {
   'blamelist_end_index': existingCommitIndex,
   'configurations': [
     landedCommitChange['configuration'],
-    'another configuration'
+    'another configuration',
   ]..sort(),
   'active_configurations': [
     landedCommitChange['configuration'],
-    'another configuration'
+    'another configuration',
   ]..sort(),
   'active': true,
   'approved': false,
@@ -168,7 +168,7 @@ Map<String, dynamic> landedResult = {
   ]..sort(),
   'active_configurations': [
     landedCommitChange['configuration'],
-    'another configuration'
+    'another configuration',
   ]..sort(),
   'active': true,
   'approved': true,
@@ -195,14 +195,14 @@ const Map<String, dynamic> review44445Result = {
   'configurations': [
     'dart2js-new-rti-linux-x64-d8',
     'dartk-reload-rollback-linux-debug-x64',
-    'dartk-reload-linux-debug-x64'
+    'dartk-reload-linux-debug-x64',
   ],
   'name': sampleTest,
   'patchset': 1,
   'result': 'RuntimeError',
   'expected': 'Pass',
   'previous_result': 'Pass',
-  'approved': true
+  'approved': true,
 };
 const Map<String, dynamic> review77779Result = {
   'review': 77779,
@@ -212,7 +212,7 @@ const Map<String, dynamic> review77779Result = {
   'result': 'RuntimeError',
   'expected': 'CompileTimeError',
   'previous_result': 'CompileTimeError',
-  'approved': true
+  'approved': true,
 };
 
 const testBuilder = 'test_builder';
@@ -246,71 +246,61 @@ const Map<String, dynamic> tryjobFailingChange = {
   'previous_commit_hash': existingCommitHash,
   'previous_commit_time': 1563576211,
   'previous_build_number': '1234',
-  'changed': true
+  'changed': true,
 };
 
 final Map<String, dynamic> tryjob2OtherFailingChange =
-    Map<String, dynamic>.from(tryjobFailingChange)
-      ..addAll({
-        'name': 'test_suite/other_failing_test',
-        'test_name': 'other_failing_test',
-        'result': 'RuntimeError',
-        'expected': 'Pass',
-        'matches': false,
-        'previous_result': 'Pass',
-        'changed': true,
-        'build_number': tryjob2BuildNumber,
-      });
+    Map<String, dynamic>.from(tryjobFailingChange)..addAll({
+      'name': 'test_suite/other_failing_test',
+      'test_name': 'other_failing_test',
+      'result': 'RuntimeError',
+      'expected': 'Pass',
+      'matches': false,
+      'previous_result': 'Pass',
+      'changed': true,
+      'build_number': tryjob2BuildNumber,
+    });
 
 final Map<String, dynamic> tryjobExistingFailure =
-    Map<String, dynamic>.from(tryjobFailingChange)
-      ..addAll({
-        'name': 'test_suite/existing_failure_test',
-        'test_name': 'passing_test',
-        'result': 'RuntimeError',
-        'expected': 'Pass',
-        'matches': false,
-        'previous_result': 'RuntimeError',
-        'changed': false
-      });
+    Map<String, dynamic>.from(tryjobFailingChange)..addAll({
+      'name': 'test_suite/existing_failure_test',
+      'test_name': 'passing_test',
+      'result': 'RuntimeError',
+      'expected': 'Pass',
+      'matches': false,
+      'previous_result': 'RuntimeError',
+      'changed': false,
+    });
 
-final Map<String, dynamic> tryjob2ExistingFailure =
-    Map<String, dynamic>.from(tryjobExistingFailure)
-      ..addAll({
-        'build_number': tryjob2BuildNumber,
-      });
+final Map<String, dynamic> tryjob2ExistingFailure = Map<String, dynamic>.from(
+  tryjobExistingFailure,
+)..addAll({'build_number': tryjob2BuildNumber});
 
-final Map<String, dynamic> tryjob2FailingChange =
-    Map<String, dynamic>.from(tryjobFailingChange)
-      ..addAll({
-        'build_number': tryjob2BuildNumber,
-      });
+final Map<String, dynamic> tryjob2FailingChange = Map<String, dynamic>.from(
+  tryjobFailingChange,
+)..addAll({'build_number': tryjob2BuildNumber});
 
 final Map<String, dynamic> tryjobPassingChange =
-    Map<String, dynamic>.from(tryjobFailingChange)
-      ..addAll({
-        'name': 'test_suite/passing_test',
-        'test_name': 'passing_test',
-        'result': 'Pass',
-        'expected': 'Pass',
-        'matches': true,
-        'previous_result': 'RuntimeError',
-        'changed': true
-      });
+    Map<String, dynamic>.from(tryjobFailingChange)..addAll({
+      'name': 'test_suite/passing_test',
+      'test_name': 'passing_test',
+      'result': 'Pass',
+      'expected': 'Pass',
+      'matches': true,
+      'previous_result': 'RuntimeError',
+      'changed': true,
+    });
 
-final Map<String, dynamic> tryjob2PassingChange =
-    Map<String, dynamic>.from(tryjobPassingChange)
-      ..addAll({
-        'build_number': tryjob2BuildNumber,
-      });
+final Map<String, dynamic> tryjob2PassingChange = Map<String, dynamic>.from(
+  tryjobPassingChange,
+)..addAll({'build_number': tryjob2BuildNumber});
 
-final Map<String, dynamic> tryjob3PassingChange =
-    Map<String, dynamic>.from(tryjobPassingChange)
-      ..addAll({
-        'build_number': tryjob3BuildNumber,
-      });
+final Map<String, dynamic> tryjob3PassingChange = Map<String, dynamic>.from(
+  tryjobPassingChange,
+)..addAll({'build_number': tryjob3BuildNumber});
 
-String gitilesLog = '''
+String gitilesLog =
+    '''
 )]}'
 {
   "log": [

@@ -20,8 +20,9 @@ import 'package:builder/src/commits_cache.dart';
 void main() async {
   final baseClient = http.Client();
   final client = await clientViaApplicationDefaultCredentials(
-      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-      baseClient: baseClient);
+    scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    baseClient: baseClient,
+  );
   final firestore = fs.FirestoreService(FirestoreApi(client), client);
   // create commits cache
   final commits = TestingCommitsCache(firestore, baseClient);
@@ -58,7 +59,7 @@ final commit68889 = <String, dynamic>{
   'title': '[Cleanup] Removes deprecated --gc_at_instance_allocation.',
   'index': 68889,
   'created': DateTime.parse('2020-02-26 15:00:26.000Z'),
-  'hash': '9c05fde96b62556944befd18ec834c56d6854fda'
+  'hash': '9c05fde96b62556944befd18ec834c56d6854fda',
 };
 
 final commit68890 = <String, dynamic>{
@@ -67,7 +68,7 @@ final commit68890 = <String, dynamic>{
       'Add analyzer run support to steamroller and minor QOL improvements.',
   'index': 68890,
   'created': DateTime.parse('2020-02-26 16:57:46.000Z'),
-  'hash': '31053a8c0180b663858aadce1ff6c0eefcf78623'
+  'hash': '31053a8c0180b663858aadce1ff6c0eefcf78623',
 };
 
 final commit68900 = <String, dynamic>{
@@ -83,7 +84,7 @@ final commit68905 = <String, dynamic>{
   'title': '[dart2js] switch bot to use hostaserts once again',
   'index': 68905,
   'created': DateTime.parse('2020-02-26 21:41:47.000Z'),
-  'hash': '5055c98beeacb3996c256e37148b4dc3561735ee'
+  'hash': '5055c98beeacb3996c256e37148b4dc3561735ee',
 };
 
 final commit68910 = <String, dynamic>{

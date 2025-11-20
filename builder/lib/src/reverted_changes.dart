@@ -9,15 +9,22 @@ import 'firestore.dart';
 import 'result.dart';
 
 Future<RevertedChanges> getRevertedChanges(
-    String reverted, int revertIndex, FirestoreService firestore) async {
+  String reverted,
+  int revertIndex,
+  FirestoreService firestore,
+) async {
   final revertedCommit = await firestore.getCommit(reverted);
   if (revertedCommit == null) {
     throw 'Cannot find commit for reverted commit hash $reverted';
   }
   final index = revertedCommit.index;
   final changes = await firestore.findRevertedChanges(index);
-  return RevertedChanges(index, revertIndex, changes,
-      groupBy(changes, (change) => getValue(change[fName]!)));
+  return RevertedChanges(
+    index,
+    revertIndex,
+    changes,
+    groupBy(changes, (change) => getValue(change[fName]!)),
+  );
 }
 
 class RevertedChanges {
@@ -27,13 +34,18 @@ class RevertedChanges {
   final Map<String, List<Map<String, Value>>> changesForTest;
 
   RevertedChanges(
-      this.index, this.revertIndex, this.changes, this.changesForTest);
+    this.index,
+    this.revertIndex,
+    this.changes,
+    this.changesForTest,
+  );
 
   bool approveRevert(Map<String, dynamic> revert) {
     final reverted = changesForTest[revert[fName]];
     return isFailure(revert) &&
         reverted != null &&
         reverted.any(
-            (change) => revert[fResult] == getValue(change[fPreviousResult]!));
+          (change) => revert[fResult] == getValue(change[fPreviousResult]!),
+        );
   }
 }

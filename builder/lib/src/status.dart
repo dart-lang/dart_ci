@@ -32,9 +32,9 @@ class BuildStatus {
         '  ${entry.key}:',
         for (final result in entry.value.take(unapprovedFailuresLimit))
           resultLine(result),
-        if (entry.value.length > unapprovedFailuresLimit) '    ...'
+        if (entry.value.length > unapprovedFailuresLimit) '    ...',
       ],
-      ''
+      '',
     ].join('\n');
   }
 }

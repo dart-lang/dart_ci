@@ -12,8 +12,10 @@ import 'gerrit_review_json.dart';
 
 void main() async {
   test('get revert information from Gerrit log api output', () {
-    expect(GerritInfo.revert(json.decode(revertReviewGerritLog)),
-        '7ed1690b4ed6b56bc818173dff41a7a2530991a2');
+    expect(
+      GerritInfo.revert(json.decode(revertReviewGerritLog)),
+      '7ed1690b4ed6b56bc818173dff41a7a2530991a2',
+    );
   });
 
   test('update', () async {

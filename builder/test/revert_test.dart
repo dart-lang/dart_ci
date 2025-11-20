@@ -20,9 +20,11 @@ void main() async {
     expect(builderTest.builder.endIndex, revertCommit['index']);
     expect(builderTest.builder.startIndex, landedCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(revertCommitHash))!
-            .toJson(),
-        revertCommit);
+      (await builderTest.builder.firestore.getCommit(
+        revertCommitHash,
+      ))!.toJson(),
+      revertCommit,
+    );
   });
 
   test('fetch commit that is a reland (as a reland)', () async {
@@ -33,16 +35,21 @@ void main() async {
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(revertCommitHash))!
-            .toJson(),
-        revertCommit);
+      (await builderTest.builder.firestore.getCommit(
+        revertCommitHash,
+      ))!.toJson(),
+      revertCommit,
+    );
     expect(
-        (await builderTest.builder.firestore.getCommit(commit56Hash))!.toJson(),
-        commit56);
+      (await builderTest.builder.firestore.getCommit(commit56Hash))!.toJson(),
+      commit56,
+    );
     expect(
-        (await builderTest.builder.firestore.getCommit(relandCommitHash))!
-            .toJson(),
-        relandCommit);
+      (await builderTest.builder.firestore.getCommit(
+        relandCommitHash,
+      ))!.toJson(),
+      relandCommit,
+    );
   });
 
   test('fetch commit that is a reland (as a revert)', () async {
@@ -52,9 +59,11 @@ void main() async {
     expect(builderTest.builder.endIndex, relandCommit['index']);
     expect(builderTest.builder.startIndex, revertCommit['index'] + 1);
     expect(
-        (await builderTest.builder.firestore.getCommit(relandCommitHash))!
-            .toJson(),
-        relandCommit);
+      (await builderTest.builder.firestore.getCommit(
+        relandCommitHash,
+      ))!.toJson(),
+      relandCommit,
+    );
   });
 
   test('Automatically approve expected failure on revert', () async {
@@ -62,10 +71,11 @@ void main() async {
     await builderTest.update();
     await builderTest.storeChange(revertChange);
     expect(
-        builderTest.firestore.results.values
-            .where((result) => result[fBlamelistEndIndex] == 55)
-            .single,
-        revertResult);
+      builderTest.firestore.results.values
+          .where((result) => result[fBlamelistEndIndex] == 55)
+          .single,
+      revertResult,
+    );
   });
 
   test('Revert in blamelist, doesn\'t match new failure', () async {
@@ -76,8 +86,10 @@ void main() async {
     await builderTest.storeChange(commit56Change);
 
     Future<bool> findApproval(Map<String, dynamic> change) async {
-      final result = await builderTest.firestore
-          .findActiveResults(change[fName], change[fConfiguration]);
+      final result = await builderTest.firestore.findActiveResults(
+        change[fName],
+        change[fConfiguration],
+      );
       return result.single.getBool(fApproved)!;
     }
 
@@ -88,7 +100,7 @@ void main() async {
 }
 
 class RevertBuilderTest extends BuilderTest {
-  RevertBuilderTest(Map<String, dynamic> firstChange) : super(firstChange) {
+  RevertBuilderTest(super.firstChange) {
     expect(revertedCommit[fIndex] + 1, fakeFirestoreCommitsFirstIndex);
     expect(revertCommit[fIndex] - 1, fakeFirestoreCommitsLastIndex);
     firestore.commits
@@ -215,7 +227,7 @@ const Map<String, dynamic> revertedChange = {
   'previous_commit_hash': 'a nonexistent hash',
   'previous_commit_time': 1563576211,
   'previous_build_number': '306',
-  'changed': true
+  'changed': true,
 };
 
 Map<String, dynamic> commit56Change = Map.from(revertChange)
@@ -255,13 +267,17 @@ const Map<String, dynamic> revertedResult = {
 };
 
 // Git logs
-String? escape(s) => s.replaceAll('"', '\\"');
+String? escape(String s) => s.replaceAll('"', '\\"');
 String revertGitilesLog = gitilesLog([revertCommitJson]);
 String relandGitilesLog = gitilesLog([relandCommitJson(relandAsRevert)]);
-String revertAndRelandGitilesLog = gitilesLog(
-    [relandCommitJson(relandAsReland), commit56Json, revertCommitJson]);
+String revertAndRelandGitilesLog = gitilesLog([
+  relandCommitJson(relandAsReland),
+  commit56Json,
+  revertCommitJson,
+]);
 
-String gitilesLog(List<String> commitLogs) => '''
+String gitilesLog(List<String> commitLogs) =>
+    '''
 )]}'
 {
   "log": [
@@ -270,7 +286,8 @@ String gitilesLog(List<String> commitLogs) => '''
 }
 ''';
 
-String revertCommitJson = '''
+String revertCommitJson =
+    '''
     {
       "commit": "$revertCommitHash",
       "parents": ["$landedCommitHash"],
@@ -284,7 +301,8 @@ String revertCommitJson = '''
     }
 ''';
 
-String commit56Json = '''
+String commit56Json =
+    '''
     {
       "commit": "$commit56Hash",
       "parents": ["$revertCommitHash"],
@@ -298,7 +316,8 @@ String commit56Json = '''
     }
 ''';
 
-String relandCommitJson(String relandLine) => '''
+String relandCommitJson(String relandLine) =>
+    '''
     {
       "commit": "$relandCommitHash",
       "parents": ["$commit56Hash"],

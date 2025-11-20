@@ -4,18 +4,18 @@ publish_to: none
 version: 0.1.0
 
 environment:
-  sdk: 3.1.0 # Pinned, the recipe will use this exact version.
+  sdk: ^3.10.1 # The recipe will use this exact version.
 
 dependencies:
   args: ^2.3.0
-  googleapis_auth: ^1.2.0
-  googleapis: ^11.4.0
+  googleapis_auth: ^2.0.0
+  googleapis: ^15.0.0
   http: ^1.1.0
   pool: ^1.5.0
   retry: ^3.1.0
-  collection: ^1.15.0-nullsafety.4
+  collection: ^1.15.0
   glob: ^2.1.0
 
 dev_dependencies:
-  lints: ^2.0.0
+  lints: ^6.0.0
   test: ^1.9.4
