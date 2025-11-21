@@ -47,22 +47,31 @@ Future<void> removeTryBuildersAndResults() async {
   }
 
   for (final test in testsToRemove) {
-    await deleteDocuments(await firestore.query(
-        from: 'try_results', where: fieldEquals('name', test)));
+    await deleteDocuments(
+      await firestore.query(
+        from: 'try_results',
+        where: fieldEquals('name', test),
+      ),
+    );
   }
   for (final builder in buildersToRemove) {
-    await deleteDocuments(await firestore.query(
-        from: 'try_builds', where: fieldEquals('builder', builder)));
+    await deleteDocuments(
+      await firestore.query(
+        from: 'try_builds',
+        where: fieldEquals('builder', builder),
+      ),
+    );
   }
 }
 
 Future<Map<String, String?>> loadTestCommits(int startIndex) async {
   // Get review data for the last two landed CLs before or at startIndex.
   final reviews = await firestore.query(
-      from: 'reviews',
-      orderBy: orderBy('landed_index', false),
-      where: fieldLessThanOrEqual('landed_index', startIndex),
-      limit: 2);
+    from: 'reviews',
+    orderBy: orderBy('landed_index', false),
+    where: fieldLessThanOrEqual('landed_index', startIndex),
+    limit: 2,
+  );
   final firstReview = reviews.first;
   final String? index = firstReview.fields['landed_index']!.integerValue;
   final String review = firstReview.name.split('/').last;
@@ -90,13 +99,10 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
   var commits = {
     for (final index in [index, landedIndex, baseIndex])
       index: (await firestore.query(
-              from: 'commits',
-              where: fieldEquals('index', int.parse(index!)),
-              limit: 1))
-          .first
-          .name
-          .split('/')
-          .last
+        from: 'commits',
+        where: fieldEquals('index', int.parse(index!)),
+        limit: 1,
+      )).first.name.split('/').last,
   };
   return {
     'index': index,
@@ -111,31 +117,36 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
     'landedPatchset': landedPatchset,
     'landedPatchsetRef': 'refs/changes/$landedReview/$landedPatchset',
     'baseIndex': baseIndex,
-    'baseCommit': commits[baseIndex]
+    'baseCommit': commits[baseIndex],
   };
 }
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
-    BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
-        as TryBuildInfo,
-    'bbID_$name',
-    data['landedCommit']!,
-    commitsCache,
-    firestore,
-    client);
+  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+      as TryBuildInfo,
+  'bbID_$name',
+  data['landedCommit']!,
+  commitsCache,
+  firestore,
+  client,
+);
 
 Tryjob makeLandedTryjob(String name, Map<String, dynamic> firstChange) =>
     Tryjob(
-        BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
-            as TryBuildInfo,
-        'bbID_$name',
-        data['baseCommit']!,
-        commitsCache,
-        firestore,
-        client);
+      BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+          as TryBuildInfo,
+      'bbID_$name',
+      data['baseCommit']!,
+      commitsCache,
+      firestore,
+      client,
+    );
 
-Map<String, dynamic> makeChange(String name, String result,
-    {bool flaky = false}) {
+Map<String, dynamic> makeChange(
+  String name,
+  String result, {
+  bool flaky = false,
+}) {
   final results = result.split('/');
   final previous = results[0];
   final current = results[1];
@@ -170,11 +181,16 @@ Map<String, dynamic> makeLandedChange(String name, String result) {
   return makeChange(name, result)..['commit_hash'] = data['landedPatchsetRef'];
 }
 
-Future<void> checkTryBuild(String name,
-    {bool? success, bool? truncated}) async {
+Future<void> checkTryBuild(
+  String name, {
+  bool? success,
+  bool? truncated,
+}) async {
   final buildbucketId = 'bbID_$name';
   final buildDocuments = await firestore.query(
-      from: 'try_builds', where: fieldEquals('buildbucket_id', buildbucketId));
+    from: 'try_builds',
+    where: fieldEquals('buildbucket_id', buildbucketId),
+  );
   expect(buildDocuments.length, 1);
   expect(buildDocuments.single.fields['success']!.booleanValue, success);
   if (truncated != null) {
@@ -187,8 +203,9 @@ Future<void> checkTryBuild(String name,
 void main() async {
   final baseClient = http.Client();
   client = await clientViaApplicationDefaultCredentials(
-      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-      baseClient: baseClient);
+    scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    baseClient: baseClient,
+  );
   final api = FirestoreApi(client);
   firestore = FirestoreService(api, client);
   if (!firestore.isStaging) {
@@ -216,22 +233,29 @@ void main() async {
       'builder': 'other_builder',
     };
     registerChangeForDeletion(otherConfigurationChange);
-    final otherTryjob =
-        makeTryjob('other_configuration', otherConfigurationChange);
-    final otherFailedStatus =
-        await otherTryjob.process([otherConfigurationChange]);
+    final otherTryjob = makeTryjob(
+      'other_configuration',
+      otherConfigurationChange,
+    );
+    final otherFailedStatus = await otherTryjob.process([
+      otherConfigurationChange,
+    ]);
     await checkTryBuild('other_configuration', success: false);
     expect(otherFailedStatus.success, isFalse);
     expect(otherFailedStatus.truncatedResults, isFalse);
     final result = await firestore.query(
-        from: 'try_results', where: fieldEquals('name', 'failure_test'));
+      from: 'try_results',
+      where: fieldEquals('name', 'failure_test'),
+    );
     expect(result.length, 1);
     expect(result.single.getList('configurations')!.length, 2);
   });
 
   test('landedFailure', () async {
-    final landedChange =
-        makeLandedChange('landedFailure', 'Pass/RuntimeError/Pass');
+    final landedChange = makeLandedChange(
+      'landedFailure',
+      'Pass/RuntimeError/Pass',
+    );
     final landedTryjob = makeLandedTryjob('landedFailure', landedChange);
     await landedTryjob.process([landedChange]);
     // This change has a base revision containing the landed failure, but
@@ -245,8 +269,11 @@ void main() async {
   });
 
   test('flaky', () async {
-    final flakyChange =
-        makeChange('flaky', 'Pass/RuntimeError/Pass', flaky: true);
+    final flakyChange = makeChange(
+      'flaky',
+      'Pass/RuntimeError/Pass',
+      flaky: true,
+    );
     final tryjob = makeTryjob('flaky', flakyChange);
     final status = await tryjob.process([flakyChange]);
     await checkTryBuild('flaky', success: true);
@@ -273,8 +300,10 @@ void main() async {
       ..['name'] = 'truncated_pass_2_test';
     registerChangeForDeletion(failingChange);
     tryjob.counter.passes = ChangeCounter.maxReportedSuccesses;
-    final truncatedStatus =
-        await tryjob.process([passingChange, failingChange]);
+    final truncatedStatus = await tryjob.process([
+      passingChange,
+      failingChange,
+    ]);
     await checkTryBuild('truncatedPass', success: false, truncated: true);
     expect(truncatedStatus.success, isFalse);
     expect(truncatedStatus.truncatedResults, isTrue);
@@ -285,11 +314,14 @@ void main() async {
     expect(tryjob.counter.hasTooManyFailingChanges, isFalse);
     expect(tryjob.counter.hasTruncatedChanges, isTrue);
     final existingResult = await firestore.query(
-        from: 'try_results',
-        where: fieldEquals('name', 'truncated_pass_2_test'));
+      from: 'try_results',
+      where: fieldEquals('name', 'truncated_pass_2_test'),
+    );
     expect(existingResult.length, 1);
     final truncatedResult = await firestore.query(
-        from: 'try_results', where: fieldEquals('name', 'truncatedPass_test'));
+      from: 'try_results',
+      where: fieldEquals('name', 'truncatedPass_test'),
+    );
     expect(truncatedResult, isEmpty);
   });
 
@@ -299,8 +331,10 @@ void main() async {
     final truncatedChange = {...failingChange, 'name': 'truncated_2_test'};
     registerChangeForDeletion(truncatedChange);
     tryjob.counter.failures = ChangeCounter.maxReportedFailures - 1;
-    final truncatedStatus =
-        await tryjob.process([failingChange, truncatedChange]);
+    final truncatedStatus = await tryjob.process([
+      failingChange,
+      truncatedChange,
+    ]);
     await checkTryBuild('truncated', success: false, truncated: true);
     expect(truncatedStatus.success, isFalse);
     expect(truncatedStatus.truncatedResults, isTrue);
@@ -309,36 +343,43 @@ void main() async {
     expect(tryjob.counter.hasTooManyFailingChanges, isTrue);
     expect(tryjob.counter.hasTruncatedChanges, isTrue);
     final existingResult = await firestore.query(
-        from: 'try_results', where: fieldEquals('name', 'truncated_test'));
+      from: 'try_results',
+      where: fieldEquals('name', 'truncated_test'),
+    );
     expect(existingResult.length, 1);
     final truncatedResult = await firestore.query(
-        from: 'try_results', where: fieldEquals('name', 'truncated_2_test'));
+      from: 'try_results',
+      where: fieldEquals('name', 'truncated_2_test'),
+    );
     expect(truncatedResult, isEmpty);
   });
 
   test('patchsets', () async {
     final document = await firestore.getDocument(
-        '${firestore.documents}/reviews/${data['review']}/patchsets/${data['patchset']}');
+      '${firestore.documents}/reviews/${data['review']}/patchsets/${data['patchset']}',
+    );
     final fields = untagMap(document.fields!);
     expect(fields['number'].toString(), data['patchset']);
     await firestore.storePatchset(
-        data['review']!,
-        fields['number'],
-        fields['kind'],
-        fields['description'],
-        fields['patchset_group'],
-        fields['number']);
+      data['review']!,
+      fields['number'],
+      fields['kind'],
+      fields['description'],
+      fields['patchset_group'],
+      fields['number'],
+    );
     final document1 = await firestore.getDocument(document.name!);
     expect(untagMap(document1.fields!), equals(fields));
     fields['number'] += 1;
     fields['description'] = 'test description';
     await firestore.storePatchset(
-        data['review']!,
-        fields['number'],
-        fields['kind'],
-        fields['description'],
-        fields['patchset_group'],
-        fields['number']);
+      data['review']!,
+      fields['number'],
+      fields['kind'],
+      fields['description'],
+      fields['patchset_group'],
+      fields['number'],
+    );
     final name =
         '${firestore.documents}/reviews/${data['review']}/patchsets/${fields['number']}';
     final document2 = await firestore.getDocument(name);

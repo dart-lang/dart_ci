@@ -24,19 +24,26 @@ void main() async {
 
   test('Link landed commit to review', () async {
     final builderTest = BuilderTest(landedCommitChange);
-    builderTest.firestore.commits
-        .removeWhere((key, value) => value[fIndex] > existingCommitIndex);
+    builderTest.firestore.commits.removeWhere(
+      (key, value) => value[fIndex] > existingCommitIndex,
+    );
     builderTest.client.addDefaultResponse(gitilesLog);
     await builderTest.storeBuildCommitsInfo();
     await builderTest.builder.reviewsFetched;
     expect(builderTest.builder.endIndex, landedCommitIndex);
     expect(builderTest.builder.startIndex, existingCommitIndex + 1);
-    expect(builderTest.builder.tryApprovals,
-        {testResult(review44445Result): 54, testResult(review77779Result): 53});
-    expect((await builderTest.firestore.getCommit(commit53Hash))!.toJson(),
-        commit53);
-    expect((await builderTest.firestore.getCommit(landedCommitHash))!.toJson(),
-        landedCommit);
+    expect(builderTest.builder.tryApprovals, {
+      testResult(review44445Result): 54,
+      testResult(review77779Result): 53,
+    });
+    expect(
+      (await builderTest.firestore.getCommit(commit53Hash))!.toJson(),
+      commit53,
+    );
+    expect(
+      (await builderTest.firestore.getCommit(landedCommitHash))!.toJson(),
+      landedCommit,
+    );
   });
 
   test('update previous active result', () async {
@@ -45,29 +52,36 @@ void main() async {
     await builderTest.storeChange(landedCommitChange);
     expect(builderTest.builder.success, true);
     expect(
-        builderTest.firestore.results['activeResultID'],
-        Map.from(activeResult)
-          ..[fActiveConfigurations] = ['another configuration']);
+      builderTest.firestore.results['activeResultID'],
+      Map.from(activeResult)
+        ..[fActiveConfigurations] = ['another configuration'],
+    );
 
-    final changeAnotherConfiguration =
-        Map<String, dynamic>.from(landedCommitChange)
-          ..['configuration'] = 'another configuration';
+    final changeAnotherConfiguration = Map<String, dynamic>.from(
+      landedCommitChange,
+    )..['configuration'] = 'another configuration';
     await builderTest.storeChange(changeAnotherConfiguration);
     expect(builderTest.builder.success, true);
     expect(
-        builderTest.firestore.results['activeResultID'],
-        Map.from(activeResult)
-          ..remove(fActiveConfigurations)
-          ..remove(fActive));
+      builderTest.firestore.results['activeResultID'],
+      Map.from(activeResult)
+        ..remove(fActiveConfigurations)
+        ..remove(fActive),
+    );
     expect(builderTest.builder.countApprovalsCopied, 1);
     expect(builderTest.builder.countChanges, 2);
     expect(
-        builderTest.firestore.results[await builderTest.firestore.findResult(
-            landedCommitChange, landedCommitIndex, landedCommitIndex)],
-        landedResult);
+      builderTest.firestore.results[await builderTest.firestore.findResult(
+        landedCommitChange,
+        landedCommitIndex,
+        landedCommitIndex,
+      )],
+      landedResult,
+    );
     final result = (await builderTest.firestore.findActiveResults(
-            landedCommitChange['name'], landedCommitChange['configuration']))
-        .single;
+      landedCommitChange['name'],
+      landedCommitChange['configuration'],
+    )).single;
     expect(untagMap(result.fields), landedResult);
   });
 
@@ -82,14 +96,19 @@ void main() async {
     expect(flakyChange[fResult], 'flaky');
     expect(builderTest.builder.success, true);
     expect(
-        builderTest.firestore.results['activeResultID'],
-        Map.from(activeResult)
-          ..[fActiveConfigurations] = ['another configuration']);
+      builderTest.firestore.results['activeResultID'],
+      Map.from(activeResult)
+        ..[fActiveConfigurations] = ['another configuration'],
+    );
 
     expect(builderTest.builder.countChanges, 1);
     expect(
-        builderTest.firestore.results[await builderTest.firestore
-            .findResult(flakyChange, landedCommitIndex, landedCommitIndex)],
-        flakyResult);
+      builderTest.firestore.results[await builderTest.firestore.findResult(
+        flakyChange,
+        landedCommitIndex,
+        landedCommitIndex,
+      )],
+      flakyResult,
+    );
   });
 }

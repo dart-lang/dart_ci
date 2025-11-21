@@ -9,8 +9,8 @@ class SafeDocument {
   final Map<String, Value> fields;
 
   SafeDocument(Document document)
-      : name = document.name!,
-        fields = document.fields!;
+    : name = document.name!,
+      fields = document.fields!;
 
   Document toDocument() => Document(name: name, fields: fields);
   int? getInt(String name) {

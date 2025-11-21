@@ -46,7 +46,10 @@ class Build {
     await storeBuildCommitsInfo();
     log('update build info');
     if (!await firestore.updateBuildInfo(
-        info.builderName, info.buildNumber, endIndex)) {
+      info.builderName,
+      info.buildNumber,
+      endIndex,
+    )) {
       // This build's results have already been recorded.
       log('build already uploaded to database, exiting');
       // TODO(karlklose): add a flag to overwrite builder results.
@@ -61,7 +64,9 @@ class Build {
     try {
       status.unapprovedFailures = {
         for (final configuration in info.configurations)
-          configuration: await unapprovedFailuresForConfiguration(configuration)
+          configuration: await unapprovedFailuresForConfiguration(
+            configuration,
+          ),
       }..removeWhere((key, value) => value.isEmpty);
     } catch (e) {
       log('Failed to fetch unapproved failures: $e');
@@ -79,8 +84,8 @@ class Build {
       if (countApprovalsCopied > 0) ...[
         '$countApprovalsCopied approvals copied',
         ...approvalMessages,
-        if (countApprovalsCopied > 10) '...'
-      ]
+        if (countApprovalsCopied > 10) '...',
+      ],
     ];
     log(report.join('\n'));
     return status;
@@ -102,13 +107,16 @@ class Build {
     if (info.previousCommitHash == null) {
       startIndex = endIndex;
     } else {
-      final startCommit =
-          await commitsCache.getCommit(info.previousCommitHash!);
+      final startCommit = await commitsCache.getCommit(
+        info.previousCommitHash!,
+      );
       startIndex = startCommit.index + 1;
       if (startIndex > endIndex) {
-        throw ArgumentError('Results received with empty blamelist\n'
-            'previous commit: ${info.previousCommitHash}\n'
-            'built commit: ${info.commitRef}');
+        throw ArgumentError(
+          'Results received with empty blamelist\n'
+          'previous commit: ${info.previousCommitHash}\n'
+          'built commit: ${info.commitRef}',
+        );
       }
     }
   }
@@ -119,7 +127,7 @@ class Build {
     commits = [
       for (var index = startIndex; index < endIndex; ++index)
         await commitsCache.getCommitByIndex(index),
-      endCommit
+      endCommit,
     ];
     for (final commit in commits) {
       final index = commit.index;
@@ -128,12 +136,13 @@ class Build {
       if (review != null) {
         tryApprovals.addAll({
           for (final result in await firestore.tryApprovals(review))
-            testResult(result.fields): index
+            testResult(result.fields): index,
         });
       }
       if (reverted != null) {
-        allRevertedChanges
-            .add(await getRevertedChanges(reverted, index, firestore));
+        allRevertedChanges.add(
+          await getRevertedChanges(reverted, index, firestore),
+        );
       }
     }
   }
@@ -155,30 +164,43 @@ class Build {
     bool approved;
     var result = await firestore.findResult(change, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
-        change['name'], change['configuration']);
+      change['name'],
+      change['configuration'],
+    );
     if (result == null) {
-      final approvingIndex = tryApprovals[testResult(change)] ??
+      final approvingIndex =
+          tryApprovals[testResult(change)] ??
           allRevertedChanges
               .firstWhereOrNull(
-                  (revertedChange) => revertedChange.approveRevert(change))
+                (revertedChange) => revertedChange.approveRevert(change),
+              )
               ?.revertIndex;
       approved = approvingIndex != null;
-      final newResult = constructResult(change, startIndex, endIndex,
-          approved: approved,
-          landedReviewIndex: approvingIndex,
-          failure: failure);
+      final newResult = constructResult(
+        change,
+        startIndex,
+        endIndex,
+        approved: approved,
+        landedReviewIndex: approvingIndex,
+        failure: failure,
+      );
       await firestore.storeResult(newResult);
       if (approved) {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10) {
-          approvalMessages
-              .add('Copied approval of result ${testResult(change)}');
+          approvalMessages.add(
+            'Copied approval of result ${testResult(change)}',
+          );
         }
       }
     } else {
       approved = await firestore.updateResult(
-          result, change['configuration'], startIndex, endIndex,
-          failure: failure);
+        result,
+        change['configuration'],
+        startIndex,
+        endIndex,
+        failure: failure,
+      );
     }
     if (failure && !approved) success = false;
 
@@ -189,38 +211,52 @@ class Build {
                   .getList(fActiveConfigurations)
                   ?.contains(change['configuration']) ??
               false)) {
-        log('Unexpected active result when processing new change:\n'
-            'Active result: ${untagMap(activeResult.fields)}\n\n'
-            'Change: $change\n\n'
-            'approved: $approved');
+        log(
+          'Unexpected active result when processing new change:\n'
+          'Active result: ${untagMap(activeResult.fields)}\n\n'
+          'Change: $change\n\n'
+          'approved: $approved',
+        );
       }
       // Removes the configuration from the list of active configurations.
       await firestore.removeActiveConfiguration(
-          activeResult, change['configuration']);
+        activeResult,
+        change['configuration'],
+      );
     }
   }
 
   Future<List<SafeDocument>> unapprovedFailuresForConfiguration(
-      String configuration) async {
+    String configuration,
+  ) async {
     final failures = await firestore.findUnapprovedFailures(
-        configuration, BuildStatus.unapprovedFailuresLimit + 1);
+      configuration,
+      BuildStatus.unapprovedFailuresLimit + 1,
+    );
     await Future.forEach(failures, addBlamelistCommits);
     return failures;
   }
 
   Future<void> addBlamelistCommits(SafeDocument result) async {
-    final startCommit = await commitsCache
-        .getCommitByIndex(result.getInt(fBlamelistStartIndex)!);
+    final startCommit = await commitsCache.getCommitByIndex(
+      result.getInt(fBlamelistStartIndex)!,
+    );
     result.fields[fBlamelistStartCommit] = taggedValue(startCommit.hash);
-    final endCommit =
-        await commitsCache.getCommitByIndex(result.getInt(fBlamelistEndIndex)!);
+    final endCommit = await commitsCache.getCommitByIndex(
+      result.getInt(fBlamelistEndIndex)!,
+    );
     result.fields[fBlamelistEndCommit] = taggedValue(endCommit.hash);
   }
 }
 
 Map<String, dynamic> constructResult(
-    Map<String, dynamic> change, int startIndex, int endIndex,
-    {required bool approved, int? landedReviewIndex, required bool failure}) {
+  Map<String, dynamic> change,
+  int startIndex,
+  int endIndex, {
+  required bool approved,
+  int? landedReviewIndex,
+  required bool failure,
+}) {
   return {
     fName: change[fName],
     fResult: change[fResult],
@@ -232,6 +268,6 @@ Map<String, dynamic> constructResult(
     fConfigurations: <String>[change['configuration']],
     fApproved: approved,
     if (failure) fActive: true,
-    if (failure) fActiveConfigurations: <String>[change['configuration']]
+    if (failure) fActiveConfigurations: <String>[change['configuration']],
   };
 }

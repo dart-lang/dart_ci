@@ -23,13 +23,15 @@ import 'test_data.dart';
 void main() async {
   final baseClient = http.Client();
   final client = await clientViaApplicationDefaultCredentials(
-      scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-      baseClient: baseClient);
+    scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    baseClient: baseClient,
+  );
   final api = FirestoreApi(client);
   final firestore = FirestoreService(api, client);
   if (!firestore.isStaging) {
     throw (TestFailure(
-        'Error: firestore_test_nodejs.dart is being run on production'));
+      'Error: firestore_test_nodejs.dart is being run on production',
+    ));
   }
 
   const testDatabaseName =
@@ -39,7 +41,7 @@ void main() async {
       'firestore_test/Remove_active_configuration';
   final createdResult = {
     ...activeFailureResult,
-    'name': removeActiveConfigurationTestName
+    'name': removeActiveConfigurationTestName,
   };
 
   tearDownAll(() => baseClient.close());
@@ -54,19 +56,24 @@ void main() async {
     tearDown(() async {
       // Delete database records created by the tests.
       var snapshot = await firestore.query(
-          from: 'try_builds', where: fieldEquals('review', testReview));
+        from: 'try_builds',
+        where: fieldEquals('review', testReview),
+      );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name);
       }
 
       snapshot = await firestore.query(
-          from: 'patchsets', parent: 'reviews/$testReview/');
+        from: 'patchsets',
+        parent: 'reviews/$testReview/',
+      );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name);
       }
       snapshot = await firestore.query(
-          from: 'results',
-          where: fieldEquals('name', removeActiveConfigurationTestName));
+        from: 'results',
+        where: fieldEquals('name', removeActiveConfigurationTestName),
+      );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name);
       }
@@ -79,23 +86,33 @@ void main() async {
       final createdResultDocument = await firestore.storeResult(createdResult);
       final name = removeActiveConfigurationTestName;
 
-      var foundActiveResults =
-          await firestore.findActiveResults(name, testConfiguration);
+      var foundActiveResults = await firestore.findActiveResults(
+        name,
+        testConfiguration,
+      );
       var activeResult = foundActiveResults.single;
       expect(createdResultDocument.name, activeResult.name);
 
       await firestore.removeActiveConfiguration(
-          activeResult, testConfiguration);
-      foundActiveResults =
-          await firestore.findActiveResults(name, testConfiguration);
+        activeResult,
+        testConfiguration,
+      );
+      foundActiveResults = await firestore.findActiveResults(
+        name,
+        testConfiguration,
+      );
       expect(foundActiveResults, isEmpty);
-      foundActiveResults =
-          await firestore.findActiveResults(name, 'configuration 2');
+      foundActiveResults = await firestore.findActiveResults(
+        name,
+        'configuration 2',
+      );
       activeResult = foundActiveResults.single;
 
       expect(activeResult.fields, contains('active'));
       await firestore.removeActiveConfiguration(
-          activeResult, 'configuration 2');
+        activeResult,
+        'configuration 2',
+      );
       final document = await firestore.getDocument(createdResultDocument.name!);
       expect(document.fields, isNot(contains('active')));
       expect(document.fields, isNot(contains('active_configurations')));
@@ -104,10 +121,9 @@ void main() async {
 
     test('approved try result fetching', () async {
       await firestore.storeReview(
-          testReview.toString(),
-          taggedMap({
-            'subject': 'test review: approved try result fetching',
-          }));
+        testReview.toString(),
+        taggedMap({'subject': 'test review: approved try result fetching'}),
+      );
       await firestore.storePatchset(
         testReview.toString(),
         1,
@@ -152,12 +168,13 @@ void main() async {
       await firestore.storeTryChange(tryResult, testReview, 3);
       // Set the results on patchsets 1 and 2 to approved.
       final snapshot = await firestore.query(
-          from: 'try_results',
-          where: compositeFilter([
-            fieldEquals('approved', false),
-            fieldEquals('review', testReview),
-            fieldLessThanOrEqual('patchset', 2)
-          ]));
+        from: 'try_results',
+        where: compositeFilter([
+          fieldEquals('approved', false),
+          fieldEquals('review', testReview),
+          fieldLessThanOrEqual('patchset', 2),
+        ]),
+      );
       for (final response in snapshot) {
         await firestore.approveResult(response.toDocument());
         //await firestore.updateDocument(response.document.name, {'approved': taggedValue(true)});

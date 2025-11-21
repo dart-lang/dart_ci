@@ -15,16 +15,24 @@ import 'package:glob/glob.dart';
 
 void main(List<String> args) async {
   final parser = ArgParser();
-  parser.addMultiOption('builder',
-      abbr: 'b',
-      help: 'Select the builders matching the glob [option is repeatable]',
-      splitCommas: false);
-  parser.addOption('branch',
-      abbr: 'B',
-      help: 'Select the builders building this branch',
-      defaultsTo: 'main');
-  parser.addOption('count',
-      abbr: 'c', help: 'List this many commits', defaultsTo: '1');
+  parser.addMultiOption(
+    'builder',
+    abbr: 'b',
+    help: 'Select the builders matching the glob [option is repeatable]',
+    splitCommas: false,
+  );
+  parser.addOption(
+    'branch',
+    abbr: 'B',
+    help: 'Select the builders building this branch',
+    defaultsTo: 'main',
+  );
+  parser.addOption(
+    'count',
+    abbr: 'c',
+    help: 'List this many commits',
+    defaultsTo: '1',
+  );
   parser.addFlag('help', help: 'Show the program usage.', negatable: false);
 
   final options = parser.parse(args);
@@ -41,21 +49,24 @@ ${parser.usage}''');
 
   int count = int.parse(options['count']);
   final globs = List<Glob>.from(
-      options['builder'].map((String pattern) => Glob(pattern)));
+    options['builder'].map((String pattern) => Glob(pattern)),
+  );
 
   // Download the most recent builds from buildbucket.
   const maxBuilds = 1000;
-  final url = Uri.parse('https://cr-buildbucket.appspot.com'
-      '/prpc/buildbucket.v2.Builds/SearchBuilds');
+  final url = Uri.parse(
+    'https://cr-buildbucket.appspot.com'
+    '/prpc/buildbucket.v2.Builds/SearchBuilds',
+  );
   const maxRetries = 3;
   const timeout = Duration(seconds: 30);
   final query = jsonEncode({
     'predicate': {
       'builder': {'project': 'dart', 'bucket': 'ci.sandbox'},
-      'status': 'ENDED_MASK'
+      'status': 'ENDED_MASK',
     },
     'pageSize': maxBuilds,
-    'fields': 'builds.*.builder.builder,builds.*.input'
+    'fields': 'builds.*.builder.builder,builds.*.input',
   });
   late Map<String, dynamic> searchResult;
   for (int i = 1; i <= maxRetries; i++) {
@@ -67,16 +78,21 @@ ${parser.usage}''');
         ..write(query);
       final response = await request.close().timeout(timeout);
       if (response.statusCode != 200) {
-        print('Failed to search for builds: '
-            '${response.statusCode}:${response.reasonPhrase}');
+        print(
+          'Failed to search for builds: '
+          '${response.statusCode}:${response.reasonPhrase}',
+        );
         exit(1);
       }
       const prefix = ")]}'";
       searchResult = await (response
           .cast<List<int>>()
           .transform(Utf8Decoder())
-          .map((event) =>
-              event.startsWith(prefix) ? event.substring(prefix.length) : event)
+          .map(
+            (event) => event.startsWith(prefix)
+                ? event.substring(prefix.length)
+                : event,
+          )
           .transform(JsonDecoder())
           .cast<Map<String, dynamic>>()
           .first
@@ -86,7 +102,8 @@ ${parser.usage}''');
     } on TimeoutException catch (e) {
       final inSeconds = e.duration?.inSeconds;
       stderr.writeln(
-          'Attempt $i of $maxRetries timed out after $inSeconds seconds');
+        'Attempt $i of $maxRetries timed out after $inSeconds seconds',
+      );
       if (i == maxRetries) {
         stderr.writeln('error: Failed to download $url');
         exit(1);
@@ -131,8 +148,10 @@ ${parser.usage}''');
       continue;
     }
     final commit = input['id'] as String;
-    final buildersForCommit =
-        buildersForCommits.putIfAbsent(commit, () => <String>{});
+    final buildersForCommit = buildersForCommits.putIfAbsent(
+      commit,
+      () => <String>{},
+    );
     buildersForCommit.add(builder);
   }
 
@@ -148,9 +167,10 @@ ${parser.usage}''');
   }
 
   // List commits run on the most builders.
-  for (final commit in buildersForCommits.keys
-      .where((commit) => buildersForCommits[commit]!.length == maxBots)
-      .take(count)) {
+  for (final commit
+      in buildersForCommits.keys
+          .where((commit) => buildersForCommits[commit]!.length == maxBots)
+          .take(count)) {
     print(commit);
   }
 }

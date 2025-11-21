@@ -12,11 +12,7 @@ class GerritInfo {
   static const gerritUrl = 'https://dart-review.googlesource.com/changes';
   static const gerritQuery =
       'o=ALL_REVISIONS&o=DETAILED_ACCOUNTS&o=CURRENT_COMMIT';
-  static const trivialKinds = {
-    'TRIVIAL_REBASE',
-    'NO_CHANGE',
-    'NO_CODE_CHANGE',
-  };
+  static const trivialKinds = {'TRIVIAL_REBASE', 'NO_CHANGE', 'NO_CODE_CHANGE'};
   static const prefix = ")]}'\n";
 
   final http.Client httpClient;
@@ -25,8 +21,8 @@ class GerritInfo {
   final String patchset;
 
   GerritInfo(int review, int patchset, this.firestore, this.httpClient)
-      : review = review.toString(),
-        patchset = patchset.toString();
+    : review = review.toString(),
+      patchset = patchset.toString();
 
   /// Fetches the owner, changeId, message, and date of a Gerrit change and
   /// stores them in the databases.
@@ -39,13 +35,14 @@ class GerritInfo {
     if (!protectedJson.startsWith(prefix)) {
       throw Exception('Gerrit response missing prefix $prefix: $protectedJson');
     }
-    final reviewInfo = jsonDecode(protectedJson.substring(prefix.length))
-        as Map<String, dynamic>;
+    final reviewInfo =
+        jsonDecode(protectedJson.substring(prefix.length))
+            as Map<String, dynamic>;
     final reverted = revert(reviewInfo);
     if (!(await firestore.hasReview(review))) {
       await firestore.storeReview(review, {
         'subject': taggedValue(reviewInfo['subject']),
-        if (reverted != null) 'revert_of': taggedValue(reverted)
+        if (reverted != null) 'revert_of': taggedValue(reverted),
       });
     }
     // Add the patchset information to the patchsets subcollection.
@@ -57,16 +54,24 @@ class GerritInfo {
       if (!trivialKinds.contains(revision['kind'])) {
         patchsetGroupFirst = number;
       }
-      await firestore.storePatchset(review, number, revision['kind'],
-          revision['description'], patchsetGroupFirst, number);
+      await firestore.storePatchset(
+        review,
+        number,
+        revision['kind'],
+        revision['description'],
+        patchsetGroupFirst,
+        number,
+      );
     }
   }
 
   static String? revert(Map<String, dynamic> reviewInfo) {
     final current = reviewInfo['current_revision'];
     final commit = reviewInfo['revisions'][current]['commit'];
-    final regExp =
-        RegExp('^This reverts commit ([\\da-f]+)\\.\$', multiLine: true);
+    final regExp = RegExp(
+      '^This reverts commit ([\\da-f]+)\\.\$',
+      multiLine: true,
+    );
     return regExp.firstMatch(commit['message'])?.group(1);
   }
 }

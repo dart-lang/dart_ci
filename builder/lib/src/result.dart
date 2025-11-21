@@ -69,11 +69,11 @@ String? fromStringOrValue(dynamic value) {
 }
 
 String testResult(Map<String, dynamic> change) => [
-      fromStringOrValue(change[fName]),
-      fromStringOrValue(change[fResult]),
-      fromStringOrValue(change[fPreviousResult]),
-      fromStringOrValue(change[fExpected])
-    ].join(' ');
+  fromStringOrValue(change[fName]),
+  fromStringOrValue(change[fResult]),
+  fromStringOrValue(change[fPreviousResult]),
+  fromStringOrValue(change[fExpected]),
+].join(' ');
 
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results
@@ -87,20 +87,26 @@ class BuildInfo {
   final Set<String> configurations;
 
   BuildInfo(Map<String, dynamic> result, this.configurations)
-      : builderName = result[fBuilderName],
-        buildNumber = int.parse(result[fBuildNumber]),
-        commitRef = result[fCommitHash],
-        previousCommitHash = result[fPreviousCommitHash];
+    : builderName = result[fBuilderName],
+      buildNumber = int.parse(result[fBuildNumber]),
+      commitRef = result[fCommitHash],
+      previousCommitHash = result[fPreviousCommitHash];
 
   factory BuildInfo.fromResult(
-      Map<String, dynamic> result, Set<String> configurations) {
+    Map<String, dynamic> result,
+    Set<String> configurations,
+  ) {
     final commitRef = result[fCommitHash];
     final match = commitRefRegExp.matchAsPrefix(commitRef);
     if (match == null) {
       return BuildInfo(result, configurations);
     } else {
       return TryBuildInfo(
-          result, configurations, int.parse(match[1]!), int.parse(match[2]!));
+        result,
+        configurations,
+        int.parse(match[1]!),
+        int.parse(match[2]!),
+      );
     }
   }
 }
@@ -109,16 +115,16 @@ class TryBuildInfo extends BuildInfo {
   final int review;
   final int patchset;
 
-  TryBuildInfo(Map<String, dynamic> result, Set<String> configurations,
-      this.review, this.patchset)
-      : super(result, configurations);
+  TryBuildInfo(super.result, super.configurations, this.review, this.patchset);
 }
 
 class TestNameLock {
   final locks = <String, Future<void>>{};
 
-  Future<void> guardedCall(Future<void> Function(Map<String, dynamic> change) f,
-      Map<String, dynamic> change) async {
+  Future<void> guardedCall(
+    Future<void> Function(Map<String, dynamic> change) f,
+    Map<String, dynamic> change,
+  ) async {
     final name = change[fName]!;
     while (locks.containsKey(name)) {
       await locks[name];

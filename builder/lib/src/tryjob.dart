@@ -43,18 +43,18 @@ class ChangeCounter {
   }
 
   List<String> report() => [
-        if (changes > 0) 'Stored $changes changes',
-        if (hasTruncatedChanges) 'Did not store all results. Truncating.',
-        if (hasTooManyPassingChanges)
-          'Only $maxReportedSuccesses new passes stored',
-        if (hasTooManyFailingChanges)
-          'Only $maxReportedFailures new failures stored',
-        if (unapprovedFailures > 0)
-          '$unapprovedFailures unapproved failing tests found',
-        if (failures > 0) '$failures failing tests found',
-        if (passes > 0) '$passes passing tests found',
-        if (newFlakes > 0) '$newFlakes new flaky tests found',
-      ];
+    if (changes > 0) 'Stored $changes changes',
+    if (hasTruncatedChanges) 'Did not store all results. Truncating.',
+    if (hasTooManyPassingChanges)
+      'Only $maxReportedSuccesses new passes stored',
+    if (hasTooManyFailingChanges)
+      'Only $maxReportedFailures new failures stored',
+    if (unapprovedFailures > 0)
+      '$unapprovedFailures unapproved failing tests found',
+    if (failures > 0) '$failures failing tests found',
+    if (passes > 0) '$passes passing tests found',
+    if (newFlakes > 0) '$newFlakes new flaky tests found',
+  ];
 }
 
 class Tryjob {
@@ -70,14 +70,24 @@ class Tryjob {
   Map<String, SafeDocument> lastLandedResultByName = {};
   final String buildbucketID;
 
-  Tryjob(this.info, this.buildbucketID, this.baseRevision, this.commits,
-      this.firestore, this.httpClient);
+  Tryjob(
+    this.info,
+    this.buildbucketID,
+    this.baseRevision,
+    this.commits,
+    this.firestore,
+    this.httpClient,
+  );
 
   void log(String string) => firestore.log(string);
 
   Future<void> update() async {
-    await GerritInfo(info.review, info.patchset, firestore, httpClient)
-        .update();
+    await GerritInfo(
+      info.review,
+      info.patchset,
+      firestore,
+      httpClient,
+    ).update();
   }
 
   bool isNotLandedResult(Map<String, dynamic> change) {
@@ -89,18 +99,21 @@ class Tryjob {
     await update();
     log('storing ${results.length} change(s)');
     final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
-        results, (result) => result['configuration']);
+      results,
+      (result) => result['configuration'],
+    );
 
     for (final configuration in resultsByConfiguration.keys) {
       if (info.previousCommitHash != null) {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.getString(fName): result
+          for (final result in landedResults) result.getString(fName): result,
         };
       }
-      final changes =
-          resultsByConfiguration[configuration]!.where(isNotLandedResult);
+      final changes = resultsByConfiguration[configuration]!.where(
+        isNotLandedResult,
+      );
       await Pool(30).forEach(changes, guardedStoreChange).drain();
     }
 
@@ -108,7 +121,11 @@ class Tryjob {
       success = false;
     }
     await firestore.recordTryBuild(
-        info, buildbucketID, success, counter.hasTruncatedChanges);
+      info,
+      buildbucketID,
+      success,
+      counter.hasTruncatedChanges,
+    );
     final status = BuildStatus()
       ..success = success
       ..truncatedResults = counter.hasTruncatedChanges;
@@ -131,8 +148,11 @@ class Tryjob {
     transformChange(change);
     counter.count(change);
     if (counter.isNotReported(change)) return;
-    final approved =
-        await firestore.storeTryChange(change, info.review, info.patchset);
+    final approved = await firestore.storeTryChange(
+      change,
+      info.review,
+      info.patchset,
+    );
     if (!approved && isFailure(change)) {
       counter.unapprovedFailures++;
       success = false;
@@ -143,20 +163,24 @@ class Tryjob {
     final resultsBase = await commits.getCommit(info.previousCommitHash!);
     final rebaseBase = await commits.getCommit(baseRevision);
     if (resultsBase.index > rebaseBase.index) {
-      print('Try build is rebased on $baseRevision, which is before '
-          'the commit ${info.previousCommitHash} with CI comparison results');
+      print(
+        'Try build is rebased on $baseRevision, which is before '
+        'the commit ${info.previousCommitHash} with CI comparison results',
+      );
       return [];
     }
     final reviews = [
-      for (var index = resultsBase.index + 1;
-          index <= rebaseBase.index;
-          ++index)
-        (await commits.getCommitByIndex(index)).review
+      for (
+        var index = resultsBase.index + 1;
+        index <= rebaseBase.index;
+        ++index
+      )
+        (await commits.getCommitByIndex(index)).review,
     ];
     return [
       for (final landedReview in reviews)
         if (landedReview != null)
-          ...await firestore.tryResults(landedReview, configuration)
+          ...await firestore.tryResults(landedReview, configuration),
     ];
   }
 }
