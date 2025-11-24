@@ -23,18 +23,28 @@ import 'package:provider/provider.dart';
 
 import 'routing_test.mocks.dart';
 
-class FakeQueryResults extends TryQueryResults {
-  FakeQueryResults({
-    super.cl = 0,
-    super.patchset = 0,
-    required super.filter,
-    super.resultsService,
-  });
+mixin FakeCreateResultsStreamMixin on QueryResultsBase {
+  bool createResultsStreamCalled = false;
 
   @override
   Stream<Iterable<(ChangeInResult, Result)>> createResultsStream() async* {
+    createResultsStreamCalled = true;
     yield [];
   }
+}
+
+class FakeQueryResults extends QueryResults with FakeCreateResultsStreamMixin {
+  FakeQueryResults(super.filter);
+}
+
+class FakeTryQueryResults extends TryQueryResults
+    with FakeCreateResultsStreamMixin {
+  FakeTryQueryResults({
+    required super.cl,
+    required super.patchset,
+    required super.filter,
+    super.resultsService,
+  });
 }
 
 @GenerateNiceMocks([
@@ -45,7 +55,8 @@ class FakeQueryResults extends TryQueryResults {
 void main() {
   late MockAuthService mockAuthService;
   late GoRouter router;
-  late TryQueryResults queryResults;
+  late FakeQueryResults queryResults;
+  late FakeTryQueryResults tryQueryResults;
   late MockResultsService mockResultsService;
 
   setUp(() {
@@ -56,17 +67,16 @@ void main() {
     );
     router = createRouter(
       queryResultsProvider: (filter) => queryResults = FakeQueryResults(
-        filter: filter,
-        resultsService: mockResultsService,
+        filter,
       ),
       tryQueryResultsProvider:
           ({required cl, required patchset, required filter}) =>
-              queryResults = FakeQueryResults(
-                cl: cl,
-                patchset: patchset,
-                filter: filter,
-                resultsService: mockResultsService,
-              ),
+              tryQueryResults = FakeTryQueryResults(
+        cl: cl,
+        patchset: patchset,
+        filter: filter,
+        resultsService: mockResultsService,
+      ),
     );
   });
 
@@ -92,6 +102,7 @@ void main() {
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(0));
     expect(find.byType(Instructions), findsNothing);
+    expect(queryResults.createResultsStreamCalled, isTrue);
   });
 
   testWidgets('Routing works for flaky parameter', (WidgetTester tester) async {
@@ -104,6 +115,7 @@ void main() {
     expect(resultsScreen.filter.terms, isEmpty);
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(1));
+    expect(queryResults.createResultsStreamCalled, isFalse);
   });
 
   testWidgets('Routing works for showAll parameter', (
@@ -118,6 +130,7 @@ void main() {
     expect(resultsScreen.filter.terms, isEmpty);
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(2));
+    expect(queryResults.createResultsStreamCalled, isFalse);
   });
 
   testWidgets('Routing works for combined parameters', (
@@ -132,6 +145,7 @@ void main() {
     expect(resultsScreen.filter.terms, equals(['test-filter']));
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(2));
+    expect(queryResults.createResultsStreamCalled, isTrue);
   });
 
   testWidgets('Routing works for default route', (WidgetTester tester) async {
@@ -145,6 +159,7 @@ void main() {
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(0));
     expect(find.byType(Instructions), findsOneWidget);
+    expect(queryResults.createResultsStreamCalled, isFalse);
   });
 
   testWidgets('Routing works for cl route', (WidgetTester tester) async {
@@ -155,9 +170,10 @@ void main() {
 
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(0));
-    expect(queryResults.cl, equals(1234));
-    expect(queryResults.patchset, equals(5));
-    expect(queryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.cl, equals(1234));
+    expect(tryQueryResults.patchset, equals(5));
+    expect(tryQueryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.createResultsStreamCalled, isTrue);
   });
 
   testWidgets('Routing works for cl route with filter', (
@@ -170,9 +186,10 @@ void main() {
 
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(0));
-    expect(queryResults.cl, equals(1234));
-    expect(queryResults.patchset, equals(5));
-    expect(queryResults.filter.terms, equals(['my-filter']));
+    expect(tryQueryResults.cl, equals(1234));
+    expect(tryQueryResults.patchset, equals(5));
+    expect(tryQueryResults.filter.terms, equals(['my-filter']));
+    expect(tryQueryResults.createResultsStreamCalled, isTrue);
   });
 
   testWidgets('Routing works for cl route with flaky', (
@@ -185,9 +202,10 @@ void main() {
 
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(1));
-    expect(queryResults.cl, equals(1234));
-    expect(queryResults.patchset, equals(5));
-    expect(queryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.cl, equals(1234));
+    expect(tryQueryResults.patchset, equals(5));
+    expect(tryQueryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.createResultsStreamCalled, isTrue);
   });
 
   testWidgets('Routing works for cl route with showAll', (
@@ -200,8 +218,9 @@ void main() {
 
     final tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.controller?.index, equals(2));
-    expect(queryResults.cl, equals(1234));
-    expect(queryResults.patchset, equals(5));
-    expect(queryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.cl, equals(1234));
+    expect(tryQueryResults.patchset, equals(5));
+    expect(tryQueryResults.filter.terms, isEmpty);
+    expect(tryQueryResults.createResultsStreamCalled, isTrue);
   });
 }

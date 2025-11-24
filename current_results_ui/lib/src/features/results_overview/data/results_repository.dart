@@ -34,10 +34,9 @@ abstract class QueryResultsBase extends ChangeNotifier {
 
   QueryResultsBase(
     this._filter, {
-    bool fetchInitialResults = false,
     this.supportsEmptyQuery = false,
   }) {
-    if (fetchInitialResults) {
+    if (_filter.terms.isNotEmpty || supportsEmptyQuery) {
       _fetchResults();
     }
   }
