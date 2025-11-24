@@ -66,17 +66,15 @@ void main() {
       (_) async => Review(id: '123', subject: 'Test Subject', patchsets: []),
     );
     router = createRouter(
-      queryResultsProvider: (filter) => queryResults = FakeQueryResults(
-        filter,
-      ),
+      queryResultsProvider: (filter) => queryResults = FakeQueryResults(filter),
       tryQueryResultsProvider:
           ({required cl, required patchset, required filter}) =>
               tryQueryResults = FakeTryQueryResults(
-        cl: cl,
-        patchset: patchset,
-        filter: filter,
-        resultsService: mockResultsService,
-      ),
+                cl: cl,
+                patchset: patchset,
+                filter: filter,
+                resultsService: mockResultsService,
+              ),
     );
   });
 

@@ -20,8 +20,8 @@ class TryQueryResults extends QueryResultsBase {
     required this.patchset,
     required Filter filter,
     ResultsService? resultsService,
-  })  : _resultsService = resultsService ?? ResultsService(),
-        super(filter, supportsEmptyQuery: true);
+  }) : _resultsService = resultsService ?? ResultsService(),
+       super(filter, supportsEmptyQuery: true);
 
   @override
   Stream<Iterable<(ChangeInResult, Result)>> createResultsStream() async* {
