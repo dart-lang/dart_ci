@@ -32,12 +32,8 @@ abstract class QueryResultsBase extends ChangeNotifier {
   Counts resultCounts = Counts();
   int fetchedResultsCount = 0;
 
-  QueryResultsBase(
-    this._filter, {
-    bool fetchInitialResults = false,
-    this.supportsEmptyQuery = false,
-  }) {
-    if (fetchInitialResults) {
+  QueryResultsBase(this._filter, {this.supportsEmptyQuery = false}) {
+    if (_filter.terms.isNotEmpty || supportsEmptyQuery) {
       _fetchResults();
     }
   }
