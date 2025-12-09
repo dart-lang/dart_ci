@@ -19,6 +19,8 @@ This project uses `build_runner` to generate mock files for testing. To generate
 dart run build_runner build --delete-conflicting-outputs
 ```
 
+This project also depends on generated protobuf code. For instructions on how to regenerate these files, see the [current_results README](../current_results/README.md).
+
 ### Code Formatting
 
 To ensure consistent code style, format the code using the following command:
