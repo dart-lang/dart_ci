@@ -1,7 +1,19 @@
 steps:
 - name: gcr.io/dart_ci/flutter:master
-  dir: current_results_ui
-  args: ['build', 'web', '--wasm']
+  entrypoint: /bin/bash
+  args:
+  - -c
+  - |
+    # Generate protobufs
+    cd current_results
+    apt-get update && apt-get install -y protobuf-compiler
+    dart pub global activate protoc_plugin
+    export PATH=$PATH:$HOME/.pub-cache/bin
+    ./tools/generate_protogen.sh
+
+    # Build app
+    cd ../current_results_ui
+    flutter build web --wasm
 - name: gcr.io/dart_ci/firebase
   dir: current_results_ui
   args: ['deploy', '--project=dart-ci', '--only=hosting:current-results']
