@@ -49,7 +49,8 @@ jobs:
 
       - run: dart pub global activate protoc_plugin
 
-      - run: ../current_results/tools/generate_protogen.sh
+      - run: ./tools/generate_protogen.sh
+        working-directory: current_results
 
       - name: Generate files
         run: flutter pub run build_runner build --delete-conflicting-outputs
