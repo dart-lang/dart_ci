@@ -35,7 +35,7 @@ jobs:
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
         with:
           path: "~/.pub-cache/hosted"
-          key: "${{ matrix.os }}-${{ matrix.sdk }}"
+          key: "${{ matrix.os }}-${{ matrix.flutterSdk }}"
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.flutterSdk }}
@@ -43,6 +43,13 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       - run: flutter pub get
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@c65c819552d16ad3c9b72d9dfd5ba5237b9c906b
+
+      - run: dart pub global activate protoc_plugin
+
+      - run: ../current_results/tools/generate_protogen.sh
 
       - name: Generate files
         run: flutter pub run build_runner build --delete-conflicting-outputs
