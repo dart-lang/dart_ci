@@ -49,9 +49,9 @@ jobs:
 
       - run: dart format --output=none --set-exit-if-changed .
 
-      - run: dart run build_runner:build_runner build
+      - run: dart run build_runner build
 
       - run: dart analyze --fatal-infos
 
       # TODO: Write tests
-      # - run: dart run build_runner:build_runner test -- -p chrome
+      # - run: dart run build_runner test -- -p chrome

@@ -53,7 +53,7 @@ jobs:
         working-directory: current_results
 
       - name: Generate files
-        run: dart run build_runner:build_runner build --delete-conflicting-outputs
+        run: dart run build_runner build --delete-conflicting-outputs
 
       - run: flutter analyze --fatal-infos
 
