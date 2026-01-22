@@ -20,7 +20,7 @@ import 'page_objects/app_po.dart';
 import 'page_objects/blamelist_po.dart';
 import 'page_objects/commit_po.dart';
 
-// pub run build_runner test --fail-on-severe -- -p chrome comments_test.dart
+// dart run build_runner test --fail-on-severe -- -p chrome comments_test.dart
 
 const int neededCommits = 3;
 

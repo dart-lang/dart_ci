@@ -22,4 +22,4 @@ Local builds can be run with
 ## Testing
 Run tests (one at a time only) with the commands
 
-    pub run build_runner test --fail-on-severe -- -p chrome
+    dart run build_runner test --fail-on-severe -- -p chrome

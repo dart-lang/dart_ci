@@ -49,8 +49,8 @@ jobs:
 
       - run: dart format --output=none --set-exit-if-changed .
 
-      - run: dart pub run build_runner build
+      - run: dart run build_runner build
 
       - run: dart analyze --fatal-infos
 
-      - run: dart pub run build_runner test -- -p chrome -x requires_auth
+      - run: dart run build_runner test -- -p chrome -x requires_auth

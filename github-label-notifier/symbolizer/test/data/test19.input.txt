@@ -1,7 +1,7 @@
 @flutter-symbolizer-bot flutter#bbc0161 profile
 
 tdout:            11-09 15:27:57.618 D/ActivityManager( 1462): cleanUpApplicationRecord -- 14311
-2020-11-09T15:32:20.230036: stdout: [  +19 ms] executing: /home/flutter/.cocoon/flutter/bin/cache/dart-sdk/bin/dart pub run test test_driver/multi_widget_construction_perf_test.dart -rexpanded
+2020-11-09T15:32:20.230036: stdout: [  +19 ms] executing: /home/flutter/.cocoon/flutter/bin/cache/dart-sdk/bin/dart run test test_driver/multi_widget_construction_perf_test.dart -rexpanded
 2020-11-09T15:32:33.378428: stdout: [+13148 ms] 00:00 �[32m+0�[0m: multi_widget_construction_perf�[0m
 2020-11-09T15:32:33.409464: stderr: [  +31 ms] VMServiceFlutterDriver: Connecting to Flutter application at http://127.0.0.1:35015/D39pZt4yXxM=/
 2020-11-09T15:32:33.554340: stderr: [ +144 ms] VMServiceFlutterDriver: Isolate found with number: 3413807003351991

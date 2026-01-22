@@ -15,6 +15,6 @@ export SENDGRID_MOCK_SERVER=localhost:8151
 export GITHUB_SECRET=a_fake_github_secret_value
 export SENDGRID_SECRET=fake_SG.I9JN-n6oQb-X686126S.qJasdasdasda_lyadasd
 
-pub run build_runner build --output=build
+dart run build_runner build --output=build
 
 firebase emulators:start --project github-label-notifier

@@ -20,7 +20,7 @@ import 'try_results_sample_data.dart';
 import 'page_objects/results_panel_po.dart';
 import 'page_objects/try_results_po.dart';
 
-// pub run build_runner test --fail-on-severe -- -p chrome comments_test.dart
+// dart run build_runner test --fail-on-severe -- -p chrome comments_test.dart
 
 @GenerateInjector([
   ClassProvider(FirestoreService, useClass: TestingFirestoreService),
