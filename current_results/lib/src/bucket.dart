@@ -6,8 +6,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
+import 'package:logging/logging.dart';
 
 /// Fetches la(st )test results from the dart-test-results GCS bucket.
+final _log = Logger('bucket');
+
 class ResultsBucket {
   final Bucket _bucket;
 
@@ -52,9 +55,8 @@ class ResultsBucket {
           .transform(LineSplitter())
           .toList();
       return results;
-    } catch (e) {
-      print('Error reading results from $configurationDirectory:');
-      print(e);
+    } catch (e, st) {
+      _log.severe('Error reading results from $configurationDirectory', e, st);
       return [];
     }
   }

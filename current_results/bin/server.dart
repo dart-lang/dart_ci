@@ -9,12 +9,18 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:grpc/grpc.dart';
 import 'package:pool/pool.dart';
 
+import 'package:logging/logging.dart';
+
 import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/logger.dart';
+
+final _log = Logger('server');
 
 void main() async {
+  setupLogging();
   final client = await clientViaApplicationDefaultCredentials(
     scopes: ['https://www.googleapis.com/auth/devstorage.read_only'],
   );
@@ -32,7 +38,7 @@ Future<void> startServer(int port, ResultsBucket bucket) async {
     services: [QueryService(current, notifications, bucket)],
   );
   await grpcServer.serve(port: port);
-  print('Grpc serving on port ${grpcServer.port}');
+  _log.info('Grpc serving on port ${grpcServer.port}');
 }
 
 Future<Slice> loadData(ResultsBucket bucket) async {
@@ -50,7 +56,11 @@ Future<Slice> loadData(ResultsBucket bucket) async {
         result.add(results);
       }
     } catch (e, stack) {
-      print('Error loading configuration $configurationDirectory: $e\n$stack');
+      _log.severe(
+        'Error loading configuration $configurationDirectory',
+        e,
+        stack,
+      );
     }
   }).drain<void>();
   return result;
