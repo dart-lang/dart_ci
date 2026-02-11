@@ -35,4 +35,4 @@ gcloud compute ssh current-results-server --zone=us-central1-a \
   --command="docker kill current-results; docker rm current-results; docker pull gcr.io/$PROJECT/current_results"
 
 gcloud compute ssh current-results-server --zone=us-central1-a \
-  --command="docker run -d --security-opt seccomp=unconfined --log-driver=gcplogs --net=bridge_net --publish=8080:8080 --name=current-results gcr.io/$PROJECT/current_results"
+  --command="docker run -d --security-opt seccomp=unconfined --net=bridge_net --publish=8080:8080 --name=current-results gcr.io/$PROJECT/current_results"

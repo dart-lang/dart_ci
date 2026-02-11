@@ -16,6 +16,7 @@ dependencies:
   pool: ^1.5.1
   protobuf: ^6.0.0
   shelf: ^1.4.0
+  stack_trace: ^1.12.1
 
 dev_dependencies:
   lints: ^6.0.0

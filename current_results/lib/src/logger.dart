@@ -1,45 +1,54 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:stack_trace/stack_trace.dart';
 
 void setupLogging() {
   Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((LogRecord record) {
-    final entry = <String, dynamic>{
-      'severity': _logLevelToGcpSeverity(record.level),
-      'message': record.message,
+  Logger.root.onRecord.listen((record) {
+    final level = switch (record.level) {
+      Level.SHOUT => 'EMERGENCY',
+      Level.SEVERE => 'ERROR',
+      Level.WARNING => 'WARNING',
+      Level.INFO => 'INFO',
+      Level.CONFIG => 'DEBUG',
+      _ => 'DEFAULT',
     };
 
+    var message = record.message;
+
     if (record.loggerName.isNotEmpty) {
-      entry['logger'] = record.loggerName;
+      message = '${record.loggerName}: $message';
     }
 
-    if (record.error != null) {
-      entry['@type'] =
-          'type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent';
-      final errorMessage = record.error.toString();
-      final stackTrace = record.stackTrace?.toString() ?? '';
-
-      var fullMessage = record.message;
-      if (errorMessage.isNotEmpty) {
-        fullMessage += '\n$errorMessage';
-      }
-      if (stackTrace.isNotEmpty) {
-        fullMessage += '\n$stackTrace';
-      }
-      entry['message'] = fullMessage.trim();
+    void addBlock(String header, String body) {
+      body = body.replaceAll('\n', '\n    ');
+      message = '$message\n\n$header:\n    $body';
     }
 
-    stdout.writeln(jsonEncode(entry));
+    final error = record.error;
+    if (error != null) addBlock('Error', '$error');
+    var stackTrace = record.stackTrace;
+    if (stackTrace is Chain) {
+      stackTrace = stackTrace.terse;
+    }
+    if (stackTrace != null) {
+      addBlock('Stack', '$stackTrace');
+    }
+
+    // Truncated messages over 64kb
+    if (message.length > 64 * 1024) {
+      message =
+          '${message.substring(0, 32 * 1024)}...\n[truncated due to size]\n...'
+          '${message.substring(message.length - 16 * 1024)}';
+    }
+
+    print(
+      jsonEncode({
+        'severity': level,
+        'message': message,
+        'time': record.time.toUtc().toIso8601String(),
+      }),
+    );
   });
-}
-
-String _logLevelToGcpSeverity(Level level) {
-  if (level >= Level.SHOUT) return 'EMERGENCY';
-  if (level >= Level.SEVERE) return 'ERROR';
-  if (level >= Level.WARNING) return 'WARNING';
-  if (level >= Level.INFO) return 'INFO';
-  if (level >= Level.CONFIG) return 'DEBUG';
-  return 'DEFAULT';
 }
