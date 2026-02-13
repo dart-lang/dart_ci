@@ -3,7 +3,7 @@ description: Cache and serve the most recent test results from Dart CI.
 publish_to: none
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.10.0
 
 dependencies:
   args: ^2.4.2
@@ -12,9 +12,11 @@ dependencies:
   gcloud: ^0.9.0
   googleapis_auth: ^2.0.0
   grpc: ^5.0.0
+  logging: ^1.3.0
   pool: ^1.5.1
   protobuf: ^6.0.0
   shelf: ^1.4.0
+  stack_trace: ^1.12.1
 
 dev_dependencies:
   lints: ^6.0.0

@@ -32,7 +32,7 @@ gcloud compute project-info add-metadata \
 
 gcloud compute instances create current-results-server \
   --image-project cos-cloud --image-family=cos-117-lts --machine-type=e2-small \
-  --zone us-central1-a
+  --zone us-central1-a --metadata google-logging-enabled=true
 
 # This command requires the organization policy
 # constraints/compute.vmCanIpForward

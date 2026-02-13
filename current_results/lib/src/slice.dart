@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 
 import 'package:current_results/src/result.dart';
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
@@ -54,6 +55,8 @@ Iterable<Result> getResultRange(
 /// Answers queries about the test results.
 /// Used for holding the current test results in memory.
 /// Can also be used to hold a snapshot of results data at a past time.
+final _log = Logger('slice');
+
 class Slice {
   /// The current results, stored separately for each configuration in a
   /// list sorted by test name.
@@ -87,7 +90,7 @@ class Slice {
       if (configuration == null) {
         configuration = result.configuration;
       } else if (result.configuration != configuration) {
-        print(
+        _log.warning(
           'Loaded results list with multiple configurations: '
           'first result ${results.first}',
         );
@@ -105,7 +108,7 @@ class Slice {
     _lastFetched[configuration] = DateTime.now();
     _size += sorted.length;
 
-    print(
+    _log.info(
       'latest results of $configuration: ${sorted.length} results '
       '(total: $_size)',
     );
