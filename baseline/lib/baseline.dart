@@ -108,11 +108,11 @@ Future<void> baselineBuilder(
 }
 
 Future<String> read(String url) {
-  return run('gsutil', ['cp', url, '-']);
+  return run('gcloud', ['storage', 'cp', url, '-']);
 }
 
 Future<String> write(String url, String stdin, bool dryRun) {
-  return run('gsutil', ['cp', '-', url], stdin: stdin, dryRun: dryRun);
+  return run('gcloud', ['storage', 'cp', '-', url], stdin: stdin, dryRun: dryRun);
 }
 
 Future<String> run(String command, List<String> arguments,
