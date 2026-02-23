@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 const _builders = ['-ba1,a2', '-tb'];
 
-main() {
+void main() {
   for (var channels in [
     ['main'],
     ['dev', 'beta'],

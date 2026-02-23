@@ -33,7 +33,7 @@ List<String> _readTestData(String path) {
   return LineSplitter.split(File(path).readAsStringSync()).toList();
 }
 
-main() {
+void main() {
   test('run', () async {
     var out = await run('echo', ['hellø!']);
     expect(out, 'hellø!\n');
