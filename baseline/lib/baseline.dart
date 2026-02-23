@@ -112,10 +112,7 @@ Future<String> read(String url) {
 }
 
 Future<String> write(String url, String stdin, bool dryRun) {
-  return run(
-    'gcloud',
-    ['storage', 'cp', '-', url],
-    stdin: stdin,
+  return run('gcloud', ['storage', 'cp', '-', url], stdin: stdin,
     dryRun: dryRun,
   );
 }
