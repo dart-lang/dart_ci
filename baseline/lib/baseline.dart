@@ -12,58 +12,64 @@ const _resultBase = 'gs://dart-test-results';
 
 /// Baselines a builder with the [options] and copies the results to the
 /// [resultBase]. [resultBase] can be a URL or a path supported by `gsutil cp`.
-Future<void> baseline(BaselineOptions options,
-    [String resultBase = _resultBase]) async {
+Future<void> baseline(
+  BaselineOptions options, [
+  String resultBase = _resultBase,
+]) async {
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
         // baseline a new builder on main
         // builder,builder2 -> new-builder
         baselineBuilder(
-            options.builders,
-            channel,
-            options.suites,
-            options.target,
-            options.configs,
-            options.dryRun,
-            options.mapping,
-            resultBase)
+          options.builders,
+          channel,
+          options.suites,
+          options.target,
+          options.configs,
+          options.dryRun,
+          options.mapping,
+          resultBase,
+        )
       else if (options.builders.contains(options.target))
         // baseline a builder on a channel with main builder data
         // builder,builder2 -> builder-dev
         baselineBuilder(
-            options.builders,
-            channel,
-            options.suites,
-            '${options.target}-$channel',
-            options.configs,
-            options.dryRun,
-            options.mapping,
-            resultBase)
+          options.builders,
+          channel,
+          options.suites,
+          '${options.target}-$channel',
+          options.configs,
+          options.dryRun,
+          options.mapping,
+          resultBase,
+        )
       else
         // baseline a builder on a channel with channel builder data
         // builder-dev,builder2-dev -> new-builder-dev
         baselineBuilder(
-            options.builders.map((b) => '$b-$channel').toList(),
-            channel,
-            options.suites,
-            '${options.target}-$channel',
-            options.configs,
-            options.dryRun,
-            options.mapping,
-            resultBase)
+          options.builders.map((b) => '$b-$channel').toList(),
+          channel,
+          options.suites,
+          '${options.target}-$channel',
+          options.configs,
+          options.dryRun,
+          options.mapping,
+          resultBase,
+        ),
   ]);
 }
 
 Future<void> baselineBuilder(
-    List<String> builders,
-    String channel,
-    Set<String> suites,
-    String target,
-    Map<String, List<String>> configs,
-    bool dryRun,
-    ConfigurationMapping mapping,
-    String resultBase) async {
+  List<String> builders,
+  String channel,
+  Set<String> suites,
+  String target,
+  Map<String, List<String>> configs,
+  bool dryRun,
+  ConfigurationMapping mapping,
+  String resultBase,
+) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
     var latest = await read('$resultBase/builders/$builder/latest');
     return await read('$resultBase/builders/$builder/$latest/results.json');
@@ -71,9 +77,9 @@ Future<void> baselineBuilder(
   var modifiedResults = StringBuffer();
   var modifiedResultsPerConfig = <String, StringBuffer>{};
   await for (var results in resultsStream) {
-    for (var json in LineSplitter.split(results)
-        .map(jsonDecode)
-        .cast<Map<String, dynamic>>()) {
+    for (var json in LineSplitter.split(
+      results,
+    ).map(jsonDecode).cast<Map<String, dynamic>>()) {
       var configurations = mapping(json['configuration'], configs);
       if (configurations == null) {
         continue;
@@ -96,13 +102,17 @@ Future<void> baselineBuilder(
       if (dryRun) break;
     }
   }
-  await write('$resultBase/builders/$target/0/results.json',
-      modifiedResults.toString(), dryRun);
+  await write(
+    '$resultBase/builders/$target/0/results.json',
+    modifiedResults.toString(),
+    dryRun,
+  );
   for (var entry in modifiedResultsPerConfig.entries) {
     await write(
-        '$resultBase/configuration/$channel/${entry.key}/0/results.json',
-        entry.value.toString(),
-        dryRun);
+      '$resultBase/configuration/$channel/${entry.key}/0/results.json',
+      entry.value.toString(),
+      dryRun,
+    );
   }
   await write('$resultBase/builders/$target/latest', '0', dryRun);
 }
@@ -115,8 +125,12 @@ Future<String> write(String url, String stdin, bool dryRun) {
   return run('gsutil', ['cp', '-', url], stdin: stdin, dryRun: dryRun);
 }
 
-Future<String> run(String command, List<String> arguments,
-    {String? stdin, bool dryRun = false}) async {
+Future<String> run(
+  String command,
+  List<String> arguments, {
+  String? stdin,
+  bool dryRun = false,
+}) async {
   print('Running $command $arguments...');
   if (dryRun) {
     if (stdin != null) {
