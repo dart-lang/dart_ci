@@ -11,6 +11,7 @@ import 'dart:io';
 
 import 'package:dart_ci/src/test_source.dart' show computeTestSource;
 import 'package:http/http.dart' as http;
+import 'package:test/test.dart';
 
 const revision = '245705e23c9ec290b10cbb981c1941d7e600b00c';
 
@@ -18,30 +19,32 @@ const revision = '245705e23c9ec290b10cbb981c1941d7e600b00c';
 // test run much slower.
 const verifyTargetExists = false;
 
-main() async {
+void main() {
   for (final name in testData.keys) {
     for (final useGob in [true, false]) {
-      final expected = testData[name]![useGob.toString()];
-      if (!testData[name]!.keys.toSet().containsAll(["true", "false"])) {
-        throw 'Invalid test data for $name/$useGob';
-      }
-      String? actual;
-      Uri? url;
-      try {
-        url = await computeTestSource(revision, name, useGob);
-        actual = url?.toString();
-      } catch (e) {
-        actual = "error: $e";
-      }
-      if (expected != actual) {
-        throw Exception("Expected \n'$expected', found\n'$actual'\n");
-      }
-      if (verifyTargetExists && url != null) {
-        final response = await http.head(url);
-        if (response.statusCode != HttpStatus.ok) {
-          throw Exception("Can't find target: $url");
+      test('$name (gob: $useGob)', () async {
+        final expected = testData[name]![useGob.toString()];
+        if (!testData[name]!.keys.toSet().containsAll(["true", "false"])) {
+          fail('Invalid test data for $name/$useGob');
         }
-      }
+        String? actual;
+        Uri? url;
+        try {
+          url = await computeTestSource(revision, name, useGob);
+          actual = url?.toString();
+        } catch (e) {
+          actual = "error: $e";
+        }
+        expect(actual, expected);
+        if (verifyTargetExists && url != null) {
+          final response = await http.head(url);
+          expect(
+            response.statusCode,
+            HttpStatus.ok,
+            reason: "Can't find target: $url",
+          );
+        }
+      });
     }
   }
 }
@@ -54,385 +57,384 @@ const testData = {
     "true":
         "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Abstract_Instance_Members/inherited_t01.dart",
     "false":
-        "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Abstract_Instance_Members/inherited_t01.dart"
+        "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Abstract_Instance_Members/inherited_t01.dart",
   },
-  "co19/Language/Classes/Class_Member_Conflicts/static_member_and_constructor_t01/01":
-      {
+  "co19/Language/Classes/Class_Member_Conflicts/static_member_and_constructor_t01/01": {
     "true":
         "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Class_Member_Conflicts/static_member_and_constructor_t01.dart",
     "false":
-        "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Class_Member_Conflicts/static_member_and_constructor_t01.dart"
+        "https://github.com/dart-lang/co19/blob/055b5c984613ec1b8ef76516db3ea99fee63acb9/Language/Classes/Class_Member_Conflicts/static_member_and_constructor_t01.dart",
   },
   "co19_2/Language/Classes/Abstract_Instance_Members/inherited_t01": {
     "true":
         "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/inherited_t01.dart",
     "false":
-        "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/inherited_t01.dart"
+        "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/inherited_t01.dart",
   },
   "co19_2/Language/Classes/Abstract_Instance_Members/invocation_t01/01": {
     "true":
         "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/invocation_t01.dart",
     "false":
-        "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/invocation_t01.dart"
+        "https://github.com/dart-lang/co19/blob/f7f583366396cb1457e58c9bfb6d6e53dc21d741/Language/Classes/Abstract_Instance_Members/invocation_t01.dart",
   },
   "corelib/apply2_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart",
   },
   "corelib/apply2_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/apply2_test.dart",
   },
   "corelib/bigint_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/bigint_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/bigint_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib/bigint_test.dart",
   },
   "corelib_2/apply2_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart",
   },
   "corelib_2/apply2_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/apply2_test.dart",
   },
   "corelib_2/bigint_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/bigint_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/bigint_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/corelib_2/bigint_test.dart",
   },
   "dartdevc/assertion_failure_message_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc/assertion_failure_message_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc/assertion_failure_message_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc/assertion_failure_message_test.dart",
   },
   "dartdevc_2/assertion_failure_message_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc_2/assertion_failure_message_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc_2/assertion_failure_message_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/dartdevc_2/assertion_failure_message_test.dart",
   },
   "ffi/aliasing_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/aliasing_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/aliasing_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/aliasing_test.dart",
   },
   "ffi/function_callbacks_many_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/function_callbacks_many_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/function_callbacks_many_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/function_callbacks_many_test.dart",
   },
   "ffi/vmspecific_function_callbacks_exit_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/vmspecific_function_callbacks_exit_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/vmspecific_function_callbacks_exit_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi/vmspecific_function_callbacks_exit_test.dart",
   },
   "ffi_2/aliasing_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/aliasing_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/aliasing_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/aliasing_test.dart",
   },
   "ffi_2/function_callbacks_many_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/function_callbacks_many_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/function_callbacks_many_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/function_callbacks_many_test.dart",
   },
   "ffi_2/vmspecific_function_callbacks_exit_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/vmspecific_function_callbacks_exit_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/vmspecific_function_callbacks_exit_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/ffi_2/vmspecific_function_callbacks_exit_test.dart",
   },
   "ffi_unit/arm64_android/NativeCallingConvention_floatx10": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/compiler/ffi",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/compiler/ffi"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/compiler/ffi",
   },
   "flutter_frontend/examples/hello_world/test/hello_test.dart": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart",
   },
   "flutter_frontend/packages/flutter_test/test/accessibility_test.dart": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/frontend_server/test/frontend_server_flutter_suite.dart",
   },
   "language/abstract/beats_arguments_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/abstract/beats_arguments_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/abstract/beats_arguments_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/abstract/beats_arguments_test.dart",
   },
   "language/assert/with_type_test_or_cast_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/assert/with_type_test_or_cast_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/assert/with_type_test_or_cast_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/assert/with_type_test_or_cast_test.dart",
   },
   "language/generic/function_bounds_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/generic/function_bounds_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/generic/function_bounds_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language/generic/function_bounds_test.dart",
   },
   "language_2/abstract/beats_arguments_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/abstract/beats_arguments_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/abstract/beats_arguments_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/abstract/beats_arguments_test.dart",
   },
   "language_2/assert/with_type_test_or_cast_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/assert/with_type_test_or_cast_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/assert/with_type_test_or_cast_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/assert/with_type_test_or_cast_test.dart",
   },
   "language_2/generic/function_bounds_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/generic/function_bounds_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/generic/function_bounds_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/language_2/generic/function_bounds_test.dart",
   },
   "lib/async/async_await_sync_completer_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/async_await_sync_completer_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/async_await_sync_completer_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/async_await_sync_completer_test.dart",
   },
   "lib/async/future_or_only_in_async_test/00": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/future_or_only_in_async_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/future_or_only_in_async_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/async/future_or_only_in_async_test.dart",
   },
   "lib/isolate/compile_time_error_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/isolate/compile_time_error_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/isolate/compile_time_error_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib/isolate/compile_time_error_test.dart",
   },
   "lib_2/async/async_await_sync_completer_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/async_await_sync_completer_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/async_await_sync_completer_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/async_await_sync_completer_test.dart",
   },
   "lib_2/async/future_or_only_in_async_test/00": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/future_or_only_in_async_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/future_or_only_in_async_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/async/future_or_only_in_async_test.dart",
   },
   "lib_2/isolate/compile_time_error_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/isolate/compile_time_error_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/isolate/compile_time_error_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/lib_2/isolate/compile_time_error_test.dart",
   },
   "observatory_ui/app_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/observatory_ui/app_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/observatory_ui/app_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/observatory_ui/app_test.dart",
   },
   "observatory_ui_2/app_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/observatory_ui_2/app_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/observatory_ui_2/app_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/observatory_ui_2/app_test.dart",
   },
   "pkg/_fe_analyzer_shared/test/annotated_code_helper_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/_fe_analyzer_shared/test/annotated_code_helper_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/_fe_analyzer_shared/test/annotated_code_helper_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/_fe_analyzer_shared/test/annotated_code_helper_test.dart",
   },
   "pkg/compiler/test/async_await/async_await_js_transform_test/01": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/compiler/test/async_await/async_await_js_transform_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/compiler/test/async_await/async_await_js_transform_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/compiler/test/async_await/async_await_js_transform_test.dart",
   },
   "pkg/front_end/test/analyser_ignored/load_dill_twice_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/analyser_ignored/load_dill_twice_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/analyser_ignored/load_dill_twice_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/analyser_ignored/load_dill_twice_test.dart",
   },
   "pkg/front_end/test/fasta/expression/class_capture.expression": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/unit_test_suites.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/unit_test_suites.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/pkg/front_end/test/unit_test_suites.dart",
   },
   "pkg_tested/dart_style/test/command_line_test": {
     "true":
         "https://dart.googlesource.com/dart_style/+/f17c23e0eea9a870601c19d904e2a9c1a7c81470/test/command_line_test.dart",
     "false":
-        "https://dart.googlesource.com/dart_style/+/f17c23e0eea9a870601c19d904e2a9c1a7c81470/test/command_line_test.dart"
+        "https://dart.googlesource.com/dart_style/+/f17c23e0eea9a870601c19d904e2a9c1a7c81470/test/command_line_test.dart",
   },
   "pkg_tested/http_io/test/http_100_continue_test": {
     "true":
         "https://dart.googlesource.com/http_io/+/2fa188caf7937e313026557713f7feffedd4978b/test/http_100_continue_test.dart",
     "false":
-        "https://dart.googlesource.com/http_io/+/2fa188caf7937e313026557713f7feffedd4978b/test/http_100_continue_test.dart"
+        "https://dart.googlesource.com/http_io/+/2fa188caf7937e313026557713f7feffedd4978b/test/http_100_continue_test.dart",
   },
   "pkg_tested/package_config/test/discovery_test": {
     "true":
         "https://dart.googlesource.com/package_config/+/a84c0d45401f215fbe9384df923a38f4022a3c45/test/discovery_test.dart",
     "false":
-        "https://dart.googlesource.com/package_config/+/a84c0d45401f215fbe9384df923a38f4022a3c45/test/discovery_test.dart"
+        "https://dart.googlesource.com/package_config/+/a84c0d45401f215fbe9384df923a38f4022a3c45/test/discovery_test.dart",
   },
   "samples/ffi/async/async_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/samples/ffi/async/async_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/samples/ffi/async/async_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/samples/ffi/async/async_test.dart",
   },
   "samples_2/ffi/async/async_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/samples_2/ffi/async/async_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/samples_2/ffi/async/async_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/samples_2/ffi/async/async_test.dart",
   },
   "service/add_breakpoint_rpc_kernel_test/dds": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/add_breakpoint_rpc_kernel_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/add_breakpoint_rpc_kernel_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/add_breakpoint_rpc_kernel_test.dart",
   },
   "service/evaluate_activation_test/instance/dds": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/evaluate_activation_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/evaluate_activation_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory/tests/service/evaluate_activation_test.dart",
   },
   "service_2/add_breakpoint_rpc_kernel_test/dds": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/add_breakpoint_rpc_kernel_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/add_breakpoint_rpc_kernel_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/add_breakpoint_rpc_kernel_test.dart",
   },
   "service_2/evaluate_activation_test/instance/dds": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/evaluate_activation_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/evaluate_activation_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/observatory_2/tests/service_2/evaluate_activation_test.dart",
   },
   "standalone/array_bounds_check_generalization_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/array_bounds_check_generalization_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/array_bounds_check_generalization_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/array_bounds_check_generalization_test.dart",
   },
   "standalone/deny_listed_test/01": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/deny_listed_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/deny_listed_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/deny_listed_test.dart",
   },
   "standalone/io/dart_std_io_pipe_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/io/dart_std_io_pipe_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/io/dart_std_io_pipe_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone/io/dart_std_io_pipe_test.dart",
   },
   "standalone_2/array_bounds_check_generalization_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/array_bounds_check_generalization_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/array_bounds_check_generalization_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/array_bounds_check_generalization_test.dart",
   },
   "standalone_2/deny_listed_test/01": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/deny_listed_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/deny_listed_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/deny_listed_test.dart",
   },
   "standalone_2/io/dart_std_io_pipe_test/01/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/io/dart_std_io_pipe_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/io/dart_std_io_pipe_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/standalone_2/io/dart_std_io_pipe_test.dart",
   },
   "tests/modular/constant_with_mixin": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/modular/constant_with_mixin",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/modular/constant_with_mixin"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/modular/constant_with_mixin",
   },
   "vm/cc/AddASRNegReg": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/vm/",
   },
   "vm/dart/appjit_cha_deopt_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/appjit_cha_deopt_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/appjit_cha_deopt_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/appjit_cha_deopt_test.dart",
   },
   "vm/dart/async_igoto_threshold_flag_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/async_igoto_threshold_flag_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/async_igoto_threshold_flag_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart/async_igoto_threshold_flag_test.dart",
   },
   "vm/dart_2/appjit_cha_deopt_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/appjit_cha_deopt_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/appjit_cha_deopt_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/appjit_cha_deopt_test.dart",
   },
   "vm/dart_2/async_igoto_threshold_flag_test/0": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/async_igoto_threshold_flag_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/async_igoto_threshold_flag_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/runtime/tests/vm/dart_2/async_igoto_threshold_flag_test.dart",
   },
   "web/10216a_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/10216a_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/10216a_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/10216a_test.dart",
   },
   "web/23486_test/01": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/23486_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/23486_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web/23486_test.dart",
   },
   "web_2/10216a_test": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/10216a_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/10216a_test.dart"
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/10216a_test.dart",
   },
   "web_2/23486_test/01": {
     "true":
         "https://dart.googlesource.com/sdk/+/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/23486_test.dart",
     "false":
-        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/23486_test.dart"
-  }
+        "https://github.com/dart-lang/sdk/blob/245705e23c9ec290b10cbb981c1941d7e600b00c/tests/web_2/23486_test.dart",
+  },
 };

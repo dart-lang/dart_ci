@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// Resolves the source of a test for a given revision of the SDK.
+library;
 
 import 'dart:async' show Future;
 import 'dart:convert' show base64Decode, jsonDecode;
@@ -16,7 +17,7 @@ final testDirectories = {
   "samples": "samples",
   "samples_2": "samples_2",
   "service": "runtime/observatory/tests/service",
-  "service_2": "runtime/observatory_2/tests/service_2"
+  "service_2": "runtime/observatory_2/tests/service_2",
 };
 
 const customTestRunnerSuites = {
@@ -61,7 +62,10 @@ String? findBaseName(String suite, Iterable<String> nameParts) {
 }
 
 Future<Uri?> guessFileName(
-    String suite, Uri testDirectory, Iterable<String> parts) async {
+  String suite,
+  Uri testDirectory,
+  Iterable<String> parts,
+) async {
   final baseName = findBaseName(suite, parts);
   if (baseName != null) {
     return testDirectory.resolve('$baseName.dart');
@@ -80,7 +84,11 @@ bool isFrontEndUnitTestSuiteTest(String testName) {
 }
 
 Future<Uri?> findTestFile(
-    String testName, Uri root, String suite, Iterable<String> testParts) async {
+  String testName,
+  Uri root,
+  String suite,
+  Iterable<String> testParts,
+) async {
   if (isCo19(suite)) {
     return await guessFileName(suite, root, testParts);
   } else if (isExternalPackage(suite)) {
@@ -97,8 +105,11 @@ Future<Uri?> findTestFile(
       // custom test runner.
       return root.resolve('pkg/front_end/test/unit_test_suites.dart');
     } else {
-      final fileName =
-          await guessFileName(suite, root.resolve('pkg/'), testParts);
+      final fileName = await guessFileName(
+        suite,
+        root.resolve('pkg/'),
+        testParts,
+      );
       return fileName;
     }
   } else if (testName.startsWith('tests/modular')) {
@@ -111,7 +122,10 @@ Future<Uri?> findTestFile(
     return root.resolve('runtime/vm/');
   } else if (testName.startsWith('vm/dart')) {
     return await guessFileName(
-        suite, root.resolve('runtime/tests/vm/'), testParts);
+      suite,
+      root.resolve('runtime/tests/vm/'),
+      testParts,
+    );
   } else {
     // By default, map the path to the tests directory.
     return await guessFileName(suite, root.resolve('tests/$suite/'), testParts);
@@ -128,11 +142,14 @@ bool isExternalPackage(String suite) {
 
 Future<String> findDepsRevision(String revision, String package) async {
   final url = Uri.parse(
-      'https://dart.googlesource.com/sdk/+/$revision/DEPS?format=TEXT');
+    'https://dart.googlesource.com/sdk/+/$revision/DEPS?format=TEXT',
+  );
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
-    throw Exception("Unable to download DEPS for revision '$revision'"
-        "at $url");
+    throw Exception(
+      "Unable to download DEPS for revision '$revision'"
+      "at $url",
+    );
   }
   final body = String.fromCharCodes(base64Decode(response.body));
   final match = RegExp('"${package}_rev": "(.*)",').firstMatch(body);
@@ -145,8 +162,10 @@ Future<String> findDepsRevision(String revision, String package) async {
 const gerritDataHeader = ")]}'";
 
 Future<String> getPatchsetRevision(int review, int patchset) async {
-  final url = Uri.parse('https://dart-review.googlesource.com/'
-      'changes/$review/revisions/$patchset/commit');
+  final url = Uri.parse(
+    'https://dart-review.googlesource.com/'
+    'changes/$review/revisions/$patchset/commit',
+  );
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
     throw Exception("Can't find revision for cl/$review/$patchset");
@@ -160,7 +179,10 @@ Future<String> getPatchsetRevision(int review, int patchset) async {
 }
 
 Future<Uri?> computeTestSource(
-    String revision, String testName, bool useGob) async {
+  String revision,
+  String testName,
+  bool useGob,
+) async {
   final splitName = testName.split('/');
   var parts = splitName.skip(1);
   final suite = splitName.first;

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// Displays the log for a failing test on a given runner and build
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -26,12 +27,18 @@ Future<String> getCloudFile(String bucket, String path) async {
   final client = http.Client();
   try {
     final api = storage.StorageApi(client);
-    final media = await api.objects
-        .get(bucket, path, downloadOptions: DownloadOptions.fullMedia) as Media;
+    final media =
+        await api.objects.get(
+              bucket,
+              path,
+              downloadOptions: DownloadOptions.fullMedia,
+            )
+            as Media;
     return await utf8.decodeStream(media.stream);
   } catch (e) {
     throw UserVisibleFailure(
-        'Failure when fetching $path from $bucket in cloud storage');
+      'Failure when fetching $path from $bucket in cloud storage',
+    );
   } finally {
     client.close();
   }
@@ -45,21 +52,28 @@ Future<String> getLatestConfigurationBuildNumber(String configuration) =>
 
 /// Fetches a log or logs and formats them for output.
 Future<String?> getLog(
-    String builder, String build, String configuration, String test) async {
+  String builder,
+  String build,
+  String configuration,
+  String test,
+) async {
   final safeRegExp = RegExp('^[-\\w]*\$');
   final digitsRegExp = RegExp('^\\d*\$');
   if (!safeRegExp.hasMatch(builder)) {
     throw UserVisibleFailure(
-        "Builder name $builder contains illegal characters");
+      "Builder name $builder contains illegal characters",
+    );
   }
   if (builder == 'any') {
     if (configuration.endsWith('*')) {
       throw UserVisibleFailure(
-          'Wildcard not allowed in configuration with builder "any"');
+        'Wildcard not allowed in configuration with builder "any"',
+      );
     }
     if (!safeRegExp.hasMatch(configuration)) {
       throw UserVisibleFailure(
-          'Configuration name $configuration contains illegal characters');
+        'Configuration name $configuration contains illegal characters',
+      );
     }
   }
   if (!digitsRegExp.hasMatch(build)) {
@@ -75,8 +89,8 @@ Future<String?> getLog(
       .where((line) => line.isNotEmpty)
       .map(jsonDecode)
       .cast<Map<String, dynamic>>();
-  bool Function(Map<String, dynamic>) testFilter =
-      (Map<String, dynamic> log) => log['name'] == test;
+  bool Function(Map<String, dynamic>) testFilter = (Map<String, dynamic> log) =>
+      log['name'] == test;
   if (test.endsWith('*')) {
     final prefix = test.substring(0, test.length - 1);
     testFilter = (Map<String, dynamic> log) => log['name'].startsWith(prefix);
@@ -85,8 +99,8 @@ Future<String?> getLog(
       (Map<String, dynamic> log) => log['configuration'] == configuration;
   if (configuration.endsWith('*')) {
     final prefix = configuration.substring(0, configuration.length - 1);
-    configurationFilter =
-        (Map<String, dynamic> log) => log['configuration'].startsWith(prefix);
+    configurationFilter = (Map<String, dynamic> log) =>
+        log['configuration'].startsWith(prefix);
   }
   var result = logs
       .where((log) => testFilter(log) && configurationFilter(log))

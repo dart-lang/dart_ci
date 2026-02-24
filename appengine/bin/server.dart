@@ -4,6 +4,7 @@
 
 /// Serves the log over HTTP for a failing test on a given runner and build,
 /// and redirects to the source code of a test for a given revision.
+library;
 
 import 'dart:async';
 import 'dart:io';
@@ -13,7 +14,8 @@ import 'package:dart_ci/src/test_source.dart'
     show computeTestSource, getPatchsetRevision;
 
 void main() async {
-  final server = await HttpServer.bind(InternetAddress.anyIPv4, 8080);
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
+  final server = await HttpServer.bind(InternetAddress.anyIPv4, port);
   server.listen(dispatchingServer);
   print("Server started at ip:port ${server.address}:${server.port}");
 }
@@ -22,10 +24,14 @@ Future<void> dispatchingServer(HttpRequest request) async {
   try {
     if (request.headers['X-Forwarded-Proto']?.first == 'http') {
       return redirectPermanent(
-          request, request.requestedUri.replace(scheme: 'https').toString());
+        request,
+        request.requestedUri.replace(scheme: 'https').toString(),
+      );
     }
-    request.response.headers
-        .add('Strict-Transport-Security', 'max-age=31536000; preload');
+    request.response.headers.add(
+      'Strict-Transport-Security',
+      'max-age=31536000; preload',
+    );
     final path = request.uri.path;
     if (path.startsWith('/log/')) {
       await serveLog(request);
@@ -100,12 +106,16 @@ Future<void> serveLog(HttpRequest request) async {
         ? await getLatestConfigurationBuildNumber(configuration)
         : await getLatestBuildNumber(builder);
     return redirectTemporary(
-        request, '/log/$builder/$configuration/$actualBuild/$test');
+      request,
+      '/log/$builder/$configuration/$actualBuild/$test',
+    );
   }
   final log = await getLog(builder, build, configuration, test);
   if (log == null) {
-    throw UserVisibleFailure('No logs found for test $test on build $build of '
-        'builder $builder, configuration $configuration');
+    throw UserVisibleFailure(
+      'No logs found for test $test on build $build of '
+      'builder $builder, configuration $configuration',
+    );
   }
   final response = request.response;
   response.headers.contentType = ContentType.text;
@@ -131,10 +141,13 @@ Future<void> redirectToTest(HttpRequest request) async {
     if (source != null) {
       return redirectTemporary(request, source.toString());
     } else {
-      return notFound(request,
-          message: "No rules found that match test name '$testName'."
-              " If you think that this test name should work, please send a"
-              " message to dart-engprod@.");
+      return notFound(
+        request,
+        message:
+            "No rules found that match test name '$testName'."
+            " If you think that this test name should work, please send a"
+            " message to dart-engprod@.",
+      );
     }
   } catch (e) {
     throw UserVisibleFailure(e.toString());
