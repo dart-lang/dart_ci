@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 const _builders = ['-ba1,a2', '-tb'];
 
-main() {
+void main() {
   for (var channels in [
     ['main'],
     ['dev', 'beta'],
@@ -35,7 +35,7 @@ main() {
     var options = BaselineOptions.parse(['-mc:d,e:f', ..._builders]);
     expect(options.configs, {
       'c': ['d'],
-      'e': ['f']
+      'e': ['f'],
     });
     expect(options.mapping, ConfigurationMapping.strict);
   });
@@ -43,7 +43,7 @@ main() {
   test('config-mapping-multiple', () {
     var options = BaselineOptions.parse(['-ma:b,a:c', ..._builders]);
     expect(options.configs, {
-      'a': ['b', 'c']
+      'a': ['b', 'c'],
     });
     expect(options.mapping, ConfigurationMapping.strict);
   });
@@ -76,40 +76,46 @@ main() {
 
   test('mapping: strict', () {
     expect(
-        ConfigurationMapping.strict('foo', {
-          'foo': ['bar']
-        }),
-        ['bar']);
+      ConfigurationMapping.strict('foo', {
+        'foo': ['bar'],
+      }),
+      ['bar'],
+    );
     expect(
-        () => ConfigurationMapping.strict('oof', {
-              'foo': ['bar']
-            }),
-        throwsException);
+      () => ConfigurationMapping.strict('oof', {
+        'foo': ['bar'],
+      }),
+      throwsException,
+    );
   });
 
   test('mapping: relaxed', () {
     expect(
-        ConfigurationMapping.relaxed('foo', {
-          'foo': ['bar']
-        }),
-        ['bar']);
+      ConfigurationMapping.relaxed('foo', {
+        'foo': ['bar'],
+      }),
+      ['bar'],
+    );
     expect(
-        ConfigurationMapping.relaxed('oof', {
-          'foo': ['bar']
-        }),
-        null);
+      ConfigurationMapping.relaxed('oof', {
+        'foo': ['bar'],
+      }),
+      null,
+    );
   });
 
   test('mapping: none', () {
     expect(
-        ConfigurationMapping.none('foo', {
-          'foo': ['bar']
-        }),
-        ['foo']);
+      ConfigurationMapping.none('foo', {
+        'foo': ['bar'],
+      }),
+      ['foo'],
+    );
     expect(
-        ConfigurationMapping.none('oof', {
-          'foo': ['bar']
-        }),
-        ['oof']);
+      ConfigurationMapping.none('oof', {
+        'foo': ['bar'],
+      }),
+      ['oof'],
+    );
   });
 }

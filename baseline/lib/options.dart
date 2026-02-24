@@ -15,40 +15,68 @@ class BaselineOptions {
   final Set<String> suites;
   final String target;
 
-  BaselineOptions(this.builders, this.configs, this.dryRun, this.channels,
-      this.mapping, this.suites, this.target);
+  BaselineOptions(
+    this.builders,
+    this.configs,
+    this.dryRun,
+    this.channels,
+    this.mapping,
+    this.suites,
+    this.target,
+  );
 
   factory BaselineOptions.parse(List<String> arguments) {
     var parser = ArgParser();
-    parser.addMultiOption('channel',
-        abbr: 'c',
-        allowed: ['main', 'dev', 'beta', 'stable'],
-        defaultsTo: ['main'],
-        help: 'a comma separated list of channels');
-    parser.addMultiOption('config-mapping',
-        abbr: 'm',
-        defaultsTo: ['*'],
-        help: 'a comma separated list of configuration mappings in the form:'
-            '<old1>:<new1>,<old2>:<new2>');
-    parser.addMultiOption('builders',
-        abbr: 'b',
-        help: 'a comma separated list of builders to read result data from');
-    parser.addMultiOption('suites',
-        abbr: 's', help: 'a comma separated list of test suites to include');
-    parser.addOption('target',
-        abbr: 't', help: 'a the name of the builder to baseline');
-    parser.addFlag('dry-run',
-        abbr: 'n',
-        defaultsTo: false,
-        help: 'prevents writes and only processes a single result',
-        negatable: false);
-    parser.addFlag('ignore-unmapped',
-        abbr: 'u',
-        defaultsTo: false,
-        help: 'ignore tests in unmapped configurations',
-        negatable: false);
-    parser.addFlag('help',
-        abbr: 'h', negatable: false, help: 'prints this message');
+    parser.addMultiOption(
+      'channel',
+      abbr: 'c',
+      allowed: ['main', 'dev', 'beta', 'stable'],
+      defaultsTo: ['main'],
+      help: 'a comma separated list of channels',
+    );
+    parser.addMultiOption(
+      'config-mapping',
+      abbr: 'm',
+      defaultsTo: ['*'],
+      help:
+          'a comma separated list of configuration mappings in the form:'
+          '<old1>:<new1>,<old2>:<new2>',
+    );
+    parser.addMultiOption(
+      'builders',
+      abbr: 'b',
+      help: 'a comma separated list of builders to read result data from',
+    );
+    parser.addMultiOption(
+      'suites',
+      abbr: 's',
+      help: 'a comma separated list of test suites to include',
+    );
+    parser.addOption(
+      'target',
+      abbr: 't',
+      help: 'a the name of the builder to baseline',
+    );
+    parser.addFlag(
+      'dry-run',
+      abbr: 'n',
+      defaultsTo: false,
+      help: 'prevents writes and only processes a single result',
+      negatable: false,
+    );
+    parser.addFlag(
+      'ignore-unmapped',
+      abbr: 'u',
+      defaultsTo: false,
+      help: 'ignore tests in unmapped configurations',
+      negatable: false,
+    );
+    parser.addFlag(
+      'help',
+      abbr: 'h',
+      negatable: false,
+      help: 'prints this message',
+    );
     var parsed = parser.parse(arguments);
     if (parsed['help'] ||
         parsed['builders'] is! List<String> ||
@@ -79,17 +107,27 @@ class BaselineOptions {
     final suites = Set.unmodifiable(parsed['suites'] as List<String>);
 
     return BaselineOptions(
-        builders, configs, dryRun, channels, mapping, suites, target);
+      builders,
+      configs,
+      dryRun,
+      channels,
+      mapping,
+      suites,
+      target,
+    );
   }
 }
 
 List<String>? _strict(
-        String configuration, Map<String, List<String>> configs) =>
+  String configuration,
+  Map<String, List<String>> configs,
+) =>
     configs[configuration] ??
     (throw Exception("Missing configuration mapping for $configuration"));
 List<String>? _relaxed(
-        String configuration, Map<String, List<String>> configs) =>
-    configs[configuration];
+  String configuration,
+  Map<String, List<String>> configs,
+) => configs[configuration];
 List<String>? _none(String configuration, Map<String, List<String>> configs) =>
     [configuration];
 
@@ -100,7 +138,10 @@ enum ConfigurationMapping {
 
   const ConfigurationMapping(this.mapping);
   final List<String>? Function(
-      String configuration, Map<String, List<String>> configs) mapping;
+    String configuration,
+    Map<String, List<String>> configs,
+  )
+  mapping;
 
   List<String>? call(String configuration, Map<String, List<String>> configs) =>
       mapping(configuration, configs);
