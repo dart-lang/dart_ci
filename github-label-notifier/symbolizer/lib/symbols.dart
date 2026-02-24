@@ -201,8 +201,8 @@ class SymbolsCache {
   }
 
   Future<String> _copyFromGS(String fromUri, String toDir) {
-    _log.info('gsutil cp $fromUri $toDir');
-    return _run('gsutil', ['cp', fromUri, toDir]);
+    _log.info('gcloud storage cp $fromUri $toDir');
+    return _run('gcloud', ['storage', 'cp', fromUri, toDir]);
   }
 
   Future<void> _downloadSymbols(Directory tempDir, EngineBuild build) async {
