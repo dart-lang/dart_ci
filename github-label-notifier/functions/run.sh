@@ -5,8 +5,6 @@
 
 set -e
 
-export SYMBOLIZER_SERVER=localhost:4040
-
 # Don't use real SendGrid servers during testing - instead redirect API
 # calls to a mock server.
 export SENDGRID_MOCK_SERVER=localhost:8151
