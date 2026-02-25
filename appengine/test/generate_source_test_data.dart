@@ -11,7 +11,7 @@ import 'package:dart_ci/src/test_source.dart';
 
 const revision = '245705e23c9ec290b10cbb981c1941d7e600b00c';
 
-main(List<String> arguments) async {
+void main(List<String> arguments) async {
   // We want a test case for each suite and other variations, so we compute
   // an identifier for each class of tests that we are interested in.
   String makeKey(String testName) {
@@ -20,8 +20,11 @@ main(List<String> arguments) async {
     final baseName = findBaseName(suite, parts) ?? testName;
     // Make distinct keys for tests that have one or multiple postfix '/???'
     // parts because of multi-tests or VMOption variations.
-    final postFix =
-        testName.substring(baseName.length).split('/').length.toString();
+    final postFix = testName
+        .substring(baseName.length)
+        .split('/')
+        .length
+        .toString();
     if (['vm', 'pkg_tested'].contains(parts.first)) {
       // Include the sub component of the path in the key.
       return parts.take(2).join('/') + postFix;
@@ -50,8 +53,11 @@ main(List<String> arguments) async {
   for (var name in testNames.values) {
     results[name] = {};
     for (var gob in [true, false]) {
-      results[name]![gob.toString()] =
-          (await computeTestSource(revision, name, gob)).toString();
+      results[name]![gob.toString()] = (await computeTestSource(
+        revision,
+        name,
+        gob,
+      )).toString();
     }
   }
   print(jsonEncode(results));
