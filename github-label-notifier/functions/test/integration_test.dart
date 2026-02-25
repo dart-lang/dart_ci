@@ -62,8 +62,6 @@ void main() async {
   late HttpServer sendgridMockServer;
   final sendgridRequests = <SendgridRequest>[];
 
-  final symbolizerCommands = <String>[];
-
   late int notifierPort;
 
   final client = HttpClient();
@@ -130,7 +128,6 @@ void main() async {
 
   setUp(() {
     sendgridRequests.clear();
-    symbolizerCommands.clear();
   });
 
   tearDownAll(() async {

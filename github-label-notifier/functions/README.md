@@ -5,12 +5,6 @@ to subscribers.
 It also can inspect newly opened issues for specific keywords and treat matches
 as if a specific label was assigned to an issue.
 
-Newly created issues are also fed to `crash-symbolizer`'s `/symbolize` endpoint
-in attempt to extract and symbolize any native crashes.
-
-This function is also responsible for routing comments mentioning
-`@flutter-symbolizer-bot` to `crash-symbolizer`'s '/symbolize' endpoint.
-
 # Testing
 
 To run local tests use `test.sh` script from this folder.
@@ -27,10 +21,6 @@ creating a GitHub Hook at https://github.com/{org}/{repo}/settings/hooks
 you add SendGrid to your Cloud Project (see
 [docs](https://sendgrid.com/docs/for-developers/partners/google/) for the
 initial setup).
-
-Note: Function is connecting to `crash-symbolizer` GCE instance through
-[VPC Connector](https://cloud.google.com/functions/docs/networking/connecting-vpc)
-with name `cloud-run-to-gce`.
 
 ## Firestore
 

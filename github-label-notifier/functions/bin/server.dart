@@ -15,8 +15,6 @@ import 'package:github_label_notifier/github_utils.dart';
 import 'package:github_label_notifier/redirecting_http.dart';
 import 'package:github_label_notifier/subscriptions_db.dart' as db;
 
-final String symbolizerServer = Platform.environment['SYMBOLIZER_SERVER'] ??
-    'crash-symbolizer.c.dart-ci.internal:4040';
 late final sendgrid.Mailer mailer;
 late final Future<Result<void>> Function(sendgrid.Email) sendMail;
 

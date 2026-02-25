@@ -143,9 +143,3 @@ $ dart test test -j1 --no-chain-stack-traces
 
 To update expectation files set `REGENERATE_EXPECTATIONS` environment
 variable to `true` (`export REGENERATE_EXPECTATIONS=true`).
-
-## SDK version
-
-We deploy the code in form of Kernel binary - which means your local SDK
-needs to match the version of Dart SDK installed on `crash-symbolizer`.
-Deployment script will verify this for you.
