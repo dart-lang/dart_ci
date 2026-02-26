@@ -143,13 +143,21 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
   final bool matches;
   final bool flaky;
+  final bool skipped;
   final String text;
 
-  ResultKind get kind => flaky
-      ? ResultKind.flaky
-      : matches
-      ? ResultKind.pass
-      : ResultKind.fail;
+  late final ResultKind kind = () {
+    if (flaky) {
+      return ResultKind.flaky;
+    }
+    if (skipped) {
+      return ResultKind.skipped;
+    }
+    if (matches) {
+      return ResultKind.pass;
+    }
+    return ResultKind.fail;
+  }();
 
   factory ChangeInResult(Result result) {
     return ChangeInResult.create(
@@ -166,6 +174,7 @@ class ChangeInResult implements Comparable<ChangeInResult> {
     String? previousResult,
   }) {
     final bool matches = result == expected;
+    final bool skipped = result == 'skipped';
     final String text;
 
     if (isFlaky) {
@@ -190,11 +199,11 @@ class ChangeInResult implements Comparable<ChangeInResult> {
 
     return _cache.putIfAbsent(
       text,
-      () => ChangeInResult._(text, matches, isFlaky),
+      () => ChangeInResult._(text, matches, isFlaky, skipped),
     );
   }
 
-  ChangeInResult._(this.text, this.matches, this.flaky);
+  ChangeInResult._(this.text, this.matches, this.flaky, this.skipped);
 
   @override
   String toString() => text;
@@ -236,47 +245,47 @@ class Counts {
   int count = 0;
   int countFailing = 0;
   int countFlaky = 0;
-
-  int get countPassing => count - countFailing - countFlaky;
+  int countPassing = 0;
 
   void addResult(ChangeInResult change, Result result) {
     count++;
-    if (change.flaky) {
-      countFlaky++;
-    } else if (!change.matches) {
-      countFailing++;
+    _countResultByKind(change);
+  }
+
+  void _countResultByKind(ChangeInResult change) {
+    switch (change.kind) {
+      case ResultKind.flaky:
+        countFlaky++;
+      case ResultKind.fail:
+        countFailing++;
+      case ResultKind.pass:
+        countPassing++;
+      case ResultKind.skipped: // not counted
     }
   }
 }
 
 class TestCounts extends Counts {
-  String currentTest = '';
-  bool currentFailing = false;
-  bool currentFlaky = false;
+  String _currentTest = '';
+  Set<ResultKind> _countedKinds = {};
 
   @override
   void addResult(ChangeInResult change, Result result) {
-    if (currentTest != result.name) {
-      if (currentTest.compareTo(result.name) > 0) {
+    if (_currentTest != result.name) {
+      if (_currentTest.compareTo(result.name) > 0) {
         print(
           'Results are not sorted by test name: '
-          '$currentTest, ${result.name}',
+          '$_currentTest, ${result.name}',
         );
         return;
       }
-      currentFlaky = false;
-      currentFailing = false;
-      currentTest = result.name;
+      _countedKinds = {};
+      _currentTest = result.name;
       count++;
     }
-    if (change.flaky) {
-      if (!currentFlaky) {
-        currentFlaky = true;
-        countFlaky++;
-      }
-    } else if (!change.matches && !currentFailing) {
-      currentFailing = true;
-      countFailing++;
+    if (!_countedKinds.contains(change.kind)) {
+      _countResultByKind(change);
+      _countedKinds.add(change.kind);
     }
   }
 }

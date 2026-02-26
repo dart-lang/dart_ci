@@ -18,7 +18,8 @@ const Color _gold = Color.fromARGB(255, 255, 215, 0);
 enum ResultKind {
   pass(Colors.lightGreen),
   fail(_lightCoral),
-  flaky(_gold);
+  flaky(_gold),
+  skipped(Colors.grey);
 
   const ResultKind(this.color);
   final Color color;
