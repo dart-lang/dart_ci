@@ -9,7 +9,7 @@ which provides a filterable view of the current test status across
 all configurations.
 
 The current results service is a gRPC server written in Dart, running
-on GCE. Cloud Endpoints is used to configure access to the server's API,
+on Cloud Run. Cloud Endpoints is used to configure access to the server's API,
 and the ESPv2 proxy is used to manage the API and provide a REST translation of
 the API.
 

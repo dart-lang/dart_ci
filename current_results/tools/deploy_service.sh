@@ -4,7 +4,7 @@
 # for details. All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 #
-# Build with cloud build and deploy the project to GCE
+# Build with cloud build and deploy the project to Cloud Run
 
 set -ex
 
@@ -15,7 +15,7 @@ Usage: $0 <cloud project name>
 This script deploys the current results server.
 
 It builds a docker image from the code in the working directory,
-and deploys it to the current-results-server instance in the given project.
+and deploys it to Cloud Run in the given project.
 EOF
   exit 1
 fi
@@ -31,8 +31,14 @@ fi
 
 gcloud builds submit --project=$PROJECT --tag gcr.io/$PROJECT/current_results
 
-gcloud compute ssh current-results-server --zone=us-central1-a \
-  --command="docker kill current-results; docker rm current-results; docker pull gcr.io/$PROJECT/current_results"
-
-gcloud compute ssh current-results-server --zone=us-central1-a \
-  --command="docker run -d --security-opt seccomp=unconfined --net=bridge_net --publish=8080:8080 --name=current-results gcr.io/$PROJECT/current_results"
+gcloud run deploy current-results-backend \
+  --project=$PROJECT \
+  --image=gcr.io/$PROJECT/current_results \
+  --region=us-central1 \
+  --platform=managed \
+  --allow-unauthenticated \
+  --use-http2 \
+  --min-instances=1 \
+  --max-instances=1 \
+  --cpu=1 \
+  --memory=2Gi

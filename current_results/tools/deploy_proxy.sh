@@ -21,7 +21,7 @@ fi
 PROJECT=$1
 REGION=us-central1
 ZONE=a
-ESP_TAG=2.52.0 # This needs to be updated if the ESP container gets outdated.
+ESP_TAG=2.55.0 # This needs to be updated if the ESP container gets outdated.
 
 script_dir=$(dirname "${BASH_SOURCE[0]}")
 echo $script_dir
@@ -33,7 +33,12 @@ service_hostname=${service_url#https://}
 
 echo $service_hostname
 
-sed "s/SERVICE_HOSTNAME/$service_hostname/ ; s/PROJECT/$PROJECT/ ; s/REGION/$REGION/ ; s/ZONE/$ZONE/" \
+backend_url=$(gcloud run services describe --platform managed current-results-backend --format="value(status.url)" --region=$REGION)
+backend_hostname=${backend_url#https://}
+
+echo $backend_hostname
+
+sed "s/SERVICE_HOSTNAME/$service_hostname/ ; s/BACKEND_HOSTNAME/$backend_hostname/ ; s/PROJECT/$PROJECT/ ; s/REGION/$REGION/ ; s/ZONE/$ZONE/" \
   < $script_dir/../endpoints/cloud_run_api_config_template.yaml \
   > $script_dir/../endpoints/generated/cloud_run_api_config.yaml
 
@@ -53,4 +58,4 @@ gcloud run deploy current-results \
   --image="gcr.io/$PROJECT/endpoints-runtime-serverless:$ESP_TAG-${service_hostname}-$config_id" \
   --allow-unauthenticated --platform managed \
   --project=$PROJECT  --region=$REGION \
-  --set-env-vars=ESPv2_ARGS=--cors_preset=basic --vpc-connector cloud-run-to-gce
+  --set-env-vars=ESPv2_ARGS=--cors_preset=basic
