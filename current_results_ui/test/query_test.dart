@@ -29,6 +29,13 @@ void main() {
       expect(change.text, 'flaky (latest result RuntimeError expected Pass)');
     });
 
+    test('skipped result', () {
+      final result = Result(result: 'skipped', expected: 'Pass', flaky: false);
+      final change = ChangeInResult(result);
+      expect(change.kind, ResultKind.skipped);
+      expect(change.text, 'skipped (expected Pass)');
+    });
+
     test('matching result', () {
       final result = Result(result: 'Pass', expected: 'Pass', flaky: false);
       final change = ChangeInResult(result);
@@ -158,7 +165,13 @@ void main() {
       final response = GetResultsResponse(
         results: [
           Result(name: 'test1', result: 'Pass', expected: 'Pass'),
+          Result(name: 'test1', result: 'Pass', expected: 'Pass'),
+          Result(name: 'test1', result: 'Fail', expected: 'Pass'),
           Result(name: 'test2', result: 'Fail', expected: 'Pass'),
+          Result(name: 'test2', result: 'Fail', expected: 'Pass'),
+          Result(name: 'test3', result: 'skipped', expected: 'Pass'),
+          Result(name: 'test3', result: 'skipped', expected: 'Pass'),
+          Result(name: 'test3', result: 'Fail', expected: 'Pass', flaky: true),
         ],
         nextPageToken: '',
       );
@@ -173,11 +186,27 @@ void main() {
         await Future.delayed(Duration.zero);
       }
 
-      expect(queryResults.names, ['test1', 'test2']);
-      expect(queryResults.counts['test1']!.count, 1);
-      expect(queryResults.counts['test1']!.countPassing, 1);
-      expect(queryResults.counts['test2']!.count, 1);
-      expect(queryResults.counts['test2']!.countFailing, 1);
+      expect(queryResults.names, ['test1', 'test2', 'test3']);
+      expect(queryResults.counts['test1']!.count, 3);
+      expect(queryResults.counts['test1']!.countPassing, 2);
+      expect(queryResults.counts['test1']!.countFailing, 1);
+      expect(queryResults.counts['test2']!.count, 2);
+      expect(queryResults.counts['test2']!.countPassing, 0);
+      expect(queryResults.counts['test2']!.countFailing, 2);
+      expect(queryResults.counts['test3']!.count, 3);
+      expect(queryResults.counts['test3']!.countPassing, 0);
+      expect(queryResults.counts['test3']!.countFailing, 0);
+      expect(queryResults.counts['test3']!.countFlaky, 1);
+
+      expect(queryResults.resultCounts.count, 8);
+      expect(queryResults.resultCounts.countPassing, 2);
+      expect(queryResults.resultCounts.countFailing, 3);
+      expect(queryResults.resultCounts.countFlaky, 1);
+
+      expect(queryResults.testCounts.count, 3);
+      expect(queryResults.testCounts.countPassing, 1);
+      expect(queryResults.testCounts.countFailing, 2);
+      expect(queryResults.testCounts.countFlaky, 1);
     });
   });
 }
