@@ -51,9 +51,6 @@ jobs:
 
       - run: dart analyze --fatal-infos
 
-      - name: Generate files
-        run: dart pub run build_runner build --delete-conflicting-outputs
-
       # We don't want to format third_party/ but dart format doesn't support
       # excluding a directory.
       - run: dart format --output=none --set-exit-if-changed lib/ bin/ endpoints/ test/ tools/
