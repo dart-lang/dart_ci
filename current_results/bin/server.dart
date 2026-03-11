@@ -19,7 +19,6 @@ final _log = Logger('server');
 
 void main() async {
   setupLogging();
-
   final client = await clientViaApplicationDefaultCredentials(
     scopes: ['https://www.googleapis.com/auth/devstorage.read_only'],
   );
