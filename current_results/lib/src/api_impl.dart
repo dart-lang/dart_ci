@@ -5,10 +5,9 @@
 import 'dart:convert';
 
 import 'package:current_results/src/bucket.dart';
-import 'package:current_results/src/generated/query.pb.dart' as api;
+import 'package:current_results/src/generated/query.pb.dart';
 import 'package:current_results/src/notifications.dart';
 import 'package:current_results/src/slice.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -50,7 +49,7 @@ class RestApi {
   @Route.get('/v1/results')
   Future<Response> _getResults(Request request) async {
     final params = request.url.queryParameters;
-    final protoRequest = api.GetResultsRequest();
+    final protoRequest = GetResultsRequest();
     if (params['filter'] case final filter?) {
       protoRequest.filter = filter;
     }
@@ -62,7 +61,7 @@ class RestApi {
     }
     final response = current.results(protoRequest);
     return Response.ok(
-      _toJson(response),
+      jsonEncode(response.toProto3Json()),
       headers: {'Content-Type': 'application/json'},
     );
   }
@@ -70,7 +69,7 @@ class RestApi {
   @Route.get('/v1/tests')
   Future<Response> _listTests(Request request) async {
     final params = request.url.queryParameters;
-    final protoRequest = api.ListTestsRequest();
+    final protoRequest = ListTestsRequest();
     if (params['prefix'] case final prefix?) {
       protoRequest.prefix = prefix;
     }
@@ -79,7 +78,7 @@ class RestApi {
     }
     final response = current.listTests(protoRequest);
     return Response.ok(
-      _toJson(response),
+      jsonEncode(response.toProto3Json()),
       headers: {'Content-Type': 'application/json'},
     );
   }
@@ -88,21 +87,18 @@ class RestApi {
   Future<Response> _fetch(Request request) async {
     final response = await fetchUpdates(notifications, bucket, current);
     return Response.ok(
-      _toJson(response),
+      jsonEncode(response.toProto3Json()),
       headers: {'Content-Type': 'application/json'},
     );
   }
-
-  String _toJson(GeneratedMessage message) =>
-      jsonEncode(message.toProto3Json());
 }
 
-Future<api.FetchResponse> fetchUpdates(
+Future<FetchResponse> fetchUpdates(
   BucketNotifications notifications,
   ResultsBucket bucket,
   Slice current,
 ) async {
-  final response = api.FetchResponse();
+  final response = FetchResponse();
   final messages = await notifications.getMessages();
   final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
   final configurations = <String>{};
@@ -119,9 +115,7 @@ Future<api.FetchResponse> fetchUpdates(
   for (final configuration in configurations) {
     final lines = await bucket.latestResults(configuration);
     current.add(lines);
-    response.updates.add(
-      api.ConfigurationUpdate()..configuration = configuration,
-    );
+    response.updates.add(ConfigurationUpdate()..configuration = configuration);
   }
   current.dropResultsOlderThan(maximumAge);
   current.collectTestNames();

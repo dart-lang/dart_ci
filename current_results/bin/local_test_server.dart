@@ -44,7 +44,7 @@ void main(List<String> args) async {
     stderr.writeln('Usage: local_test_server <directory>');
     exit(1);
   }
-  var resultsBucket = DirectoryBasedBucket(args[0]);
+  var resultsBucket = DirectoryBasedBucket(args.single);
   var port = int.parse(Platform.environment['PORT'] ?? '8080');
   await startServer(port, resultsBucket);
 }

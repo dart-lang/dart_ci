@@ -17,7 +17,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 
 final _log = Logger('server');
 
-void main(List<String> args) async {
+void main() async {
   setupLogging();
 
   final client = await clientViaApplicationDefaultCredentials(
@@ -29,10 +29,7 @@ void main(List<String> args) async {
   await startServer(port, resultsBucket);
 }
 
-Future<void> startServer(
-  int port,
-  ResultsBucket bucket,
-) async {
+Future<void> startServer(int port, ResultsBucket bucket) async {
   final notifications = BucketNotifications();
   await notifications.initialize();
   final current = await loadData(bucket);
