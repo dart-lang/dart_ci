@@ -15,6 +15,15 @@ import 'package:shelf_router/shelf_router.dart';
 
 part 'rest_api.g.dart';
 
+const _corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers':
+      'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,'
+      'Content-Type,Range,Authorization',
+  'Access-Control-Expose-Headers': 'Content-Length,Content-Range',
+};
+
 class RestApi {
   final Slice current;
   final BucketNotifications notifications;
@@ -24,7 +33,12 @@ class RestApi {
 
   Router get router => _$RestApiRouter(this);
 
-  Future<Response> handleRequest(Request request) => router(request);
+  Future<Response> handleRequest(Request request) async {
+    return (await router(request)).change(headers: _corsHeaders);
+  }
+
+  @Route.options('/<ignored|.*>')
+  Future<Response> _options(Request request) async => Response.ok('');
 
   @Route.get('/v1/testPaths')
   Future<Response> _testPaths(Request request) async =>
@@ -41,10 +55,10 @@ class RestApi {
     if (params['filter'] case final filter?) {
       protoRequest.filter = filter;
     }
-    if (params['page_size'] case final pageSize?) {
+    if (params['pageSize'] case final pageSize?) {
       protoRequest.pageSize = int.tryParse(pageSize) ?? 0;
     }
-    if (params['page_token'] case final pageToken?) {
+    if (params['pageToken'] case final pageToken?) {
       protoRequest.pageToken = pageToken;
     }
     final response = current.results(protoRequest);

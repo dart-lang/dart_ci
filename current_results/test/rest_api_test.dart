@@ -86,7 +86,7 @@ void main() {
     test('GET /v1/results - With PageSize', () async {
       final request = Request(
         'GET',
-        Uri.parse('http://localhost/v1/results?page_size=1'),
+        Uri.parse('http://localhost/v1/results?pageSize=1'),
       );
       final response = await restApi.handleRequest(request);
 
@@ -165,6 +165,30 @@ void main() {
       final response = await restApi.handleRequest(request);
 
       expect(response.statusCode, 404);
+    });
+
+    test('OPTIONS /v1/results - Returns CORS headers', () async {
+      final request = Request(
+        'OPTIONS',
+        Uri.parse('http://localhost/v1/results'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Access-Control-Allow-Origin'], '*');
+      expect(response.headers['Access-Control-Allow-Methods'], contains('GET'));
+      expect(
+        response.headers['Access-Control-Allow-Headers'],
+        contains('Content-Type'),
+      );
+    });
+
+    test('GET /v1/results - Response has CORS headers', () async {
+      final request = Request('GET', Uri.parse('http://localhost/v1/results'));
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Access-Control-Allow-Origin'], '*');
     });
   });
 }
