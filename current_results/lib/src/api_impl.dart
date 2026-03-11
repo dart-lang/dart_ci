@@ -45,30 +45,37 @@ class QueryService extends QueryServiceBase {
   }
 
   @override
-  Future<FetchResponse> fetch(ServiceCall call, Empty request) async {
-    final response = FetchResponse();
-    final messages = await notifications.getMessages();
-    final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
-    final configurations = <String>{};
-    for (final message in messages) {
-      if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
-        final match = latestObjectPattern.firstMatch(
-          message.attributes['objectId']!,
-        );
-        if (match != null) {
-          configurations.add(match[1]!);
-        }
+  Future<FetchResponse> fetch(ServiceCall call, Empty request) =>
+      fetchUpdates(notifications, bucket, current);
+}
+
+Future<FetchResponse> fetchUpdates(
+  BucketNotifications notifications,
+  ResultsBucket bucket,
+  Slice current,
+) async {
+  final response = FetchResponse();
+  final messages = await notifications.getMessages();
+  final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
+  final configurations = <String>{};
+  for (final message in messages) {
+    if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
+      final match = latestObjectPattern.firstMatch(
+        message.attributes['objectId']!,
+      );
+      if (match != null) {
+        configurations.add(match[1]!);
       }
     }
-    for (final configuration in configurations) {
-      final lines = await bucket.latestResults(configuration);
-      current.add(lines);
-      response.updates.add(
-        ConfigurationUpdate()..configuration = configuration,
-      );
-    }
-    current.dropResultsOlderThan(maximumAge);
-    current.collectTestNames();
-    return response;
   }
+  for (final configuration in configurations) {
+    final lines = await bucket.latestResults(configuration);
+    current.add(lines);
+    response.updates.add(
+      ConfigurationUpdate()..configuration = configuration,
+    );
+  }
+  current.dropResultsOlderThan(maximumAge);
+  current.collectTestNames();
+  return response;
 }
