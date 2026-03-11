@@ -38,12 +38,14 @@ class RestApi {
   Future<Response> _getResults(Request request) async {
     final params = request.url.queryParameters;
     final protoRequest = api.GetResultsRequest();
-    if (params.containsKey('filter')) protoRequest.filter = params['filter']!;
-    if (params.containsKey('page_size')) {
-      protoRequest.pageSize = int.tryParse(params['page_size']!) ?? 0;
+    if (params['filter'] case final filter?) {
+      protoRequest.filter = filter;
     }
-    if (params.containsKey('page_token')) {
-      protoRequest.pageToken = params['page_token']!;
+    if (params['page_size'] case final pageSize?) {
+      protoRequest.pageSize = int.tryParse(pageSize) ?? 0;
+    }
+    if (params['page_token'] case final pageToken?) {
+      protoRequest.pageToken = pageToken;
     }
     final response = current.results(protoRequest);
     return Response.ok(
@@ -56,9 +58,11 @@ class RestApi {
   Future<Response> _listTests(Request request) async {
     final params = request.url.queryParameters;
     final protoRequest = api.ListTestsRequest();
-    if (params.containsKey('prefix')) protoRequest.prefix = params['prefix']!;
-    if (params.containsKey('limit')) {
-      protoRequest.limit = int.tryParse(params['limit']!) ?? 0;
+    if (params['prefix'] case final prefix?) {
+      protoRequest.prefix = prefix;
+    }
+    if (params['limit'] case final limit?) {
+      protoRequest.limit = int.tryParse(limit) ?? 0;
     }
     final response = current.listTests(protoRequest);
     return Response.ok(
