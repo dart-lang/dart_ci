@@ -4,16 +4,13 @@
 
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/logger.dart';
 import 'package:current_results/src/notifications.dart';
-import 'package:current_results/src/rest_api.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:grpc/grpc.dart';
 import 'package:logging/logging.dart';
 import 'package:pool/pool.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -23,58 +20,30 @@ final _log = Logger('server');
 void main(List<String> args) async {
   setupLogging();
 
-  final parser = ArgParser()
-    ..addOption(
-      'server',
-      allowed: ['grpc', 'rest'],
-      help: 'Which server to run (grpc or rest)',
-      mandatory: true,
-    );
-
-  ArgResults argResults;
-  try {
-    argResults = parser.parse(args);
-  } catch (e) {
-    stderr.writeln(e);
-    stderr.writeln('Usage: server --server <grpc|rest>');
-    exit(1);
-  }
-
-  final serverType = argResults['server'] as String;
-
   final client = await clientViaApplicationDefaultCredentials(
     scopes: ['https://www.googleapis.com/auth/devstorage.read_only'],
   );
   final bucket = Storage(client, 'dart-ci').bucket('dart-test-results');
   final resultsBucket = ResultsBucket(bucket);
   var port = int.parse(Platform.environment['PORT'] ?? '8080');
-  await startServer(port, resultsBucket, serverType);
+  await startServer(port, resultsBucket);
 }
 
 Future<void> startServer(
   int port,
   ResultsBucket bucket,
-  String serverType,
 ) async {
   final notifications = BucketNotifications();
   await notifications.initialize();
   final current = await loadData(bucket);
 
-  if (serverType == 'grpc') {
-    final grpcServer = Server.create(
-      services: [QueryService(current, notifications, bucket)],
-    );
-    await grpcServer.serve(port: port);
-    _log.info('Grpc serving on port ${grpcServer.port}');
-  } else if (serverType == 'rest') {
-    final restApi = RestApi(current, notifications, bucket);
-    final shelfServer = await shelf_io.serve(
-      restApi.handleRequest,
-      '0.0.0.0',
-      port,
-    );
-    _log.info('REST serving on port ${shelfServer.port}');
-  }
+  final restApi = RestApi(current, notifications, bucket);
+  final shelfServer = await shelf_io.serve(
+    restApi.handleRequest,
+    '0.0.0.0',
+    port,
+  );
+  _log.info('REST serving on port ${shelfServer.port}');
 }
 
 Future<Slice> loadData(ResultsBucket bucket) async {

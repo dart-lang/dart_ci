@@ -4,11 +4,11 @@
 
 import 'dart:convert';
 
+import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart'
     show PubsubMessage;
 import 'package:current_results/src/notifications.dart';
-import 'package:current_results/src/rest_api.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

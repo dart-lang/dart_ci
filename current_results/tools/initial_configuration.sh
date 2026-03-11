@@ -21,24 +21,11 @@ REGION=us-central1
 
 gcloud config set project $PROJECT
 
-gcloud services enable vpcaccess.googleapis.com
-gcloud services enable pubsub.googleapis.com
-gcloud services enable compute.googleapis.com
-gcloud services enable run.googleapis.com
 gcloud services enable cloudbuild.googleapis.com
+gcloud services enable pubsub.googleapis.com
+gcloud services enable run.googleapis.com
 
-# Reserve the cloud run hostname for the backend service.
-# We need this generated hostname for later deployment.
-gcloud run deploy current-results-backend \
-  --image="gcr.io/cloudrun/hello" \
-  --allow-unauthenticated \
-  --platform managed \
-  --region us-central1 \
-  --use-http2 \
-  --cpu=1 \
-  --memory=2Gi
-
-# Reserve the cloud run hostname for the ESPv2 proxy service.
+# Reserve the cloud run hostname for the service.
 # We need this generated hostname for later deployment.
 gcloud run deploy current-results \
   --image="gcr.io/cloudrun/hello" \

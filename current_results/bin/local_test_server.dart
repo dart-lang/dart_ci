@@ -41,11 +41,10 @@ class DirectoryBasedBucket implements ResultsBucket {
 
 void main(List<String> args) async {
   if (args.isEmpty) {
-    stderr.writeln('Usage: local_test_server <directory> [grpc|rest]');
+    stderr.writeln('Usage: local_test_server <directory>');
     exit(1);
   }
   var resultsBucket = DirectoryBasedBucket(args[0]);
-  var serverType = args.length > 1 ? args[1] : 'grpc';
   var port = int.parse(Platform.environment['PORT'] ?? '8080');
-  await startServer(port, resultsBucket, serverType);
+  await startServer(port, resultsBucket);
 }
