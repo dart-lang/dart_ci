@@ -4,8 +4,8 @@
 
 import 'package:current_results/src/generated/query.pbgrpc.dart' as query_api;
 import 'package:current_results/src/result.dart';
-import 'package:test/test.dart';
 import 'package:current_results/src/slice.dart';
+import 'package:test/test.dart';
 
 void main() {
   test('add results', () {

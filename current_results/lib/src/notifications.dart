@@ -2,9 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:grpc/grpc.dart';
-
 import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart';
+import 'package:grpc/grpc.dart';
 
 class BucketNotifications {
   late SubscriberClient client;

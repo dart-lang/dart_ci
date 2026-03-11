@@ -2,12 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:grpc/grpc.dart';
-
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/query.pbgrpc.dart';
-import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/slice.dart';
+import 'package:grpc/grpc.dart';
 
 class QueryService extends QueryServiceBase {
   Slice current;

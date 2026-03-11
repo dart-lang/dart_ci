@@ -3,13 +3,17 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'package:shelf/shelf.dart';
-import 'package:current_results/src/slice.dart';
-import 'package:current_results/src/notifications.dart';
+
+import 'package:current_results/src/api_impl.dart' show fetchUpdates;
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/query.pb.dart' as api;
+import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/slice.dart';
 import 'package:protobuf/protobuf.dart';
-import 'package:current_results/src/api_impl.dart' show fetchUpdates;
+import 'package:shelf/shelf.dart';
+import 'package:shelf_router/shelf_router.dart';
+
+part 'rest_api.g.dart';
 
 class RestApi {
   final Slice current;
@@ -18,21 +22,19 @@ class RestApi {
 
   RestApi(this.current, this.notifications, this.bucket);
 
-  Future<Response> handleRequest(Request request) async {
-    final path = request.url.path;
-    if (path == 'v1/results' && request.method == 'GET') {
-      return _getResults(request);
-    } else if (path == 'v1/tests' && request.method == 'GET') {
-      return _listTests(request);
-    } else if (path == 'v1/fetch' && request.method == 'POST') {
-      return _fetch(request);
-    } else if ((path == 'v1/testPaths' || path == 'v1/configurations') &&
-        request.method == 'GET') {
-      return Response(501, body: 'Unimplemented');
-    }
-    return Response.notFound('Not Found');
-  }
+  Router get router => _$RestApiRouter(this);
 
+  Future<Response> handleRequest(Request request) => router(request);
+
+  @Route.get('/v1/testPaths')
+  Future<Response> _testPaths(Request request) async =>
+      Response(501, body: 'Unimplemented');
+
+  @Route.get('/v1/configurations')
+  Future<Response> _configurations(Request request) async =>
+      Response(501, body: 'Unimplemented');
+
+  @Route.get('/v1/results')
   Future<Response> _getResults(Request request) async {
     final params = request.url.queryParameters;
     final protoRequest = api.GetResultsRequest();
@@ -50,6 +52,7 @@ class RestApi {
     );
   }
 
+  @Route.get('/v1/tests')
   Future<Response> _listTests(Request request) async {
     final params = request.url.queryParameters;
     final protoRequest = api.ListTestsRequest();
@@ -64,6 +67,7 @@ class RestApi {
     );
   }
 
+  @Route.post('/v1/fetch')
   Future<Response> _fetch(Request request) async {
     final response = await fetchUpdates(notifications, bucket, current);
     return Response.ok(

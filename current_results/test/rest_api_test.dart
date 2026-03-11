@@ -3,18 +3,19 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'package:test/test.dart';
-import 'package:shelf/shelf.dart';
-import 'package:current_results/src/rest_api.dart';
-import 'package:current_results/src/slice.dart';
-import 'package:current_results/src/notifications.dart';
+
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart'
     show PubsubMessage;
-
+import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/rest_api.dart';
+import 'package:current_results/src/slice.dart';
 import 'package:mockito/annotations.dart';
-import 'rest_api_test.mocks.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shelf/shelf.dart';
+import 'package:test/test.dart';
+
+import 'rest_api_test.mocks.dart';
 
 @GenerateMocks([BucketNotifications, ResultsBucket])
 void main() {

@@ -2,3 +2,7 @@ include: package:lints/recommended.yaml
 analyzer:
   exclude:
     - third_party/
+
+linter:
+  rules:
+    - directives_ordering
