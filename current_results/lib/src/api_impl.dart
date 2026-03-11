@@ -71,9 +71,7 @@ Future<FetchResponse> fetchUpdates(
   for (final configuration in configurations) {
     final lines = await bucket.latestResults(configuration);
     current.add(lines);
-    response.updates.add(
-      ConfigurationUpdate()..configuration = configuration,
-    );
+    response.updates.add(ConfigurationUpdate()..configuration = configuration);
   }
   current.dropResultsOlderThan(maximumAge);
   current.collectTestNames();

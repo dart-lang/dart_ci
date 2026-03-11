@@ -26,7 +26,8 @@ class RestApi {
       return _listTests(request);
     } else if (path == 'v1/fetch' && request.method == 'POST') {
       return _fetch(request);
-    } else if ((path == 'v1/testPaths' || path == 'v1/configurations') && request.method == 'GET') {
+    } else if ((path == 'v1/testPaths' || path == 'v1/configurations') &&
+        request.method == 'GET') {
       return Response(501, body: 'Unimplemented');
     }
     return Response.notFound('Not Found');
@@ -43,7 +44,10 @@ class RestApi {
       protoRequest.pageToken = params['page_token']!;
     }
     final response = current.results(protoRequest);
-    return Response.ok(_toJson(response), headers: {'Content-Type': 'application/json'});
+    return Response.ok(
+      _toJson(response),
+      headers: {'Content-Type': 'application/json'},
+    );
   }
 
   Future<Response> _listTests(Request request) async {
@@ -54,13 +58,20 @@ class RestApi {
       protoRequest.limit = int.tryParse(params['limit']!) ?? 0;
     }
     final response = current.listTests(protoRequest);
-    return Response.ok(_toJson(response), headers: {'Content-Type': 'application/json'});
+    return Response.ok(
+      _toJson(response),
+      headers: {'Content-Type': 'application/json'},
+    );
   }
 
   Future<Response> _fetch(Request request) async {
     final response = await fetchUpdates(notifications, bucket, current);
-    return Response.ok(_toJson(response), headers: {'Content-Type': 'application/json'});
+    return Response.ok(
+      _toJson(response),
+      headers: {'Content-Type': 'application/json'},
+    );
   }
 
-  String _toJson(GeneratedMessage message) => jsonEncode(message.toProto3Json());
+  String _toJson(GeneratedMessage message) =>
+      jsonEncode(message.toProto3Json());
 }

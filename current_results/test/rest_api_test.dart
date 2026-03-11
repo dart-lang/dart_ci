@@ -9,7 +9,8 @@ import 'package:current_results/src/rest_api.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
 import 'package:current_results/src/bucket.dart';
-import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart' show PubsubMessage;
+import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart'
+    show PubsubMessage;
 
 import 'package:mockito/annotations.dart';
 import 'rest_api_test.mocks.dart';
@@ -25,11 +26,23 @@ void main() {
       slice = Slice();
       // Add fake results
       slice.add([
-        jsonEncode({'name': 'test1', 'configuration': 'config_a', 'result': 'passed'}),
-        jsonEncode({'name': 'test2', 'configuration': 'config_a', 'result': 'failed'}),
+        jsonEncode({
+          'name': 'test1',
+          'configuration': 'config_a',
+          'result': 'passed',
+        }),
+        jsonEncode({
+          'name': 'test2',
+          'configuration': 'config_a',
+          'result': 'failed',
+        }),
       ]);
       slice.add([
-        jsonEncode({'name': 'test1', 'configuration': 'config_b', 'result': 'passed'}),
+        jsonEncode({
+          'name': 'test1',
+          'configuration': 'config_b',
+          'result': 'passed',
+        }),
       ]);
       slice.collectTestNames();
 
@@ -58,7 +71,9 @@ void main() {
 
     test('GET /v1/results - With Filter', () async {
       final request = Request(
-          'GET', Uri.parse('http://localhost/v1/results?filter=config_b'));
+        'GET',
+        Uri.parse('http://localhost/v1/results?filter=config_b'),
+      );
       final response = await restApi.handleRequest(request);
 
       expect(response.statusCode, 200);
@@ -69,7 +84,9 @@ void main() {
 
     test('GET /v1/results - With PageSize', () async {
       final request = Request(
-          'GET', Uri.parse('http://localhost/v1/results?page_size=1'));
+        'GET',
+        Uri.parse('http://localhost/v1/results?page_size=1'),
+      );
       final response = await restApi.handleRequest(request);
 
       expect(response.statusCode, 200);
@@ -91,18 +108,26 @@ void main() {
 
     test('POST /v1/fetch', () async {
       final notifications = MockBucketNotifications();
-      when(notifications.getMessages()).thenAnswer((_) async => [
-        PubsubMessage()
-          ..attributes.addAll({
-            'eventType': 'OBJECT_FINALIZE',
-            'objectId': 'configuration/main/config_c/latest'
-          })
-      ]);
+      when(notifications.getMessages()).thenAnswer(
+        (_) async => [
+          PubsubMessage()
+            ..attributes.addAll({
+              'eventType': 'OBJECT_FINALIZE',
+              'objectId': 'configuration/main/config_c/latest',
+            }),
+        ],
+      );
 
       final bucket = MockResultsBucket();
-      when(bucket.latestResults('configuration/main/config_c/')).thenAnswer((_) async => [
-        jsonEncode({'name': 'test3', 'configuration': 'config_c', 'result': 'passed'})
-      ]);
+      when(bucket.latestResults('configuration/main/config_c/')).thenAnswer(
+        (_) async => [
+          jsonEncode({
+            'name': 'test3',
+            'configuration': 'config_c',
+            'result': 'passed',
+          }),
+        ],
+      );
 
       final apiWithFetch = RestApi(slice, notifications, bucket);
 
@@ -112,21 +137,30 @@ void main() {
       expect(response.statusCode, 200);
       final body = jsonDecode(await response.readAsString());
       expect(body['updates'], isList);
-      expect(body['updates'][0]['configuration'], 'configuration/main/config_c/');
+      expect(
+        body['updates'][0]['configuration'],
+        'configuration/main/config_c/',
+      );
 
       // Verify slice updated
-      expect(slice.size, 4); 
+      expect(slice.size, 4);
     });
 
     test('GET /v1/testPaths - Returns 501', () async {
-      final request = Request('GET', Uri.parse('http://localhost/v1/testPaths'));
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/testPaths'),
+      );
       final response = await restApi.handleRequest(request);
 
       expect(response.statusCode, 501);
     });
 
     test('GET /invalid_path - Returns 404', () async {
-      final request = Request('GET', Uri.parse('http://localhost/invalid_path'));
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/invalid_path'),
+      );
       final response = await restApi.handleRequest(request);
 
       expect(response.statusCode, 404);
