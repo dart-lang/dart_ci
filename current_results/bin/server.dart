@@ -4,18 +4,18 @@
 
 import 'dart:io';
 
+import 'package:current_results/src/api_impl.dart';
+import 'package:current_results/src/bucket.dart';
+import 'package:current_results/src/logger.dart';
+import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/rest_api.dart';
+import 'package:current_results/src/slice.dart';
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:grpc/grpc.dart';
-import 'package:pool/pool.dart';
-
 import 'package:logging/logging.dart';
-
-import 'package:current_results/src/api_impl.dart';
-import 'package:current_results/src/bucket.dart';
-import 'package:current_results/src/slice.dart';
-import 'package:current_results/src/notifications.dart';
-import 'package:current_results/src/logger.dart';
+import 'package:pool/pool.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
 
 final _log = Logger('server');
 
@@ -39,6 +39,14 @@ Future<void> startServer(int port, ResultsBucket bucket) async {
   );
   await grpcServer.serve(port: port);
   _log.info('Grpc serving on port ${grpcServer.port}');
+
+  final restApi = RestApi(current, notifications, bucket);
+  final shelfServer = await shelf_io.serve(
+    restApi.handleRequest,
+    '0.0.0.0',
+    port + 1,
+  );
+  _log.info('REST serving on port ${shelfServer.port}');
 }
 
 Future<Slice> loadData(ResultsBucket bucket) async {

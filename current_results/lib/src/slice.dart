@@ -6,12 +6,11 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:logging/logging.dart';
-
-import 'package:current_results/src/result.dart';
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
 import 'package:current_results/src/generated/result.pb.dart' as api;
 import 'package:current_results/src/iterable.dart';
+import 'package:current_results/src/result.dart';
+import 'package:logging/logging.dart';
 
 const maximumAge = Duration(days: 7);
 

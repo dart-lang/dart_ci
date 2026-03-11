@@ -5,11 +5,10 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:test/test.dart';
-
 import 'package:current_results/src/generated/query.pb.dart' as query_api;
 import 'package:current_results/src/result.dart' show Result;
 import 'package:current_results/src/slice.dart' show Slice;
+import 'package:test/test.dart';
 
 Slice makeTestSlice(Map<String, List<Map<String, dynamic>>> tests) {
   var slice = Slice();

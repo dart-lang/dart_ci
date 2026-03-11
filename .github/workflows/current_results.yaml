@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         sdk:
-          - 3.10.0 # min pubspec SDK
+          - 3.11.0 # min pubspec SDK
           - stable
         os:
           - ubuntu-latest
@@ -45,6 +45,9 @@ jobs:
       - run: dart pub get
 
       - run: ./tools/generate_protogen.sh
+
+      - name: Generate files
+        run: dart pub run build_runner build --delete-conflicting-outputs
 
       - run: dart analyze --fatal-infos
 

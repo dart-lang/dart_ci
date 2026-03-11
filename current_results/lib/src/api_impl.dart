@@ -2,12 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:grpc/grpc.dart';
-
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/query.pbgrpc.dart';
-import 'package:current_results/src/slice.dart';
 import 'package:current_results/src/notifications.dart';
+import 'package:current_results/src/slice.dart';
+import 'package:grpc/grpc.dart';
 
 class QueryService extends QueryServiceBase {
   Slice current;
@@ -45,30 +44,35 @@ class QueryService extends QueryServiceBase {
   }
 
   @override
-  Future<FetchResponse> fetch(ServiceCall call, Empty request) async {
-    final response = FetchResponse();
-    final messages = await notifications.getMessages();
-    final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
-    final configurations = <String>{};
-    for (final message in messages) {
-      if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
-        final match = latestObjectPattern.firstMatch(
-          message.attributes['objectId']!,
-        );
-        if (match != null) {
-          configurations.add(match[1]!);
-        }
+  Future<FetchResponse> fetch(ServiceCall call, Empty request) =>
+      fetchUpdates(notifications, bucket, current);
+}
+
+Future<FetchResponse> fetchUpdates(
+  BucketNotifications notifications,
+  ResultsBucket bucket,
+  Slice current,
+) async {
+  final response = FetchResponse();
+  final messages = await notifications.getMessages();
+  final latestObjectPattern = RegExp('^(configuration/main/[^/]+/)latest\$');
+  final configurations = <String>{};
+  for (final message in messages) {
+    if (message.attributes['eventType'] == 'OBJECT_FINALIZE') {
+      final match = latestObjectPattern.firstMatch(
+        message.attributes['objectId']!,
+      );
+      if (match != null) {
+        configurations.add(match[1]!);
       }
     }
-    for (final configuration in configurations) {
-      final lines = await bucket.latestResults(configuration);
-      current.add(lines);
-      response.updates.add(
-        ConfigurationUpdate()..configuration = configuration,
-      );
-    }
-    current.dropResultsOlderThan(maximumAge);
-    current.collectTestNames();
-    return response;
   }
+  for (final configuration in configurations) {
+    final lines = await bucket.latestResults(configuration);
+    current.add(lines);
+    response.updates.add(ConfigurationUpdate()..configuration = configuration);
+  }
+  current.dropResultsOlderThan(maximumAge);
+  current.collectTestNames();
+  return response;
 }
