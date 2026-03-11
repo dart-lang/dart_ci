@@ -46,10 +46,10 @@ jobs:
 
       - run: ./tools/generate_protogen.sh
 
-      - run: dart analyze --fatal-infos
-
       - name: Generate files
         run: dart pub run build_runner build --delete-conflicting-outputs
+
+      - run: dart analyze --fatal-infos
 
       # We don't want to format third_party/ but dart format doesn't support
       # excluding a directory.
