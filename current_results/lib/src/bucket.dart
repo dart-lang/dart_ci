@@ -22,19 +22,7 @@ class ResultsBucket {
         .where((entry) => entry.isDirectory)
         .map((entry) => entry.name)
         .toSet();
-    // Once all builders have run once on the main branch, this search
-    // for results from the master branch can be removed.
-    final masterDirectories = await _bucket
-        .list(prefix: 'configuration/master/')
-        .where((entry) => entry.isDirectory)
-        .map((entry) => entry.name)
-        .where(
-          (name) => !mainDirectories.contains(
-            name.replaceFirst('configuration/master/', 'configuration/main/'),
-          ),
-        )
-        .toList();
-    return [...mainDirectories, ...masterDirectories];
+    return [...mainDirectories];
   }
 
   Future<DateTime> latestResultsDate(String configurationDirectory) async {

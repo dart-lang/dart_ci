@@ -13,7 +13,6 @@ GOOGLEAPIS_PATH=third_party/googleapis
 
 git -C $GOOGLEAPIS_PATH pull || git clone $GOOGLEAPIS_GIT $GOOGLEAPIS_PATH
 
-mkdir -p endpoints/generated
 mkdir -p lib/src/generated
 
 protoc \
@@ -23,7 +22,6 @@ protoc \
   --include_imports \
   --include_source_info \
   --dart_out=grpc:lib/src/generated \
-  --descriptor_set_out endpoints/generated/api_descriptor.pb \
   $GOOGLEAPIS_PATH/google/pubsub/v1/pubsub.proto \
   $GOOGLEAPIS_PATH/google/pubsub/v1/schema.proto \
   ../common/result.proto \

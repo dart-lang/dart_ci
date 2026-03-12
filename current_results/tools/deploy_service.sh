@@ -31,13 +31,13 @@ fi
 
 gcloud builds submit --project=$PROJECT --tag gcr.io/$PROJECT/current_results
 
-gcloud run deploy current-results-backend \
+gcloud run deploy current-results \
   --project=$PROJECT \
   --image=gcr.io/$PROJECT/current_results \
+  --args=--server=rest \
   --region=us-central1 \
   --platform=managed \
   --allow-unauthenticated \
-  --use-http2 \
   --min-instances=1 \
   --max-instances=1 \
   --cpu=1 \

@@ -40,6 +40,10 @@ class DirectoryBasedBucket implements ResultsBucket {
 }
 
 void main(List<String> args) async {
+  if (args.isEmpty) {
+    stderr.writeln('Usage: local_test_server <directory>');
+    exit(1);
+  }
   var resultsBucket = DirectoryBasedBucket(args.single);
   var port = int.parse(Platform.environment['PORT'] ?? '8080');
   await startServer(port, resultsBucket);

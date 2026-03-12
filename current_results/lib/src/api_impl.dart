@@ -2,50 +2,95 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:current_results/src/bucket.dart';
-import 'package:current_results/src/generated/query.pbgrpc.dart';
+import 'package:current_results/src/generated/query.pb.dart';
 import 'package:current_results/src/notifications.dart';
 import 'package:current_results/src/slice.dart';
-import 'package:grpc/grpc.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf_router/shelf_router.dart';
 
-class QueryService extends QueryServiceBase {
-  Slice current;
-  BucketNotifications notifications;
-  ResultsBucket bucket;
+part 'api_impl.g.dart';
 
-  QueryService(this.current, this.notifications, this.bucket);
+const _corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers':
+      'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,'
+      'Content-Type,Range,Authorization',
+  'Access-Control-Expose-Headers': 'Content-Length,Content-Range',
+};
 
-  @override
-  Future<GetResultsResponse> getResults(
-    ServiceCall call,
-    GetResultsRequest request,
-  ) => Future.value(current.results(request));
+class RestApi {
+  final Slice current;
+  final BucketNotifications notifications;
+  final ResultsBucket bucket;
 
-  @override
-  Future<ListTestsResponse> listTests(
-    ServiceCall call,
-    ListTestsRequest request,
-  ) => Future.value(current.listTests(request));
+  RestApi(this.current, this.notifications, this.bucket);
 
-  @override
-  Future<ListTestsResponse> listTestPathCompletions(
-    ServiceCall call,
-    ListTestsRequest request,
-  ) async {
-    throw UnimplementedError();
+  Router get router => _$RestApiRouter(this);
+
+  Future<Response> handleRequest(Request request) async {
+    return (await router(request)).change(headers: _corsHeaders);
   }
 
-  @override
-  Future<ListConfigurationsResponse> listConfigurations(
-    ServiceCall call,
-    ListConfigurationsRequest request,
-  ) async {
-    throw UnimplementedError;
+  @Route.options('/<ignored|.*>')
+  Future<Response> _options(Request request) async => Response.ok('');
+
+  @Route.get('/v1/testPaths')
+  Future<Response> _testPaths(Request request) async =>
+      Response(501, body: 'Unimplemented');
+
+  @Route.get('/v1/configurations')
+  Future<Response> _configurations(Request request) async =>
+      Response(501, body: 'Unimplemented');
+
+  @Route.get('/v1/results')
+  Future<Response> _getResults(Request request) async {
+    final params = request.url.queryParameters;
+    final protoRequest = GetResultsRequest();
+    if (params['filter'] case final filter?) {
+      protoRequest.filter = filter;
+    }
+    if (params['pageSize'] case final pageSize?) {
+      protoRequest.pageSize = int.tryParse(pageSize) ?? 0;
+    }
+    if (params['pageToken'] case final pageToken?) {
+      protoRequest.pageToken = pageToken;
+    }
+    final response = current.results(protoRequest);
+    return Response.ok(
+      jsonEncode(response.toProto3Json()),
+      headers: {'Content-Type': 'application/json'},
+    );
   }
 
-  @override
-  Future<FetchResponse> fetch(ServiceCall call, Empty request) =>
-      fetchUpdates(notifications, bucket, current);
+  @Route.get('/v1/tests')
+  Future<Response> _listTests(Request request) async {
+    final params = request.url.queryParameters;
+    final protoRequest = ListTestsRequest();
+    if (params['prefix'] case final prefix?) {
+      protoRequest.prefix = prefix;
+    }
+    if (params['limit'] case final limit?) {
+      protoRequest.limit = int.tryParse(limit) ?? 0;
+    }
+    final response = current.listTests(protoRequest);
+    return Response.ok(
+      jsonEncode(response.toProto3Json()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+
+  @Route.post('/v1/fetch')
+  Future<Response> _fetch(Request request) async {
+    final response = await fetchUpdates(notifications, bucket, current);
+    return Response.ok(
+      jsonEncode(response.toProto3Json()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
 }
 
 Future<FetchResponse> fetchUpdates(
