@@ -14,6 +14,6 @@ steps:
     # Build app
     cd ../current_results_ui
     flutter build web --wasm
-- name: gcr.io/dart_ci/firebase
+- name: us-docker.pkg.dev/firebase-cli/us/firebase
   dir: current_results_ui
   args: ['deploy', '--project=dart-ci', '--only=hosting:current-results']
