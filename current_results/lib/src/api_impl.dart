@@ -8,6 +8,7 @@ import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/query.pb.dart';
 import 'package:current_results/src/notifications.dart';
 import 'package:current_results/src/slice.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -36,7 +37,8 @@ class RestApi {
   }
 
   @Route.options('/<ignored|.*>')
-  Future<Response> _options(Request request) async => Response.ok('');
+  Future<Response> _options(Request request) async =>
+      Response.ok('', headers: _corsHeaders);
 
   @Route.get('/v1/testPaths')
   Future<Response> _testPaths(Request request) async =>
@@ -60,10 +62,7 @@ class RestApi {
       protoRequest.pageToken = pageToken;
     }
     final response = current.results(protoRequest);
-    return Response.ok(
-      jsonEncode(response.toProto3Json()),
-      headers: {'Content-Type': 'application/json'},
-    );
+    return _respond(request, response);
   }
 
   @Route.get('/v1/tests')
@@ -77,18 +76,29 @@ class RestApi {
       protoRequest.limit = int.tryParse(limit) ?? 0;
     }
     final response = current.listTests(protoRequest);
-    return Response.ok(
-      jsonEncode(response.toProto3Json()),
-      headers: {'Content-Type': 'application/json'},
-    );
+    return _respond(request, response);
   }
 
   @Route.post('/v1/fetch')
   Future<Response> _fetch(Request request) async {
     final response = await fetchUpdates(notifications, bucket, current);
+    return _respond(request, response);
+  }
+
+  Response _respond(Request request, GeneratedMessage response) {
+    final accept = request.headers['Accept'] ?? '';
+    final Object body;
+    final String contentType;
+    if (accept.contains('application/x-protobuf')) {
+      body = response.writeToBuffer();
+      contentType = 'application/x-protobuf';
+    } else {
+      body = jsonEncode(response.toProto3Json());
+      contentType = 'application/json';
+    }
     return Response.ok(
-      jsonEncode(response.toProto3Json()),
-      headers: {'Content-Type': 'application/json'},
+      body,
+      headers: {'Content-Type': contentType, ..._corsHeaders},
     );
   }
 }
