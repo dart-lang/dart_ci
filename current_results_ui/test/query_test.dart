@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:flutter_current_results/src/data/models/filter.dart';
 import 'package:flutter_current_results/src/features/results_overview/data/results_repository.dart';
 import 'package:flutter_current_results/src/shared/generated/query.pb.dart';
@@ -175,13 +173,17 @@ void main() {
         ],
         nextPageToken: '',
       );
-      when(mockClient.get(any)).thenAnswer(
-        (_) async => http.Response(jsonEncode(response.toProto3Json()), 200),
+      when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response.bytes(
+          response.writeToBuffer(),
+          200,
+          headers: {'content-type': 'application/x-protobuf'},
+        ),
       );
 
       queryResults.filter = Filter('test');
 
-      await untilCalled(mockClient.get(any));
+      await untilCalled(mockClient.get(any, headers: anyNamed('headers')));
       while (!queryResults.isDone) {
         await Future.delayed(Duration.zero);
       }

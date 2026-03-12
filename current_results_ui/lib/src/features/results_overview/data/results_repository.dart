@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -129,9 +128,11 @@ class QueryResults extends QueryResultsBase {
         'pageSize': '$fetchLimit',
         'pageToken': pageToken,
       });
-      final response = await _client.get(resultsQuery);
-      final results = GetResultsResponse.create()
-        ..mergeFromProto3Json(json.decode(response.body));
+      final response = await _client.get(
+        resultsQuery,
+        headers: {'Accept': 'application/x-protobuf'},
+      );
+      final results = GetResultsResponse.fromBuffer(response.bodyBytes);
       yield results;
       pageToken = results.nextPageToken;
     } while (pageToken.isNotEmpty);

@@ -8,6 +8,7 @@ import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:current_results/src/generated/google/pubsub/v1/pubsub.pbgrpc.dart'
     show PubsubMessage;
+import 'package:current_results/src/generated/query.pb.dart';
 import 'package:current_results/src/notifications.dart';
 import 'package:current_results/src/slice.dart';
 import 'package:mockito/annotations.dart';
@@ -70,6 +71,22 @@ void main() {
       expect(body['results'], hasLength(3));
     });
 
+    test('GET /v1/results - Returns Binary Protobuf', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/results'),
+        headers: {'Accept': 'application/x-protobuf'},
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Content-Type'], 'application/x-protobuf');
+
+      final bytes = await response.read().expand((b) => b).toList();
+      final body = GetResultsResponse.fromBuffer(bytes);
+      expect(body.results, hasLength(3));
+    });
+
     test('GET /v1/results - With Filter', () async {
       final request = Request(
         'GET',
@@ -105,6 +122,23 @@ void main() {
       expect(body['names'], isList);
       expect(body['names'], contains('test1'));
       expect(body['names'], contains('test2'));
+    });
+
+    test('GET /v1/tests - Returns Binary Protobuf', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/tests'),
+        headers: {'Accept': 'application/x-protobuf'},
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Content-Type'], 'application/x-protobuf');
+
+      final bytes = await response.read().expand((b) => b).toList();
+      final body = ListTestsResponse.fromBuffer(bytes);
+      expect(body.names, contains('test1'));
+      expect(body.names, contains('test2'));
     });
 
     test('POST /v1/fetch', () async {
