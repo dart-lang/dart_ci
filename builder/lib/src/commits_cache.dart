@@ -70,7 +70,7 @@ class CommitsCache {
     final lastIndex = lastCommit.index;
 
     final branch = 'main';
-    final logUrl = 'https://dart.googlesource.com/sdk/+log/';
+    final logUrl = 'https://dart.googlesource.com/a/sdk/+log/';
     final range = '$lastHash..$branch';
     final parameters = ['format=JSON', 'topo-order', 'first-parent', 'n=1000'];
     final url = Uri.parse('$logUrl$range?${parameters.join('&')}');
