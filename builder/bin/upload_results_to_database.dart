@@ -83,7 +83,10 @@ void main(List<String> arguments) async {
 
   final baseClient = http.Client();
   final client = await clientViaApplicationDefaultCredentials(
-    scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+    scopes: [
+      'https://www.googleapis.com/auth/cloud-platform',
+      'https://www.googleapis.com/auth/gerritcodereview',
+    ],
     baseClient: baseClient,
   );
   final api = FirestoreApi(client);
