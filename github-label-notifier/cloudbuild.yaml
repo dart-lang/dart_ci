@@ -5,4 +5,13 @@ steps:
   args: ['push', 'gcr.io/dart-ci/github-label-notifier']
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'github-webhook', '--image', 'gcr.io/dart-ci/github-label-notifier', '--region', 'us-central1', '--service-account', 'github-label-notifier@dart-ci.iam.gserviceaccount.com']
+  args:
+  - 'run'
+  - 'deploy'
+  - 'github-webhook'
+  - '--image'
+  - 'gcr.io/dart-ci/github-label-notifier'
+  - '--region'
+  - 'us-central1'
+  - '--service-account'
+  - 'github-label-notifier@dart-ci.iam.gserviceaccount.com'
