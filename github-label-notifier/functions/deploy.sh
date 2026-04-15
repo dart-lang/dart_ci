@@ -21,4 +21,5 @@ gcloud run deploy github-webhook --port 8080 --project dart-ci \
     --memory 128Mi \
     --source=./ --allow-unauthenticated \
     --description 'The Github label notifier service' \
-    --set-env-vars "GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET"
+    --set-env-vars "GITHUB_SECRET=$GITHUB_SECRET,SENDGRID_SECRET=$SENDGRID_SECRET" \
+    --service-account github-label-notifier@dart-ci.iam.gserviceaccount.com
