@@ -374,20 +374,28 @@ class Pill extends StatelessWidget {
   }
 }
 
-class ApiPortalLink extends StatelessWidget {
-  const ApiPortalLink({super.key});
+class TermsOfServiceLink extends StatelessWidget {
+  const TermsOfServiceLink({super.key});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: const Text('API portal'),
-      onPressed: () => url_launcher.launchUrl(
-        Uri.https(
-          'endpointsportal.dart-ci.cloud.goog',
-          '/docs/current-results-qvyo5rktwa-uc.a.run.app/g'
-              '/routes/v1/results/get',
-        ),
-      ),
+      child: const Text('Terms of Service'),
+      onPressed: () =>
+          url_launcher.launchUrl(Uri.https('policies.google.com', '/terms')),
+    );
+  }
+}
+
+class PrivacyPolicyLink extends StatelessWidget {
+  const PrivacyPolicyLink({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: const Text('Privacy Policy'),
+      onPressed: () =>
+          url_launcher.launchUrl(Uri.https('policies.google.com', '/privacy')),
     );
   }
 }
