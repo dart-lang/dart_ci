@@ -380,7 +380,7 @@ class TermsOfServiceLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: const Text('Terms of Service'),
+      child: const Text('Terms'),
       onPressed: () =>
           url_launcher.launchUrl(Uri.https('policies.google.com', '/terms')),
     );
@@ -393,7 +393,7 @@ class PrivacyPolicyLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: const Text('Privacy Policy'),
+      child: const Text('Privacy'),
       onPressed: () =>
           url_launcher.launchUrl(Uri.https('policies.google.com', '/privacy')),
     );
