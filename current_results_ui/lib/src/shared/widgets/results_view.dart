@@ -122,7 +122,8 @@ class _ResultsViewState extends State<ResultsView>
         persistentFooterButtons: const [
           ResultsSummary(),
           TestSummary(),
-          ApiPortalLink(),
+          TermsOfServiceLink(),
+          PrivacyPolicyLink(),
           JsonLink(),
           TextPopup(),
         ],
