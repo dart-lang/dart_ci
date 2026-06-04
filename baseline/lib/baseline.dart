@@ -7,21 +7,26 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:pool/pool.dart';
+import 'package:google_cloud_storage/google_cloud_storage.dart';
 
 const _resultBase = 'gs://dart-test-results';
 
 /// Baselines a builder with the [options] and copies the results to the
-/// [resultBase]. [resultBase] can be a URL or a path supported by `gsutil cp`.
+/// [resultBase]. [resultBase] can be a GCS URL (gs://...) or a local path.
 Future<void> baseline(
   BaselineOptions options, [
   String resultBase = _resultBase,
 ]) async {
+  final FileStore store = resultBase.startsWith('gs://')
+      ? GcsFileStore(Storage())
+      : LocalFileStore();
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
         // baseline a new builder on main
         // builder,builder2 -> new-builder
         baselineBuilder(
+          store,
           options.builders,
           channel,
           options.suites,
@@ -35,6 +40,7 @@ Future<void> baseline(
         // baseline a builder on a channel with main builder data
         // builder,builder2 -> builder-dev
         baselineBuilder(
+          store,
           options.builders,
           channel,
           options.suites,
@@ -48,6 +54,7 @@ Future<void> baseline(
         // baseline a builder on a channel with channel builder data
         // builder-dev,builder2-dev -> new-builder-dev
         baselineBuilder(
+          store,
           options.builders.map((b) => '$b-$channel').toList(),
           channel,
           options.suites,
@@ -61,6 +68,7 @@ Future<void> baseline(
 }
 
 Future<void> baselineBuilder(
+  FileStore store,
   List<String> builders,
   String channel,
   Set<String> suites,
@@ -71,8 +79,10 @@ Future<void> baselineBuilder(
   String resultBase,
 ) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
-    var latest = await read('$resultBase/builders/$builder/latest');
-    return await read('$resultBase/builders/$builder/$latest/results.json');
+    var latest = await store.read('$resultBase/builders/$builder/latest');
+    return await store.read(
+      '$resultBase/builders/$builder/$latest/results.json',
+    );
   });
   var modifiedResults = StringBuffer();
   var modifiedResultsPerConfig = <String, StringBuffer>{};
@@ -102,27 +112,75 @@ Future<void> baselineBuilder(
       if (dryRun) break;
     }
   }
-  await write(
+  await store.write(
     '$resultBase/builders/$target/0/results.json',
     modifiedResults.toString(),
     dryRun,
   );
   for (var entry in modifiedResultsPerConfig.entries) {
-    await write(
+    await store.write(
       '$resultBase/configuration/$channel/${entry.key}/0/results.json',
       entry.value.toString(),
       dryRun,
     );
   }
-  await write('$resultBase/builders/$target/latest', '0', dryRun);
+  await store.write('$resultBase/builders/$target/latest', '0', dryRun);
 }
 
-Future<String> read(String url) {
-  return run('gsutil', ['cp', url, '-']);
+abstract class FileStore {
+  Future<String> read(String path);
+  Future<void> write(String path, String content, bool dryRun);
 }
 
-Future<String> write(String url, String stdin, bool dryRun) {
-  return run('gsutil', ['cp', '-', url], stdin: stdin, dryRun: dryRun);
+class GcsFileStore implements FileStore {
+  final Storage _storage;
+  GcsFileStore(this._storage);
+
+  (String, String) _parseGsUrl(String url) {
+    final uri = Uri.parse(url);
+    if (uri.scheme != 'gs') {
+      throw ArgumentError('Invalid scheme: ${uri.scheme}, expected gs://');
+    }
+    final object = uri.path.startsWith('/') ? uri.path.substring(1) : uri.path;
+    return (uri.host, object);
+  }
+
+  @override
+  Future<String> read(String path) async {
+    final (bucket, object) = _parseGsUrl(path);
+    final bytes = await _storage.bucket(bucket).object(object).download();
+    return utf8.decode(bytes);
+  }
+
+  @override
+  Future<void> write(String path, String content, bool dryRun) async {
+    print('Writing to $path...');
+    if (dryRun) {
+      print('stdin:\n$content');
+      return;
+    }
+    final (bucket, object) = _parseGsUrl(path);
+    await _storage.bucket(bucket).object(object).uploadAsString(content);
+  }
+}
+
+class LocalFileStore implements FileStore {
+  @override
+  Future<String> read(String path) {
+    return File(path).readAsString();
+  }
+
+  @override
+  Future<void> write(String path, String content, bool dryRun) async {
+    print('Writing to $path...');
+    if (dryRun) {
+      print('stdin:\n$content');
+      return;
+    }
+    final file = File(path);
+    await file.parent.create(recursive: true);
+    await file.writeAsString(content);
+  }
 }
 
 Future<String> run(
