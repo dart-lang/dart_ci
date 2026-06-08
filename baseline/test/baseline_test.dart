@@ -67,7 +67,7 @@ void main() {
           '--config-mapping=config2:new-config2',
           '--dry-run',
         ]),
-        'test/data',
+        store: LocalFileStore('test/data'),
       ),
       throwsException,
     );
@@ -349,7 +349,10 @@ Future<void> baselineTest(
   var temp = await Directory.systemTemp.createTemp();
   try {
     await copyPath('test/data', temp.path);
-    await baseline(BaselineOptions.parse(arguments), temp.path);
+    await baseline(
+      BaselineOptions.parse(arguments),
+      store: LocalFileStore(temp.path),
+    );
     var files = temp
         .listSync(recursive: true)
         .whereType<File>()
