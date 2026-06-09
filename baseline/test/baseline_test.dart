@@ -67,7 +67,7 @@ void main() {
           '--config-mapping=config2:new-config2',
           '--dry-run',
         ]),
-        'test/data',
+        store: LocalFileStore('test/data'),
       ),
       throwsException,
     );
@@ -82,7 +82,7 @@ void main() {
       '--dry-run',
       '--ignore-unmapped',
     ], testData);
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline ignored config mapping', () async {
     final newBuilderStableResults = [
@@ -110,7 +110,7 @@ void main() {
         ...testData,
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline default config mapping', () async {
     final newBuilderDevResults = [
@@ -159,7 +159,7 @@ void main() {
         'configuration/dev/config4/0/results.json': [newBuilderDevResults[3]],
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline dry-run', () async {
     await baselineTest([
@@ -170,7 +170,7 @@ void main() {
           'config3:new-config3,config4:new-config4',
       '--dry-run',
     ], testData);
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline', () async {
     final newBuilderStableResults = [
@@ -222,7 +222,7 @@ void main() {
         ...testData,
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline with suite filter', () async {
     final newBuilderStableResults = [
@@ -262,7 +262,7 @@ void main() {
         ...testData,
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline merge configs', () async {
     final newBuilderStableResults = [
@@ -300,7 +300,7 @@ void main() {
         ...testData,
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 
   test('baseline split configs', () async {
     final newBuilderStableResults = [
@@ -339,7 +339,7 @@ void main() {
         ...testData,
       },
     );
-  }, tags: ['requires_gsutil']);
+  });
 }
 
 Future<void> baselineTest(
@@ -349,7 +349,10 @@ Future<void> baselineTest(
   var temp = await Directory.systemTemp.createTemp();
   try {
     await copyPath('test/data', temp.path);
-    await baseline(BaselineOptions.parse(arguments), temp.path);
+    await baseline(
+      BaselineOptions.parse(arguments),
+      store: LocalFileStore(temp.path),
+    );
     var files = temp
         .listSync(recursive: true)
         .whereType<File>()

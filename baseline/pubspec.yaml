@@ -9,6 +9,8 @@ environment:
 dependencies:
   args: ^2.3.0
   pool: ^1.5.0
+  google_cloud_storage: ^0.6.2
+
 
 dev_dependencies:
   io: ^1.0.3

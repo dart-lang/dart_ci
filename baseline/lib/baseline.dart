@@ -7,21 +7,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:pool/pool.dart';
+import 'package:google_cloud_storage/google_cloud_storage.dart';
 
-const _resultBase = 'gs://dart-test-results';
+const _defaultBucket = 'dart-test-results';
 
 /// Baselines a builder with the [options] and copies the results to the
-/// [resultBase]. [resultBase] can be a URL or a path supported by `gsutil cp`.
-Future<void> baseline(
-  BaselineOptions options, [
-  String resultBase = _resultBase,
-]) async {
+/// GCS [store] (defaults to GCS bucket 'dart-test-results').
+Future<void> baseline(BaselineOptions options, {FileStore? store}) async {
+  final FileStore fileStore = store ?? GcsFileStore(Storage(), _defaultBucket);
   await Future.wait([
     for (final channel in options.channels)
       if (channel == 'main')
         // baseline a new builder on main
         // builder,builder2 -> new-builder
         baselineBuilder(
+          fileStore,
           options.builders,
           channel,
           options.suites,
@@ -29,12 +29,12 @@ Future<void> baseline(
           options.configs,
           options.dryRun,
           options.mapping,
-          resultBase,
         )
       else if (options.builders.contains(options.target))
         // baseline a builder on a channel with main builder data
         // builder,builder2 -> builder-dev
         baselineBuilder(
+          fileStore,
           options.builders,
           channel,
           options.suites,
@@ -42,12 +42,12 @@ Future<void> baseline(
           options.configs,
           options.dryRun,
           options.mapping,
-          resultBase,
         )
       else
         // baseline a builder on a channel with channel builder data
         // builder-dev,builder2-dev -> new-builder-dev
         baselineBuilder(
+          fileStore,
           options.builders.map((b) => '$b-$channel').toList(),
           channel,
           options.suites,
@@ -55,12 +55,12 @@ Future<void> baseline(
           options.configs,
           options.dryRun,
           options.mapping,
-          resultBase,
         ),
   ]);
 }
 
 Future<void> baselineBuilder(
+  FileStore store,
   List<String> builders,
   String channel,
   Set<String> suites,
@@ -68,11 +68,10 @@ Future<void> baselineBuilder(
   Map<String, List<String>> configs,
   bool dryRun,
   ConfigurationMapping mapping,
-  String resultBase,
 ) async {
   var resultsStream = Pool(4).forEach(builders, (builder) async {
-    var latest = await read('$resultBase/builders/$builder/latest');
-    return await read('$resultBase/builders/$builder/$latest/results.json');
+    var latest = await store.read('builders/$builder/latest');
+    return await store.read('builders/$builder/$latest/results.json');
   });
   var modifiedResults = StringBuffer();
   var modifiedResultsPerConfig = <String, StringBuffer>{};
@@ -102,27 +101,74 @@ Future<void> baselineBuilder(
       if (dryRun) break;
     }
   }
-  await write(
-    '$resultBase/builders/$target/0/results.json',
+  await store.write(
+    'builders/$target/0/results.json',
     modifiedResults.toString(),
     dryRun,
   );
   for (var entry in modifiedResultsPerConfig.entries) {
-    await write(
-      '$resultBase/configuration/$channel/${entry.key}/0/results.json',
+    await store.write(
+      'configuration/$channel/${entry.key}/0/results.json',
       entry.value.toString(),
       dryRun,
     );
   }
-  await write('$resultBase/builders/$target/latest', '0', dryRun);
+  await store.write('builders/$target/latest', '0', dryRun);
 }
 
-Future<String> read(String url) {
-  return run('gsutil', ['cp', url, '-']);
+abstract class FileStore {
+  Future<String> read(String path);
+  Future<void> write(String path, String content, bool dryRun);
 }
 
-Future<String> write(String url, String stdin, bool dryRun) {
-  return run('gsutil', ['cp', '-', url], stdin: stdin, dryRun: dryRun);
+class GcsFileStore implements FileStore {
+  final Storage _storage;
+  final String _bucketName;
+
+  GcsFileStore(this._storage, this._bucketName);
+
+  @override
+  Future<String> read(String path) async {
+    final bytes = await _storage.downloadObject(_bucketName, path);
+    return utf8.decode(bytes);
+  }
+
+  @override
+  Future<void> write(String path, String content, bool dryRun) async {
+    print('Writing to gs://$_bucketName/$path...');
+    if (dryRun) {
+      print('stdin:\n$content');
+      return;
+    }
+    await _storage.uploadObjectFromString(_bucketName, path, content);
+  }
+}
+
+class LocalFileStore implements FileStore {
+  final String _baseDir;
+  LocalFileStore(this._baseDir);
+
+  String _getPath(String relativePath) {
+    return '$_baseDir/$relativePath';
+  }
+
+  @override
+  Future<String> read(String path) {
+    return File(_getPath(path)).readAsString();
+  }
+
+  @override
+  Future<void> write(String path, String content, bool dryRun) async {
+    final fullPath = _getPath(path);
+    print('Writing to $fullPath...');
+    if (dryRun) {
+      print('stdin:\n$content');
+      return;
+    }
+    final file = File(fullPath);
+    await file.parent.create(recursive: true);
+    await file.writeAsString(content);
+  }
 }
 
 Future<String> run(
