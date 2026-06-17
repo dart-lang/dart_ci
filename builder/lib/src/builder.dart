@@ -207,8 +207,7 @@ class Build {
     for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
       if (activeResult.blamelistEndIndex >= startIndex ||
-          !(activeResult.activeConfigurations
-                  ?.contains(record.configuration) ??
+          !(activeResult.activeConfigurations?.contains(record.configuration) ??
               false)) {
         log(
           'Unexpected active result when processing new change:\n'

@@ -11,21 +11,25 @@ extension MapValueExtensions on Map<String, Value> {
     if (val == null || val.nullValue != null) return null;
     return getValue(val) as int?;
   }
+
   String? getString(String key) {
     final val = this[key];
     if (val == null || val.nullValue != null) return null;
     return getValue(val) as String?;
   }
+
   bool? getBool(String key) {
     final val = this[key];
     if (val == null || val.nullValue != null) return null;
     return getValue(val) as bool?;
   }
+
   List<dynamic>? getList(String key) {
     final val = this[key];
     if (val == null || val.nullValue != null) return null;
     return getValue(val) as List<dynamic>?;
   }
+
   bool isNull(String key) {
     return !containsKey(key) || this[key]!.nullValue == 'NULL_VALUE';
   }
@@ -140,20 +144,20 @@ extension type ResultRecord(Document doc) {
   int get blamelistEndIndex => doc.fields!.getInt(fBlamelistEndIndex)!;
   bool get approved => doc.fields!.getBool(fApproved) ?? false;
   bool get active => doc.fields!.getBool(fActive) ?? false;
-  List<String> get configurations => doc.fields!.getList(fConfigurations)!.cast<String>();
-  List<String>? get activeConfigurations => doc.fields!.getList(fActiveConfigurations)?.cast<String>();
+  List<String> get configurations =>
+      doc.fields!.getList(fConfigurations)!.cast<String>();
+  List<String>? get activeConfigurations =>
+      doc.fields!.getList(fActiveConfigurations)?.cast<String>();
   int? get pinnedIndex => doc.fields!.getInt(fPinnedIndex);
-  String? get blamelistStartCommit => doc.fields!.getString(fBlamelistStartCommit);
+  String? get blamelistStartCommit =>
+      doc.fields!.getString(fBlamelistStartCommit);
   String? get blamelistEndCommit => doc.fields!.getString(fBlamelistEndCommit);
 
-  String get testResult => [
-        testName,
-        result,
-        previousResult,
-        expected,
-      ].join(' ');
+  String get testResult =>
+      [testName, result, previousResult, expected].join(' ');
 
-  Map<String, dynamic> toJson() => untagMap(doc.fields!).cast<String, dynamic>();
+  Map<String, dynamic> toJson() =>
+      untagMap(doc.fields!).cast<String, dynamic>();
 }
 
 extension type ChangeRecord(Document doc) implements ResultRecord {
@@ -197,14 +201,11 @@ extension type TryResultRecord(Document doc) {
   int get review => doc.fields!.getInt(fReview)!;
   int get patchset => doc.fields!.getInt('patchset')!;
   bool get approved => doc.fields!.getBool(fApproved) ?? false;
-  List<String> get configurations => doc.fields!.getList(fConfigurations)!.cast<String>();
+  List<String> get configurations =>
+      doc.fields!.getList(fConfigurations)!.cast<String>();
 
-  String get testResult => [
-        testName,
-        result,
-        previousResult,
-        expected,
-      ].join(' ');
+  String get testResult =>
+      [testName, result, previousResult, expected].join(' ');
 }
 
 extension type TryBuildRecord(Document doc) {
@@ -252,10 +253,12 @@ extension type CommentRecord(Document doc) {
 
 extension type CommitRecord(Document doc) {
   CommitRecord.fromJson(String hash, Map<String, dynamic> data)
-    : this(Document(
-        fields: taggedMap(data),
-        name: 'projects/dummy/databases/(default)/documents/commits/$hash',
-      ));
+    : this(
+        Document(
+          fields: taggedMap(data),
+          name: 'projects/dummy/databases/(default)/documents/commits/$hash',
+        ),
+      );
 
   int get index => doc.fields!.getInt(fIndex)!;
   String? get revertOf => doc.fields!.getString(fRevertOf);

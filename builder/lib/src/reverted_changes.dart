@@ -42,8 +42,6 @@ class RevertedChanges {
     final reverted = changesForTest[revert.testName];
     return revert.isFailure &&
         reverted != null &&
-        reverted.any(
-          (change) => revert.result == change.previousResult,
-        );
+        reverted.any((change) => revert.result == change.previousResult);
   }
 }

@@ -23,7 +23,9 @@ class BuilderTest {
   BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
     builder = Build(
-      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]}),
+      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
+        firstChange[fConfiguration],
+      }),
       commitsCache,
       firestore,
     );
@@ -129,9 +131,11 @@ class FirestoreServiceFake implements FirestoreService {
         if (results[id]![fName] == name &&
             results[id]![fActiveConfigurations] != null &&
             results[id]![fActiveConfigurations].contains(configuration))
-          ResultRecord(Document()
-            ..fields = taggedMap(Map.from(results[id]!))
-            ..name = id),
+          ResultRecord(
+            Document()
+              ..fields = taggedMap(Map.from(results[id]!))
+              ..name = id,
+          ),
     ];
   }
 
@@ -197,17 +201,19 @@ class FirestoreServiceFake implements FirestoreService {
   @override
   Future<List<ResultRecord>> findRevertedChanges(int index) async {
     return results.entries
-        .where(
-          (entry) {
-            final change = entry.value;
-            return change[fPinnedIndex] == index ||
-                (change[fBlamelistStartIndex] == index &&
-                    change[fBlamelistEndIndex] == index);
-          },
+        .where((entry) {
+          final change = entry.value;
+          return change[fPinnedIndex] == index ||
+              (change[fBlamelistStartIndex] == index &&
+                  change[fBlamelistEndIndex] == index);
+        })
+        .map(
+          (entry) => ResultRecord(
+            Document()
+              ..fields = taggedMap(entry.value)
+              ..name = entry.key,
+          ),
         )
-        .map((entry) => ResultRecord(Document()
-          ..fields = taggedMap(entry.value)
-          ..name = entry.key))
         .toList();
   }
 
@@ -219,9 +225,12 @@ class FirestoreServiceFake implements FirestoreService {
         )
         .map(taggedMap)
         .map(
-          (fields) => TryResultRecord(Document()
-            ..fields = fields
-            ..name = 'projects/dummy/databases/(default)/documents/try_results/dummy'),
+          (fields) => TryResultRecord(
+            Document()
+              ..fields = fields
+              ..name =
+                  'projects/dummy/databases/(default)/documents/try_results/dummy',
+          ),
         )
         .toList();
   }
@@ -239,9 +248,12 @@ class FirestoreServiceFake implements FirestoreService {
         )
         .map(taggedMap)
         .map(
-          (fields) => TryResultRecord(Document()
-            ..fields = fields
-            ..name = 'projects/dummy/databases/(default)/documents/try_results/dummy'),
+          (fields) => TryResultRecord(
+            Document()
+              ..fields = fields
+              ..name =
+                  'projects/dummy/databases/(default)/documents/try_results/dummy',
+          ),
         )
         .toList();
   }

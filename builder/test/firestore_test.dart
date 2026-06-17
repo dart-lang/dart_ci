@@ -83,7 +83,9 @@ void main() async {
     test('Remove active configuration', () async {
       // Remove the two active configurations from createdResultDocument,
       // checking that the document is updated correctly at each stage.
-      final createdResultDocument = await firestore.storeResult(ResultRecord.fromMap(createdResult));
+      final createdResultDocument = await firestore.storeResult(
+        ResultRecord.fromMap(createdResult),
+      );
       final name = removeActiveConfigurationTestName;
 
       var foundActiveResults = await firestore.findActiveResults(
@@ -157,15 +159,27 @@ void main() async {
         'expected': 'Pass',
         'previous_result': 'Pass',
       };
-      await firestore.storeTryChange(ChangeRecord.fromMap(tryResult), testReview, 1);
+      await firestore.storeTryChange(
+        ChangeRecord.fromMap(tryResult),
+        testReview,
+        1,
+      );
       final tryResult2 = Map<String, dynamic>.from(tryResult);
       tryResult2['patchset'] = 2;
       tryResult2['name'] = 'test_suite/test_name_2';
-      await firestore.storeTryChange(ChangeRecord.fromMap(tryResult2), testReview, 2);
+      await firestore.storeTryChange(
+        ChangeRecord.fromMap(tryResult2),
+        testReview,
+        2,
+      );
       tryResult['patchset'] = 3;
       tryResult['name'] = 'test_suite/test_name';
       tryResult['expected'] = 'CompileTimeError';
-      await firestore.storeTryChange(ChangeRecord.fromMap(tryResult), testReview, 3);
+      await firestore.storeTryChange(
+        ChangeRecord.fromMap(tryResult),
+        testReview,
+        3,
+      );
       // Set the results on patchsets 1 and 2 to approved.
       final snapshot = await firestore.query(
         from: 'try_results',

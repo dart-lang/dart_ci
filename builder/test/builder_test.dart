@@ -85,7 +85,9 @@ Future<void> loadCommits() async {
 }
 
 Build makeBuild(Map<String, dynamic> firstChange) => Build(
-  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]}),
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
+    firstChange[fConfiguration],
+  }),
   commitsCache,
   firestore,
 );
@@ -157,7 +159,9 @@ void main() async {
     )..[fName] = 'previous_failure_test';
     registerChangeForDeletion(failingPreviousChange); // Name changed.
     final previousBuild = makeBuild(failingPreviousChange);
-    final previousStatus = await previousBuild.process([ChangeRecord.fromMap(failingPreviousChange)]);
+    final previousStatus = await previousBuild.process([
+      ChangeRecord.fromMap(failingPreviousChange),
+    ]);
     expect(previousStatus.success, isFalse);
     expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
 
@@ -175,10 +179,7 @@ void main() async {
     final failure = failures
         .where((failure) => failure.testName == 'failure_test')
         .single;
-    expect(
-      previousFailure.blamelistEndCommit,
-      previousBlamelistEndCommit.hash,
-    );
+    expect(previousFailure.blamelistEndCommit, previousBlamelistEndCommit.hash);
     expect(
       previousFailure.blamelistStartCommit,
       previousBlamelistStartCommit.hash,

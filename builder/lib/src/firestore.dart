@@ -99,8 +99,7 @@ class FirestoreService {
     if (queryResponse.first.document == null) return [];
     documentsFetched += queryResponse.length;
     return [
-      for (final responseElement in queryResponse)
-        responseElement.document!,
+      for (final responseElement in queryResponse) responseElement.document!,
     ];
   }
 
@@ -692,7 +691,9 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.fields!.getInt('patchset_group'); // Use fields!.getInt
+    final lastPatchsetGroup = patchsets.first.fields!.getInt(
+      'patchset_group',
+    ); // Use fields!.getInt
     final results = await query(
       from: 'try_results',
       where: compositeFilter([
@@ -717,7 +718,9 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.fields!.getInt('patchset_group'); // Use fields!.getInt
+    final lastPatchsetGroup = patchsets.first.fields!.getInt(
+      'patchset_group',
+    ); // Use fields!.getInt
     final results = await query(
       from: 'try_results',
       where: compositeFilter([

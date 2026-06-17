@@ -5,7 +5,6 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
-
 import 'firestore_helpers.dart';
 
 // Field names of Result document fields
@@ -44,7 +43,6 @@ const fTitle = 'title';
 const fReview = 'review';
 const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
-
 
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results
@@ -88,4 +86,3 @@ class TryBuildInfo extends BuildInfo {
 
   TryBuildInfo(super.result, super.configurations, this.review, this.patchset);
 }
-

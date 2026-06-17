@@ -24,7 +24,8 @@ class CommitsCache {
 
   CommitsCache(this.firestore, this.httpClient);
 
-  FutureOr<CommitRecord> getCommit(String hash) => byHash[hash] ??= _getCommit(hash);
+  FutureOr<CommitRecord> getCommit(String hash) =>
+      byHash[hash] ??= _getCommit(hash);
   Future<CommitRecord> _getCommit(String hash) async {
     var commit = await _fetchByHash(hash);
     if (commit == null) {

@@ -98,11 +98,13 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
     for (final idx in [index.toString(), landedIndex.toString(), baseIndex])
-      idx: CommitRecord((await firestore.query(
-        from: 'commits',
-        where: fieldEquals('index', int.parse(idx)),
-        limit: 1,
-      )).first).hash,
+      idx: CommitRecord(
+        (await firestore.query(
+          from: 'commits',
+          where: fieldEquals('index', int.parse(idx)),
+          limit: 1,
+        )).first,
+      ).hash,
   };
   return {
     'index': index.toString(),
@@ -122,7 +124,9 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
 }
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
-  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
+        firstChange[fConfiguration],
+      })
       as TryBuildInfo,
   'bbID_$name',
   data['landedCommit']!,
@@ -133,7 +137,9 @@ Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
 
 Tryjob makeLandedTryjob(String name, Map<String, dynamic> firstChange) =>
     Tryjob(
-      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
+      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
+            firstChange[fConfiguration],
+          })
           as TryBuildInfo,
       'bbID_$name',
       data['baseCommit']!,
@@ -223,7 +229,9 @@ void main() async {
   test('failure', () async {
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('failure', failingChange);
-    final failedStatus = await tryjob.process([ChangeRecord.fromMap(failingChange)]);
+    final failedStatus = await tryjob.process([
+      ChangeRecord.fromMap(failingChange),
+    ]);
     await checkTryBuild('failure', success: false);
     expect(failedStatus.success, isFalse);
     expect(failedStatus.truncatedResults, isFalse);

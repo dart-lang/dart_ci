@@ -147,11 +147,13 @@ Future<void> loadTestCommits(int startIndex) async {
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
     for (final index in [index1, index2, index3, index4])
-      index: CommitRecord((await firestore.query(
-        from: 'commits',
-        where: fieldEquals('index', int.parse(index)),
-        limit: 1,
-      )).first).hash,
+      index: CommitRecord(
+        (await firestore.query(
+          from: 'commits',
+          where: fieldEquals('index', int.parse(index)),
+          limit: 1,
+        )).first,
+      ).hash,
   };
   commit1 = commits[index1]!;
   commit2 = commits[index2]!;
@@ -164,7 +166,9 @@ Tryjob makeTryjob(
   Map<String, dynamic> firstChange, {
   String? baseCommit,
 }) => Tryjob(
-  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
+        firstChange[fConfiguration],
+      })
       as TryBuildInfo,
   'bbID_$name',
   baseCommit ?? commit4,
@@ -227,7 +231,9 @@ Map<String, dynamic> makeChange(
 
 Build makeBuild(String commit, Map<String, dynamic> change) {
   return Build(
-    BuildInfo.fromResult(ChangeRecord.fromMap(change), <String>{change[fConfiguration]}),
+    BuildInfo.fromResult(ChangeRecord.fromMap(change), <String>{
+      change[fConfiguration],
+    }),
     commitsCache,
     firestore,
   );
@@ -270,7 +276,10 @@ void main() async {
     // Test that approvals are copied from approved try results in the
     // blamelist range of a CI build
     final change1 = makeTryChange('approvals', newFailure, lastPatchsetRef);
-    await makeTryjob('approvals', change1).process([ChangeRecord.fromMap(change1)]);
+    await makeTryjob(
+      'approvals',
+      change1,
+    ).process([ChangeRecord.fromMap(change1)]);
     var documents = await firestore.query(
       from: 'try_results',
       where: fieldEquals('name', 'approvals_test'),
@@ -282,7 +291,10 @@ void main() async {
       patchsetGroupRef,
       testName: 'approvals_2',
     );
-    await makeTryjob('approvals', change2).process([ChangeRecord.fromMap(change2)]);
+    await makeTryjob(
+      'approvals',
+      change2,
+    ).process([ChangeRecord.fromMap(change2)]);
     documents = await firestore.query(
       from: 'try_results',
       where: fieldEquals('name', 'approvals_2_test'),
@@ -299,10 +311,7 @@ void main() async {
       commit4,
       testName: 'approvals_2',
     );
-    final status = await makeBuild(
-      commit1,
-      change3,
-    ).process([
+    final status = await makeBuild(commit1, change3).process([
       ChangeRecord.fromMap(change3),
       ChangeRecord.fromMap(change3a),
       ChangeRecord.fromMap(change4),
@@ -320,7 +329,10 @@ void main() async {
       commit3,
       testName: 'approvals',
     );
-    final status2 = await makeBuild(commit1, change5).process([ChangeRecord.fromMap(change5)]);
+    final status2 = await makeBuild(
+      commit1,
+      change5,
+    ).process([ChangeRecord.fromMap(change5)]);
     await checkBuild(change5['builder_name'], index1, success: true);
     expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {

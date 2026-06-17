@@ -91,8 +91,7 @@ class Tryjob {
   }
 
   bool isNotLandedResult(ChangeRecord change) {
-    return change.result !=
-        lastLandedResultByName[change.testName]?.result;
+    return change.result != lastLandedResultByName[change.testName]?.result;
   }
 
   Future<BuildStatus> process(List<ChangeRecord> results) async {
