@@ -145,7 +145,13 @@ class Tryjob {
       testNameLock.guardedCall(storeChange, change);
 
   Future<void> storeChange(Map<String, dynamic> change) async {
-    transformChange(change);
+    final record = ResultRecord.fromMap(change);
+    record.transformChange();
+    record.toJson().forEach((key, value) {
+      if (change[key] != value) {
+        change[key] = value;
+      }
+    });
     counter.count(change);
     if (counter.isNotReported(change)) return;
     final approved = await firestore.storeTryChange(
@@ -153,7 +159,7 @@ class Tryjob {
       info.review,
       info.patchset,
     );
-    if (!approved && isFailure(change)) {
+    if (!approved && record.isFailure) {
       counter.unapprovedFailures++;
       success = false;
     }

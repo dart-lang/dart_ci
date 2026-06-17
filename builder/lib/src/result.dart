@@ -43,25 +43,7 @@ const fReview = 'review';
 const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
 
-bool isChangedResult(Map<String, dynamic> change) =>
-    change[fChanged] && (!change[fFlaky] || !change[fPreviousFlaky]);
 
-/// Whether the change will be marked as an active failure.
-/// New flaky tests will not be marked active, so they will appear in the
-/// results feed "all", but not turn the builder red
-bool isFailure(Map<String, dynamic> change) =>
-    !change[fMatches] && change[fResult] != 'flaky';
-
-void transformChange(Map<String, dynamic> change) {
-  change[fPreviousResult] ??= 'new test';
-  if (change[fPreviousFlaky]) {
-    change[fPreviousResult] = 'flaky';
-  }
-  if (change[fFlaky]) {
-    change[fResult] = 'flaky';
-    change[fMatches] = false;
-  }
-}
 
 
 

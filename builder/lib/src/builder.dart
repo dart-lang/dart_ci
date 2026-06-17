@@ -159,8 +159,14 @@ class Build {
   Future<void> storeChange(Map<String, dynamic> change) async {
     countChanges++;
     await reviewsFetched;
-    transformChange(change);
-    final failure = isFailure(change);
+    final record = ResultRecord.fromMap(change);
+    record.transformChange();
+    record.toJson().forEach((key, value) {
+      if (change[key] != value) {
+        change[key] = value;
+      }
+    });
+    final failure = record.isFailure;
     bool approved;
     var result = await firestore.findResult(change, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
@@ -169,7 +175,7 @@ class Build {
     );
     if (result == null) {
       final approvingIndex =
-          tryApprovals[ResultRecord.fromMap(change).testResult] ??
+          tryApprovals[record.testResult] ??
           allRevertedChanges
               .firstWhereOrNull(
                 (revertedChange) => revertedChange.approveRevert(change),
@@ -189,7 +195,7 @@ class Build {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10) {
           approvalMessages.add(
-            'Copied approval of result ${ResultRecord.fromMap(change).testResult}',
+            'Copied approval of result ${record.testResult}',
           );
         }
       }

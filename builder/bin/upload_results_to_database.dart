@@ -25,7 +25,7 @@ Future<List<Map<String, dynamic>>> readChangedResults(File resultsFile) async {
   buildInfo = BuildInfo.fromResult(lines.first, {
     for (final line in lines) line[fConfiguration],
   });
-  return lines.where(isChangedResult).toList();
+  return lines.where((line) => ResultRecord.fromMap(line).isChangedResult).toList();
 }
 
 File fileOption(ArgResults options, String name) {

@@ -153,6 +153,32 @@ extension type ResultRecord(Document doc) {
         previousResult,
         expected,
       ].join(' ');
+
+  bool get changed => doc.fields!.getBool(fChanged) ?? false;
+  bool get flaky => doc.fields!.getBool(fFlaky) ?? false;
+  bool get previousFlaky => doc.fields!.getBool(fPreviousFlaky) ?? false;
+  bool get matches => doc.fields!.getBool(fMatches) ?? false;
+
+  bool get isChangedResult =>
+      changed && (!flaky || !previousFlaky);
+
+  bool get isFailure =>
+      !matches && result != 'flaky';
+
+  void transformChange() {
+    if (doc.fields!.getString(fPreviousResult) == null) {
+      doc.fields![fPreviousResult] = taggedValue('new test');
+    }
+    if (doc.fields!.getBool(fPreviousFlaky) == true) {
+      doc.fields![fPreviousResult] = taggedValue('flaky');
+    }
+    if (doc.fields!.getBool(fFlaky) == true) {
+      doc.fields![fResult] = taggedValue('flaky');
+      doc.fields![fMatches] = taggedValue(false);
+    }
+  }
+
+  Map<String, dynamic> toJson() => untagMap(doc.fields!).cast<String, dynamic>();
 }
 
 extension type TryResultRecord(Document doc) {

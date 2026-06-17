@@ -41,7 +41,7 @@ class RevertedChanges {
 
   bool approveRevert(Map<String, dynamic> revert) {
     final reverted = changesForTest[revert[fName]];
-    return isFailure(revert) &&
+    return ResultRecord.fromMap(revert).isFailure &&
         reverted != null &&
         reverted.any(
           (change) => revert[fResult] == change.previousResult,
