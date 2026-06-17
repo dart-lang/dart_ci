@@ -164,7 +164,7 @@ Tryjob makeTryjob(
   Map<String, dynamic> firstChange, {
   String? baseCommit,
 }) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
       as TryBuildInfo,
   'bbID_$name',
   baseCommit ?? commit4,
@@ -227,7 +227,7 @@ Map<String, dynamic> makeChange(
 
 Build makeBuild(String commit, Map<String, dynamic> change) {
   return Build(
-    BuildInfo.fromResult(change, <String>{change[fConfiguration]}),
+    BuildInfo.fromResult(ChangeRecord.fromMap(change), <String>{change[fConfiguration]}),
     commitsCache,
     firestore,
   );
@@ -270,7 +270,7 @@ void main() async {
     // Test that approvals are copied from approved try results in the
     // blamelist range of a CI build
     final change1 = makeTryChange('approvals', newFailure, lastPatchsetRef);
-    await makeTryjob('approvals', change1).process([change1]);
+    await makeTryjob('approvals', change1).process([ChangeRecord.fromMap(change1)]);
     var documents = await firestore.query(
       from: 'try_results',
       where: fieldEquals('name', 'approvals_test'),
@@ -282,7 +282,7 @@ void main() async {
       patchsetGroupRef,
       testName: 'approvals_2',
     );
-    await makeTryjob('approvals', change2).process([change2]);
+    await makeTryjob('approvals', change2).process([ChangeRecord.fromMap(change2)]);
     documents = await firestore.query(
       from: 'try_results',
       where: fieldEquals('name', 'approvals_2_test'),
@@ -302,7 +302,11 @@ void main() async {
     final status = await makeBuild(
       commit1,
       change3,
-    ).process([change3, change3a, change4]);
+    ).process([
+      ChangeRecord.fromMap(change3),
+      ChangeRecord.fromMap(change3a),
+      ChangeRecord.fromMap(change4),
+    ]);
     await checkBuild(change3['builder_name'], index1, success: true);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
@@ -316,7 +320,7 @@ void main() async {
       commit3,
       testName: 'approvals',
     );
-    final status2 = await makeBuild(commit1, change5).process([change5]);
+    final status2 = await makeBuild(commit1, change5).process([ChangeRecord.fromMap(change5)]);
     await checkBuild(change5['builder_name'], index1, success: true);
     expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {
@@ -425,7 +429,7 @@ Future<void> checkResult(
 ) async {
   expect([fConfigurations, fApproved], containsAll(expected.keys));
   final resultName = await firestore.findResult(
-    change,
+    ChangeRecord.fromMap(change),
     int.parse(startIndex),
     int.parse(endIndex),
   );

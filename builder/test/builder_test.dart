@@ -85,7 +85,7 @@ Future<void> loadCommits() async {
 }
 
 Build makeBuild(Map<String, dynamic> firstChange) => Build(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]}),
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]}),
   commitsCache,
   firestore,
 );
@@ -157,13 +157,13 @@ void main() async {
     )..[fName] = 'previous_failure_test';
     registerChangeForDeletion(failingPreviousChange); // Name changed.
     final previousBuild = makeBuild(failingPreviousChange);
-    final previousStatus = await previousBuild.process([failingPreviousChange]);
+    final previousStatus = await previousBuild.process([ChangeRecord.fromMap(failingPreviousChange)]);
     expect(previousStatus.success, isFalse);
     expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
 
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final build = makeBuild(failingChange);
-    final status = await build.process([failingChange]);
+    final status = await build.process([ChangeRecord.fromMap(failingChange)]);
     expect(status.success, isFalse);
     expect(status.truncatedResults, isFalse);
     expect(status.unapprovedFailures, isNotEmpty);
@@ -208,7 +208,7 @@ void main() async {
       'RuntimeError/RuntimeError/Pass',
     );
     final unchangedBuild = makeBuild(unchangedChange);
-    final unchangedStatus = await unchangedBuild.process([]);
+    final unchangedStatus = await unchangedBuild.process(<ChangeRecord>[]);
     expect(unchangedStatus.success, isTrue);
     expect(unchangedStatus.unapprovedFailures, isNotEmpty);
     expect(
@@ -225,7 +225,7 @@ void main() async {
     registerChangeForDeletion(failingOtherConfigurationChange);
     final otherConfigurationBuild = makeBuild(failingOtherConfigurationChange);
     final otherStatus = await otherConfigurationBuild.process([
-      failingOtherConfigurationChange,
+      ChangeRecord.fromMap(failingOtherConfigurationChange),
     ]);
     expect(otherStatus.success, isFalse);
     expect(otherStatus.unapprovedFailures, isNotEmpty);
@@ -245,7 +245,7 @@ void main() async {
       'Pass/RuntimeError/Pass',
     );
     final build = makeBuild(failingChange);
-    final status = await build.process([failingChange]);
+    final status = await build.process([ChangeRecord.fromMap(failingChange)]);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
     expect(status.unapprovedFailures, isEmpty);

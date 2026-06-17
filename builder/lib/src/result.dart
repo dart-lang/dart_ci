@@ -6,6 +6,8 @@
 // commit documents from Firestore.
 
 
+import 'firestore_helpers.dart';
+
 // Field names of Result document fields
 const fName = 'name';
 const fResult = 'result';
@@ -44,9 +46,6 @@ const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
 
 
-
-
-
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results
 class BuildInfo {
@@ -58,17 +57,17 @@ class BuildInfo {
   final String? previousCommitHash;
   final Set<String> configurations;
 
-  BuildInfo(Map<String, dynamic> result, this.configurations)
-    : builderName = result[fBuilderName],
-      buildNumber = int.parse(result[fBuildNumber]),
-      commitRef = result[fCommitHash],
-      previousCommitHash = result[fPreviousCommitHash];
+  BuildInfo(ChangeRecord result, this.configurations)
+    : builderName = result.builderName,
+      buildNumber = result.buildNumber,
+      commitRef = result.commitHash,
+      previousCommitHash = result.previousCommitHash;
 
   factory BuildInfo.fromResult(
-    Map<String, dynamic> result,
+    ChangeRecord result,
     Set<String> configurations,
   ) {
-    final commitRef = result[fCommitHash];
+    final commitRef = result.commitHash;
     final match = commitRefRegExp.matchAsPrefix(commitRef);
     if (match == null) {
       return BuildInfo(result, configurations);
@@ -90,24 +89,3 @@ class TryBuildInfo extends BuildInfo {
   TryBuildInfo(super.result, super.configurations, this.review, this.patchset);
 }
 
-class TestNameLock {
-  final locks = <String, Future<void>>{};
-
-  Future<void> guardedCall(
-    Future<void> Function(Map<String, dynamic> change) f,
-    Map<String, dynamic> change,
-  ) async {
-    final name = change[fName]!;
-    while (locks.containsKey(name)) {
-      await locks[name];
-    }
-    return locks[name] = () async {
-      try {
-        await f(change);
-      } finally {
-        // ignore: unawaited_futures
-        locks.remove(name);
-      }
-    }();
-  }
-}

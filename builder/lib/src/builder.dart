@@ -41,7 +41,7 @@ class Build {
 
   void log(String string) => firestore.log(string);
 
-  Future<BuildStatus> process(List<Map<String, dynamic>> changes) async {
+  Future<BuildStatus> process(List<ChangeRecord> changes) async {
     log('store build commits info');
     await storeBuildCommitsInfo();
     log('update build info');
@@ -153,37 +153,31 @@ class Build {
     }
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+  Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(Map<String, dynamic> change) async {
+  Future<void> storeChange(ChangeRecord record) async {
     countChanges++;
     await reviewsFetched;
-    final record = ResultRecord.fromMap(change);
     record.transformChange();
-    record.toJson().forEach((key, value) {
-      if (change[key] != value) {
-        change[key] = value;
-      }
-    });
     final failure = record.isFailure;
     bool approved;
-    var result = await firestore.findResult(change, startIndex, endIndex);
+    var result = await firestore.findResult(record, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
-      change['name'],
-      change['configuration'],
+      record.testName,
+      record.configuration!,
     );
     if (result == null) {
       final approvingIndex =
           tryApprovals[record.testResult] ??
           allRevertedChanges
               .firstWhereOrNull(
-                (revertedChange) => revertedChange.approveRevert(change),
+                (revertedChange) => revertedChange.approveRevert(record),
               )
               ?.revertIndex;
       approved = approvingIndex != null;
       final newResult = constructResult(
-        change,
+        record,
         startIndex,
         endIndex,
         approved: approved,
@@ -202,7 +196,7 @@ class Build {
     } else {
       approved = await firestore.updateResult(
         result,
-        change['configuration'],
+        record.configuration,
         startIndex,
         endIndex,
         failure: failure,
@@ -214,19 +208,19 @@ class Build {
       // Log error message if any expected invariants are violated
       if (activeResult.blamelistEndIndex >= startIndex ||
           !(activeResult.activeConfigurations
-                  ?.contains(change['configuration']) ??
+                  ?.contains(record.configuration) ??
               false)) {
         log(
           'Unexpected active result when processing new change:\n'
           'Active result: ${untagMap(activeResult.doc.fields!)}\n\n'
-          'Change: $change\n\n'
+          'Change: ${record.toJson()}\n\n'
           'approved: $approved',
         );
       }
       // Removes the configuration from the list of active configurations.
       await firestore.removeActiveConfiguration(
         activeResult,
-        change['configuration'],
+        record.configuration!,
       );
     }
   }
@@ -254,25 +248,25 @@ class Build {
   }
 }
 
-Map<String, dynamic> constructResult(
-  Map<String, dynamic> change,
+ResultRecord constructResult(
+  ChangeRecord change,
   int startIndex,
   int endIndex, {
   required bool approved,
   int? landedReviewIndex,
   required bool failure,
 }) {
-  return {
-    fName: change[fName],
-    fResult: change[fResult],
-    fPreviousResult: change[fPreviousResult],
-    fExpected: change[fExpected],
+  return ResultRecord.fromMap({
+    fName: change.testName,
+    fResult: change.result,
+    fPreviousResult: change.previousResult,
+    fExpected: change.expected,
     fBlamelistStartIndex: startIndex,
     fBlamelistEndIndex: endIndex,
     if (startIndex != endIndex && approved) fPinnedIndex: landedReviewIndex,
-    fConfigurations: <String>[change['configuration']],
+    fConfigurations: <String>[change.configuration!],
     fApproved: approved,
     if (failure) fActive: true,
-    if (failure) fActiveConfigurations: <String>[change['configuration']],
-  };
+    if (failure) fActiveConfigurations: <String>[change.configuration!],
+  });
 }

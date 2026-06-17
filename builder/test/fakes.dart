@@ -23,7 +23,7 @@ class BuilderTest {
   BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
     builder = Build(
-      BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]}),
+      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]}),
       commitsCache,
       firestore,
     );
@@ -39,7 +39,13 @@ class BuilderTest {
   }
 
   Future<void> storeChange(Map<String, dynamic> change) async {
-    return builder.storeChange(change);
+    final record = ChangeRecord.fromMap(change);
+    await builder.storeChange(record);
+    record.toJson().forEach((key, value) {
+      if (change[key] != value) {
+        change[key] = value;
+      }
+    });
   }
 }
 
@@ -89,7 +95,7 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<String?> findResult(
-    Map<String, dynamic> change,
+    ResultRecord change,
     int startIndex,
     int endIndex,
   ) {
@@ -97,10 +103,10 @@ class FirestoreServiceFake implements FirestoreService {
     int? resultEndIndex;
     for (final entry in results.entries) {
       final result = entry.value;
-      if (result[fName] == change[fName] &&
-          result[fResult] == change[fResult] &&
-          result[fExpected] == change[fExpected] &&
-          result[fPreviousResult] == change[fPreviousResult] &&
+      if (result[fName] == change.testName &&
+          result[fResult] == change.result &&
+          result[fExpected] == change.expected &&
+          result[fPreviousResult] == change.previousResult &&
           result[fBlamelistEndIndex] >= startIndex &&
           result[fBlamelistStartIndex] <= endIndex) {
         if (resultEndIndex == null ||
@@ -130,12 +136,12 @@ class FirestoreServiceFake implements FirestoreService {
   }
 
   @override
-  Future<Document> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(ResultRecord result) async {
     final id = 'resultDocumentID$addedResultIdCounter';
     addedResultIdCounter++;
-    results[id] = result;
+    results[id] = result.toJson();
     return Document()
-      ..fields = taggedMap(result)
+      ..fields = result.doc.fields
       ..name = id;
   }
 

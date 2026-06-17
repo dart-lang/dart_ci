@@ -132,7 +132,6 @@ Filter compositeFilter(List<Filter> filters) {
 extension type ResultRecord(Document doc) {
   ResultRecord.fromMap(Map<String, dynamic> data)
     : this(Document(fields: taggedMap(data)));
-
   String get testName => doc.fields!.getString(fName)!;
   String get result => doc.fields!.getString(fResult)!;
   String get previousResult => doc.fields!.getString(fPreviousResult)!;
@@ -154,16 +153,27 @@ extension type ResultRecord(Document doc) {
         expected,
       ].join(' ');
 
+  Map<String, dynamic> toJson() => untagMap(doc.fields!).cast<String, dynamic>();
+}
+
+extension type ChangeRecord(Document doc) implements ResultRecord {
+  ChangeRecord.fromMap(Map<String, dynamic> data)
+    : this(Document(fields: taggedMap(data)));
+
+  String? get configuration => doc.fields!.getString('configuration');
+  String get builderName => doc.fields!.getString(fBuilderName)!;
+  int get buildNumber => int.parse(doc.fields!.getString(fBuildNumber)!);
+  String get commitHash => doc.fields!.getString(fCommitHash)!;
+  String? get previousCommitHash => doc.fields!.getString(fPreviousCommitHash);
+
   bool get changed => doc.fields!.getBool(fChanged) ?? false;
   bool get flaky => doc.fields!.getBool(fFlaky) ?? false;
   bool get previousFlaky => doc.fields!.getBool(fPreviousFlaky) ?? false;
   bool get matches => doc.fields!.getBool(fMatches) ?? false;
 
-  bool get isChangedResult =>
-      changed && (!flaky || !previousFlaky);
+  bool get isChangedResult => changed && (!flaky || !previousFlaky);
 
-  bool get isFailure =>
-      !matches && result != 'flaky';
+  bool get isFailure => !matches && result != 'flaky';
 
   void transformChange() {
     if (doc.fields!.getString(fPreviousResult) == null) {
@@ -177,8 +187,6 @@ extension type ResultRecord(Document doc) {
       doc.fields![fMatches] = taggedValue(false);
     }
   }
-
-  Map<String, dynamic> toJson() => untagMap(doc.fields!).cast<String, dynamic>();
 }
 
 extension type TryResultRecord(Document doc) {
@@ -260,4 +268,26 @@ extension type CommitRecord(Document doc) {
 
 extension type ConfigurationRecord(Document doc) {
   String get builder => doc.fields!.getString('builder')!;
+}
+
+class TestNameLock {
+  final locks = <String, Future<void>>{};
+
+  Future<void> guardedCall(
+    Future<void> Function(ChangeRecord change) f,
+    ChangeRecord change,
+  ) async {
+    final name = change.testName;
+    while (locks.containsKey(name)) {
+      await locks[name];
+    }
+    return locks[name] = () async {
+      try {
+        await f(change);
+      } finally {
+        // ignore: unawaited_futures
+        locks.remove(name);
+      }
+    }();
+  }
 }

@@ -259,14 +259,14 @@ class FirestoreService {
   }
 
   Future<String?> findResult(
-    Map<String, dynamic> change,
+    ResultRecord change,
     int startIndex,
     int endIndex,
   ) async {
-    final name = change['name'] as String;
-    final result = change['result'] as String;
-    final previousResult = change['previous_result'] as String;
-    final expected = change['expected'] as String;
+    final name = change.testName;
+    final result = change.result;
+    final previousResult = change.previousResult;
+    final expected = change.expected;
     final snapshot = await query(
       from: 'results',
       orderBy: orderBy('blamelist_end_index', false),
@@ -289,10 +289,10 @@ class FirestoreService {
     return snapshot.firstWhereOrNull(blamelistIncludesChange)?.name;
   }
 
-  Future<Document> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(ResultRecord result) async {
     for (var retries = 0; true; retries++) {
       try {
-        final document = Document()..fields = taggedMap(result);
+        final document = result.doc;
         final createdDocument = await firestore.projects.databases.documents
             .createDocument(document, documents, 'results');
         documentsWritten++;
@@ -300,7 +300,7 @@ class FirestoreService {
       } catch (e) {
         log('Failed creating document at path $documents/results.');
         log('Retrying in 1000 ms.');
-        log('Document contents: ${jsonEncode(result)}\n');
+        log('Document contents: ${jsonEncode(result.toJson())}\n');
         log('$e');
         if (retries > 2) {
           rethrow;
@@ -402,15 +402,15 @@ class FirestoreService {
   }
 
   Future<bool> storeTryChange(
-    Map<String, dynamic> change,
+    ChangeRecord change,
     int review,
     int patchset,
   ) async {
-    final name = change['name'] as String;
-    final result = change['result'] as String;
-    final expected = change['expected'] as String;
-    final previousResult = change['previous_result'] as String;
-    final configuration = change['configuration'] as String;
+    final name = change.testName;
+    final result = change.result;
+    final expected = change.expected;
+    final previousResult = change.previousResult;
+    final configuration = change.configuration!;
 
     // Find an existing result record for this test on this patchset.
     final responses = await query(

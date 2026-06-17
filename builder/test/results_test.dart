@@ -72,7 +72,7 @@ void main() async {
     expect(builderTest.builder.countChanges, 2);
     expect(
       builderTest.firestore.results[await builderTest.firestore.findResult(
-        landedCommitChange,
+        ChangeRecord.fromMap(landedCommitChange),
         landedCommitIndex,
         landedCommitIndex,
       )],
@@ -104,7 +104,7 @@ void main() async {
     expect(builderTest.builder.countChanges, 1);
     expect(
       builderTest.firestore.results[await builderTest.firestore.findResult(
-        flakyChange,
+        ChangeRecord.fromMap(flakyChange),
         landedCommitIndex,
         landedCommitIndex,
       )],

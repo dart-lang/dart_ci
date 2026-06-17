@@ -5,7 +5,6 @@
 import 'package:collection/collection.dart';
 
 import 'firestore.dart';
-import 'result.dart';
 
 Future<RevertedChanges> getRevertedChanges(
   String reverted,
@@ -39,12 +38,12 @@ class RevertedChanges {
     this.changesForTest,
   );
 
-  bool approveRevert(Map<String, dynamic> revert) {
-    final reverted = changesForTest[revert[fName]];
-    return ResultRecord.fromMap(revert).isFailure &&
+  bool approveRevert(ChangeRecord revert) {
+    final reverted = changesForTest[revert.testName];
+    return revert.isFailure &&
         reverted != null &&
         reverted.any(
-          (change) => revert[fResult] == change.previousResult,
+          (change) => revert.result == change.previousResult,
         );
   }
 }

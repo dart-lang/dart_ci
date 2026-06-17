@@ -122,7 +122,7 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
 }
 
 Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
       as TryBuildInfo,
   'bbID_$name',
   data['landedCommit']!,
@@ -133,7 +133,7 @@ Tryjob makeTryjob(String name, Map<String, dynamic> firstChange) => Tryjob(
 
 Tryjob makeLandedTryjob(String name, Map<String, dynamic> firstChange) =>
     Tryjob(
-      BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{firstChange[fConfiguration]})
           as TryBuildInfo,
       'bbID_$name',
       data['baseCommit']!,
@@ -223,7 +223,7 @@ void main() async {
   test('failure', () async {
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('failure', failingChange);
-    final failedStatus = await tryjob.process([failingChange]);
+    final failedStatus = await tryjob.process([ChangeRecord.fromMap(failingChange)]);
     await checkTryBuild('failure', success: false);
     expect(failedStatus.success, isFalse);
     expect(failedStatus.truncatedResults, isFalse);
@@ -239,7 +239,7 @@ void main() async {
       otherConfigurationChange,
     );
     final otherFailedStatus = await otherTryjob.process([
-      otherConfigurationChange,
+      ChangeRecord.fromMap(otherConfigurationChange),
     ]);
     await checkTryBuild('other_configuration', success: false);
     expect(otherFailedStatus.success, isFalse);
@@ -258,13 +258,13 @@ void main() async {
       'Pass/RuntimeError/Pass',
     );
     final landedTryjob = makeLandedTryjob('landedFailure', landedChange);
-    await landedTryjob.process([landedChange]);
+    await landedTryjob.process([ChangeRecord.fromMap(landedChange)]);
     // This change has a base revision containing the landed failure, but
     // CI results that don't contain it. The failure is seen in the landed
     // try results, and ignored.
     final failingChange = makeChange('landedFailure', 'Pass/RuntimeError/Pass');
     final tryjob = makeTryjob('landedFailure2', failingChange);
-    final status = await tryjob.process([failingChange]);
+    final status = await tryjob.process([ChangeRecord.fromMap(failingChange)]);
     await checkTryBuild('landedFailure2', success: true);
     expect(status.success, isTrue);
   });
@@ -276,7 +276,7 @@ void main() async {
       flaky: true,
     );
     final tryjob = makeTryjob('flaky', flakyChange);
-    final status = await tryjob.process([flakyChange]);
+    final status = await tryjob.process([ChangeRecord.fromMap(flakyChange)]);
     await checkTryBuild('flaky', success: true);
     expect(status.success, isTrue);
     expect(tryjob.success, isTrue);
@@ -287,7 +287,7 @@ void main() async {
   test('empty', () async {
     final emptyChange = makeChange('empty', 'Pass/Pass/Pass');
     final tryjob = makeTryjob('empty', emptyChange);
-    final status = await tryjob.process([]);
+    final status = await tryjob.process(<ChangeRecord>[]);
     await checkTryBuild('empty', success: true);
     expect(status.success, isTrue);
     expect(tryjob.success, isTrue);
@@ -302,8 +302,8 @@ void main() async {
     registerChangeForDeletion(failingChange);
     tryjob.counter.passes = ChangeCounter.maxReportedSuccesses;
     final truncatedStatus = await tryjob.process([
-      passingChange,
-      failingChange,
+      ChangeRecord.fromMap(passingChange),
+      ChangeRecord.fromMap(failingChange),
     ]);
     await checkTryBuild('truncatedPass', success: false, truncated: true);
     expect(truncatedStatus.success, isFalse);
@@ -333,8 +333,8 @@ void main() async {
     registerChangeForDeletion(truncatedChange);
     tryjob.counter.failures = ChangeCounter.maxReportedFailures - 1;
     final truncatedStatus = await tryjob.process([
-      failingChange,
-      truncatedChange,
+      ChangeRecord.fromMap(failingChange),
+      ChangeRecord.fromMap(truncatedChange),
     ]);
     await checkTryBuild('truncated', success: false, truncated: true);
     expect(truncatedStatus.success, isFalse);
