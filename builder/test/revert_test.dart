@@ -90,7 +90,7 @@ void main() async {
         change[fName],
         change[fConfiguration],
       );
-      return result.single.getBool(fApproved)!;
+      return result.single.approved;
     }
 
     expect(await findApproval(commit56UnmatchingChange), false);

@@ -59,26 +59,26 @@ class FirestoreServiceFake implements FirestoreService {
       throw UnimplementedError(invocation.memberName.toString());
 
   @override
-  Future<Commit?> getCommit(String hash) async {
+  Future<CommitRecord?> getCommit(String hash) async {
     final commit = commits[hash];
     if (commit == null) {
       return null;
     }
-    return Commit.fromJson(hash, commits[hash]!);
+    return CommitRecord.fromJson(hash, commits[hash]!);
   }
 
   @override
-  Future<Commit> getCommitByIndex(int? index) {
+  Future<CommitRecord> getCommitByIndex(int? index) {
     for (final entry in commits.entries) {
       if (entry.value[fIndex] == index) {
-        return Future.value(Commit.fromJson(entry.key, entry.value));
+        return Future.value(CommitRecord.fromJson(entry.key, entry.value));
       }
     }
     throw 'No commit found with index $index';
   }
 
   @override
-  Future<Commit> getLastCommit() => getCommitByIndex(
+  Future<CommitRecord> getLastCommit() => getCommitByIndex(
     commits.values.map<int>((commit) => commit[fIndex]).reduce(max),
   );
 
@@ -114,7 +114,7 @@ class FirestoreServiceFake implements FirestoreService {
   }
 
   @override
-  Future<List<SafeDocument>> findActiveResults(
+  Future<List<ResultRecord>> findActiveResults(
     String? name,
     String? configuration,
   ) async {
@@ -123,11 +123,9 @@ class FirestoreServiceFake implements FirestoreService {
         if (results[id]![fName] == name &&
             results[id]![fActiveConfigurations] != null &&
             results[id]![fActiveConfigurations].contains(configuration))
-          SafeDocument(
-            Document()
-              ..fields = taggedMap(Map.from(results[id]!))
-              ..name = id,
-          ),
+          ResultRecord(Document()
+            ..fields = taggedMap(Map.from(results[id]!))
+            ..name = id),
     ];
   }
 
@@ -177,51 +175,53 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<void> removeActiveConfiguration(
-    SafeDocument activeResult,
+    ResultRecord activeResult,
     String? configuration,
   ) async {
-    final result = Map<String, dynamic>.from(results[activeResult.name]!);
+    final result = Map<String, dynamic>.from(results[activeResult.doc.name]!);
     result[fActiveConfigurations] = List.from(result[fActiveConfigurations])
       ..remove(configuration);
     if (result[fActiveConfigurations].isEmpty) {
       result.remove(fActiveConfigurations);
       result.remove(fActive);
     }
-    results[activeResult.name] = result;
+    results[activeResult.doc.name!] = result;
   }
 
   @override
-  Future<List<Map<String, Value>>> findRevertedChanges(int index) async {
-    return results.values
+  Future<List<ResultRecord>> findRevertedChanges(int index) async {
+    return results.entries
         .where(
-          (change) =>
-              change[fPinnedIndex] == index ||
-              (change[fBlamelistStartIndex] == index &&
-                  change[fBlamelistEndIndex] == index),
+          (entry) {
+            final change = entry.value;
+            return change[fPinnedIndex] == index ||
+                (change[fBlamelistStartIndex] == index &&
+                    change[fBlamelistEndIndex] == index);
+          },
         )
-        .map(taggedMap)
+        .map((entry) => ResultRecord(Document()
+          ..fields = taggedMap(entry.value)
+          ..name = entry.key))
         .toList();
   }
 
   @override
-  Future<List<SafeDocument>> tryApprovals(int review) async {
+  Future<List<TryResultRecord>> tryApprovals(int review) async {
     return fakeTryResults
         .where(
           (result) => result[fReview] == review && result[fApproved] == true,
         )
         .map(taggedMap)
         .map(
-          (fields) => SafeDocument(
-            Document()
-              ..fields = fields
-              ..name = '',
-          ),
+          (fields) => TryResultRecord(Document()
+            ..fields = fields
+            ..name = 'projects/dummy/databases/(default)/documents/try_results/dummy'),
         )
         .toList();
   }
 
   @override
-  Future<List<SafeDocument>> tryResults(
+  Future<List<TryResultRecord>> tryResults(
     int review,
     String configuration,
   ) async {
@@ -233,11 +233,9 @@ class FirestoreServiceFake implements FirestoreService {
         )
         .map(taggedMap)
         .map(
-          (fields) => SafeDocument(
-            Document()
-              ..fields = fields
-              ..name = '',
-          ),
+          (fields) => TryResultRecord(Document()
+            ..fields = fields
+            ..name = 'projects/dummy/databases/(default)/documents/try_results/dummy'),
         )
         .toList();
   }

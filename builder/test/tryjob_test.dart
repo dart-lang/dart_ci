@@ -40,9 +40,9 @@ void registerChangeForDeletion(Map<String, dynamic> change) {
 }
 
 Future<void> removeTryBuildersAndResults() async {
-  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+  Future<void> deleteDocuments(List<Document> documents) async {
     for (final document in documents) {
-      await firestore.deleteDocument(document.name);
+      await firestore.deleteDocument(document.name!);
     }
   }
 
@@ -72,47 +72,47 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
     where: fieldLessThanOrEqual('landed_index', startIndex),
     limit: 2,
   );
-  final firstReview = reviews.first;
-  final String? index = firstReview.fields['landed_index']!.integerValue;
-  final String review = firstReview.name.split('/').last;
-  final secondReview = reviews.last;
-  final String landedIndex = secondReview.fields['landed_index']!.integerValue!;
-  final String landedReview = secondReview.name.split('/').last;
+  final firstReview = ReviewRecord(reviews.first);
+  final int index = firstReview.landedIndex!;
+  final String review = firstReview.review;
+  final secondReview = ReviewRecord(reviews.last);
+  final int landedIndex = secondReview.landedIndex!;
+  final String landedReview = secondReview.review;
   // expect(int.parse(index), greaterThan(int.parse(landedIndex)));
-  final String baseIndex = (int.parse(landedIndex) - 1).toString();
+  final String baseIndex = (landedIndex - 1).toString();
 
   final patchsets = await firestore.query(
     from: 'patchsets',
     parent: 'reviews/$review',
     orderBy: orderBy('number', true),
   );
-  final patchset = patchsets.last.fields['number']!.integerValue;
+  final patchset = PatchsetRecord(patchsets.last).number.toString();
   final previousPatchset = '1';
   final landedPatchsets = await firestore.query(
     from: 'patchsets',
     parent: 'reviews/$landedReview',
     orderBy: orderBy('number', true),
   );
-  final landedPatchset = landedPatchsets.last.fields['number']!.integerValue;
+  final landedPatchset = PatchsetRecord(landedPatchsets.last).number.toString();
 
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
-    for (final index in [index, landedIndex, baseIndex])
-      index: (await firestore.query(
+    for (final idx in [index.toString(), landedIndex.toString(), baseIndex])
+      idx: CommitRecord((await firestore.query(
         from: 'commits',
-        where: fieldEquals('index', int.parse(index!)),
+        where: fieldEquals('index', int.parse(idx)),
         limit: 1,
-      )).first.name.split('/').last,
+      )).first).hash,
   };
   return {
-    'index': index,
-    'commit': commits[index],
+    'index': index.toString(),
+    'commit': commits[index.toString()],
     'review': review,
     'patchset': patchset,
     'patchsetRef': 'refs/changes/$review/$patchset',
     'previousPatchset': previousPatchset,
-    'landedIndex': landedIndex,
-    'landedCommit': commits[landedIndex],
+    'landedIndex': landedIndex.toString(),
+    'landedCommit': commits[landedIndex.toString()],
     'landedReview': landedReview,
     'landedPatchset': landedPatchset,
     'landedPatchsetRef': 'refs/changes/$landedReview/$landedPatchset',
@@ -192,11 +192,12 @@ Future<void> checkTryBuild(
     where: fieldEquals('buildbucket_id', buildbucketId),
   );
   expect(buildDocuments.length, 1);
-  expect(buildDocuments.single.fields['success']!.booleanValue, success);
+  final record = TryBuildRecord(buildDocuments.single);
+  expect(record.success, success);
   if (truncated != null) {
-    expect(buildDocuments.single.fields['truncated']!.booleanValue, truncated);
+    expect(record.truncated, truncated);
   } else {
-    expect(buildDocuments.single.fields.containsKey('truncated'), isFalse);
+    expect(record.doc.fields!.containsKey('truncated'), isFalse);
   }
 }
 
@@ -248,7 +249,7 @@ void main() async {
       where: fieldEquals('name', 'failure_test'),
     );
     expect(result.length, 1);
-    expect(result.single.getList('configurations')!.length, 2);
+    expect(TryResultRecord(result.single).configurations.length, 2);
   });
 
   test('landedFailure', () async {

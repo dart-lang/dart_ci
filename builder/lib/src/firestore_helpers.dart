@@ -3,45 +3,31 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:googleapis/firestore/v1.dart';
+import 'result.dart';
 
-class SafeDocument {
-  final String name;
-  final Map<String, Value> fields;
-
-  SafeDocument(Document document)
-    : name = document.name!,
-      fields = document.fields!;
-
-  Document toDocument() => Document(name: name, fields: fields);
-  int? getInt(String name) {
-    final value = fields[name]?.integerValue;
-    if (value == null) {
-      return null;
-    }
-    return int.parse(value);
+extension MapValueExtensions on Map<String, Value> {
+  int? getInt(String key) {
+    final val = this[key];
+    if (val == null || val.nullValue != null) return null;
+    return getValue(val) as int?;
   }
-
-  String getString(String name) {
-    return fields[name]!.stringValue!;
+  String? getString(String key) {
+    final val = this[key];
+    if (val == null || val.nullValue != null) return null;
+    return getValue(val) as String?;
   }
-
-  String? getStringOrNull(String name) {
-    return fields[name]?.stringValue;
+  bool? getBool(String key) {
+    final val = this[key];
+    if (val == null || val.nullValue != null) return null;
+    return getValue(val) as bool?;
   }
-
-  bool? getBool(String name) {
-    return fields[name]?.booleanValue;
+  List<dynamic>? getList(String key) {
+    final val = this[key];
+    if (val == null || val.nullValue != null) return null;
+    return getValue(val) as List<dynamic>?;
   }
-
-  List<dynamic>? getList(String name) {
-    final arrayValue = fields[name]?.arrayValue;
-    if (arrayValue == null) return null;
-    return arrayValue.values?.map(getValue).toList() ?? [];
-  }
-
-  bool isNull(String name) {
-    return !fields.containsKey(name) ||
-        fields['name']!.nullValue == 'NULL_VALUE';
+  bool isNull(String key) {
+    return !containsKey(key) || this[key]!.nullValue == 'NULL_VALUE';
   }
 }
 
@@ -77,7 +63,7 @@ dynamic getValue(Value value) {
   } else if (value.booleanValue != null) {
     return value.booleanValue;
   } else if (value.arrayValue != null) {
-    return value.arrayValue!.values!.map(getValue).toList();
+    return value.arrayValue!.values?.map(getValue).toList() ?? [];
   } else if (value.timestampValue != null) {
     return DateTime.parse(value.timestampValue!);
   } else if (value.nullValue != null) {
@@ -141,4 +127,94 @@ Filter compositeFilter(List<Filter> filters) {
     ..compositeFilter = (CompositeFilter()
       ..filters = filters
       ..op = 'AND');
+}
+
+extension type ResultRecord(Document doc) {
+  String get testName => doc.fields!.getString(fName)!;
+  String get result => doc.fields!.getString(fResult)!;
+  String get previousResult => doc.fields!.getString(fPreviousResult)!;
+  String get expected => doc.fields!.getString(fExpected)!;
+  int get blamelistStartIndex => doc.fields!.getInt(fBlamelistStartIndex)!;
+  int get blamelistEndIndex => doc.fields!.getInt(fBlamelistEndIndex)!;
+  bool get approved => doc.fields!.getBool(fApproved) ?? false;
+  bool get active => doc.fields!.getBool(fActive) ?? false;
+  List<String> get configurations => doc.fields!.getList(fConfigurations)!.cast<String>();
+  List<String>? get activeConfigurations => doc.fields!.getList(fActiveConfigurations)?.cast<String>();
+  int? get pinnedIndex => doc.fields!.getInt(fPinnedIndex);
+  String? get blamelistStartCommit => doc.fields!.getString(fBlamelistStartCommit);
+  String? get blamelistEndCommit => doc.fields!.getString(fBlamelistEndCommit);
+}
+
+extension type TryResultRecord(Document doc) {
+  String get testName => doc.fields!.getString(fName)!;
+  String get result => doc.fields!.getString(fResult)!;
+  String get previousResult => doc.fields!.getString(fPreviousResult)!;
+  String get expected => doc.fields!.getString(fExpected)!;
+  int get review => doc.fields!.getInt(fReview)!;
+  int get patchset => doc.fields!.getInt('patchset')!;
+  bool get approved => doc.fields!.getBool(fApproved) ?? false;
+  List<String> get configurations => doc.fields!.getList(fConfigurations)!.cast<String>();
+}
+
+extension type TryBuildRecord(Document doc) {
+  String get builder => doc.fields!.getString('builder')!;
+  int get buildNumber => doc.fields!.getInt('build_number')!;
+  String get buildbucketId => doc.fields!.getString('buildbucket_id')!;
+  int get review => doc.fields!.getInt(fReview)!;
+  int get patchset => doc.fields!.getInt('patchset')!;
+  bool get success => doc.fields!.getBool('success') ?? false;
+  bool get completed => doc.fields!.getBool('completed') ?? false;
+  bool get truncated => doc.fields!.getBool('truncated') ?? false;
+}
+
+extension type BuildRecord(Document doc) {
+  String get builder => doc.fields!.getString('builder')!;
+  int get buildNumber => doc.fields!.getInt('build_number')!;
+  int get index => doc.fields!.getInt('index')!;
+  bool get success => doc.fields!.getBool('success') ?? false;
+  bool get completed => doc.fields!.getBool('completed') ?? false;
+}
+
+extension type ReviewRecord(Document doc) {
+  String get review => doc.name!.split('/').last;
+  String get subject => doc.fields!.getString('subject')!;
+  int? get landedIndex => doc.fields!.getInt('landed_index');
+  String? get revertOf => doc.fields!.getString('revert_of');
+}
+
+extension type PatchsetRecord(Document doc) {
+  int get number => doc.fields!.getInt('number')!;
+  int get patchsetGroup => doc.fields!.getInt('patchset_group')!;
+  String get kind => doc.fields!.getString('kind')!;
+  String? get description => doc.fields!.getString('description');
+}
+
+extension type CommentRecord(Document doc) {
+  String get id => doc.name!.split('/').last;
+  String get author => doc.fields!.getString('author')!;
+  String get comment => doc.fields!.getString('comment')!;
+  int get review => doc.fields!.getInt(fReview)!;
+  int? get blamelistStartIndex => doc.fields!.getInt(fBlamelistStartIndex);
+  int? get blamelistEndIndex => doc.fields!.getInt(fBlamelistEndIndex);
+  bool get approved => doc.fields!.getBool(fApproved) ?? false;
+}
+
+extension type CommitRecord(Document doc) {
+  CommitRecord.fromJson(String hash, Map<String, dynamic> data)
+    : this(Document(
+        fields: taggedMap(data),
+        name: 'projects/dummy/databases/(default)/documents/commits/$hash',
+      ));
+
+  int get index => doc.fields!.getInt(fIndex)!;
+  String? get revertOf => doc.fields!.getString(fRevertOf);
+  bool get isRevert => doc.fields!.containsKey(fRevertOf);
+  int? get review => doc.fields!.getInt(fReview);
+  String get hash => doc.name!.split('/').last;
+
+  Map<String, Object?> toJson() => untagMap(doc.fields!);
+}
+
+extension type ConfigurationRecord(Document doc) {
+  String get builder => doc.fields!.getString('builder')!;
 }

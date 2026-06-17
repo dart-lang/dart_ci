@@ -5,13 +5,12 @@
 import 'dart:convert' show jsonEncode;
 
 import 'firestore.dart';
-import 'result.dart';
 
 class BuildStatus {
   static const unapprovedFailuresLimit = 10;
   bool success = true;
   bool truncatedResults = false;
-  Map<String, List<SafeDocument>> unapprovedFailures = {};
+  Map<String, List<ResultRecord>> unapprovedFailures = {};
 
   String toJson() {
     return jsonEncode({
@@ -39,13 +38,13 @@ class BuildStatus {
   }
 }
 
-String resultLine(SafeDocument result) {
-  final name = result.getString(fName);
-  final previous = result.getString(fPreviousResult);
-  final current = result.getString(fResult);
-  final expected = result.getString(fExpected);
-  final start = result.getString(fBlamelistStartCommit);
-  final end = result.getString(fBlamelistEndCommit);
+String resultLine(ResultRecord result) {
+  final name = result.testName;
+  final previous = result.previousResult;
+  final current = result.result;
+  final expected = result.expected;
+  final start = result.blamelistStartCommit!;
+  final end = result.blamelistEndCommit!;
   final range = start == end
       ? start.substring(0, 6)
       : '${start.substring(0, 6)}..${end.substring(0, 6)}';

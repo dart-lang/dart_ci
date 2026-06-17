@@ -60,7 +60,7 @@ void main() async {
         where: fieldEquals('review', testReview),
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
 
       snapshot = await firestore.query(
@@ -68,14 +68,14 @@ void main() async {
         parent: 'reviews/$testReview/',
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
       snapshot = await firestore.query(
         from: 'results',
         where: fieldEquals('name', removeActiveConfigurationTestName),
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
       await firestore.deleteDocument(testReviewDocument);
     });
@@ -91,7 +91,7 @@ void main() async {
         testConfiguration,
       );
       var activeResult = foundActiveResults.single;
-      expect(createdResultDocument.name, activeResult.name);
+      expect(createdResultDocument.name, activeResult.doc.name);
 
       await firestore.removeActiveConfiguration(
         activeResult,
@@ -108,7 +108,7 @@ void main() async {
       );
       activeResult = foundActiveResults.single;
 
-      expect(activeResult.fields, contains('active'));
+      expect(activeResult.doc.fields!, contains('active'));
       await firestore.removeActiveConfiguration(
         activeResult,
         'configuration 2',
@@ -176,7 +176,7 @@ void main() async {
         ]),
       );
       for (final response in snapshot) {
-        await firestore.approveResult(response.toDocument());
+        await firestore.approveResult(response);
         //await firestore.updateDocument(response.document.name, {'approved': taggedValue(true)});
       }
 
@@ -187,7 +187,7 @@ void main() async {
       tryResult2['approved'] = true;
       tryResult2.remove('configuration');
       expect(1, approvals.length);
-      final approval = untagMap(approvals.single.fields);
+      final approval = untagMap(approvals.single.doc.fields!);
       expect(approval, tryResult2);
     });
   });

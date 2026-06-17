@@ -82,7 +82,7 @@ void main() async {
       landedCommitChange['name'],
       landedCommitChange['configuration'],
     )).single;
-    expect(untagMap(result.fields), landedResult);
+    expect(untagMap(result.doc.fields!), landedResult);
   });
 
   test('mark active result flaky', () async {

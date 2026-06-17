@@ -25,8 +25,8 @@ class Build {
   final TestNameLock testNameLock = TestNameLock();
   late final int startIndex;
   late int endIndex;
-  late Commit endCommit;
-  late List<Commit> commits;
+  late CommitRecord endCommit;
+  late List<CommitRecord> commits;
   late final Future<void> reviewsFetched = _fetchReviewsAndReverts();
   Map<String, int> tryApprovals = {};
   List<RevertedChanges> allRevertedChanges = [];
@@ -70,7 +70,7 @@ class Build {
       }..removeWhere((key, value) => value.isEmpty);
     } catch (e) {
       log('Failed to fetch unapproved failures: $e');
-      status.unapprovedFailures = {'failed': []};
+      status.unapprovedFailures = {'failed': <ResultRecord>[]};
       status.success = false;
     }
     final report = [
@@ -136,7 +136,7 @@ class Build {
       if (review != null) {
         tryApprovals.addAll({
           for (final result in await firestore.tryApprovals(review))
-            testResult(result.fields): index,
+            testResult(result.doc.fields!): index,
         });
       }
       if (reverted != null) {
@@ -206,14 +206,13 @@ class Build {
 
     for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
-      if (activeResult.getInt(fBlamelistEndIndex)! >= startIndex ||
-          !(activeResult
-                  .getList(fActiveConfigurations)
+      if (activeResult.blamelistEndIndex >= startIndex ||
+          !(activeResult.activeConfigurations
                   ?.contains(change['configuration']) ??
               false)) {
         log(
           'Unexpected active result when processing new change:\n'
-          'Active result: ${untagMap(activeResult.fields)}\n\n'
+          'Active result: ${untagMap(activeResult.doc.fields!)}\n\n'
           'Change: $change\n\n'
           'approved: $approved',
         );
@@ -226,7 +225,7 @@ class Build {
     }
   }
 
-  Future<List<SafeDocument>> unapprovedFailuresForConfiguration(
+  Future<List<ResultRecord>> unapprovedFailuresForConfiguration(
     String configuration,
   ) async {
     final failures = await firestore.findUnapprovedFailures(
@@ -237,15 +236,15 @@ class Build {
     return failures;
   }
 
-  Future<void> addBlamelistCommits(SafeDocument result) async {
+  Future<void> addBlamelistCommits(ResultRecord result) async {
     final startCommit = await commitsCache.getCommitByIndex(
-      result.getInt(fBlamelistStartIndex)!,
+      result.blamelistStartIndex,
     );
-    result.fields[fBlamelistStartCommit] = taggedValue(startCommit.hash);
+    result.doc.fields![fBlamelistStartCommit] = taggedValue(startCommit.hash);
     final endCommit = await commitsCache.getCommitByIndex(
-      result.getInt(fBlamelistEndIndex)!,
+      result.blamelistEndIndex,
     );
-    result.fields[fBlamelistEndCommit] = taggedValue(endCommit.hash);
+    result.doc.fields![fBlamelistEndCommit] = taggedValue(endCommit.hash);
   }
 }
 

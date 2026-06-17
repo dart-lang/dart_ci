@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:collection/collection.dart';
-import 'package:googleapis/firestore/v1.dart';
 
 import 'firestore.dart';
 import 'result.dart';
@@ -23,15 +22,15 @@ Future<RevertedChanges> getRevertedChanges(
     index,
     revertIndex,
     changes,
-    groupBy(changes, (change) => getValue(change[fName]!)),
+    groupBy(changes, (change) => change.testName),
   );
 }
 
 class RevertedChanges {
   final int index;
   final int revertIndex;
-  final List<Map<String, Value>> changes;
-  final Map<String, List<Map<String, Value>>> changesForTest;
+  final List<ResultRecord> changes;
+  final Map<String, List<ResultRecord>> changesForTest;
 
   RevertedChanges(
     this.index,
@@ -45,7 +44,7 @@ class RevertedChanges {
     return isFailure(revert) &&
         reverted != null &&
         reverted.any(
-          (change) => revert[fResult] == getValue(change[fPreviousResult]!),
+          (change) => revert[fResult] == change.previousResult,
         );
   }
 }

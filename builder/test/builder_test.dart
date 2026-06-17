@@ -34,11 +34,11 @@ const previousIndex = index - 1;
 const previousBlamelistEnd = previousIndex - 1;
 const previousBlamelistStart = previousBlamelistEnd - 3;
 const previousBuildPreviousIndex = previousBlamelistStart - 1;
-late Commit commit;
-late Commit previousCommit;
-late Commit previousBlamelistEndCommit;
-late Commit previousBlamelistStartCommit;
-late Commit previousBuildPreviousCommit;
+late CommitRecord commit;
+late CommitRecord previousCommit;
+late CommitRecord previousBlamelistEndCommit;
+late CommitRecord previousBlamelistStartCommit;
+late CommitRecord previousBuildPreviousCommit;
 
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};
@@ -49,9 +49,9 @@ void registerChangeForDeletion(Map<String, dynamic> change) {
 }
 
 Future<void> removeBuildersAndResults() async {
-  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+  Future<void> deleteDocuments(List<Document> documents) async {
     for (final document in documents) {
-      await firestore.deleteDocument(document.name);
+      await firestore.deleteDocument(document.name!);
     }
   }
 
@@ -170,21 +170,21 @@ void main() async {
     expect(status.unapprovedFailures.keys, contains('failure_configuration'));
     final failures = status.unapprovedFailures['failure_configuration']!;
     final previousFailure = failures
-        .where((failure) => failure.getString(fName) == 'previous_failure_test')
+        .where((failure) => failure.testName == 'previous_failure_test')
         .single;
     final failure = failures
-        .where((failure) => failure.getString(fName) == 'failure_test')
+        .where((failure) => failure.testName == 'failure_test')
         .single;
     expect(
-      previousFailure.getStringOrNull(fBlamelistEndCommit),
+      previousFailure.blamelistEndCommit,
       previousBlamelistEndCommit.hash,
     );
     expect(
-      previousFailure.getStringOrNull(fBlamelistStartCommit),
+      previousFailure.blamelistStartCommit,
       previousBlamelistStartCommit.hash,
     );
-    expect(failure.getStringOrNull(fBlamelistEndCommit), commit.hash);
-    expect(failure.getStringOrNull(fBlamelistStartCommit), commit.hash);
+    expect(failure.blamelistEndCommit, commit.hash);
+    expect(failure.blamelistStartCommit, commit.hash);
     final message = status.toJson();
     expect(message, matches(r'There are unapproved failures\\n'));
     expect(
@@ -237,9 +237,9 @@ void main() async {
       'approved_failure_test',
       'other_configuration',
     )).single;
-    expect(result.getInt(fBlamelistEndIndex), index);
-    expect(result.getInt(fBlamelistStartIndex), previousBlamelistStart);
-    await firestore.approveResult(result.toDocument());
+    expect(result.blamelistEndIndex, index);
+    expect(result.blamelistStartIndex, previousBlamelistStart);
+    await firestore.approveResult(result.doc);
     final failingChange = makeChange(
       'approved_failure',
       'Pass/RuntimeError/Pass',
@@ -253,9 +253,9 @@ void main() async {
       'approved_failure_test',
       'other_configuration',
     )).single;
-    expect(result.name, changedResult.name);
+    expect(result.testName, changedResult.testName);
     // Check blamelist narrowing.
-    expect(changedResult.getInt(fBlamelistEndIndex), index);
-    expect(changedResult.getInt(fBlamelistStartIndex), index);
+    expect(changedResult.blamelistEndIndex, index);
+    expect(changedResult.blamelistStartIndex, index);
   });
 }
