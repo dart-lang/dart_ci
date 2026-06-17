@@ -57,14 +57,19 @@ Future<void> removeBuildersAndResults() async {
 
   for (final test in testsToRemove) {
     await deleteDocuments(
-      await firestore.query(from: 'results', where: fieldEquals(fName, test)),
+      await firestore.query(
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals(fName, test),
+      ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('builds')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }

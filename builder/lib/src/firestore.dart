@@ -10,6 +10,7 @@ import 'package:builder/src/result.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:googleapis/firestore/v1.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 import 'firestore_helpers.dart';
 
@@ -38,20 +39,6 @@ class FirestoreService {
     }
   }
 
-  Future<List<Document>> query({
-    required String from,
-    Filter? where,
-    Order? orderBy,
-    int? limit,
-    String? parent,
-  }) => _query<Document>(
-    from: from,
-    where: where,
-    orderBy: orderBy,
-    limit: limit,
-    parent: parent,
-  );
-
   Future<List<T>> _query<T>({
     required String from,
     Filter? where,
@@ -64,7 +51,7 @@ class FirestoreService {
       ..where = where
       ..orderBy = orderBy != null ? [orderBy] : null
       ..limit = limit;
-    final results = await runQuery(query, parent: parent);
+    final results = await this.query(query, parent: parent);
     return results.cast<T>();
   }
 
@@ -101,7 +88,8 @@ class FirestoreService {
   String get database => 'projects/$project/databases/(default)';
   String get documents => '$database/documents';
 
-  Future<List<Document>> runQuery(
+  @visibleForTesting
+  Future<List<Document>> query(
     StructuredQuery query, {
     String? parent,
   }) async {

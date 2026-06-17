@@ -71,37 +71,45 @@ Future<void> removeBuildersAndResults() async {
   for (final test in testsToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'try_results',
-        where: fieldEquals('name', test),
+        StructuredQuery()
+          ..from = inCollection('try_results')
+          ..where = fieldEquals('name', test),
       ),
     );
   }
   for (final test in testsToRemove) {
     await deleteDocuments(
-      await firestore.query(from: 'results', where: fieldEquals('name', test)),
-    );
-  }
-  for (final builder in buildersToRemove) {
-    await deleteDocuments(
       await firestore.query(
-        from: 'try_builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals('name', test),
       ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('try_builds')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'configurations',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('builds')
+          ..where = fieldEquals('builder', builder),
+      ),
+    );
+  }
+  for (final builder in buildersToRemove) {
+    await deleteDocuments(
+      await firestore.query(
+        StructuredQuery()
+          ..from = inCollection('configurations')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }
@@ -110,10 +118,11 @@ Future<void> removeBuildersAndResults() async {
 Future<void> loadTestCommits(int startIndex) async {
   // Get review data for the last two landed CLs before or at startIndex.
   final reviews = await firestore.query(
-    from: 'reviews',
-    orderBy: orderBy('landed_index', false),
-    where: fieldLessThanOrEqual('landed_index', startIndex),
-    limit: 2,
+    StructuredQuery()
+      ..from = inCollection('reviews')
+      ..orderBy = [orderBy('landed_index', false)]
+      ..where = fieldLessThanOrEqual('landed_index', startIndex)
+      ..limit = 2,
   );
   final firstReview = ReviewRecord(reviews.first);
   index1 = firstReview.landedIndex!.toString();
@@ -125,9 +134,10 @@ Future<void> loadTestCommits(int startIndex) async {
   index4 = (int.parse(index2) - 2).toString();
 
   final patchsets = await firestore.query(
-    from: 'patchsets',
+    StructuredQuery()
+      ..from = inCollection('patchsets')
+      ..orderBy = [orderBy('number', true)],
     parent: 'reviews/$review',
-    orderBy: orderBy('number', true),
   );
   final patchsetRecord = PatchsetRecord(patchsets.last);
   lastPatchset = patchsetRecord.number.toString();
@@ -137,9 +147,10 @@ Future<void> loadTestCommits(int startIndex) async {
   earlyPatchset = '1';
   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';
   final patchsets2 = await firestore.query(
-    from: 'patchsets',
+    StructuredQuery()
+      ..from = inCollection('patchsets')
+      ..orderBy = [orderBy('number', true)],
     parent: 'reviews/$review2',
-    orderBy: orderBy('number', true),
   );
   patchset2 = PatchsetRecord(patchsets2.last).number.toString();
   patchset2Ref = 'refs/changes/$review/$patchset2';
@@ -149,9 +160,10 @@ Future<void> loadTestCommits(int startIndex) async {
     for (final index in [index1, index2, index3, index4])
       index: CommitRecord(
         (await firestore.query(
-          from: 'commits',
-          where: fieldEquals('index', int.parse(index)),
-          limit: 1,
+          StructuredQuery()
+            ..from = inCollection('commits')
+            ..where = fieldEquals('index', int.parse(index))
+            ..limit = 1,
         )).first,
       ).hash,
   };
@@ -266,8 +278,9 @@ void main() async {
     expect(int.parse(index2), lessThan(int.parse(index1)));
     // reviewWithComments should have some comments, to test linking
     final comments = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     expect(comments, isNotEmpty);
   });
@@ -281,8 +294,9 @@ void main() async {
       change1,
     ).process([ChangeRecord.fromMap(change1)]);
     var documents = await firestore.query(
-      from: 'try_results',
-      where: fieldEquals('name', 'approvals_test'),
+      StructuredQuery()
+        ..from = inCollection('try_results')
+        ..where = fieldEquals('name', 'approvals_test'),
     );
     await firestore.approveResult(documents.single);
     final change2 = makeTryChange(
@@ -296,8 +310,9 @@ void main() async {
       change2,
     ).process([ChangeRecord.fromMap(change2)]);
     documents = await firestore.query(
-      from: 'try_results',
-      where: fieldEquals('name', 'approvals_2_test'),
+      StructuredQuery()
+        ..from = inCollection('try_results')
+        ..where = fieldEquals('name', 'approvals_2_test'),
     );
     await firestore.approveResult(documents.single);
 
@@ -356,8 +371,9 @@ void main() async {
       isTrue,
     );
     var commentsQuery = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     final landedIndex =
         commentsQuery.first.fields![fBlamelistStartIndex]!.integerValue!;
@@ -389,8 +405,9 @@ void main() async {
       int.parse(landedIndex),
     );
     commentsQuery = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     for (final item in commentsQuery) {
       final fields = item.fields!;
@@ -412,8 +429,9 @@ Future<void> checkTryBuild(
 }) async {
   final buildbucketId = 'bbID_$name';
   final buildDocuments = await firestore.query(
-    from: 'try_builds',
-    where: fieldEquals('buildbucket_id', buildbucketId),
+    StructuredQuery()
+      ..from = inCollection('try_builds')
+      ..where = fieldEquals('buildbucket_id', buildbucketId),
   );
   expect(buildDocuments.length, 1);
   final record = TryBuildRecord(buildDocuments.single);

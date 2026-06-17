@@ -56,23 +56,26 @@ void main() async {
     tearDown(() async {
       // Delete database records created by the tests.
       var snapshot = await firestore.query(
-        from: 'try_builds',
-        where: fieldEquals('review', testReview),
+        StructuredQuery()
+          ..from = inCollection('try_builds')
+          ..where = fieldEquals('review', testReview),
       );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name!);
       }
 
       snapshot = await firestore.query(
-        from: 'patchsets',
+        StructuredQuery()
+          ..from = inCollection('patchsets'),
         parent: 'reviews/$testReview/',
       );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name!);
       }
       snapshot = await firestore.query(
-        from: 'results',
-        where: fieldEquals('name', removeActiveConfigurationTestName),
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals('name', removeActiveConfigurationTestName),
       );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name!);
@@ -182,12 +185,13 @@ void main() async {
       );
       // Set the results on patchsets 1 and 2 to approved.
       final snapshot = await firestore.query(
-        from: 'try_results',
-        where: compositeFilter([
-          fieldEquals('approved', false),
-          fieldEquals('review', testReview),
-          fieldLessThanOrEqual('patchset', 2),
-        ]),
+        StructuredQuery()
+          ..from = inCollection('try_results')
+          ..where = compositeFilter([
+            fieldEquals('approved', false),
+            fieldEquals('review', testReview),
+            fieldLessThanOrEqual('patchset', 2),
+          ]),
       );
       for (final response in snapshot) {
         await firestore.approveResult(response);
