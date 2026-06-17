@@ -505,18 +505,18 @@ class FirestoreService {
   /// Removes [configuration] from the active configurations and marks the
   /// active result inactive when we remove the last active config.
   Future<void> removeActiveConfiguration(
-    ResultRecord record,
+    ResultRecord activeResult,
     String configuration,
   ) async {
-    final configurations = record.activeConfigurations!;
+    final configurations = activeResult.activeConfigurations!;
     assert(configurations.contains(configuration));
     await removeArrayEntry(
-      record.doc,
+      activeResult.doc,
       'active_configurations',
       taggedValue(configuration),
     );
-    final document = await getDocument(record.doc.name!);
-    final activeResult = ResultRecord(document);
+    final document = await getDocument(activeResult.doc.name!);
+    activeResult = ResultRecord(document);
     if (activeResult.activeConfigurations?.isEmpty == true) {
       activeResult.doc.fields!.remove('active_configurations');
       activeResult.doc.fields!.remove('active');
