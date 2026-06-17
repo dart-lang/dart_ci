@@ -33,8 +33,8 @@ void main() async {
     expect(builderTest.builder.endIndex, landedCommitIndex);
     expect(builderTest.builder.startIndex, existingCommitIndex + 1);
     expect(builderTest.builder.tryApprovals, {
-      testResult(review44445Result): 54,
-      testResult(review77779Result): 53,
+      ResultRecord.fromMap(review44445Result).testResult: 54,
+      ResultRecord.fromMap(review77779Result).testResult: 53,
     });
     expect(
       (await builderTest.firestore.getCommit(commit53Hash))!.toJson(),

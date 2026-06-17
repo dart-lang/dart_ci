@@ -130,6 +130,9 @@ Filter compositeFilter(List<Filter> filters) {
 }
 
 extension type ResultRecord(Document doc) {
+  ResultRecord.fromMap(Map<String, dynamic> data)
+    : this(Document(fields: taggedMap(data)));
+
   String get testName => doc.fields!.getString(fName)!;
   String get result => doc.fields!.getString(fResult)!;
   String get previousResult => doc.fields!.getString(fPreviousResult)!;
@@ -143,6 +146,13 @@ extension type ResultRecord(Document doc) {
   int? get pinnedIndex => doc.fields!.getInt(fPinnedIndex);
   String? get blamelistStartCommit => doc.fields!.getString(fBlamelistStartCommit);
   String? get blamelistEndCommit => doc.fields!.getString(fBlamelistEndCommit);
+
+  String get testResult => [
+        testName,
+        result,
+        previousResult,
+        expected,
+      ].join(' ');
 }
 
 extension type TryResultRecord(Document doc) {
@@ -154,6 +164,13 @@ extension type TryResultRecord(Document doc) {
   int get patchset => doc.fields!.getInt('patchset')!;
   bool get approved => doc.fields!.getBool(fApproved) ?? false;
   List<String> get configurations => doc.fields!.getList(fConfigurations)!.cast<String>();
+
+  String get testResult => [
+        testName,
+        result,
+        previousResult,
+        expected,
+      ].join(' ');
 }
 
 extension type TryBuildRecord(Document doc) {

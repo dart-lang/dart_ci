@@ -136,7 +136,7 @@ class Build {
       if (review != null) {
         tryApprovals.addAll({
           for (final result in await firestore.tryApprovals(review))
-            testResult(result.doc.fields!): index,
+            result.testResult: index,
         });
       }
       if (reverted != null) {
@@ -169,7 +169,7 @@ class Build {
     );
     if (result == null) {
       final approvingIndex =
-          tryApprovals[testResult(change)] ??
+          tryApprovals[ResultRecord.fromMap(change).testResult] ??
           allRevertedChanges
               .firstWhereOrNull(
                 (revertedChange) => revertedChange.approveRevert(change),
@@ -189,7 +189,7 @@ class Build {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10) {
           approvalMessages.add(
-            'Copied approval of result ${testResult(change)}',
+            'Copied approval of result ${ResultRecord.fromMap(change).testResult}',
           );
         }
       }
