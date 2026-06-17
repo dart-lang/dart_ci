@@ -105,7 +105,7 @@ class FirestoreServiceFake implements FirestoreService {
     int? resultEndIndex;
     for (final entry in results.entries) {
       final result = entry.value;
-      if (result[fName] == change.testName &&
+      if (result[fName] == change.name &&
           result[fResult] == change.result &&
           result[fExpected] == change.expected &&
           result[fPreviousResult] == change.previousResult &&

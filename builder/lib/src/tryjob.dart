@@ -91,7 +91,7 @@ class Tryjob {
   }
 
   bool isNotLandedResult(ChangeRecord change) {
-    return change.result != lastLandedResultByName[change.testName]?.result;
+    return change.result != lastLandedResultByName[change.name]?.result;
   }
 
   Future<BuildStatus> process(List<ChangeRecord> results) async {
@@ -99,7 +99,7 @@ class Tryjob {
     log('storing ${results.length} change(s)');
     final resultsByConfiguration = groupBy<ChangeRecord, String>(
       results,
-      (result) => result.configuration!,
+      (result) => result.configuration,
     );
 
     for (final configuration in resultsByConfiguration.keys) {
@@ -107,7 +107,7 @@ class Tryjob {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.testName: result,
+          for (final result in landedResults) result.name: result,
         };
       }
       final changes = resultsByConfiguration[configuration]!.where(
@@ -143,16 +143,16 @@ class Tryjob {
   Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(ChangeRecord record) async {
-    record.transformChange();
-    counter.count(record);
-    if (counter.isNotReported(record)) return;
+  Future<void> storeChange(ChangeRecord change) async {
+    change.transform();
+    counter.count(change);
+    if (counter.isNotReported(change)) return;
     final approved = await firestore.storeTryChange(
-      record,
+      change,
       info.review,
       info.patchset,
     );
-    if (!approved && record.isFailure) {
+    if (!approved && change.isFailure) {
       counter.unapprovedFailures++;
       success = false;
     }

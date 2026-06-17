@@ -21,7 +21,7 @@ Future<RevertedChanges> getRevertedChanges(
     index,
     revertIndex,
     changes,
-    groupBy(changes, (change) => change.testName),
+    groupBy(changes, (change) => change.name),
   );
 }
 
@@ -39,7 +39,7 @@ class RevertedChanges {
   );
 
   bool approveRevert(ChangeRecord revert) {
-    final reverted = changesForTest[revert.testName];
+    final reverted = changesForTest[revert.name];
     return revert.isFailure &&
         reverted != null &&
         reverted.any((change) => revert.result == change.previousResult);

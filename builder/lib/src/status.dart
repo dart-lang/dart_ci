@@ -39,7 +39,7 @@ class BuildStatus {
 }
 
 String resultLine(ResultRecord result) {
-  final name = result.testName;
+  final name = result.name;
   final previous = result.previousResult;
   final current = result.result;
   final expected = result.expected;

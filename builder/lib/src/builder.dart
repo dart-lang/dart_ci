@@ -156,28 +156,28 @@ class Build {
   Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(ChangeRecord record) async {
+  Future<void> storeChange(ChangeRecord change) async {
     countChanges++;
     await reviewsFetched;
-    record.transformChange();
-    final failure = record.isFailure;
+    change.transform();
+    final failure = change.isFailure;
     bool approved;
-    var result = await firestore.findResult(record, startIndex, endIndex);
+    var result = await firestore.findResult(change, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
-      record.testName,
-      record.configuration!,
+      change.name,
+      change.configuration,
     );
     if (result == null) {
       final approvingIndex =
-          tryApprovals[record.testResult] ??
+          tryApprovals[change.testResult] ??
           allRevertedChanges
               .firstWhereOrNull(
-                (revertedChange) => revertedChange.approveRevert(record),
+                (revertedChange) => revertedChange.approveRevert(change),
               )
               ?.revertIndex;
       approved = approvingIndex != null;
       final newResult = constructResult(
-        record,
+        change,
         startIndex,
         endIndex,
         approved: approved,
@@ -189,14 +189,14 @@ class Build {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10) {
           approvalMessages.add(
-            'Copied approval of result ${record.testResult}',
+            'Copied approval of result ${change.testResult}',
           );
         }
       }
     } else {
       approved = await firestore.updateResult(
         result,
-        record.configuration,
+        change.configuration,
         startIndex,
         endIndex,
         failure: failure,
@@ -207,19 +207,19 @@ class Build {
     for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
       if (activeResult.blamelistEndIndex >= startIndex ||
-          !(activeResult.activeConfigurations?.contains(record.configuration) ??
+          !(activeResult.activeConfigurations?.contains(change.configuration) ??
               false)) {
         log(
           'Unexpected active result when processing new change:\n'
           'Active result: ${untagMap(activeResult.doc.fields!)}\n\n'
-          'Change: ${record.toJson()}\n\n'
+          'Change: ${change.toJson()}\n\n'
           'approved: $approved',
         );
       }
       // Removes the configuration from the list of active configurations.
       await firestore.removeActiveConfiguration(
         activeResult,
-        record.configuration!,
+        change.configuration,
       );
     }
   }
@@ -239,11 +239,11 @@ class Build {
     final startCommit = await commitsCache.getCommitByIndex(
       result.blamelistStartIndex,
     );
-    result.doc.fields![fBlamelistStartCommit] = taggedValue(startCommit.hash);
+    result.blamelistStartCommit = startCommit.hash;
     final endCommit = await commitsCache.getCommitByIndex(
       result.blamelistEndIndex,
     );
-    result.doc.fields![fBlamelistEndCommit] = taggedValue(endCommit.hash);
+    result.blamelistEndCommit = endCommit.hash;
   }
 }
 
@@ -256,16 +256,16 @@ ResultRecord constructResult(
   required bool failure,
 }) {
   return ResultRecord.fromMap({
-    fName: change.testName,
+    fName: change.name,
     fResult: change.result,
     fPreviousResult: change.previousResult,
     fExpected: change.expected,
     fBlamelistStartIndex: startIndex,
     fBlamelistEndIndex: endIndex,
     if (startIndex != endIndex && approved) fPinnedIndex: landedReviewIndex,
-    fConfigurations: <String>[change.configuration!],
+    fConfigurations: <String>[change.configuration],
     fApproved: approved,
     if (failure) fActive: true,
-    if (failure) fActiveConfigurations: <String>[change.configuration!],
+    if (failure) fActiveConfigurations: <String>[change.configuration],
   });
 }

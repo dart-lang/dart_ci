@@ -179,10 +179,10 @@ void main() async {
     expect(status.unapprovedFailures.keys, contains('failure_configuration'));
     final failures = status.unapprovedFailures['failure_configuration']!;
     final previousFailure = failures
-        .where((failure) => failure.testName == 'previous_failure_test')
+        .where((failure) => failure.name == 'previous_failure_test')
         .single;
     final failure = failures
-        .where((failure) => failure.testName == 'failure_test')
+        .where((failure) => failure.name == 'failure_test')
         .single;
     expect(previousFailure.blamelistEndCommit, previousBlamelistEndCommit.hash);
     expect(
@@ -259,7 +259,7 @@ void main() async {
       'approved_failure_test',
       'other_configuration',
     )).single;
-    expect(result.testName, changedResult.testName);
+    expect(result.name, changedResult.name);
     // Check blamelist narrowing.
     expect(changedResult.blamelistEndIndex, index);
     expect(changedResult.blamelistStartIndex, index);

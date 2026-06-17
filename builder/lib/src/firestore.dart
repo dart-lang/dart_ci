@@ -265,7 +265,7 @@ class FirestoreService {
     int startIndex,
     int endIndex,
   ) async {
-    final name = change.testName;
+    final name = change.name;
     final result = change.result;
     final previousResult = change.previousResult;
     final expected = change.expected;
@@ -314,7 +314,7 @@ class FirestoreService {
 
   Future<bool> updateResult(
     String result,
-    String? configuration,
+    String configuration,
     int startIndex,
     int endIndex, {
     required bool failure,
@@ -322,12 +322,12 @@ class FirestoreService {
     late bool approved;
     await retryCommit(() async {
       final document = await getDocument(result);
-      final record = ResultRecord(document);
+      final data = ResultRecord(document);
       // Allow missing 'approved' field during transition period.
-      approved = record.approved;
+      approved = data.approved;
       // Add the new configuration and narrow the blamelist.
-      final newStart = max(startIndex, record.blamelistStartIndex);
-      final newEnd = min(endIndex, record.blamelistEndIndex);
+      final newStart = max(startIndex, data.blamelistStartIndex);
+      final newEnd = min(endIndex, data.blamelistEndIndex);
       // TODO(karlklose): check for pinned, and remove the pin if the new range
       // doesn't include it?
       final updates = [
@@ -393,10 +393,10 @@ class FirestoreService {
       from: 'results',
       where: fieldEquals('blamelist_end_index', index),
     );
-    for (final record in unpinnedResults) {
-      if (record.blamelistStartIndex == index &&
-          record.doc.fields!.isNull('pinned_index')) {
-        results.add(record);
+    for (final data in unpinnedResults) {
+      if (data.blamelistStartIndex == index &&
+          data.doc.fields!.isNull('pinned_index')) {
+        results.add(data);
       }
     }
     return results;
@@ -407,11 +407,11 @@ class FirestoreService {
     int review,
     int patchset,
   ) async {
-    final name = change.testName;
+    final name = change.name;
     final result = change.result;
     final expected = change.expected;
     final previousResult = change.previousResult;
-    final configuration = change.configuration!;
+    final configuration = change.configuration;
 
     // Find an existing result record for this test on this patchset.
     final responses = await _query<TryResultRecord>(
@@ -478,7 +478,7 @@ class FirestoreService {
       documentsWritten++;
       return approved;
     } else {
-      final record = responses.first;
+      final tryResult = responses.first;
       // Update the TryResult for this test, adding this configuration.
       final values = ArrayValue()..values = [taggedValue(configuration)];
       final addConfiguration = FieldTransform()
@@ -486,10 +486,10 @@ class FirestoreService {
         ..appendMissingElements = values;
       await _executeWrite([
         Write()
-          ..update = record.doc
+          ..update = tryResult.doc
           ..updateTransforms = [addConfiguration],
       ]);
-      return record.approved;
+      return tryResult.approved;
     }
   }
 
@@ -505,23 +505,23 @@ class FirestoreService {
   /// Removes [configuration] from the active configurations and marks the
   /// active result inactive when we remove the last active config.
   Future<void> removeActiveConfiguration(
-    ResultRecord activeResult,
-    String? configuration,
+    ResultRecord record,
+    String configuration,
   ) async {
-    final configurations = activeResult.activeConfigurations!;
+    final configurations = record.activeConfigurations!;
     assert(configurations.contains(configuration));
     await removeArrayEntry(
-      activeResult.doc,
+      record.doc,
       'active_configurations',
       taggedValue(configuration),
     );
-    final document = await getDocument(activeResult.doc.name!);
-    final record = ResultRecord(document);
-    if (record.activeConfigurations?.isEmpty == true) {
-      record.doc.fields!.remove('active_configurations');
-      record.doc.fields!.remove('active');
+    final document = await getDocument(record.doc.name!);
+    final activeResult = ResultRecord(document);
+    if (activeResult.activeConfigurations?.isEmpty == true) {
+      activeResult.doc.fields!.remove('active_configurations');
+      activeResult.doc.fields!.remove('active');
       final write = Write()
-        ..update = record.doc
+        ..update = activeResult.doc
         ..updateMask = (DocumentMask()
           ..fieldPaths = ['active', 'active_configurations']);
       await _executeWrite([write]);
