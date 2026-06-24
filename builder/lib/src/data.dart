@@ -1,4 +1,4 @@
-// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2026, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -184,24 +184,3 @@ extension type ConfigurationRecord(Document doc) {
   String get builder => doc.fields!.getString('builder')!;
 }
 
-class TestNameLock {
-  final locks = <String, Future<void>>{};
-
-  Future<void> guardedCall(
-    Future<void> Function(ChangeRecord change) f,
-    ChangeRecord change,
-  ) async {
-    final name = change.name;
-    while (locks.containsKey(name)) {
-      await locks[name];
-    }
-    return locks[name] = () async {
-      try {
-        await f(change);
-      } finally {
-        // ignore: unawaited_futures
-        locks.remove(name);
-      }
-    }();
-  }
-}

@@ -200,8 +200,8 @@ class FirestoreService {
     int buildNumber,
     int index,
   ) async {
-    final record = await getDocumentOrNull('$documents/builds/$builder:$index');
-    if (record == null) {
+    final data = await getDocumentOrNull('$documents/builds/$builder:$index');
+    if (data == null) {
       final newRecord = Document()
         ..fields = taggedMap({
           'builder': builder,
@@ -217,7 +217,7 @@ class FirestoreService {
       documentsWritten++;
       return true;
     } else {
-      final buildRecord = BuildRecord(record);
+      final buildRecord = BuildRecord(data);
       final existingIndex = buildRecord.index;
       if (existingIndex != index) {
         throw ('Build $buildNumber of $builder had commit index '
@@ -323,7 +323,6 @@ class FirestoreService {
     await retryCommit(() async {
       final document = await getDocument(result);
       final data = ResultRecord(document);
-      // Allow missing 'approved' field during transition period.
       approved = data.approved;
       // Add the new configuration and narrow the blamelist.
       final newStart = max(startIndex, data.blamelistStartIndex);

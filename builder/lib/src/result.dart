@@ -86,3 +86,25 @@ class TryBuildInfo extends BuildInfo {
 
   TryBuildInfo(super.result, super.configurations, this.review, this.patchset);
 }
+
+class TestNameLock {
+  final locks = <String, Future<void>>{};
+
+  Future<void> guardedCall(
+    Future<void> Function(ChangeRecord change) f,
+    ChangeRecord change,
+  ) async {
+    final name = change.name;
+    while (locks.containsKey(name)) {
+      await locks[name];
+    }
+    return locks[name] = () async {
+      try {
+        await f(change);
+      } finally {
+        // ignore: unawaited_futures
+        locks.remove(name);
+      }
+    }();
+  }
+}

@@ -43,9 +43,9 @@ late CommitRecord previousBuildPreviousCommit;
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};
 
-void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name']!);
-  testsToRemove.add(change['name']!);
+void registerChangeForDeletion(ChangeRecord change) {
+  buildersToRemove.add(change.builderName);
+  testsToRemove.add(change.name);
 }
 
 Future<void> removeBuildersAndResults() async {
@@ -89,25 +89,28 @@ Future<void> loadCommits() async {
   );
 }
 
-Build makeBuild(Map<String, dynamic> firstChange) => Build(
-  BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
-    firstChange[fConfiguration],
+Build makeBuild(ChangeRecord firstChange) => Build(
+  BuildInfo.fromResult(firstChange, <String>{
+    firstChange.configuration,
   }),
   commitsCache,
   firestore,
 );
 
-Map<String, dynamic> makeChange(
+ChangeRecord makeChange(
   String name,
   String result, {
   bool flaky = false,
+  String? testName,
+  String? commitHash,
+  String? previousCommitHash,
 }) {
   final results = result.split('/');
   final previous = results[0];
   final current = results[1];
   final expected = results[2];
   final change = {
-    fName: '${name}_test',
+    fName: testName ?? '${name}_test',
     fConfiguration: '${name}_configuration',
     'suite': 'unused_field',
     'test_name': 'unused_field',
@@ -117,25 +120,34 @@ Map<String, dynamic> makeChange(
     fExpected: expected,
     fMatches: current == expected,
     fChanged: current != previous,
-    fCommitHash: commit.hash,
+    fCommitHash: commitHash ?? commit.hash,
     'commit_time': 1583906489,
     fBuildNumber: '99997',
     fBuilderName: 'builder_$name',
     fFlaky: flaky,
     fPreviousFlaky: false,
-    fPreviousCommitHash: previousCommit.hash,
+    fPreviousCommitHash: previousCommitHash ?? previousCommit.hash,
     'previous_commit_time': 1583906489,
     'bot_name': 'fake_bot_name',
     'previous_build_number': '306',
   };
-  registerChangeForDeletion(change);
-  return change;
+  final record = ChangeRecord.fromMap(change);
+  registerChangeForDeletion(record);
+  return record;
 }
 
-Map<String, dynamic> makePreviousChange(String name, String result) {
-  return makeChange(name, result)
-    ..[fCommitHash] = previousBlamelistEndCommit.hash
-    ..[fPreviousCommitHash] = previousBuildPreviousCommit.hash;
+ChangeRecord makePreviousChange(
+  String name,
+  String result, {
+  String? testName,
+}) {
+  return makeChange(
+    name,
+    result,
+    testName: testName,
+    commitHash: previousBlamelistEndCommit.hash,
+    previousCommitHash: previousBuildPreviousCommit.hash,
+  );
 }
 
 void main() async {
@@ -161,18 +173,18 @@ void main() async {
     final failingPreviousChange = makePreviousChange(
       'failure',
       'Pass/RuntimeError/Pass',
-    )..[fName] = 'previous_failure_test';
-    registerChangeForDeletion(failingPreviousChange); // Name changed.
+      testName: 'previous_failure_test',
+    );
     final previousBuild = makeBuild(failingPreviousChange);
     final previousStatus = await previousBuild.process([
-      ChangeRecord.fromMap(failingPreviousChange),
+      failingPreviousChange,
     ]);
     expect(previousStatus.success, isFalse);
     expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
 
     final failingChange = makeChange('failure', 'Pass/RuntimeError/Pass');
     final build = makeBuild(failingChange);
-    final status = await build.process([ChangeRecord.fromMap(failingChange)]);
+    final status = await build.process([failingChange]);
     expect(status.success, isFalse);
     expect(status.truncatedResults, isFalse);
     expect(status.unapprovedFailures, isNotEmpty);
@@ -224,14 +236,15 @@ void main() async {
   });
 
   test('existing approved failure', () async {
-    final failingOtherConfigurationChange =
-        makeChange('other', 'Pass/RuntimeError/Pass')
-          ..[fName] = 'approved_failure_test'
-          ..[fPreviousCommitHash] = previousBuildPreviousCommit.hash;
-    registerChangeForDeletion(failingOtherConfigurationChange);
+    final failingOtherConfigurationChange = makeChange(
+      'other',
+      'Pass/RuntimeError/Pass',
+      testName: 'approved_failure_test',
+      previousCommitHash: previousBuildPreviousCommit.hash,
+    );
     final otherConfigurationBuild = makeBuild(failingOtherConfigurationChange);
     final otherStatus = await otherConfigurationBuild.process([
-      ChangeRecord.fromMap(failingOtherConfigurationChange),
+      failingOtherConfigurationChange,
     ]);
     expect(otherStatus.success, isFalse);
     expect(otherStatus.unapprovedFailures, isNotEmpty);
@@ -251,7 +264,7 @@ void main() async {
       'Pass/RuntimeError/Pass',
     );
     final build = makeBuild(failingChange);
-    final status = await build.process([ChangeRecord.fromMap(failingChange)]);
+    final status = await build.process([failingChange]);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
     expect(status.unapprovedFailures, isEmpty);

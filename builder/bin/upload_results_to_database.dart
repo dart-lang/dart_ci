@@ -15,17 +15,24 @@ import 'package:http/http.dart' as http;
 late BuildInfo buildInfo;
 
 Future<List<ChangeRecord>> readChangedResults(File resultsFile) async {
-  final changes = (await resultsFile.readAsLines())
-      .map((line) => ChangeRecord.fromMap(jsonDecode(line)! as Map<String, dynamic>))
-      .toList();
-  if (changes.isEmpty) {
+  final lines = await resultsFile.readAsLines();
+  if (lines.isEmpty) {
     print('Empty input results.json file');
     exit(1);
   }
-  buildInfo = BuildInfo.fromResult(changes.first, {
-    for (final change in changes) change.configuration,
-  });
-  return changes.where((change) => change.isChangedResult).toList();
+  final changes = <ChangeRecord>[];
+  final configurations = <String>{};
+  ChangeRecord? firstChange;
+  for (final line in lines) {
+    final change = ChangeRecord.fromMap(jsonDecode(line)! as Map<String, dynamic>);
+    firstChange ??= change;
+    configurations.add(change.configuration);
+    if (change.isChangedResult) {
+      changes.add(change);
+    }
+  }
+  buildInfo = BuildInfo.fromResult(firstChange!, configurations);
+  return changes;
 }
 
 File fileOption(ArgResults options, String name) {
