@@ -24,7 +24,9 @@ Future<List<ChangeRecord>> readChangedResults(File resultsFile) async {
   final configurations = <String>{};
   ChangeRecord? firstChange;
   for (final line in lines) {
-    final change = ChangeRecord.fromMap(jsonDecode(line)! as Map<String, dynamic>);
+    final change = ChangeRecord.fromMap(
+      jsonDecode(line)! as Map<String, dynamic>,
+    );
     firstChange ??= change;
     configurations.add(change.configuration);
     if (change.isChangedResult) {

@@ -178,9 +178,7 @@ Tryjob makeTryjob(
   ChangeRecord firstChange, {
   String? baseCommit,
 }) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{
-        firstChange.configuration,
-      })
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration})
       as TryBuildInfo,
   'bbID_$name',
   baseCommit ?? commit4,
@@ -245,9 +243,7 @@ ChangeRecord makeChange(
 
 Build makeBuild(String commit, ChangeRecord change) {
   return Build(
-    BuildInfo.fromResult(change, <String>{
-      change.configuration,
-    }),
+    BuildInfo.fromResult(change, <String>{change.configuration}),
     commitsCache,
     firestore,
   );
@@ -291,10 +287,7 @@ void main() async {
     // Test that approvals are copied from approved try results in the
     // blamelist range of a CI build
     final change1 = makeTryChange('approvals', newFailure, lastPatchsetRef);
-    await makeTryjob(
-      'approvals',
-      change1,
-    ).process([change1]);
+    await makeTryjob('approvals', change1).process([change1]);
     var documents = await firestore.query(
       StructuredQuery()
         ..from = inCollection('try_results')
@@ -307,10 +300,7 @@ void main() async {
       patchsetGroupRef,
       testName: 'approvals_2',
     );
-    await makeTryjob(
-      'approvals',
-      change2,
-    ).process([change2]);
+    await makeTryjob('approvals', change2).process([change2]);
     documents = await firestore.query(
       StructuredQuery()
         ..from = inCollection('try_results')
@@ -330,11 +320,10 @@ void main() async {
       commit4,
       testName: 'approvals_2',
     );
-    final status = await makeBuild(commit1, change3).process([
+    final status = await makeBuild(
+      commit1,
       change3,
-      change3a,
-      change4,
-    ]);
+    ).process([change3, change3a, change4]);
     await checkBuild(change3.builderName, index1, success: true);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
@@ -348,10 +337,7 @@ void main() async {
       commit3,
       testName: 'approvals',
     );
-    final status2 = await makeBuild(
-      commit1,
-      change5,
-    ).process([change5]);
+    final status2 = await makeBuild(commit1, change5).process([change5]);
     await checkBuild(change5.builderName, index1, success: true);
     expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {

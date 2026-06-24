@@ -89,10 +89,7 @@ class FirestoreService {
   String get documents => '$database/documents';
 
   @visibleForTesting
-  Future<List<Document>> query(
-    StructuredQuery query, {
-    String? parent,
-  }) async {
+  Future<List<Document>> query(StructuredQuery query, {String? parent}) async {
     final request = RunQueryRequest()..structuredQuery = query;
     final parentPath = parent == null ? documents : '$documents/$parent';
     final queryResponse = await firestore.projects.databases.documents.runQuery(

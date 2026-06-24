@@ -103,5 +103,3 @@ Filter compositeFilter(List<Filter> filters) {
       ..filters = filters
       ..op = 'AND');
 }
-
-

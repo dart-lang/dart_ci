@@ -130,9 +130,7 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
 }
 
 Tryjob makeTryjob(String name, ChangeRecord firstChange) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{
-        firstChange.configuration,
-      })
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration})
       as TryBuildInfo,
   'bbID_$name',
   data['landedCommit']!,
@@ -141,24 +139,17 @@ Tryjob makeTryjob(String name, ChangeRecord firstChange) => Tryjob(
   client,
 );
 
-Tryjob makeLandedTryjob(String name, ChangeRecord firstChange) =>
-    Tryjob(
-      BuildInfo.fromResult(firstChange, <String>{
-            firstChange.configuration,
-          })
-          as TryBuildInfo,
-      'bbID_$name',
-      data['baseCommit']!,
-      commitsCache,
-      firestore,
-      client,
-    );
+Tryjob makeLandedTryjob(String name, ChangeRecord firstChange) => Tryjob(
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration})
+      as TryBuildInfo,
+  'bbID_$name',
+  data['baseCommit']!,
+  commitsCache,
+  firestore,
+  client,
+);
 
-ChangeRecord makeChange(
-  String name,
-  String result, {
-  bool flaky = false,
-}) {
+ChangeRecord makeChange(String name, String result, {bool flaky = false}) {
   final results = result.split('/');
   final previous = results[0];
   final current = results[1];

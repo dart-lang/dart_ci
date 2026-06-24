@@ -90,9 +90,7 @@ Future<void> loadCommits() async {
 }
 
 Build makeBuild(ChangeRecord firstChange) => Build(
-  BuildInfo.fromResult(firstChange, <String>{
-    firstChange.configuration,
-  }),
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration}),
   commitsCache,
   firestore,
 );
@@ -176,9 +174,7 @@ void main() async {
       testName: 'previous_failure_test',
     );
     final previousBuild = makeBuild(failingPreviousChange);
-    final previousStatus = await previousBuild.process([
-      failingPreviousChange,
-    ]);
+    final previousStatus = await previousBuild.process([failingPreviousChange]);
     expect(previousStatus.success, isFalse);
     expect(previousStatus.unapprovedFailures.values.first, hasLength(1));
 

@@ -63,8 +63,7 @@ extension type ResultRecord(Document doc) {
   set blamelistEndCommit(String? value) =>
       doc.fields![fBlamelistEndCommit] = taggedValue(value);
 
-  String get testResult =>
-      [name, result, previousResult, expected].join(' ');
+  String get testResult => [name, result, previousResult, expected].join(' ');
 
   Map<String, dynamic> toJson() =>
       untagMap(doc.fields!).cast<String, dynamic>();
@@ -115,8 +114,7 @@ extension type TryResultRecord(Document doc) {
   List<String> get configurations =>
       doc.fields!.getList(fConfigurations)!.cast<String>();
 
-  String get testResult =>
-      [name, result, previousResult, expected].join(' ');
+  String get testResult => [name, result, previousResult, expected].join(' ');
 }
 
 extension type TryBuildRecord(Document doc) {
@@ -183,4 +181,3 @@ extension type CommitRecord(Document doc) {
 extension type ConfigurationRecord(Document doc) {
   String get builder => doc.fields!.getString('builder')!;
 }
-

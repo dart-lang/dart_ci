@@ -65,8 +65,7 @@ void main() async {
       }
 
       snapshot = await firestore.query(
-        StructuredQuery()
-          ..from = inCollection('patchsets'),
+        StructuredQuery()..from = inCollection('patchsets'),
         parent: 'reviews/$testReview/',
       );
       for (final doc in snapshot) {
