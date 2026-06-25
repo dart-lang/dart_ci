@@ -10,6 +10,7 @@ import 'package:builder/src/result.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:googleapis/firestore/v1.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 import 'firestore_helpers.dart';
 
@@ -52,22 +53,6 @@ class FirestoreService {
     }
   }
 
-  Future<List<SafeDocument>> query({
-    required String from,
-    Filter? where,
-    Order? orderBy,
-    int? limit,
-    String? parent,
-  }) async {
-    final query = StructuredQuery()
-      ..from = inCollection(from)
-      ..where = where
-      ..orderBy = orderBy != null ? [orderBy] : null
-      ..limit = limit;
-    final results = await runQuery(query, parent: parent);
-    return results.map((d) => SafeDocument(d)).toList();
-  }
-
   Future<List<T>> _query<T>({
     required String from,
     Filter? where,
@@ -80,26 +65,26 @@ class FirestoreService {
       ..where = where
       ..orderBy = orderBy != null ? [orderBy] : null
       ..limit = limit;
-    final results = await runQuery(query, parent: parent);
+    final results = await this.query(query, parent: parent);
     return results.cast<T>();
   }
 
-  Future<Document> getDocument(String path) async {
+  Future<T> getDocument<T>(String path) async {
     try {
       final document = await firestore.projects.databases.documents.get(path);
       documentsFetched++;
-      return document;
+      return document as T;
     } on DetailedApiRequestError {
       log("Failed to get document '$path'");
       rethrow;
     }
   }
 
-  Future<Document?> getDocumentOrNull(String path) async {
+  Future<T?> getDocumentOrNull<T>(String path) async {
     try {
       final document = await firestore.projects.databases.documents.get(path);
       documentsFetched++;
-      return document;
+      return document as T;
     } on DetailedApiRequestError catch (e) {
       if (e.status == 404) {
         return null;
@@ -117,10 +102,8 @@ class FirestoreService {
   String get database => 'projects/$project/databases/(default)';
   String get documents => '$database/documents';
 
-  Future<List<Document>> runQuery(
-    StructuredQuery query, {
-    String? parent,
-  }) async {
+  @visibleForTesting
+  Future<List<Document>> query(StructuredQuery query, {String? parent}) async {
     final request = RunQueryRequest()..structuredQuery = query;
     final parentPath = parent == null ? documents : '$documents/$parent';
     final queryResponse = await firestore.projects.databases.documents.runQuery(
@@ -152,12 +135,14 @@ class FirestoreService {
   }
 
   Future<Commit?> getCommit(String hash) async {
-    final document = await getDocumentOrNull('$documents/commits/$hash');
-    return document != null ? Commit(hash, SafeDocument(document)) : null;
+    final document = await getDocumentOrNull<SafeDocument>(
+      '$documents/commits/$hash',
+    );
+    return document != null ? Commit(hash, document) : null;
   }
 
   Future<Commit> getCommitByIndex(int index) async {
-    final response = await query(
+    final response = await _query<SafeDocument>(
       from: 'commits',
       where: fieldEquals('index', index),
     );
@@ -165,7 +150,7 @@ class FirestoreService {
   }
 
   Future<Commit> getLastCommit() async {
-    final lastCommit = await query(
+    final lastCommit = await _query<SafeDocument>(
       from: 'commits',
       orderBy: orderBy('index', false),
     );
@@ -194,7 +179,7 @@ class FirestoreService {
 
   Future<void> updateConfiguration(String configuration, String builder) async {
     documentsWritten++;
-    final record = await getDocumentOrNull(
+    final record = await getDocumentOrNull<ConfigurationRecord>(
       '$documents/configurations/$configuration',
     );
     if (record == null) {
@@ -207,10 +192,10 @@ class FirestoreService {
       );
       log('Configuration document $configuration -> $builder created');
     } else {
-      final originalBuilder = SafeDocument(record).getString('builder');
+      final originalBuilder = record.builder;
       if (originalBuilder != builder) {
-        record.fields!['builder']!.stringValue = builder;
-        await updateFields(record, ['builder']);
+        record.doc.fields!['builder']!.stringValue = builder;
+        await updateFields(record.doc, ['builder']);
         log(
           'Configuration document changed: $configuration -> $builder '
           '(was $originalBuilder)',
@@ -228,7 +213,9 @@ class FirestoreService {
     int buildNumber,
     int index,
   ) async {
-    final record = await getDocumentOrNull('$documents/builds/$builder:$index');
+    final record = await getDocumentOrNull<BuildRecord>(
+      '$documents/builds/$builder:$index',
+    );
     if (record == null) {
       final newRecord = Document()
         ..fields = taggedMap({
@@ -245,13 +232,12 @@ class FirestoreService {
       documentsWritten++;
       return true;
     } else {
-      final data = SafeDocument(record);
-      final existingIndex = data.getInt('index');
+      final existingIndex = record.index;
       if (existingIndex != index) {
         throw ('Build $buildNumber of $builder had commit index '
             '$existingIndex, should be $index.');
       }
-      return data.getBool('completed') != true;
+      return record.completed != true;
     }
   }
 
@@ -348,8 +334,7 @@ class FirestoreService {
   }) async {
     late bool approved;
     await retryCommit(() async {
-      final document = await getDocument(result);
-      final data = ResultRecord(document);
+      final data = await getDocument<ResultRecord>(result);
       approved = data.approved;
       // Add the new configuration and narrow the blamelist.
       final newStart = max(startIndex, data.blamelistStartIndex);
@@ -361,16 +346,16 @@ class FirestoreService {
         'blamelist_end_index',
         if (failure) 'active',
       ];
-      document.fields!['blamelist_start_index'] = taggedValue(newStart);
-      document.fields!['blamelist_end_index'] = taggedValue(newEnd);
+      data.blamelistStartIndex = newStart;
+      data.blamelistEndIndex = newEnd;
       if (failure) {
-        document.fields!['active'] = taggedValue(true);
+        data.active = true;
       }
       final addConfiguration = ArrayValue()
         ..values = [taggedValue(configuration)];
       final write = Write()
-        ..currentDocument = (Precondition()..updateTime = document.updateTime)
-        ..update = document
+        ..currentDocument = (Precondition()..updateTime = data.doc.updateTime)
+        ..update = data.doc
         ..updateMask = (DocumentMask()..fieldPaths = updates)
         ..updateTransforms = [
           FieldTransform()
@@ -438,7 +423,7 @@ class FirestoreService {
     final configuration = change.configuration;
 
     // Find an existing result record for this test on this patchset.
-    final responses = await query(
+    final responses = await _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('review', review),
@@ -459,7 +444,7 @@ class FirestoreService {
     //                  or there is no response at all.
     if (responses.isEmpty) {
       // Is the previous result for this test on this review approved?
-      final previous = await query(
+      final previous = await _query<TryResultRecord>(
         from: 'try_results',
         where: compositeFilter([
           fieldEquals('review', review),
@@ -471,8 +456,7 @@ class FirestoreService {
         orderBy: orderBy('patchset', false),
         limit: 1,
       );
-      final approved =
-          previous.isNotEmpty && previous.first.getBool('approved') == true;
+      final approved = previous.isNotEmpty && previous.first.approved;
 
       final document = Document()
         ..fields = taggedMap({
@@ -503,7 +487,7 @@ class FirestoreService {
       documentsWritten++;
       return approved;
     } else {
-      final document = responses.first;
+      final tryResult = responses.first;
       // Update the TryResult for this test, adding this configuration.
       final values = ArrayValue()..values = [taggedValue(configuration)];
       final addConfiguration = FieldTransform()
@@ -511,10 +495,10 @@ class FirestoreService {
         ..appendMissingElements = values;
       await _executeWrite([
         Write()
-          ..update = document.toDocument()
+          ..update = tryResult.doc
           ..updateTransforms = [addConfiguration],
       ]);
-      return document.getBool('approved') == true;
+      return tryResult.approved;
     }
   }
 
@@ -540,8 +524,7 @@ class FirestoreService {
       'active_configurations',
       taggedValue(configuration),
     );
-    final document = await getDocument(activeResult.doc.name!);
-    activeResult = ResultRecord(document);
+    activeResult = await getDocument<ResultRecord>(activeResult.doc.name!);
     if (activeResult.activeConfigurations?.isEmpty == true) {
       activeResult.doc.fields!.remove('active_configurations');
       activeResult.doc.fields!.remove('active');
@@ -628,7 +611,7 @@ class FirestoreService {
   }
 
   Future<bool> documentExists(String name) async {
-    return (await getDocumentOrNull(name) != null);
+    return (await getDocumentOrNull<Document>(name) != null);
   }
 
   Future _executeWrite(List<Write> writes) async {
@@ -673,32 +656,36 @@ class FirestoreService {
   /// or if there is no record for the review in the database.  Reviews with no
   /// test failures have no record, and don't need to be linked when landing.
   Future<bool> reviewIsLanded(int review) async {
-    final document = await getDocumentOrNull('$documents/reviews/$review');
+    final document = await getDocumentOrNull<ReviewRecord>(
+      '$documents/reviews/$review',
+    );
     if (document == null) {
       return true;
     }
-    return document.fields!.containsKey('landed_index');
+    return document.doc.fields!.containsKey('landed_index');
   }
 
   Future<void> linkReviewToCommit(int review, int index) async {
-    final document = await getDocument('$documents/reviews/$review');
-    document.fields!['landed_index'] = taggedValue(index);
-    await updateFields(document, ['landed_index']);
+    final document = await getDocument<ReviewRecord>(
+      '$documents/reviews/$review',
+    );
+    document.landedIndex = index;
+    await updateFields(document.doc, ['landed_index']);
   }
 
   Future<void> linkCommentsToCommit(int review, int index) async {
-    final comments = await query(
+    final comments = await _query<CommentRecord>(
       from: 'comments',
       where: fieldEquals('review', review),
     );
     if (comments.isEmpty) return;
     final writes = <Write>[];
-    for (final document in comments) {
-      document.fields['blamelist_start_index'] = taggedValue(index);
-      document.fields['blamelist_end_index'] = taggedValue(index);
+    for (final comment in comments) {
+      comment.blamelistStartIndex = index;
+      comment.blamelistEndIndex = index;
       writes.add(
         Write()
-          ..update = document.toDocument()
+          ..update = comment.doc
           ..updateMask = (DocumentMask()
             ..fieldPaths = ['blamelist_start_index', 'blamelist_end_index']),
       );
@@ -706,8 +693,8 @@ class FirestoreService {
     await _executeWrite(writes);
   }
 
-  Future<List<SafeDocument>> tryApprovals(int review) async {
-    final patchsets = await query(
+  Future<List<TryResultRecord>> tryApprovals(int review) async {
+    final patchsets = await _query<PatchsetRecord>(
       from: 'patchsets',
       parent: 'reviews/$review',
       orderBy: orderBy('number', false),
@@ -716,8 +703,8 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.getInt('patchset_group');
-    return query(
+    final lastPatchsetGroup = patchsets.first.patchsetGroup;
+    return _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('approved', true),
@@ -727,11 +714,11 @@ class FirestoreService {
     );
   }
 
-  Future<List<SafeDocument>> tryResults(
+  Future<List<TryResultRecord>> tryResults(
     int review,
     String configuration,
   ) async {
-    final patchsets = await query(
+    final patchsets = await _query<PatchsetRecord>(
       from: 'patchsets',
       parent: 'reviews/$review',
       orderBy: orderBy('number', false),
@@ -740,8 +727,8 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.getInt('patchset_group');
-    return query(
+    final lastPatchsetGroup = patchsets.first.patchsetGroup;
+    return _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('review', review),
@@ -760,7 +747,7 @@ class FirestoreService {
     bool success,
   ) async {
     final path = '$documents/builds/$builder:$index';
-    final document = await getDocument(path);
+    final document = await getDocument<Document>(path);
     await _completeBuilderRecord(document, success);
   }
 

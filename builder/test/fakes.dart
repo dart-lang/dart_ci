@@ -158,7 +158,7 @@ class FirestoreServiceFake implements FirestoreService {
 
     result[fBlamelistEndIndex] = min<int>(endIndex, result[fBlamelistEndIndex]);
     if (!result[fConfigurations].contains(configuration)) {
-      result[fConfigurations] = List<String>.from(result[fConfigurations])
+      result[fConfigurations] = List<String?>.from(result[fConfigurations])
         ..add(configuration)
         ..sort();
     }
@@ -166,7 +166,7 @@ class FirestoreServiceFake implements FirestoreService {
       result[fActive] = true;
       if (!result[fActiveConfigurations].contains(configuration)) {
         result[fActiveConfigurations] =
-            List<String>.from(result[fActiveConfigurations])
+            List<String?>.from(result[fActiveConfigurations])
               ..add(configuration)
               ..sort();
       }
@@ -204,24 +204,25 @@ class FirestoreServiceFake implements FirestoreService {
   }
 
   @override
-  Future<List<SafeDocument>> tryApprovals(int review) async {
+  Future<List<TryResultRecord>> tryApprovals(int review) async {
     return fakeTryResults
         .where(
           (result) => result[fReview] == review && result[fApproved] == true,
         )
         .map(taggedMap)
         .map(
-          (fields) => SafeDocument(
+          (fields) => TryResultRecord(
             Document()
               ..fields = fields
-              ..name = '',
+              ..name =
+                  'projects/dummy/databases/(default)/documents/try_results/dummy',
           ),
         )
         .toList();
   }
 
   @override
-  Future<List<SafeDocument>> tryResults(
+  Future<List<TryResultRecord>> tryResults(
     int review,
     String configuration,
   ) async {
@@ -233,10 +234,11 @@ class FirestoreServiceFake implements FirestoreService {
         )
         .map(taggedMap)
         .map(
-          (fields) => SafeDocument(
+          (fields) => TryResultRecord(
             Document()
               ..fields = fields
-              ..name = '',
+              ..name =
+                  'projects/dummy/databases/(default)/documents/try_results/dummy',
           ),
         )
         .toList();

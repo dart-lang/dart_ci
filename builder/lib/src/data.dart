@@ -17,10 +17,15 @@ extension type ResultRecord(Document doc) {
   String get expected => doc.fields![fExpected]!.stringValue!;
   int get blamelistStartIndex =>
       int.parse(doc.fields![fBlamelistStartIndex]!.integerValue!);
+  set blamelistStartIndex(int value) =>
+      doc.fields![fBlamelistStartIndex] = taggedValue(value);
   int get blamelistEndIndex =>
       int.parse(doc.fields![fBlamelistEndIndex]!.integerValue!);
+  set blamelistEndIndex(int value) =>
+      doc.fields![fBlamelistEndIndex] = taggedValue(value);
   bool get approved => doc.fields![fApproved]?.booleanValue ?? false;
   bool get active => doc.fields![fActive]?.booleanValue ?? false;
+  set active(bool value) => doc.fields![fActive] = taggedValue(value);
   List<String> get configurations => doc
       .fields![fConfigurations]!
       .arrayValue!
@@ -84,6 +89,81 @@ extension type ChangeRecord(Document doc) implements ResultRecord {
       doc.fields![fMatches] = taggedValue(false);
     }
   }
+}
+
+extension type TryResultRecord(Document doc) {
+  String get name => doc.fields![fName]!.stringValue!;
+  String get result => doc.fields![fResult]!.stringValue!;
+  String get previousResult => doc.fields![fPreviousResult]!.stringValue!;
+  String get expected => doc.fields![fExpected]!.stringValue!;
+  int get review => int.parse(doc.fields![fReview]!.integerValue!);
+  int get patchset => int.parse(doc.fields!['patchset']!.integerValue!);
+  bool get approved => doc.fields![fApproved]?.booleanValue ?? false;
+  List<String> get configurations => doc
+      .fields![fConfigurations]!
+      .arrayValue!
+      .values!
+      .map((v) => v.stringValue!)
+      .toList();
+
+  String get testResult => [name, result, previousResult, expected].join(' ');
+}
+
+extension type TryBuildRecord(Document doc) {
+  String get builder => doc.fields!['builder']!.stringValue!;
+  int get buildNumber => int.parse(doc.fields!['build_number']!.integerValue!);
+  String get buildbucketId => doc.fields!['buildbucket_id']!.stringValue!;
+  int get review => int.parse(doc.fields![fReview]!.integerValue!);
+  int get patchset => int.parse(doc.fields!['patchset']!.integerValue!);
+  bool get success => doc.fields!['success']?.booleanValue ?? false;
+  bool get completed => doc.fields!['completed']?.booleanValue ?? false;
+  bool get truncated => doc.fields!['truncated']?.booleanValue ?? false;
+}
+
+extension type BuildRecord(Document doc) {
+  String get builder => doc.fields!['builder']!.stringValue!;
+  int get buildNumber => int.parse(doc.fields!['build_number']!.integerValue!);
+  int get index => int.parse(doc.fields!['index']!.integerValue!);
+  bool get success => doc.fields!['success']?.booleanValue ?? false;
+  bool get completed => doc.fields!['completed']?.booleanValue ?? false;
+}
+
+extension type ReviewRecord(Document doc) {
+  String get review => doc.name!.split('/').last;
+  String get subject => doc.fields!['subject']!.stringValue!;
+  int? get landedIndex =>
+      int.tryParse(doc.fields!['landed_index']?.integerValue ?? '');
+  set landedIndex(int? value) =>
+      doc.fields!['landed_index'] = taggedValue(value);
+  String? get revertOf => doc.fields!['revert_of']?.stringValue;
+}
+
+extension type PatchsetRecord(Document doc) {
+  int get number => int.parse(doc.fields!['number']!.integerValue!);
+  int get patchsetGroup =>
+      int.parse(doc.fields!['patchset_group']!.integerValue!);
+  String get kind => doc.fields!['kind']!.stringValue!;
+  String? get description => doc.fields!['description']?.stringValue;
+}
+
+extension type CommentRecord(Document doc) {
+  String get id => doc.name!.split('/').last;
+  String get author => doc.fields!['author']!.stringValue!;
+  String get comment => doc.fields!['comment']!.stringValue!;
+  int get review => int.parse(doc.fields![fReview]!.integerValue!);
+  int? get blamelistStartIndex =>
+      int.tryParse(doc.fields![fBlamelistStartIndex]?.integerValue ?? '');
+  set blamelistStartIndex(int? value) {
+    doc.fields![fBlamelistStartIndex] = taggedValue(value);
+  }
+
+  int? get blamelistEndIndex =>
+      int.tryParse(doc.fields![fBlamelistEndIndex]?.integerValue ?? '');
+  set blamelistEndIndex(int? value) {
+    doc.fields![fBlamelistEndIndex] = taggedValue(value);
+  }
+
+  bool get approved => doc.fields![fApproved]?.booleanValue ?? false;
 }
 
 extension type ConfigurationRecord(Document doc) {

@@ -57,7 +57,7 @@ Future<void> removeBuildersAndResults() async {
 
   for (final test in testsToRemove) {
     await deleteDocuments(
-      await firestore.runQuery(
+      await firestore.query(
         StructuredQuery()
           ..from = inCollection('results')
           ..where = fieldEquals(fName, test),
@@ -66,7 +66,7 @@ Future<void> removeBuildersAndResults() async {
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
-      await firestore.runQuery(
+      await firestore.query(
         StructuredQuery()
           ..from = inCollection('builds')
           ..where = fieldEquals('builder', builder),

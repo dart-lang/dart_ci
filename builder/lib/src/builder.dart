@@ -136,7 +136,7 @@ class Build {
       if (review != null) {
         tryApprovals.addAll({
           for (final result in await firestore.tryApprovals(review))
-            testResult(result.fields): index,
+            result.testResult: index,
         });
       }
       if (reverted != null) {
