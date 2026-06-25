@@ -4,46 +4,7 @@
 
 import 'package:googleapis/firestore/v1.dart';
 
-class SafeDocument {
-  final String name;
-  final Map<String, Value> fields;
-
-  SafeDocument(Document document)
-    : name = document.name!,
-      fields = document.fields!;
-
-  Document toDocument() => Document(name: name, fields: fields);
-  int? getInt(String name) {
-    final value = fields[name]?.integerValue;
-    if (value == null) {
-      return null;
-    }
-    return int.parse(value);
-  }
-
-  String getString(String name) {
-    return fields[name]!.stringValue!;
-  }
-
-  String? getStringOrNull(String name) {
-    return fields[name]?.stringValue;
-  }
-
-  bool? getBool(String name) {
-    return fields[name]?.booleanValue;
-  }
-
-  List<dynamic>? getList(String name) {
-    final arrayValue = fields[name]?.arrayValue;
-    if (arrayValue == null) return null;
-    return arrayValue.values?.map(getValue).toList() ?? [];
-  }
-
-  bool isNull(String name) {
-    return !fields.containsKey(name) ||
-        fields['name']!.nullValue == 'NULL_VALUE';
-  }
-}
+export 'data.dart';
 
 Map<String, Value> taggedMap(Map<String, dynamic> fields) {
   return fields.map((key, value) => MapEntry(key, taggedValue(value)));

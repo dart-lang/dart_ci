@@ -34,37 +34,42 @@ const previousIndex = index - 1;
 const previousBlamelistEnd = previousIndex - 1;
 const previousBlamelistStart = previousBlamelistEnd - 3;
 const previousBuildPreviousIndex = previousBlamelistStart - 1;
-late Commit commit;
-late Commit previousCommit;
-late Commit previousBlamelistEndCommit;
-late Commit previousBlamelistStartCommit;
-late Commit previousBuildPreviousCommit;
+late CommitRecord commit;
+late CommitRecord previousCommit;
+late CommitRecord previousBlamelistEndCommit;
+late CommitRecord previousBlamelistStartCommit;
+late CommitRecord previousBuildPreviousCommit;
 
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};
 
-void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name']!);
-  testsToRemove.add(change['name']!);
+void registerChangeForDeletion(ChangeRecord change) {
+  buildersToRemove.add(change.builderName);
+  testsToRemove.add(change.name);
 }
 
 Future<void> removeBuildersAndResults() async {
-  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+  Future<void> deleteDocuments(List<Document> documents) async {
     for (final document in documents) {
-      await firestore.deleteDocument(document.name);
+      await firestore.deleteDocument(document.name!);
     }
   }
 
   for (final test in testsToRemove) {
     await deleteDocuments(
-      await firestore.query(from: 'results', where: fieldEquals(fName, test)),
+      await firestore.query(
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals(fName, test),
+      ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('builds')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }
@@ -84,23 +89,26 @@ Future<void> loadCommits() async {
   );
 }
 
-Build makeBuild(Map<String, dynamic> firstChange) => Build(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]}),
+Build makeBuild(ChangeRecord firstChange) => Build(
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration}),
   commitsCache,
   firestore,
 );
 
-Map<String, dynamic> makeChange(
+ChangeRecord makeChange(
   String name,
   String result, {
   bool flaky = false,
+  String? testName,
+  String? commitHash,
+  String? previousCommitHash,
 }) {
   final results = result.split('/');
   final previous = results[0];
   final current = results[1];
   final expected = results[2];
   final change = {
-    fName: '${name}_test',
+    fName: testName ?? '${name}_test',
     fConfiguration: '${name}_configuration',
     'suite': 'unused_field',
     'test_name': 'unused_field',
@@ -110,25 +118,34 @@ Map<String, dynamic> makeChange(
     fExpected: expected,
     fMatches: current == expected,
     fChanged: current != previous,
-    fCommitHash: commit.hash,
+    fCommitHash: commitHash ?? commit.hash,
     'commit_time': 1583906489,
     fBuildNumber: '99997',
     fBuilderName: 'builder_$name',
     fFlaky: flaky,
     fPreviousFlaky: false,
-    fPreviousCommitHash: previousCommit.hash,
+    fPreviousCommitHash: previousCommitHash ?? previousCommit.hash,
     'previous_commit_time': 1583906489,
     'bot_name': 'fake_bot_name',
     'previous_build_number': '306',
   };
-  registerChangeForDeletion(change);
-  return change;
+  final record = ChangeRecord.fromMap(change);
+  registerChangeForDeletion(record);
+  return record;
 }
 
-Map<String, dynamic> makePreviousChange(String name, String result) {
-  return makeChange(name, result)
-    ..[fCommitHash] = previousBlamelistEndCommit.hash
-    ..[fPreviousCommitHash] = previousBuildPreviousCommit.hash;
+ChangeRecord makePreviousChange(
+  String name,
+  String result, {
+  String? testName,
+}) {
+  return makeChange(
+    name,
+    result,
+    testName: testName,
+    commitHash: previousBlamelistEndCommit.hash,
+    previousCommitHash: previousBuildPreviousCommit.hash,
+  );
 }
 
 void main() async {
@@ -154,8 +171,8 @@ void main() async {
     final failingPreviousChange = makePreviousChange(
       'failure',
       'Pass/RuntimeError/Pass',
-    )..[fName] = 'previous_failure_test';
-    registerChangeForDeletion(failingPreviousChange); // Name changed.
+      testName: 'previous_failure_test',
+    );
     final previousBuild = makeBuild(failingPreviousChange);
     final previousStatus = await previousBuild.process([failingPreviousChange]);
     expect(previousStatus.success, isFalse);
@@ -170,21 +187,18 @@ void main() async {
     expect(status.unapprovedFailures.keys, contains('failure_configuration'));
     final failures = status.unapprovedFailures['failure_configuration']!;
     final previousFailure = failures
-        .where((failure) => failure.getString(fName) == 'previous_failure_test')
+        .where((failure) => failure.name == 'previous_failure_test')
         .single;
     final failure = failures
-        .where((failure) => failure.getString(fName) == 'failure_test')
+        .where((failure) => failure.name == 'failure_test')
         .single;
+    expect(previousFailure.blamelistEndCommit, previousBlamelistEndCommit.hash);
     expect(
-      previousFailure.getStringOrNull(fBlamelistEndCommit),
-      previousBlamelistEndCommit.hash,
-    );
-    expect(
-      previousFailure.getStringOrNull(fBlamelistStartCommit),
+      previousFailure.blamelistStartCommit,
       previousBlamelistStartCommit.hash,
     );
-    expect(failure.getStringOrNull(fBlamelistEndCommit), commit.hash);
-    expect(failure.getStringOrNull(fBlamelistStartCommit), commit.hash);
+    expect(failure.blamelistEndCommit, commit.hash);
+    expect(failure.blamelistStartCommit, commit.hash);
     final message = status.toJson();
     expect(message, matches(r'There are unapproved failures\\n'));
     expect(
@@ -208,7 +222,7 @@ void main() async {
       'RuntimeError/RuntimeError/Pass',
     );
     final unchangedBuild = makeBuild(unchangedChange);
-    final unchangedStatus = await unchangedBuild.process([]);
+    final unchangedStatus = await unchangedBuild.process(<ChangeRecord>[]);
     expect(unchangedStatus.success, isTrue);
     expect(unchangedStatus.unapprovedFailures, isNotEmpty);
     expect(
@@ -218,11 +232,12 @@ void main() async {
   });
 
   test('existing approved failure', () async {
-    final failingOtherConfigurationChange =
-        makeChange('other', 'Pass/RuntimeError/Pass')
-          ..[fName] = 'approved_failure_test'
-          ..[fPreviousCommitHash] = previousBuildPreviousCommit.hash;
-    registerChangeForDeletion(failingOtherConfigurationChange);
+    final failingOtherConfigurationChange = makeChange(
+      'other',
+      'Pass/RuntimeError/Pass',
+      testName: 'approved_failure_test',
+      previousCommitHash: previousBuildPreviousCommit.hash,
+    );
     final otherConfigurationBuild = makeBuild(failingOtherConfigurationChange);
     final otherStatus = await otherConfigurationBuild.process([
       failingOtherConfigurationChange,
@@ -237,9 +252,9 @@ void main() async {
       'approved_failure_test',
       'other_configuration',
     )).single;
-    expect(result.getInt(fBlamelistEndIndex), index);
-    expect(result.getInt(fBlamelistStartIndex), previousBlamelistStart);
-    await firestore.approveResult(result.toDocument());
+    expect(result.blamelistEndIndex, index);
+    expect(result.blamelistStartIndex, previousBlamelistStart);
+    await firestore.approveResult(result.doc);
     final failingChange = makeChange(
       'approved_failure',
       'Pass/RuntimeError/Pass',
@@ -255,7 +270,7 @@ void main() async {
     )).single;
     expect(result.name, changedResult.name);
     // Check blamelist narrowing.
-    expect(changedResult.getInt(fBlamelistEndIndex), index);
-    expect(changedResult.getInt(fBlamelistStartIndex), index);
+    expect(changedResult.blamelistEndIndex, index);
+    expect(changedResult.blamelistStartIndex, index);
   });
 }

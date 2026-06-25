@@ -35,17 +35,17 @@ const reviewWithComments = '215021';
 late final String index1; // Index of the final commit in the test range
 late final String commit1; // Hash of that commit
 late final String review; // CL number of that commit's Gerrit review
-late final String lastPatchset; // Final patchset in that review
+late final int lastPatchset; // Final patchset in that review
 late final String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
-late final String patchsetGroup; // First patchset in the final patchset group
+late final int patchsetGroup; // First patchset in the final patchset group
 late final String patchsetGroupRef;
-late final String earlyPatchset; // Patchset not in the final patchset group
+late final int earlyPatchset; // Patchset not in the final patchset group
 late final String earlyPatchsetRef;
 // Earlier commit with a review
 late final String index2;
 late final String commit2;
 late final String review2;
-late final String patchset2;
+late final int patchset2;
 late final String patchset2Ref;
 // Commits before commit2
 late final String index3;
@@ -56,52 +56,60 @@ late final String commit4;
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};
 
-void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name'] as String);
-  testsToRemove.add(change['name'] as String);
+void registerChangeForDeletion(ChangeRecord change) {
+  buildersToRemove.add(change.builderName);
+  testsToRemove.add(change.name);
 }
 
 Future<void> removeBuildersAndResults() async {
-  Future<void> deleteDocuments(List<SafeDocument> documents) async {
+  Future<void> deleteDocuments(List<Document> documents) async {
     for (final document in documents) {
-      await firestore.deleteDocument(document.name);
+      await firestore.deleteDocument(document.name!);
     }
   }
 
   for (final test in testsToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'try_results',
-        where: fieldEquals('name', test),
+        StructuredQuery()
+          ..from = inCollection('try_results')
+          ..where = fieldEquals('name', test),
       ),
     );
   }
   for (final test in testsToRemove) {
     await deleteDocuments(
-      await firestore.query(from: 'results', where: fieldEquals('name', test)),
-    );
-  }
-  for (final builder in buildersToRemove) {
-    await deleteDocuments(
       await firestore.query(
-        from: 'try_builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals('name', test),
       ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'builds',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('try_builds')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }
   for (final builder in buildersToRemove) {
     await deleteDocuments(
       await firestore.query(
-        from: 'configurations',
-        where: fieldEquals('builder', builder),
+        StructuredQuery()
+          ..from = inCollection('builds')
+          ..where = fieldEquals('builder', builder),
+      ),
+    );
+  }
+  for (final builder in buildersToRemove) {
+    await deleteDocuments(
+      await firestore.query(
+        StructuredQuery()
+          ..from = inCollection('configurations')
+          ..where = fieldEquals('builder', builder),
       ),
     );
   }
@@ -110,48 +118,54 @@ Future<void> removeBuildersAndResults() async {
 Future<void> loadTestCommits(int startIndex) async {
   // Get review data for the last two landed CLs before or at startIndex.
   final reviews = await firestore.query(
-    from: 'reviews',
-    orderBy: orderBy('landed_index', false),
-    where: fieldLessThanOrEqual('landed_index', startIndex),
-    limit: 2,
+    StructuredQuery()
+      ..from = inCollection('reviews')
+      ..orderBy = [orderBy('landed_index', false)]
+      ..where = fieldLessThanOrEqual('landed_index', startIndex)
+      ..limit = 2,
   );
-  final firstReview = reviews.first;
-  index1 = firstReview.fields['landed_index']!.integerValue!;
-  review = firstReview.name.split('/').last;
-  final secondReview = reviews.last;
-  index2 = secondReview.fields['landed_index']!.integerValue!;
-  review2 = secondReview.name.split('/').last;
+  final firstReview = ReviewRecord(reviews.first);
+  index1 = firstReview.landedIndex!.toString();
+  review = firstReview.review;
+  final secondReview = ReviewRecord(reviews.last);
+  index2 = secondReview.landedIndex!.toString();
+  review2 = secondReview.review;
   index3 = (int.parse(index2) - 1).toString();
   index4 = (int.parse(index2) - 2).toString();
 
   final patchsets = await firestore.query(
-    from: 'patchsets',
+    StructuredQuery()
+      ..from = inCollection('patchsets')
+      ..orderBy = [orderBy('number', true)],
     parent: 'reviews/$review',
-    orderBy: orderBy('number', true),
   );
-  final patchsetFields = patchsets.last.fields;
-  lastPatchset = patchsetFields['number']!.integerValue!;
+  final patchsetRecord = PatchsetRecord(patchsets.last);
+  lastPatchset = patchsetRecord.number;
   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';
-  patchsetGroup = patchsetFields['patchset_group']!.integerValue!;
+  patchsetGroup = patchsetRecord.patchsetGroup;
   patchsetGroupRef = 'refs/changes/$review/$patchsetGroup';
-  earlyPatchset = '1';
+  earlyPatchset = 1;
   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';
   final patchsets2 = await firestore.query(
-    from: 'patchsets',
+    StructuredQuery()
+      ..from = inCollection('patchsets')
+      ..orderBy = [orderBy('number', true)],
     parent: 'reviews/$review2',
-    orderBy: orderBy('number', true),
   );
-  patchset2 = patchsets2.last.fields['number']!.integerValue!;
+  patchset2 = PatchsetRecord(patchsets2.last).number;
   patchset2Ref = 'refs/changes/$review/$patchset2';
 
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
     for (final index in [index1, index2, index3, index4])
-      index: (await firestore.query(
-        from: 'commits',
-        where: fieldEquals('index', int.parse(index)),
-        limit: 1,
-      )).first.name.split('/').last,
+      index: CommitRecord(
+        (await firestore.query(
+          StructuredQuery()
+            ..from = inCollection('commits')
+            ..where = fieldEquals('index', int.parse(index))
+            ..limit = 1,
+        )).first,
+      ).hash,
   };
   commit1 = commits[index1]!;
   commit2 = commits[index2]!;
@@ -161,10 +175,10 @@ Future<void> loadTestCommits(int startIndex) async {
 
 Tryjob makeTryjob(
   String name,
-  Map<String, dynamic> firstChange, {
+  ChangeRecord firstChange, {
   String? baseCommit,
 }) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration})
       as TryBuildInfo,
   'bbID_$name',
   baseCommit ?? commit4,
@@ -174,7 +188,7 @@ Tryjob makeTryjob(
 );
 
 const newFailure = 'Pass/RuntimeError/Pass';
-Map<String, dynamic> makeTryChange(
+ChangeRecord makeTryChange(
   String name,
   String result,
   String patchsetRef, {
@@ -206,11 +220,12 @@ Map<String, dynamic> makeTryChange(
     'bot_name': 'fake_bot_name',
     'previous_build_number': '306',
   };
-  registerChangeForDeletion(change);
-  return change;
+  final record = ChangeRecord.fromMap(change);
+  registerChangeForDeletion(record);
+  return record;
 }
 
-Map<String, dynamic> makeChange(
+ChangeRecord makeChange(
   String name,
   String result,
   String commit,
@@ -218,16 +233,17 @@ Map<String, dynamic> makeChange(
   String? testName,
 }) {
   final change = {
-    ...makeTryChange(name, result, '', testName: testName),
+    ...makeTryChange(name, result, '', testName: testName).toJson(),
     'commit_hash': commit,
     'previous_commit_hash': previousCommit,
   };
-  return change;
+  final record = ChangeRecord.fromMap(change);
+  return record;
 }
 
-Build makeBuild(String commit, Map<String, dynamic> change) {
+Build makeBuild(String commit, ChangeRecord change) {
   return Build(
-    BuildInfo.fromResult(change, <String>{change[fConfiguration]}),
+    BuildInfo.fromResult(change, <String>{change.configuration}),
     commitsCache,
     firestore,
   );
@@ -260,8 +276,9 @@ void main() async {
     expect(int.parse(index2), lessThan(int.parse(index1)));
     // reviewWithComments should have some comments, to test linking
     final comments = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     expect(comments, isNotEmpty);
   });
@@ -272,10 +289,11 @@ void main() async {
     final change1 = makeTryChange('approvals', newFailure, lastPatchsetRef);
     await makeTryjob('approvals', change1).process([change1]);
     var documents = await firestore.query(
-      from: 'try_results',
-      where: fieldEquals('name', 'approvals_test'),
+      StructuredQuery()
+        ..from = inCollection('try_results')
+        ..where = fieldEquals('name', 'approvals_test'),
     );
-    await firestore.approveResult(documents.single.toDocument());
+    await firestore.approveResult(documents.single);
     final change2 = makeTryChange(
       'approvals',
       newFailure,
@@ -284,14 +302,17 @@ void main() async {
     );
     await makeTryjob('approvals', change2).process([change2]);
     documents = await firestore.query(
-      from: 'try_results',
-      where: fieldEquals('name', 'approvals_2_test'),
+      StructuredQuery()
+        ..from = inCollection('try_results')
+        ..where = fieldEquals('name', 'approvals_2_test'),
     );
-    await firestore.approveResult(documents.single.toDocument());
+    await firestore.approveResult(documents.single);
 
     final change3 = makeChange('approvals', newFailure, commit1, commit4);
-    final change3a = makeChange('approvals', newFailure, commit1, commit4)
-      ..['configuration'] = 'second_approvals_configuration';
+    final change3a = ChangeRecord.fromMap({
+      ...change3.toJson(),
+      'configuration': 'second_approvals_configuration',
+    });
     final change4 = makeChange(
       'approvals',
       newFailure,
@@ -303,7 +324,7 @@ void main() async {
       commit1,
       change3,
     ).process([change3, change3a, change4]);
-    await checkBuild(change3['builder_name'], index1, success: true);
+    await checkBuild(change3.builderName, index1, success: true);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
     await checkResult(change3, index3, index1, {'approved': true});
@@ -317,14 +338,14 @@ void main() async {
       testName: 'approvals',
     );
     final status2 = await makeBuild(commit1, change5).process([change5]);
-    await checkBuild(change5['builder_name'], index1, success: true);
+    await checkBuild(change5.builderName, index1, success: true);
     expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {
       'approved': true,
       'configurations': [
-        change3['configuration'],
-        change3a['configuration'],
-        change5['configuration'],
+        change3.configuration,
+        change3a.configuration,
+        change5.configuration,
       ],
     });
   });
@@ -340,19 +361,20 @@ void main() async {
       isTrue,
     );
     var commentsQuery = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     final landedIndex =
-        commentsQuery.first.fields[fBlamelistStartIndex]!.integerValue!;
+        commentsQuery.first.fields![fBlamelistStartIndex]!.integerValue!;
     for (final item in commentsQuery) {
-      final fields = item.fields;
+      final fields = item.fields!;
       expect(fields[fBlamelistStartIndex]!.integerValue, landedIndex);
       expect(fields[fBlamelistEndIndex]!.integerValue, landedIndex);
       expect(fields[fReview]!.integerValue, reviewWithComments);
       fields.remove(fBlamelistStartIndex);
       fields.remove(fBlamelistEndIndex);
-      await firestore.updateFields(item.toDocument(), [
+      await firestore.updateFields(item, [
         fBlamelistStartIndex,
         fBlamelistEndIndex,
       ]);
@@ -373,11 +395,12 @@ void main() async {
       int.parse(landedIndex),
     );
     commentsQuery = await firestore.query(
-      from: 'comments',
-      where: fieldEquals('review', int.parse(reviewWithComments)),
+      StructuredQuery()
+        ..from = inCollection('comments')
+        ..where = fieldEquals('review', int.parse(reviewWithComments)),
     );
     for (final item in commentsQuery) {
-      final fields = item.fields;
+      final fields = item.fields!;
       expect(fields[fBlamelistStartIndex]!.integerValue, landedIndex);
       expect(fields[fBlamelistEndIndex]!.integerValue, landedIndex);
       expect(fields[fReview]!.integerValue, reviewWithComments);
@@ -396,16 +419,17 @@ Future<void> checkTryBuild(
 }) async {
   final buildbucketId = 'bbID_$name';
   final buildDocuments = await firestore.query(
-    from: 'try_builds',
-    where: fieldEquals('buildbucket_id', buildbucketId),
+    StructuredQuery()
+      ..from = inCollection('try_builds')
+      ..where = fieldEquals('buildbucket_id', buildbucketId),
   );
   expect(buildDocuments.length, 1);
-  final document = buildDocuments.single;
-  expect(document.getBool('success'), success);
+  final record = TryBuildRecord(buildDocuments.single);
+  expect(record.success, success);
   if (truncated != null) {
-    expect(document.getBool('truncated'), truncated);
+    expect(record.truncated, truncated);
   } else {
-    expect(document.fields.containsKey('truncated'), isFalse);
+    expect(record.doc.fields!.containsKey('truncated'), isFalse);
   }
 }
 
@@ -413,11 +437,12 @@ Future<void> checkBuild(String? builder, String index, {bool? success}) async {
   final document = await firestore.getDocument(
     '${firestore.documents}/builds/$builder:$index',
   );
-  expect(document.fields!['success']!.booleanValue, success);
+  final record = BuildRecord(document);
+  expect(record.success, success);
 }
 
 Future<void> checkResult(
-  Map<String, dynamic> change,
+  ChangeRecord change,
   String startIndex,
   String endIndex,
   Map<String, dynamic> expected,
@@ -430,13 +455,13 @@ Future<void> checkResult(
   );
   expect(resultName, isNotNull);
   final resultDocument = await firestore.getDocument(resultName!);
-  final data = untagMap(resultDocument.fields!);
-  expect(data[fName], change[fName]);
-  expect(data[fBlamelistStartIndex], int.parse(startIndex));
-  expect(data[fBlamelistEndIndex], int.parse(endIndex));
+  final record = ResultRecord(resultDocument);
+  expect(record.name, change.name);
+  expect(record.blamelistStartIndex, int.parse(startIndex));
+  expect(record.blamelistEndIndex, int.parse(endIndex));
   expect(
-    data[fConfigurations],
-    unorderedEquals(expected[fConfigurations] ?? data[fConfigurations]),
+    record.configurations,
+    unorderedEquals(expected[fConfigurations] ?? record.configurations),
   );
-  expect(data[fApproved], expected[fApproved] ?? data[fApproved]);
+  expect(record.approved, expected[fApproved] ?? record.approved);
 }

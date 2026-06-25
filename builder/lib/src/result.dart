@@ -5,7 +5,7 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
-import 'package:googleapis/firestore/v1.dart' show Value;
+import 'firestore_helpers.dart';
 
 // Field names of Result document fields
 const fName = 'name';
@@ -44,37 +44,6 @@ const fReview = 'review';
 const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
 
-bool isChangedResult(Map<String, dynamic> change) =>
-    change[fChanged] && (!change[fFlaky] || !change[fPreviousFlaky]);
-
-/// Whether the change will be marked as an active failure.
-/// New flaky tests will not be marked active, so they will appear in the
-/// results feed "all", but not turn the builder red
-bool isFailure(Map<String, dynamic> change) =>
-    !change[fMatches] && change[fResult] != 'flaky';
-
-void transformChange(Map<String, dynamic> change) {
-  change[fPreviousResult] ??= 'new test';
-  if (change[fPreviousFlaky]) {
-    change[fPreviousResult] = 'flaky';
-  }
-  if (change[fFlaky]) {
-    change[fResult] = 'flaky';
-    change[fMatches] = false;
-  }
-}
-
-String? fromStringOrValue(dynamic value) {
-  return value is Value ? value.stringValue : value;
-}
-
-String testResult(Map<String, dynamic> change) => [
-  fromStringOrValue(change[fName]),
-  fromStringOrValue(change[fResult]),
-  fromStringOrValue(change[fPreviousResult]),
-  fromStringOrValue(change[fExpected]),
-].join(' ');
-
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results
 class BuildInfo {
@@ -86,17 +55,17 @@ class BuildInfo {
   final String? previousCommitHash;
   final Set<String> configurations;
 
-  BuildInfo(Map<String, dynamic> result, this.configurations)
-    : builderName = result[fBuilderName],
-      buildNumber = int.parse(result[fBuildNumber]),
-      commitRef = result[fCommitHash],
-      previousCommitHash = result[fPreviousCommitHash];
+  BuildInfo(ChangeRecord result, this.configurations)
+    : builderName = result.builderName,
+      buildNumber = result.buildNumber,
+      commitRef = result.commitHash,
+      previousCommitHash = result.previousCommitHash;
 
   factory BuildInfo.fromResult(
-    Map<String, dynamic> result,
+    ChangeRecord result,
     Set<String> configurations,
   ) {
-    final commitRef = result[fCommitHash];
+    final commitRef = result.commitHash;
     final match = commitRefRegExp.matchAsPrefix(commitRef);
     if (match == null) {
       return BuildInfo(result, configurations);
@@ -122,10 +91,10 @@ class TestNameLock {
   final locks = <String, Future<void>>{};
 
   Future<void> guardedCall(
-    Future<void> Function(Map<String, dynamic> change) f,
-    Map<String, dynamic> change,
+    Future<void> Function(ChangeRecord change) f,
+    ChangeRecord change,
   ) async {
-    final name = change[fName]!;
+    final name = change.name;
     while (locks.containsKey(name)) {
       await locks[name];
     }

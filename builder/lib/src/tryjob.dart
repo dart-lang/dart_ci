@@ -27,15 +27,15 @@ class ChangeCounter {
   bool get hasTooManyPassingChanges => passes > maxReportedSuccesses;
   bool get hasTooManyFailingChanges => failures > maxReportedFailures;
 
-  void count(Map<String, dynamic> change) {
+  void count(ChangeRecord change) {
     ++changes;
-    change[fMatches] ? ++passes : ++failures;
-    if (change[fFlaky] && !change[fPreviousFlaky]) ++newFlakes;
+    change.matches ? ++passes : ++failures;
+    if (change.flaky && !change.previousFlaky) ++newFlakes;
   }
 
-  bool isNotReported(Map<String, dynamic> change) {
-    if (change[fMatches] && hasTooManyPassingChanges ||
-        !change[fMatches] && hasTooManyFailingChanges) {
+  bool isNotReported(ChangeRecord change) {
+    if (change.matches && hasTooManyPassingChanges ||
+        !change.matches && hasTooManyFailingChanges) {
       hasTruncatedChanges = true;
       return true;
     }
@@ -66,8 +66,8 @@ class Tryjob {
   final TestNameLock testNameLock = TestNameLock();
   String baseRevision;
   bool success = true;
-  late List<SafeDocument> landedResults;
-  Map<String, SafeDocument> lastLandedResultByName = {};
+  late List<TryResultRecord> landedResults;
+  Map<String, TryResultRecord> lastLandedResultByName = {};
   final String buildbucketID;
 
   Tryjob(
@@ -90,17 +90,16 @@ class Tryjob {
     ).update();
   }
 
-  bool isNotLandedResult(Map<String, dynamic> change) {
-    return change[fResult] !=
-        lastLandedResultByName[change[fName]]?.getString(fResult);
+  bool isNotLandedResult(ChangeRecord change) {
+    return change.result != lastLandedResultByName[change.name]?.result;
   }
 
-  Future<BuildStatus> process(List<Map<String, dynamic>> results) async {
+  Future<BuildStatus> process(List<ChangeRecord> results) async {
     await update();
     log('storing ${results.length} change(s)');
-    final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
+    final resultsByConfiguration = groupBy<ChangeRecord, String>(
       results,
-      (result) => result['configuration'],
+      (result) => result.configuration,
     );
 
     for (final configuration in resultsByConfiguration.keys) {
@@ -108,7 +107,7 @@ class Tryjob {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.getString(fName): result,
+          for (final result in landedResults) result.name: result,
         };
       }
       final changes = resultsByConfiguration[configuration]!.where(
@@ -141,11 +140,11 @@ class Tryjob {
     return status;
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+  Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(Map<String, dynamic> change) async {
-    transformChange(change);
+  Future<void> storeChange(ChangeRecord change) async {
+    change.transform();
     counter.count(change);
     if (counter.isNotReported(change)) return;
     final approved = await firestore.storeTryChange(
@@ -153,13 +152,13 @@ class Tryjob {
       info.review,
       info.patchset,
     );
-    if (!approved && isFailure(change)) {
+    if (!approved && change.isFailure) {
       counter.unapprovedFailures++;
       success = false;
     }
   }
 
-  Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
+  Future<List<TryResultRecord>> fetchLandedResults(String configuration) async {
     final resultsBase = await commits.getCommit(info.previousCommitHash!);
     final rebaseBase = await commits.getCommit(baseRevision);
     if (resultsBase.index > rebaseBase.index) {

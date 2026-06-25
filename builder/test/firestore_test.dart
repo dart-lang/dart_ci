@@ -56,26 +56,28 @@ void main() async {
     tearDown(() async {
       // Delete database records created by the tests.
       var snapshot = await firestore.query(
-        from: 'try_builds',
-        where: fieldEquals('review', testReview),
+        StructuredQuery()
+          ..from = inCollection('try_builds')
+          ..where = fieldEquals('review', testReview),
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
 
       snapshot = await firestore.query(
-        from: 'patchsets',
+        StructuredQuery()..from = inCollection('patchsets'),
         parent: 'reviews/$testReview/',
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
       snapshot = await firestore.query(
-        from: 'results',
-        where: fieldEquals('name', removeActiveConfigurationTestName),
+        StructuredQuery()
+          ..from = inCollection('results')
+          ..where = fieldEquals('name', removeActiveConfigurationTestName),
       );
       for (final doc in snapshot) {
-        await firestore.deleteDocument(doc.name);
+        await firestore.deleteDocument(doc.name!);
       }
       await firestore.deleteDocument(testReviewDocument);
     });
@@ -83,7 +85,9 @@ void main() async {
     test('Remove active configuration', () async {
       // Remove the two active configurations from createdResultDocument,
       // checking that the document is updated correctly at each stage.
-      final createdResultDocument = await firestore.storeResult(createdResult);
+      final createdResultDocument = await firestore.storeResult(
+        ResultRecord.fromMap(createdResult),
+      );
       final name = removeActiveConfigurationTestName;
 
       var foundActiveResults = await firestore.findActiveResults(
@@ -91,7 +95,7 @@ void main() async {
         testConfiguration,
       );
       var activeResult = foundActiveResults.single;
-      expect(createdResultDocument.name, activeResult.name);
+      expect(createdResultDocument.name, activeResult.doc.name);
 
       await firestore.removeActiveConfiguration(
         activeResult,
@@ -108,7 +112,7 @@ void main() async {
       );
       activeResult = foundActiveResults.single;
 
-      expect(activeResult.fields, contains('active'));
+      expect(activeResult.doc.fields!, contains('active'));
       await firestore.removeActiveConfiguration(
         activeResult,
         'configuration 2',
@@ -148,7 +152,7 @@ void main() async {
         2,
         3,
       );
-      final tryResult = {
+      final tryResult = ChangeRecord.fromMap({
         'review': testReview,
         'configuration': 'test_configuration',
         'name': 'test_suite/test_name',
@@ -156,39 +160,47 @@ void main() async {
         'result': 'RuntimeError',
         'expected': 'Pass',
         'previous_result': 'Pass',
-      };
+      });
       await firestore.storeTryChange(tryResult, testReview, 1);
-      final tryResult2 = Map<String, dynamic>.from(tryResult);
-      tryResult2['patchset'] = 2;
-      tryResult2['name'] = 'test_suite/test_name_2';
+      final tryResult2 = ChangeRecord.fromMap({
+        ...tryResult.toJson(),
+        'patchset': 2,
+        'name': 'test_suite/test_name_2',
+      });
       await firestore.storeTryChange(tryResult2, testReview, 2);
-      tryResult['patchset'] = 3;
-      tryResult['name'] = 'test_suite/test_name';
-      tryResult['expected'] = 'CompileTimeError';
-      await firestore.storeTryChange(tryResult, testReview, 3);
+      final tryResult3 = ChangeRecord.fromMap({
+        ...tryResult.toJson(),
+        'patchset': 3,
+        'name': 'test_suite/test_name',
+        'expected': 'CompileTimeError',
+      });
+      await firestore.storeTryChange(tryResult3, testReview, 3);
       // Set the results on patchsets 1 and 2 to approved.
       final snapshot = await firestore.query(
-        from: 'try_results',
-        where: compositeFilter([
-          fieldEquals('approved', false),
-          fieldEquals('review', testReview),
-          fieldLessThanOrEqual('patchset', 2),
-        ]),
+        StructuredQuery()
+          ..from = inCollection('try_results')
+          ..where = compositeFilter([
+            fieldEquals('approved', false),
+            fieldEquals('review', testReview),
+            fieldLessThanOrEqual('patchset', 2),
+          ]),
       );
       for (final response in snapshot) {
-        await firestore.approveResult(response.toDocument());
+        await firestore.approveResult(response);
         //await firestore.updateDocument(response.document.name, {'approved': taggedValue(true)});
       }
 
       // Should return only the approved change on patchset 2,
       // not the one on patchset 1 or the unapproved change on patchset 3.
       final approvals = await firestore.tryApprovals(testReview);
-      tryResult2['configurations'] = [tryResult2['configuration']];
-      tryResult2['approved'] = true;
-      tryResult2.remove('configuration');
+      final expectedApproval = {
+        ...tryResult2.toJson(),
+        'configurations': [tryResult2.configuration],
+        'approved': true,
+      }..remove('configuration');
       expect(1, approvals.length);
-      final approval = untagMap(approvals.single.fields);
-      expect(approval, tryResult2);
+      final approval = untagMap(approvals.single.doc.fields!);
+      expect(approval, expectedApproval);
     });
   });
 }

@@ -10,24 +10,11 @@ import 'package:builder/src/result.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:googleapis/firestore/v1.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 import 'firestore_helpers.dart';
 
 export 'firestore_helpers.dart';
-
-class Commit {
-  final SafeDocument document;
-  final String hash /*!*/;
-  Commit(this.hash, this.document);
-  Commit.fromJson(this.hash, Map<String, dynamic> data)
-    : document = SafeDocument(Document(fields: taggedMap(data), name: ''));
-  int get index => document.getInt('index')!;
-  String? get revertOf => document.getStringOrNull(fRevertOf);
-  bool get isRevert => document.fields.containsKey(fRevertOf);
-  int? get review => document.getInt(fReview);
-
-  Map<String, Object?> toJson() => untagMap(document.fields);
-}
 
 class FirestoreService {
   final String project;
@@ -52,7 +39,7 @@ class FirestoreService {
     }
   }
 
-  Future<List<SafeDocument>> query({
+  Future<List<T>> _query<T>({
     required String from,
     Filter? where,
     Order? orderBy,
@@ -64,7 +51,8 @@ class FirestoreService {
       ..where = where
       ..orderBy = orderBy != null ? [orderBy] : null
       ..limit = limit;
-    return runQuery(query, parent: parent);
+    final results = await this.query(query, parent: parent);
+    return results.cast<T>();
   }
 
   Future<Document> getDocument(String path) async {
@@ -100,10 +88,8 @@ class FirestoreService {
   String get database => 'projects/$project/databases/(default)';
   String get documents => '$database/documents';
 
-  Future<List<SafeDocument>> runQuery(
-    StructuredQuery query, {
-    String? parent,
-  }) async {
+  @visibleForTesting
+  Future<List<Document>> query(StructuredQuery query, {String? parent}) async {
     final request = RunQueryRequest()..structuredQuery = query;
     final parentPath = parent == null ? documents : '$documents/$parent';
     final queryResponse = await firestore.projects.databases.documents.runQuery(
@@ -113,8 +99,7 @@ class FirestoreService {
     if (queryResponse.first.document == null) return [];
     documentsFetched += queryResponse.length;
     return [
-      for (final responseElement in queryResponse)
-        SafeDocument(responseElement.document!),
+      for (final responseElement in queryResponse) responseElement.document!,
     ];
   }
 
@@ -130,26 +115,26 @@ class FirestoreService {
     return documentExists('$documents/reviews/$review/patchsets/$patchset');
   }
 
-  Commit _commit(SafeDocument document) {
-    document.fields['hash'] = taggedValue(document.name.split('/').last);
-    return Commit(document.name.split('/').last, document);
+  CommitRecord _commit(Document document) {
+    document.fields!['hash'] = taggedValue(document.name!.split('/').last);
+    return CommitRecord(document);
   }
 
-  Future<Commit?> getCommit(String hash) async {
+  Future<CommitRecord?> getCommit(String hash) async {
     final document = await getDocumentOrNull('$documents/commits/$hash');
-    return document != null ? Commit(hash, SafeDocument(document)) : null;
+    return document != null ? CommitRecord(document) : null;
   }
 
-  Future<Commit> getCommitByIndex(int index) async {
-    final response = await query(
+  Future<CommitRecord> getCommitByIndex(int index) async {
+    final response = await _query<Document>(
       from: 'commits',
       where: fieldEquals('index', index),
     );
     return _commit(response.first);
   }
 
-  Future<Commit> getLastCommit() async {
-    final lastCommit = await query(
+  Future<CommitRecord> getLastCommit() async {
+    final lastCommit = await _query<Document>(
       from: 'commits',
       orderBy: orderBy('index', false),
     );
@@ -191,7 +176,7 @@ class FirestoreService {
       );
       log('Configuration document $configuration -> $builder created');
     } else {
-      final originalBuilder = SafeDocument(record).getString('builder');
+      final originalBuilder = ConfigurationRecord(record).builder;
       if (originalBuilder != builder) {
         record.fields!['builder']!.stringValue = builder;
         await updateFields(record, ['builder']);
@@ -212,8 +197,8 @@ class FirestoreService {
     int buildNumber,
     int index,
   ) async {
-    final record = await getDocumentOrNull('$documents/builds/$builder:$index');
-    if (record == null) {
+    final data = await getDocumentOrNull('$documents/builds/$builder:$index');
+    if (data == null) {
       final newRecord = Document()
         ..fields = taggedMap({
           'builder': builder,
@@ -229,13 +214,13 @@ class FirestoreService {
       documentsWritten++;
       return true;
     } else {
-      final data = SafeDocument(record);
-      final existingIndex = data.getInt('index');
+      final buildRecord = BuildRecord(data);
+      final existingIndex = buildRecord.index;
       if (existingIndex != index) {
         throw ('Build $buildNumber of $builder had commit index '
             '$existingIndex, should be $index.');
       }
-      return data.getBool('completed') != true;
+      return buildRecord.completed != true;
     }
   }
 
@@ -273,15 +258,15 @@ class FirestoreService {
   }
 
   Future<String?> findResult(
-    Map<String, dynamic> change,
+    ResultRecord change,
     int startIndex,
     int endIndex,
   ) async {
-    final name = change['name'] as String;
-    final result = change['result'] as String;
-    final previousResult = change['previous_result'] as String;
-    final expected = change['expected'] as String;
-    final snapshot = await query(
+    final name = change.name;
+    final result = change.result;
+    final previousResult = change.previousResult;
+    final expected = change.expected;
+    final snapshot = await _query<Document>(
       from: 'results',
       orderBy: orderBy('blamelist_end_index', false),
       where: compositeFilter([
@@ -293,19 +278,20 @@ class FirestoreService {
       limit: 5,
     );
 
-    bool blamelistIncludesChange(SafeDocument document) {
-      final before = endIndex < document.getInt('blamelist_start_index')!;
-      final after = startIndex > document.getInt('blamelist_end_index')!;
+    bool blamelistIncludesChange(Document document) {
+      final record = ResultRecord(document);
+      final before = endIndex < record.blamelistStartIndex;
+      final after = startIndex > record.blamelistEndIndex;
       return !before && !after;
     }
 
     return snapshot.firstWhereOrNull(blamelistIncludesChange)?.name;
   }
 
-  Future<Document> storeResult(Map<String, dynamic> result) async {
+  Future<Document> storeResult(ResultRecord result) async {
     for (var retries = 0; true; retries++) {
       try {
-        final document = Document()..fields = taggedMap(result);
+        final document = result.doc;
         final createdDocument = await firestore.projects.databases.documents
             .createDocument(document, documents, 'results');
         documentsWritten++;
@@ -313,7 +299,7 @@ class FirestoreService {
       } catch (e) {
         log('Failed creating document at path $documents/results.');
         log('Retrying in 1000 ms.');
-        log('Document contents: ${jsonEncode(result)}\n');
+        log('Document contents: ${jsonEncode(result.toJson())}\n');
         log('$e');
         if (retries > 2) {
           rethrow;
@@ -325,7 +311,7 @@ class FirestoreService {
 
   Future<bool> updateResult(
     String result,
-    String? configuration,
+    String configuration,
     int startIndex,
     int endIndex, {
     required bool failure,
@@ -333,12 +319,11 @@ class FirestoreService {
     late bool approved;
     await retryCommit(() async {
       final document = await getDocument(result);
-      final data = SafeDocument(document);
-      // Allow missing 'approved' field during transition period.
-      approved = data.getBool('approved') ?? false;
+      final data = ResultRecord(document);
+      approved = data.approved;
       // Add the new configuration and narrow the blamelist.
-      final newStart = max(startIndex, data.getInt('blamelist_start_index')!);
-      final newEnd = min(endIndex, data.getInt('blamelist_end_index')!);
+      final newStart = max(startIndex, data.blamelistStartIndex);
+      final newEnd = min(endIndex, data.blamelistEndIndex);
       // TODO(karlklose): check for pinned, and remove the pin if the new range
       // doesn't include it?
       final updates = [
@@ -394,38 +379,37 @@ class FirestoreService {
 
   /// Returns all results which are either pinned to or have a range that is
   /// this single index. // TODO: rename this function
-  Future<List<Map<String, Value>>> findRevertedChanges(int index) async {
-    final pinnedResults = await query(
+  Future<List<ResultRecord>> findRevertedChanges(int index) async {
+    final pinnedResults = await _query<ResultRecord>(
       from: 'results',
       where: fieldEquals('pinned_index', index),
     );
-    final results = pinnedResults.map((response) => response.fields).toList();
-    final unpinnedResults = await query(
+    final results = [...pinnedResults];
+    final unpinnedResults = await _query<ResultRecord>(
       from: 'results',
       where: fieldEquals('blamelist_end_index', index),
     );
     for (final data in unpinnedResults) {
-      if (data.getInt('blamelist_start_index') == index &&
-          data.isNull('pinned_index')) {
-        results.add(data.fields);
+      if (data.blamelistStartIndex == index && data.pinnedIndex == null) {
+        results.add(data);
       }
     }
     return results;
   }
 
   Future<bool> storeTryChange(
-    Map<String, dynamic> change,
+    ChangeRecord change,
     int review,
     int patchset,
   ) async {
-    final name = change['name'] as String;
-    final result = change['result'] as String;
-    final expected = change['expected'] as String;
-    final previousResult = change['previous_result'] as String;
-    final configuration = change['configuration'] as String;
+    final name = change.name;
+    final result = change.result;
+    final expected = change.expected;
+    final previousResult = change.previousResult;
+    final configuration = change.configuration;
 
     // Find an existing result record for this test on this patchset.
-    final responses = await query(
+    final responses = await _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('review', review),
@@ -446,7 +430,7 @@ class FirestoreService {
     //                  or there is no response at all.
     if (responses.isEmpty) {
       // Is the previous result for this test on this review approved?
-      final previous = await query(
+      final previous = await _query<TryResultRecord>(
         from: 'try_results',
         where: compositeFilter([
           fieldEquals('review', review),
@@ -458,8 +442,7 @@ class FirestoreService {
         orderBy: orderBy('patchset', false),
         limit: 1,
       );
-      final approved =
-          previous.isNotEmpty && previous.first.getBool('approved') == true;
+      final approved = previous.isNotEmpty && previous.first.approved;
 
       final document = Document()
         ..fields = taggedMap({
@@ -490,7 +473,7 @@ class FirestoreService {
       documentsWritten++;
       return approved;
     } else {
-      final document = responses.first;
+      final tryResult = responses.first;
       // Update the TryResult for this test, adding this configuration.
       final values = ArrayValue()..values = [taggedValue(configuration)];
       final addConfiguration = FieldTransform()
@@ -498,10 +481,10 @@ class FirestoreService {
         ..appendMissingElements = values;
       await _executeWrite([
         Write()
-          ..update = document.toDocument()
+          ..update = tryResult.doc
           ..updateTransforms = [addConfiguration],
       ]);
-      return document.getBool('approved') == true;
+      return tryResult.approved;
     }
   }
 
@@ -517,23 +500,23 @@ class FirestoreService {
   /// Removes [configuration] from the active configurations and marks the
   /// active result inactive when we remove the last active config.
   Future<void> removeActiveConfiguration(
-    SafeDocument activeResult,
-    String? configuration,
+    ResultRecord activeResult,
+    String configuration,
   ) async {
-    final configurations = activeResult.getList('active_configurations')!;
+    final configurations = activeResult.activeConfigurations!;
     assert(configurations.contains(configuration));
     await removeArrayEntry(
-      activeResult,
+      activeResult.doc,
       'active_configurations',
       taggedValue(configuration),
     );
-    final document = await getDocument(activeResult.name);
-    activeResult = SafeDocument(document);
-    if (activeResult.getList('active_configurations')?.isEmpty == true) {
-      activeResult.fields.remove('active_configurations');
-      activeResult.fields.remove('active');
+    final document = await getDocument(activeResult.doc.name!);
+    activeResult = ResultRecord(document);
+    if (activeResult.activeConfigurations?.isEmpty == true) {
+      activeResult.doc.fields!.remove('active_configurations');
+      activeResult.doc.fields!.remove('active');
       final write = Write()
-        ..update = activeResult.toDocument()
+        ..update = activeResult.doc
         ..updateMask = (DocumentMask()
           ..fieldPaths = ['active', 'active_configurations']);
       await _executeWrite([write]);
@@ -541,7 +524,7 @@ class FirestoreService {
   }
 
   Future<void> removeArrayEntry(
-    SafeDocument document,
+    Document document,
     String fieldName,
     Value entry,
   ) async {
@@ -557,11 +540,11 @@ class FirestoreService {
     ]);
   }
 
-  Future<List<SafeDocument>> findActiveResults(
+  Future<List<ResultRecord>> findActiveResults(
     String name,
     String configuration,
   ) async {
-    final results = await query(
+    final results = await _query<ResultRecord>(
       from: 'results',
       where: compositeFilter([
         arrayContains('active_configurations', configuration),
@@ -573,18 +556,18 @@ class FirestoreService {
       log(
         [
           'Multiple active results for the same configuration and test',
-          ...results,
+          ...results.map((r) => r.doc),
         ].join('\n'),
       );
     }
     return results;
   }
 
-  Future<List<SafeDocument>> findUnapprovedFailures(
+  Future<List<ResultRecord>> findUnapprovedFailures(
     String configuration,
     int limit,
   ) async {
-    final results = await query(
+    final results = await _query<ResultRecord>(
       from: 'results',
       where: compositeFilter([
         arrayContains('active_configurations', configuration),
@@ -674,18 +657,18 @@ class FirestoreService {
   }
 
   Future<void> linkCommentsToCommit(int review, int index) async {
-    final comments = await query(
+    final comments = await _query<Document>(
       from: 'comments',
       where: fieldEquals('review', review),
     );
     if (comments.isEmpty) return;
     final writes = <Write>[];
     for (final document in comments) {
-      document.fields['blamelist_start_index'] = taggedValue(index);
-      document.fields['blamelist_end_index'] = taggedValue(index);
+      document.fields!['blamelist_start_index'] = taggedValue(index);
+      document.fields!['blamelist_end_index'] = taggedValue(index);
       writes.add(
         Write()
-          ..update = document.toDocument()
+          ..update = document
           ..updateMask = (DocumentMask()
             ..fieldPaths = ['blamelist_start_index', 'blamelist_end_index']),
       );
@@ -693,8 +676,8 @@ class FirestoreService {
     await _executeWrite(writes);
   }
 
-  Future<List<SafeDocument>> tryApprovals(int review) async {
-    final patchsets = await query(
+  Future<List<TryResultRecord>> tryApprovals(int review) async {
+    final patchsets = await _query<PatchsetRecord>(
       from: 'patchsets',
       parent: 'reviews/$review',
       orderBy: orderBy('number', false),
@@ -703,8 +686,8 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.getInt('patchset_group');
-    return query(
+    final lastPatchsetGroup = patchsets.first.patchsetGroup;
+    return _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('approved', true),
@@ -714,11 +697,11 @@ class FirestoreService {
     );
   }
 
-  Future<List<SafeDocument>> tryResults(
+  Future<List<TryResultRecord>> tryResults(
     int review,
     String configuration,
   ) async {
-    final patchsets = await query(
+    final patchsets = await _query<PatchsetRecord>(
       from: 'patchsets',
       parent: 'reviews/$review',
       orderBy: orderBy('number', false),
@@ -727,8 +710,8 @@ class FirestoreService {
     if (patchsets.isEmpty) {
       return [];
     }
-    final lastPatchsetGroup = patchsets.first.getInt('patchset_group');
-    return query(
+    final lastPatchsetGroup = patchsets.first.patchsetGroup;
+    return _query<TryResultRecord>(
       from: 'try_results',
       where: compositeFilter([
         fieldEquals('review', review),
