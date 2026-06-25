@@ -38,7 +38,7 @@ dynamic getValue(Value value) {
   } else if (value.booleanValue != null) {
     return value.booleanValue;
   } else if (value.arrayValue != null) {
-    return value.arrayValue!.values?.map(getValue).toList() ?? [];
+    return value.arrayValue!.values!.map(getValue).toList();
   } else if (value.timestampValue != null) {
     return DateTime.parse(value.timestampValue!);
   } else if (value.nullValue != null) {

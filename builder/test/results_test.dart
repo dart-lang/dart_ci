@@ -11,19 +11,19 @@ import 'test_data.dart';
 
 void main() async {
   test('Base builder test', () async {
-    final builderTest = BuilderTest(landedCommitChange);
+    final builderTest = BuilderTest(ChangeRecord.fromMap(landedCommitChange));
     await builderTest.update();
   });
 
   test('Get info for already saved commit', () async {
-    final builderTest = BuilderTest(existingCommitChange);
+    final builderTest = BuilderTest(ChangeRecord.fromMap(existingCommitChange));
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, existingCommitIndex);
     expect(builderTest.builder.startIndex, previousCommitIndex + 1);
   });
 
   test('Link landed commit to review', () async {
-    final builderTest = BuilderTest(landedCommitChange);
+    final builderTest = BuilderTest(ChangeRecord.fromMap(landedCommitChange));
     builderTest.firestore.commits.removeWhere(
       (key, value) => value[fIndex] > existingCommitIndex,
     );
@@ -47,9 +47,10 @@ void main() async {
   });
 
   test('update previous active result', () async {
-    final builderTest = BuilderTest(landedCommitChange);
+    final landedRecord = ChangeRecord.fromMap(landedCommitChange);
+    final builderTest = BuilderTest(landedRecord);
     await builderTest.storeBuildCommitsInfo();
-    await builderTest.storeChange(landedCommitChange);
+    await builderTest.storeChange(landedRecord);
     expect(builderTest.builder.success, true);
     expect(
       builderTest.firestore.results['activeResultID'],
@@ -57,9 +58,10 @@ void main() async {
         ..[fActiveConfigurations] = ['another configuration'],
     );
 
-    final changeAnotherConfiguration = Map<String, dynamic>.from(
-      landedCommitChange,
-    )..['configuration'] = 'another configuration';
+    final changeAnotherConfiguration = ChangeRecord.fromMap(
+      Map<String, dynamic>.from(landedCommitChange)
+        ..['configuration'] = 'another configuration',
+    );
     await builderTest.storeChange(changeAnotherConfiguration);
     expect(builderTest.builder.success, true);
     expect(
@@ -72,28 +74,31 @@ void main() async {
     expect(builderTest.builder.countChanges, 2);
     expect(
       builderTest.firestore.results[await builderTest.firestore.findResult(
-        ChangeRecord.fromMap(landedCommitChange),
+        landedRecord,
         landedCommitIndex,
         landedCommitIndex,
       )],
       landedResult,
     );
     final result = (await builderTest.firestore.findActiveResults(
-      landedCommitChange['name'],
-      landedCommitChange['configuration'],
+      landedRecord.name,
+      landedRecord.configuration,
     )).single;
     expect(untagMap(result.doc.fields!), landedResult);
   });
 
   test('mark active result flaky', () async {
-    final builderTest = BuilderTest(landedCommitChange);
+    final landedRecord = ChangeRecord.fromMap(landedCommitChange);
+    final builderTest = BuilderTest(landedRecord);
     await builderTest.storeBuildCommitsInfo();
-    final flakyChange = Map<String, dynamic>.from(landedCommitChange)
-      ..[fPreviousResult] = 'RuntimeError'
-      ..[fFlaky] = true;
-    expect(flakyChange[fResult], 'RuntimeError');
+    final flakyChange = ChangeRecord.fromMap(
+      Map<String, dynamic>.from(landedCommitChange)
+        ..[fPreviousResult] = 'RuntimeError'
+        ..[fFlaky] = true,
+    );
+    expect(flakyChange.result, 'RuntimeError');
     await builderTest.storeChange(flakyChange);
-    expect(flakyChange[fResult], 'flaky');
+    expect(flakyChange.result, 'flaky');
     expect(builderTest.builder.success, true);
     expect(
       builderTest.firestore.results['activeResultID'],
@@ -104,7 +109,7 @@ void main() async {
     expect(builderTest.builder.countChanges, 1);
     expect(
       builderTest.firestore.results[await builderTest.firestore.findResult(
-        ChangeRecord.fromMap(flakyChange),
+        flakyChange,
         landedCommitIndex,
         landedCommitIndex,
       )],

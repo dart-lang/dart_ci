@@ -20,20 +20,24 @@ Future<List<ChangeRecord>> readChangedResults(File resultsFile) async {
     print('Empty input results.json file');
     exit(1);
   }
+  final firstRecord = ChangeRecord.fromMap(
+    jsonDecode(lines[0])! as Map<String, dynamic>,
+  );
   final changes = <ChangeRecord>[];
-  final configurations = <String>{};
-  ChangeRecord? firstChange;
-  for (final line in lines) {
+  final configurations = <String>{firstRecord.configuration};
+  if (firstRecord.isChangedResult) {
+    changes.add(firstRecord);
+  }
+  for (var i = 1; i < lines.length; i++) {
     final change = ChangeRecord.fromMap(
-      jsonDecode(line)! as Map<String, dynamic>,
+      jsonDecode(lines[i])! as Map<String, dynamic>,
     );
-    firstChange ??= change;
     configurations.add(change.configuration);
     if (change.isChangedResult) {
       changes.add(change);
     }
   }
-  buildInfo = BuildInfo.fromResult(firstChange!, configurations);
+  buildInfo = BuildInfo.fromResult(firstRecord, configurations);
   return changes;
 }
 

@@ -211,8 +211,8 @@ class Build {
               false)) {
         log(
           'Unexpected active result when processing new change:\n'
-          'Active result: ${untagMap(activeResult.doc.fields!)}\n\n'
-          'Change: ${change.toJson()}\n\n'
+          'Active result: $activeResult\n\n'
+          'Change: $change\n\n'
           'approved: $approved',
         );
       }

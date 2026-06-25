@@ -152,7 +152,7 @@ void main() async {
         2,
         3,
       );
-      final tryResult = {
+      final tryResult = ChangeRecord.fromMap({
         'review': testReview,
         'configuration': 'test_configuration',
         'name': 'test_suite/test_name',
@@ -160,28 +160,21 @@ void main() async {
         'result': 'RuntimeError',
         'expected': 'Pass',
         'previous_result': 'Pass',
-      };
-      await firestore.storeTryChange(
-        ChangeRecord.fromMap(tryResult),
-        testReview,
-        1,
-      );
-      final tryResult2 = Map<String, dynamic>.from(tryResult);
-      tryResult2['patchset'] = 2;
-      tryResult2['name'] = 'test_suite/test_name_2';
-      await firestore.storeTryChange(
-        ChangeRecord.fromMap(tryResult2),
-        testReview,
-        2,
-      );
-      tryResult['patchset'] = 3;
-      tryResult['name'] = 'test_suite/test_name';
-      tryResult['expected'] = 'CompileTimeError';
-      await firestore.storeTryChange(
-        ChangeRecord.fromMap(tryResult),
-        testReview,
-        3,
-      );
+      });
+      await firestore.storeTryChange(tryResult, testReview, 1);
+      final tryResult2 = ChangeRecord.fromMap({
+        ...tryResult.toJson(),
+        'patchset': 2,
+        'name': 'test_suite/test_name_2',
+      });
+      await firestore.storeTryChange(tryResult2, testReview, 2);
+      final tryResult3 = ChangeRecord.fromMap({
+        ...tryResult.toJson(),
+        'patchset': 3,
+        'name': 'test_suite/test_name',
+        'expected': 'CompileTimeError',
+      });
+      await firestore.storeTryChange(tryResult3, testReview, 3);
       // Set the results on patchsets 1 and 2 to approved.
       final snapshot = await firestore.query(
         StructuredQuery()
@@ -200,12 +193,14 @@ void main() async {
       // Should return only the approved change on patchset 2,
       // not the one on patchset 1 or the unapproved change on patchset 3.
       final approvals = await firestore.tryApprovals(testReview);
-      tryResult2['configurations'] = [tryResult2['configuration']];
-      tryResult2['approved'] = true;
-      tryResult2.remove('configuration');
+      final expectedApproval = {
+        ...tryResult2.toJson(),
+        'configurations': [tryResult2.configuration],
+        'approved': true,
+      }..remove('configuration');
       expect(1, approvals.length);
       final approval = untagMap(approvals.single.doc.fields!);
-      expect(approval, tryResult2);
+      expect(approval, expectedApproval);
     });
   });
 }

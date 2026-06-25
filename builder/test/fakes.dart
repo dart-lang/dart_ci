@@ -18,14 +18,12 @@ class BuilderTest {
   final firestore = FirestoreServiceFake();
   late CommitsCache commitsCache;
   late Build builder;
-  Map<String, dynamic> firstChange;
+  ChangeRecord firstChange;
 
   BuilderTest(this.firstChange) {
     commitsCache = CommitsCache(firestore, client);
     builder = Build(
-      BuildInfo.fromResult(ChangeRecord.fromMap(firstChange), <String>{
-        firstChange[fConfiguration],
-      }),
+      BuildInfo.fromResult(firstChange, <String>{firstChange.configuration}),
       commitsCache,
       firestore,
     );
@@ -40,14 +38,8 @@ class BuilderTest {
     // Test expectations
   }
 
-  Future<void> storeChange(Map<String, dynamic> change) async {
-    final record = ChangeRecord.fromMap(change);
-    await builder.storeChange(record);
-    record.toJson().forEach((key, value) {
-      if (change[key] != value) {
-        change[key] = value;
-      }
-    });
+  Future<void> storeChange(ChangeRecord change) async {
+    await builder.storeChange(change);
   }
 }
 
@@ -200,20 +192,14 @@ class FirestoreServiceFake implements FirestoreService {
 
   @override
   Future<List<ResultRecord>> findRevertedChanges(int index) async {
-    return results.entries
-        .where((entry) {
-          final change = entry.value;
-          return change[fPinnedIndex] == index ||
+    return results.values
+        .where(
+          (change) =>
+              change[fPinnedIndex] == index ||
               (change[fBlamelistStartIndex] == index &&
-                  change[fBlamelistEndIndex] == index);
-        })
-        .map(
-          (entry) => ResultRecord(
-            Document()
-              ..fields = taggedMap(entry.value)
-              ..name = entry.key,
-          ),
+                  change[fBlamelistEndIndex] == index),
         )
+        .map(ResultRecord.fromMap)
         .toList();
   }
 

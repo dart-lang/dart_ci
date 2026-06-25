@@ -35,17 +35,17 @@ const reviewWithComments = '215021';
 late final String index1; // Index of the final commit in the test range
 late final String commit1; // Hash of that commit
 late final String review; // CL number of that commit's Gerrit review
-late final String lastPatchset; // Final patchset in that review
+late final int lastPatchset; // Final patchset in that review
 late final String lastPatchsetRef; // 'refs/changes/[review]/[patchset]'
-late final String patchsetGroup; // First patchset in the final patchset group
+late final int patchsetGroup; // First patchset in the final patchset group
 late final String patchsetGroupRef;
-late final String earlyPatchset; // Patchset not in the final patchset group
+late final int earlyPatchset; // Patchset not in the final patchset group
 late final String earlyPatchsetRef;
 // Earlier commit with a review
 late final String index2;
 late final String commit2;
 late final String review2;
-late final String patchset2;
+late final int patchset2;
 late final String patchset2Ref;
 // Commits before commit2
 late final String index3;
@@ -140,11 +140,11 @@ Future<void> loadTestCommits(int startIndex) async {
     parent: 'reviews/$review',
   );
   final patchsetRecord = PatchsetRecord(patchsets.last);
-  lastPatchset = patchsetRecord.number.toString();
+  lastPatchset = patchsetRecord.number;
   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';
-  patchsetGroup = patchsetRecord.patchsetGroup.toString();
+  patchsetGroup = patchsetRecord.patchsetGroup;
   patchsetGroupRef = 'refs/changes/$review/$patchsetGroup';
-  earlyPatchset = '1';
+  earlyPatchset = 1;
   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';
   final patchsets2 = await firestore.query(
     StructuredQuery()
@@ -152,7 +152,7 @@ Future<void> loadTestCommits(int startIndex) async {
       ..orderBy = [orderBy('number', true)],
     parent: 'reviews/$review2',
   );
-  patchset2 = PatchsetRecord(patchsets2.last).number.toString();
+  patchset2 = PatchsetRecord(patchsets2.last).number;
   patchset2Ref = 'refs/changes/$review/$patchset2';
 
   // Get commit hashes for the landed reviews, and for a commit before them

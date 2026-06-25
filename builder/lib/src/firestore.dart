@@ -390,8 +390,7 @@ class FirestoreService {
       where: fieldEquals('blamelist_end_index', index),
     );
     for (final data in unpinnedResults) {
-      if (data.blamelistStartIndex == index &&
-          data.doc.fields!.isNull('pinned_index')) {
+      if (data.blamelistStartIndex == index && data.pinnedIndex == null) {
         results.add(data);
       }
     }
