@@ -56,9 +56,9 @@ late final String commit4;
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};
 
-void registerChangeForDeletion(Map<String, dynamic> change) {
-  buildersToRemove.add(change['builder_name'] as String);
-  testsToRemove.add(change['name'] as String);
+void registerChangeForDeletion(ChangeRecord change) {
+  buildersToRemove.add(change.builderName);
+  testsToRemove.add(change.name);
 }
 
 Future<void> removeBuildersAndResults() async {
@@ -161,10 +161,10 @@ Future<void> loadTestCommits(int startIndex) async {
 
 Tryjob makeTryjob(
   String name,
-  Map<String, dynamic> firstChange, {
+  ChangeRecord firstChange, {
   String? baseCommit,
 }) => Tryjob(
-  BuildInfo.fromResult(firstChange, <String>{firstChange[fConfiguration]})
+  BuildInfo.fromResult(firstChange, <String>{firstChange.configuration})
       as TryBuildInfo,
   'bbID_$name',
   baseCommit ?? commit4,
@@ -174,7 +174,7 @@ Tryjob makeTryjob(
 );
 
 const newFailure = 'Pass/RuntimeError/Pass';
-Map<String, dynamic> makeTryChange(
+ChangeRecord makeTryChange(
   String name,
   String result,
   String patchsetRef, {
@@ -206,11 +206,12 @@ Map<String, dynamic> makeTryChange(
     'bot_name': 'fake_bot_name',
     'previous_build_number': '306',
   };
-  registerChangeForDeletion(change);
-  return change;
+  final record = ChangeRecord.fromMap(change);
+  registerChangeForDeletion(record);
+  return record;
 }
 
-Map<String, dynamic> makeChange(
+ChangeRecord makeChange(
   String name,
   String result,
   String commit,
@@ -218,16 +219,16 @@ Map<String, dynamic> makeChange(
   String? testName,
 }) {
   final change = {
-    ...makeTryChange(name, result, '', testName: testName),
+    ...makeTryChange(name, result, '', testName: testName).toJson(),
     'commit_hash': commit,
     'previous_commit_hash': previousCommit,
   };
-  return change;
+  return ChangeRecord.fromMap(change);
 }
 
-Build makeBuild(String commit, Map<String, dynamic> change) {
+Build makeBuild(String commit, ChangeRecord change) {
   return Build(
-    BuildInfo.fromResult(change, <String>{change[fConfiguration]}),
+    BuildInfo.fromResult(change, <String>{change.configuration}),
     commitsCache,
     firestore,
   );
@@ -290,8 +291,10 @@ void main() async {
     await firestore.approveResult(documents.single.toDocument());
 
     final change3 = makeChange('approvals', newFailure, commit1, commit4);
-    final change3a = makeChange('approvals', newFailure, commit1, commit4)
-      ..['configuration'] = 'second_approvals_configuration';
+    final change3a = ChangeRecord.fromMap({
+      ...change3.toJson(),
+      'configuration': 'second_approvals_configuration',
+    });
     final change4 = makeChange(
       'approvals',
       newFailure,
@@ -303,7 +306,7 @@ void main() async {
       commit1,
       change3,
     ).process([change3, change3a, change4]);
-    await checkBuild(change3['builder_name'], index1, success: true);
+    await checkBuild(change3.builderName, index1, success: true);
     expect(status.success, isTrue);
     expect(status.truncatedResults, isFalse);
     await checkResult(change3, index3, index1, {'approved': true});
@@ -317,14 +320,14 @@ void main() async {
       testName: 'approvals',
     );
     final status2 = await makeBuild(commit1, change5).process([change5]);
-    await checkBuild(change5['builder_name'], index1, success: true);
+    await checkBuild(change5.builderName, index1, success: true);
     expect(status2.success, isTrue);
     await checkResult(change5, index2, index1, {
       'approved': true,
       'configurations': [
-        change3['configuration'],
-        change3a['configuration'],
-        change5['configuration'],
+        change3.configuration,
+        change3a.configuration,
+        change5.configuration,
       ],
     });
   });
@@ -417,7 +420,7 @@ Future<void> checkBuild(String? builder, String index, {bool? success}) async {
 }
 
 Future<void> checkResult(
-  Map<String, dynamic> change,
+  ChangeRecord change,
   String startIndex,
   String endIndex,
   Map<String, dynamic> expected,
@@ -431,7 +434,7 @@ Future<void> checkResult(
   expect(resultName, isNotNull);
   final resultDocument = await firestore.getDocument(resultName!);
   final data = untagMap(resultDocument.fields!);
-  expect(data[fName], change[fName]);
+  expect(data[fName], change.name);
   expect(data[fBlamelistStartIndex], int.parse(startIndex));
   expect(data[fBlamelistEndIndex], int.parse(endIndex));
   expect(

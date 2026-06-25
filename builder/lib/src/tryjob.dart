@@ -27,15 +27,15 @@ class ChangeCounter {
   bool get hasTooManyPassingChanges => passes > maxReportedSuccesses;
   bool get hasTooManyFailingChanges => failures > maxReportedFailures;
 
-  void count(Map<String, dynamic> change) {
+  void count(ChangeRecord change) {
     ++changes;
-    change[fMatches] ? ++passes : ++failures;
-    if (change[fFlaky] && !change[fPreviousFlaky]) ++newFlakes;
+    change.matches ? ++passes : ++failures;
+    if (change.flaky && !change.previousFlaky) ++newFlakes;
   }
 
-  bool isNotReported(Map<String, dynamic> change) {
-    if (change[fMatches] && hasTooManyPassingChanges ||
-        !change[fMatches] && hasTooManyFailingChanges) {
+  bool isNotReported(ChangeRecord change) {
+    if (change.matches && hasTooManyPassingChanges ||
+        !change.matches && hasTooManyFailingChanges) {
       hasTruncatedChanges = true;
       return true;
     }
@@ -90,17 +90,17 @@ class Tryjob {
     ).update();
   }
 
-  bool isNotLandedResult(Map<String, dynamic> change) {
-    return change[fResult] !=
-        lastLandedResultByName[change[fName]]?.getString(fResult);
+  bool isNotLandedResult(ChangeRecord change) {
+    return change.result !=
+        lastLandedResultByName[change.name]?.getString(fResult);
   }
 
-  Future<BuildStatus> process(List<Map<String, dynamic>> results) async {
+  Future<BuildStatus> process(List<ChangeRecord> results) async {
     await update();
     log('storing ${results.length} change(s)');
-    final resultsByConfiguration = groupBy<Map<String, dynamic>, String>(
+    final resultsByConfiguration = groupBy<ChangeRecord, String>(
       results,
-      (result) => result['configuration'],
+      (result) => result.configuration,
     );
 
     for (final configuration in resultsByConfiguration.keys) {
@@ -141,11 +141,11 @@ class Tryjob {
     return status;
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+  Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(Map<String, dynamic> change) async {
-    transformChange(change);
+  Future<void> storeChange(ChangeRecord change) async {
+    change.transform();
     counter.count(change);
     if (counter.isNotReported(change)) return;
     final approved = await firestore.storeTryChange(
@@ -153,7 +153,7 @@ class Tryjob {
       info.review,
       info.patchset,
     );
-    if (!approved && isFailure(change)) {
+    if (!approved && change.isFailure) {
       counter.unapprovedFailures++;
       success = false;
     }

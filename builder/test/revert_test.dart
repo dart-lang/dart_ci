@@ -7,12 +7,15 @@
 import 'package:test/test.dart';
 
 import 'package:builder/src/result.dart';
+import 'package:builder/src/firestore_helpers.dart';
 import 'fakes.dart';
 import 'test_data.dart';
 
 void main() async {
   test('fetch commit that is a revert', () async {
-    final builderTest = BuilderTest(revertUnchangedChange);
+    final builderTest = BuilderTest(
+      ChangeRecord.fromMap(revertUnchangedChange),
+    );
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
     builderTest.client.addDefaultResponse(revertGitilesLog);
 
@@ -28,7 +31,9 @@ void main() async {
   });
 
   test('fetch commit that is a reland (as a reland)', () async {
-    final builderTest = BuilderTest(relandUnchangedChange);
+    final builderTest = BuilderTest(
+      ChangeRecord.fromMap(relandUnchangedChange),
+    );
     builderTest.firestore.commits[revertedCommitHash] = revertedCommit;
     builderTest.client.addDefaultResponse(revertAndRelandGitilesLog);
     await builderTest.storeBuildCommitsInfo();
@@ -53,7 +58,9 @@ void main() async {
   });
 
   test('fetch commit that is a reland (as a revert)', () async {
-    final builderTest = RevertBuilderTest(relandUnchangedChange);
+    final builderTest = RevertBuilderTest(
+      ChangeRecord.fromMap(relandUnchangedChange),
+    );
     builderTest.client.addDefaultResponse(relandGitilesLog);
     await builderTest.storeBuildCommitsInfo();
     expect(builderTest.builder.endIndex, relandCommit['index']);
@@ -67,9 +74,10 @@ void main() async {
   });
 
   test('Automatically approve expected failure on revert', () async {
-    final builderTest = RevertBuilderTest(revertChange);
+    final record = ChangeRecord.fromMap(revertChange);
+    final builderTest = RevertBuilderTest(record);
     await builderTest.update();
-    await builderTest.storeChange(revertChange);
+    await builderTest.storeChange(record);
     expect(
       builderTest.firestore.results.values
           .where((result) => result[fBlamelistEndIndex] == 55)
@@ -79,23 +87,29 @@ void main() async {
   });
 
   test('Revert in blamelist, doesn\'t match new failure', () async {
-    final builderTest = RevertBuilderTest(commit56UnmatchingChange);
-    await builderTest.update();
-    await builderTest.storeChange(commit56UnmatchingChange);
-    await builderTest.storeChange(commit56DifferentNameChange);
-    await builderTest.storeChange(commit56Change);
+    final unmatchingRecord = ChangeRecord.fromMap(commit56UnmatchingChange);
+    final differentNameRecord = ChangeRecord.fromMap(
+      commit56DifferentNameChange,
+    );
+    final record = ChangeRecord.fromMap(commit56Change);
 
-    Future<bool> findApproval(Map<String, dynamic> change) async {
+    final builderTest = RevertBuilderTest(unmatchingRecord);
+    await builderTest.update();
+    await builderTest.storeChange(unmatchingRecord);
+    await builderTest.storeChange(differentNameRecord);
+    await builderTest.storeChange(record);
+
+    Future<bool> findApproval(ChangeRecord change) async {
       final result = await builderTest.firestore.findActiveResults(
-        change[fName],
-        change[fConfiguration],
+        change.name,
+        change.configuration,
       );
-      return result.single.getBool(fApproved)!;
+      return result.single.approved;
     }
 
-    expect(await findApproval(commit56UnmatchingChange), false);
-    expect(await findApproval(commit56DifferentNameChange), false);
-    expect(await findApproval(commit56Change), true);
+    expect(await findApproval(unmatchingRecord), false);
+    expect(await findApproval(differentNameRecord), false);
+    expect(await findApproval(record), true);
   });
 }
 

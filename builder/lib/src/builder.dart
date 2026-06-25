@@ -41,7 +41,7 @@ class Build {
 
   void log(String string) => firestore.log(string);
 
-  Future<BuildStatus> process(List<Map<String, dynamic>> changes) async {
+  Future<BuildStatus> process(List<ChangeRecord> changes) async {
     log('store build commits info');
     await storeBuildCommitsInfo();
     log('update build info');
@@ -70,7 +70,7 @@ class Build {
       }..removeWhere((key, value) => value.isEmpty);
     } catch (e) {
       log('Failed to fetch unapproved failures: $e');
-      status.unapprovedFailures = {'failed': []};
+      status.unapprovedFailures = {'failed': <ResultRecord>[]};
       status.success = false;
     }
     final report = [
@@ -153,23 +153,23 @@ class Build {
     }
   }
 
-  Future<void> guardedStoreChange(Map<String, dynamic> change) =>
+  Future<void> guardedStoreChange(ChangeRecord change) =>
       testNameLock.guardedCall(storeChange, change);
 
-  Future<void> storeChange(Map<String, dynamic> change) async {
+  Future<void> storeChange(ChangeRecord change) async {
     countChanges++;
     await reviewsFetched;
-    transformChange(change);
-    final failure = isFailure(change);
+    change.transform();
+    final failure = change.isFailure;
     bool approved;
     var result = await firestore.findResult(change, startIndex, endIndex);
     var activeResults = await firestore.findActiveResults(
-      change['name'],
-      change['configuration'],
+      change.name,
+      change.configuration,
     );
     if (result == null) {
       final approvingIndex =
-          tryApprovals[testResult(change)] ??
+          tryApprovals[change.testResult] ??
           allRevertedChanges
               .firstWhereOrNull(
                 (revertedChange) => revertedChange.approveRevert(change),
@@ -189,14 +189,14 @@ class Build {
         countApprovalsCopied++;
         if (countApprovalsCopied <= 10) {
           approvalMessages.add(
-            'Copied approval of result ${testResult(change)}',
+            'Copied approval of result ${change.testResult}',
           );
         }
       }
     } else {
       approved = await firestore.updateResult(
         result,
-        change['configuration'],
+        change.configuration,
         startIndex,
         endIndex,
         failure: failure,
@@ -206,14 +206,12 @@ class Build {
 
     for (final activeResult in activeResults) {
       // Log error message if any expected invariants are violated
-      if (activeResult.getInt(fBlamelistEndIndex)! >= startIndex ||
-          !(activeResult
-                  .getList(fActiveConfigurations)
-                  ?.contains(change['configuration']) ??
+      if (activeResult.blamelistEndIndex >= startIndex ||
+          !(activeResult.activeConfigurations?.contains(change.configuration) ??
               false)) {
         log(
           'Unexpected active result when processing new change:\n'
-          'Active result: ${untagMap(activeResult.fields)}\n\n'
+          'Active result: $activeResult\n\n'
           'Change: $change\n\n'
           'approved: $approved',
         );
@@ -221,12 +219,12 @@ class Build {
       // Removes the configuration from the list of active configurations.
       await firestore.removeActiveConfiguration(
         activeResult,
-        change['configuration'],
+        change.configuration,
       );
     }
   }
 
-  Future<List<SafeDocument>> unapprovedFailuresForConfiguration(
+  Future<List<ResultRecord>> unapprovedFailuresForConfiguration(
     String configuration,
   ) async {
     final failures = await firestore.findUnapprovedFailures(
@@ -237,37 +235,37 @@ class Build {
     return failures;
   }
 
-  Future<void> addBlamelistCommits(SafeDocument result) async {
+  Future<void> addBlamelistCommits(ResultRecord result) async {
     final startCommit = await commitsCache.getCommitByIndex(
-      result.getInt(fBlamelistStartIndex)!,
+      result.blamelistStartIndex,
     );
-    result.fields[fBlamelistStartCommit] = taggedValue(startCommit.hash);
+    result.blamelistStartCommit = startCommit.hash;
     final endCommit = await commitsCache.getCommitByIndex(
-      result.getInt(fBlamelistEndIndex)!,
+      result.blamelistEndIndex,
     );
-    result.fields[fBlamelistEndCommit] = taggedValue(endCommit.hash);
+    result.blamelistEndCommit = endCommit.hash;
   }
 }
 
-Map<String, dynamic> constructResult(
-  Map<String, dynamic> change,
+ResultRecord constructResult(
+  ChangeRecord change,
   int startIndex,
   int endIndex, {
   required bool approved,
   int? landedReviewIndex,
   required bool failure,
 }) {
-  return {
-    fName: change[fName],
-    fResult: change[fResult],
-    fPreviousResult: change[fPreviousResult],
-    fExpected: change[fExpected],
+  return ResultRecord.fromMap({
+    fName: change.name,
+    fResult: change.result,
+    fPreviousResult: change.previousResult,
+    fExpected: change.expected,
     fBlamelistStartIndex: startIndex,
     fBlamelistEndIndex: endIndex,
     if (startIndex != endIndex && approved) fPinnedIndex: landedReviewIndex,
-    fConfigurations: <String>[change['configuration']],
+    fConfigurations: <String>[change.configuration],
     fApproved: approved,
     if (failure) fActive: true,
-    if (failure) fActiveConfigurations: <String>[change['configuration']],
-  };
+    if (failure) fActiveConfigurations: <String>[change.configuration],
+  });
 }

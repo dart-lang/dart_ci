@@ -4,6 +4,8 @@
 
 import 'package:googleapis/firestore/v1.dart';
 
+export 'data.dart';
+
 class SafeDocument {
   final String name;
   final Map<String, Value> fields;
