@@ -81,7 +81,8 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
   final secondReview = ReviewRecord(reviews.last);
   final int landedIndex = secondReview.landedIndex!;
   final String landedReview = secondReview.review;
-  final int baseIndex = landedIndex - 1;
+  // expect(int.parse(index), greaterThan(int.parse(landedIndex)));
+  final String baseIndex = (landedIndex - 1).toString();
 
   final patchsets = await firestore.query(
     StructuredQuery()
@@ -101,27 +102,29 @@ Future<Map<String, String?>> loadTestCommits(int startIndex) async {
 
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
-    for (final idx in [index, landedIndex, baseIndex])
-      idx: (await firestore.query(
-        StructuredQuery()
-          ..from = inCollection('commits')
-          ..where = fieldEquals('index', idx)
-          ..limit = 1,
-      )).first.name!.split('/').last,
+    for (final idx in [index.toString(), landedIndex.toString(), baseIndex])
+      idx: CommitRecord(
+        (await firestore.query(
+          StructuredQuery()
+            ..from = inCollection('commits')
+            ..where = fieldEquals('index', int.parse(idx))
+            ..limit = 1,
+        )).first,
+      ).hash,
   };
   return {
     'index': index.toString(),
-    'commit': commits[index],
+    'commit': commits[index.toString()],
     'review': review,
     'patchset': patchset,
     'patchsetRef': 'refs/changes/$review/$patchset',
     'previousPatchset': previousPatchset,
     'landedIndex': landedIndex.toString(),
-    'landedCommit': commits[landedIndex],
+    'landedCommit': commits[landedIndex.toString()],
     'landedReview': landedReview,
     'landedPatchset': landedPatchset,
     'landedPatchsetRef': 'refs/changes/$landedReview/$landedPatchset',
-    'baseIndex': baseIndex.toString(),
+    'baseIndex': baseIndex,
     'baseCommit': commits[baseIndex],
   };
 }
@@ -366,7 +369,7 @@ void main() async {
   });
 
   test('patchsets', () async {
-    final document = await firestore.getDocument<Document>(
+    final document = await firestore.getDocument(
       '${firestore.documents}/reviews/${data['review']}/patchsets/${data['patchset']}',
     );
     final fields = untagMap(document.fields!);
@@ -379,7 +382,7 @@ void main() async {
       fields['patchset_group'],
       fields['number'],
     );
-    final document1 = await firestore.getDocument<Document>(document.name!);
+    final document1 = await firestore.getDocument(document.name!);
     expect(untagMap(document1.fields!), equals(fields));
     fields['number'] += 1;
     fields['description'] = 'test description';
@@ -393,7 +396,7 @@ void main() async {
     );
     final name =
         '${firestore.documents}/reviews/${data['review']}/patchsets/${fields['number']}';
-    final document2 = await firestore.getDocument<Document>(name);
+    final document2 = await firestore.getDocument(name);
     final fields2 = untagMap(document2.fields!);
     expect(fields2, equals(fields));
     await firestore.deleteDocument(name);

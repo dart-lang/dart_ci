@@ -34,11 +34,11 @@ const previousIndex = index - 1;
 const previousBlamelistEnd = previousIndex - 1;
 const previousBlamelistStart = previousBlamelistEnd - 3;
 const previousBuildPreviousIndex = previousBlamelistStart - 1;
-late Commit commit;
-late Commit previousCommit;
-late Commit previousBlamelistEndCommit;
-late Commit previousBlamelistStartCommit;
-late Commit previousBuildPreviousCommit;
+late CommitRecord commit;
+late CommitRecord previousCommit;
+late CommitRecord previousBlamelistEndCommit;
+late CommitRecord previousBlamelistStartCommit;
+late CommitRecord previousBuildPreviousCommit;
 
 final buildersToRemove = <String>{};
 final testsToRemove = <String>{};

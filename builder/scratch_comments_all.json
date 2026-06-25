@@ -1,0 +1,2075 @@
+[
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480570506",
+    "pull_request_review_id": 4578495750,
+    "id": 3480570506,
+    "node_id": "PRRC_kwDOCp9iHs7PdUqK",
+    "diff_hunk": "@@ -20,22 +20,24 @@ Future<List<ChangeRecord>> readChangedResults(File resultsFile) async {\n     print('Empty input results.json file');\n     exit(1);\n   }\n-\n-  ChangeRecord? firstChange;\n+  final firstRecord = ChangeRecord.fromMap(",
+    "path": "builder/bin/upload_results_to_database.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Revert changes to this file.",
+    "created_at": "2026-06-26T09:52:42Z",
+    "updated_at": "2026-06-26T09:52:42Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480570506",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480570506"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480570506"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480570506/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480606267",
+    "pull_request_review_id": 4578539152,
+    "id": 3480606267,
+    "node_id": "PRRC_kwDOCp9iHs7PddY7",
+    "diff_hunk": "@@ -157,15 +140,15 @@ class FirestoreService {\n   }\n \n   Future<Commit> getCommitByIndex(int index) async {\n-    final response = await query(\n+    final response = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "SafeDocument",
+    "created_at": "2026-06-26T09:58:18Z",
+    "updated_at": "2026-06-26T09:58:18Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480606267",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480606267"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480606267"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480606267/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 145,
+    "original_line": 143,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 71,
+    "position": 89,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480607204",
+    "pull_request_review_id": 4578540223,
+    "id": 3480607204,
+    "node_id": "PRRC_kwDOCp9iHs7Pddnk",
+    "diff_hunk": "@@ -146,9 +129,9 @@ class FirestoreService {\n     return documentExists('$documents/reviews/$review/patchsets/$patchset');\n   }\n \n-  Commit _commit(SafeDocument document) {\n-    document.fields['hash'] = taggedValue(document.name.split('/').last);\n-    return Commit(document.name.split('/').last, document);\n+  Commit _commit(Document document) {",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "SafeDocument",
+    "created_at": "2026-06-26T09:58:26Z",
+    "updated_at": "2026-06-26T09:58:26Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480607204",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480607204"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480607204"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480607204/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 132,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 60,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480610689",
+    "pull_request_review_id": 4578544842,
+    "id": 3480610689,
+    "node_id": "PRRC_kwDOCp9iHs7PdeeB",
+    "diff_hunk": "@@ -157,15 +140,15 @@ class FirestoreService {\n   }\n \n   Future<Commit> getCommitByIndex(int index) async {\n-    final response = await query(\n+    final response = await _query<Document>(\n       from: 'commits',\n       where: fieldEquals('index', index),\n     );\n     return _commit(response.first);\n   }\n \n   Future<Commit> getLastCommit() async {\n-    final lastCommit = await query(\n+    final lastCommit = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "SafeDocument",
+    "created_at": "2026-06-26T09:58:57Z",
+    "updated_at": "2026-06-26T09:58:57Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480610689",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480610689"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480610689"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480610689/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 153,
+    "original_line": 151,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 80,
+    "position": 99,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480640015",
+    "pull_request_review_id": 4578583491,
+    "id": 3480640015,
+    "node_id": "PRRC_kwDOCp9iHs7PdloP",
+    "diff_hunk": "",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Make getDocumentOrNull generic and make it return a ConfigurationRecord here.",
+    "created_at": "2026-06-26T10:04:00Z",
+    "updated_at": "2026-06-26T10:04:00Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480640015",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480640015"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480640015"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480640015/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 180,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480641007",
+    "pull_request_review_id": 4578584581,
+    "id": 3480641007,
+    "node_id": "PRRC_kwDOCp9iHs7Pdl3v",
+    "diff_hunk": "",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should be a ConfigurationRecord",
+    "created_at": "2026-06-26T10:04:13Z",
+    "updated_at": "2026-06-26T10:04:13Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480641007",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480641007"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480641007"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480641007/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 186,
+    "original_line": 184,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480644723",
+    "pull_request_review_id": 4578588904,
+    "id": 3480644723,
+    "node_id": "PRRC_kwDOCp9iHs7Pdmxz",
+    "diff_hunk": "@@ -228,8 +211,8 @@ class FirestoreService {\n     int buildNumber,\n     int index,\n   ) async {\n-    final record = await getDocumentOrNull('$documents/builds/$builder:$index');\n-    if (record == null) {\n+    final data = await getDocumentOrNull('$documents/builds/$builder:$index');",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Keep the name record here. No need for this diff.",
+    "created_at": "2026-06-26T10:05:03Z",
+    "updated_at": "2026-06-26T10:05:03Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480644723",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480644723"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480644723"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480644723/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 214,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 99,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480649978",
+    "pull_request_review_id": 4578594907,
+    "id": 3480649978,
+    "node_id": "PRRC_kwDOCp9iHs7PdoD6",
+    "diff_hunk": "@@ -297,7 +280,7 @@ class FirestoreService {\n     final result = change.result;\n     final previousResult = change.previousResult;\n     final expected = change.expected;\n-    final snapshot = await _query<ResultRecord>(\n+    final snapshot = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should remain as ResultRecord",
+    "created_at": "2026-06-26T10:06:10Z",
+    "updated_at": "2026-06-26T10:06:10Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480649978",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480649978"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480649978"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480649978/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 283,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 126,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480652427",
+    "pull_request_review_id": 4578597877,
+    "id": 3480652427,
+    "node_id": "PRRC_kwDOCp9iHs7PdoqL",
+    "diff_hunk": "@@ -309,13 +292,14 @@ class FirestoreService {\n       limit: 5,\n     );\n \n-    bool blamelistIncludesChange(ResultRecord document) {\n-      final before = endIndex < document.blamelistStartIndex;\n-      final after = startIndex > document.blamelistEndIndex;\n+    bool blamelistIncludesChange(Document document) {",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Restore blamelistIncludesChange to the version in split-1",
+    "created_at": "2026-06-26T10:06:41Z",
+    "updated_at": "2026-06-26T10:06:41Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480652427",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480652427"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480652427"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480652427/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 295,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 137,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480661827",
+    "pull_request_review_id": 4578608693,
+    "id": 3480661827,
+    "node_id": "PRRC_kwDOCp9iHs7Pdq9D",
+    "diff_hunk": "@@ -46,17 +46,6 @@ const fReview = 'review';\n const fRevertOf = 'revert_of';",
+    "path": "builder/lib/src/result.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Revert changes in this file.",
+    "created_at": "2026-06-26T10:08:38Z",
+    "updated_at": "2026-06-26T10:08:38Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480661827",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480661827"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480661827"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480661827/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 46,
+    "original_line": 46,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480663694",
+    "pull_request_review_id": 4578610630,
+    "id": 3480663694,
+    "node_id": "PRRC_kwDOCp9iHs7PdraO",
+    "diff_hunk": "@@ -584,7 +570,7 @@ class FirestoreService {\n       log(\n         [\n           'Multiple active results for the same configuration and test',\n-          ...results,\n+          ...results.map((r) => r.doc),",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Revert this line",
+    "created_at": "2026-06-26T10:08:59Z",
+    "updated_at": "2026-06-26T10:08:59Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480663694",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480663694"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480663694"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480663694/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 573,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 220,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480667184",
+    "pull_request_review_id": 4578614605,
+    "id": 3480667184,
+    "node_id": "PRRC_kwDOCp9iHs7PdsQw",
+    "diff_hunk": "@@ -407,11 +391,14 @@ class FirestoreService {\n     }\n   }\n \n+  /// Returns all results which are either pinned to or have a range that is\n+  /// this single index. // TODO: rename this function\n   Future<List<ResultRecord>> findRevertedChanges(int index) async {\n-    final results = await _query<ResultRecord>(\n+    final pinnedResults = await _query<ResultRecord>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Accidental removal of split-1 changes.",
+    "created_at": "2026-06-26T10:09:43Z",
+    "updated_at": "2026-06-26T10:09:43Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480667184",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480667184"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480667184"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480667184/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 397,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 157,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480668554",
+    "pull_request_review_id": 4578616428,
+    "id": 3480668554,
+    "node_id": "PRRC_kwDOCp9iHs7PdsmK",
+    "diff_hunk": "@@ -309,13 +292,14 @@ class FirestoreService {\n       limit: 5,\n     );\n \n-    bool blamelistIncludesChange(ResultRecord document) {\n-      final before = endIndex < document.blamelistStartIndex;\n-      final after = startIndex > document.blamelistEndIndex;\n+    bool blamelistIncludesChange(Document document) {\n+      final record = ResultRecord(document);\n+      final before = endIndex < record.blamelistStartIndex;\n+      final after = startIndex > record.blamelistEndIndex;\n       return !before && !after;\n     }\n \n-    return snapshot.firstWhereOrNull(blamelistIncludesChange)?.doc.name;\n+    return snapshot.firstWhereOrNull(blamelistIncludesChange)?.name;",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Revert this line.",
+    "created_at": "2026-06-26T10:10:03Z",
+    "updated_at": "2026-06-26T10:10:03Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480668554",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480668554"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480668554"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480668554/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 302,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 145,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480675822",
+    "pull_request_review_id": 4578626406,
+    "id": 3480675822,
+    "node_id": "PRRC_kwDOCp9iHs7PduXu",
+    "diff_hunk": "@@ -685,27 +671,27 @@ class FirestoreService {\n   }\n \n   Future<void> linkCommentsToCommit(int review, int index) async {\n-    final comments = await query(\n+    final comments = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "These should be CommentRecord",
+    "created_at": "2026-06-26T10:11:28Z",
+    "updated_at": "2026-06-26T10:11:28Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480675822",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480675822"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480675822"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480675822/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 674,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 229,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480686787",
+    "pull_request_review_id": 4578639620,
+    "id": 3480686787,
+    "node_id": "PRRC_kwDOCp9iHs7PdxDD",
+    "diff_hunk": "@@ -223,7 +235,8 @@ ChangeRecord makeChange(\n     'commit_hash': commit,\n     'previous_commit_hash': previousCommit,\n   };\n-  return ChangeRecord.fromMap(change);\n+  final record = ChangeRecord.fromMap(change);",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "undo changes to this line",
+    "created_at": "2026-06-26T10:13:47Z",
+    "updated_at": "2026-06-26T10:13:47Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480686787",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480686787"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480686787"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480686787/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 169,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480692637",
+    "pull_request_review_id": 4578646183,
+    "id": 3480692637,
+    "node_id": "PRRC_kwDOCp9iHs7Pdyed",
+    "diff_hunk": "@@ -399,24 +417,26 @@ Future<void> checkTryBuild(\n }) async {\n   final buildbucketId = 'bbID_$name';\n   final buildDocuments = await firestore.query(\n-    from: 'try_builds',\n-    where: fieldEquals('buildbucket_id', buildbucketId),\n+    StructuredQuery()\n+      ..from = inCollection('try_builds')\n+      ..where = fieldEquals('buildbucket_id', buildbucketId),\n   );\n   expect(buildDocuments.length, 1);\n-  final document = buildDocuments.single;\n-  expect(document.getBool('success'), success);\n+  final record = TryBuildRecord(buildDocuments.single);\n+  expect(record.success, success);\n   if (truncated != null) {\n-    expect(document.getBool('truncated'), truncated);\n+    expect(record.truncated, truncated);\n   } else {\n-    expect(document.fields.containsKey('truncated'), isFalse);\n+    expect(record.doc.fields!.containsKey('truncated'), isFalse);\n   }\n }\n \n Future<void> checkBuild(String? builder, String index, {bool? success}) async {\n   final document = await firestore.getDocument(",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It would be better to make getDocument generic and use the specific types expected wherever it's used.",
+    "created_at": "2026-06-26T10:15:00Z",
+    "updated_at": "2026-06-26T10:15:00Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480692637",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480692637"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480692637"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480692637/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 435,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 283,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480694791",
+    "pull_request_review_id": 4578648424,
+    "id": 3480694791,
+    "node_id": "PRRC_kwDOCp9iHs7PdzAH",
+    "diff_hunk": "@@ -433,13 +453,13 @@ Future<void> checkResult(\n   );\n   expect(resultName, isNotNull);\n   final resultDocument = await firestore.getDocument(resultName!);\n-  final data = untagMap(resultDocument.fields!);\n-  expect(data[fName], change.name);\n-  expect(data[fBlamelistStartIndex], int.parse(startIndex));\n-  expect(data[fBlamelistEndIndex], int.parse(endIndex));\n+  final record = ResultRecord(resultDocument);",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Leave data as the variable name here to make the diff less confusing.",
+    "created_at": "2026-06-26T10:15:28Z",
+    "updated_at": "2026-06-26T10:15:28Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480694791",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480694791"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3480694791"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3480694791/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 456,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 300,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504724214",
+    "pull_request_review_id": 4607546030,
+    "id": 3504724214,
+    "node_id": "PRRC_kwDOCp9iHs7Q5dj2",
+    "diff_hunk": "@@ -687,27 +672,27 @@ class FirestoreService {\n   }\n \n   Future<void> linkCommentsToCommit(int review, int index) async {\n-    final comments = await query(\n+    final comments = await _query<CommentRecord>(\n       from: 'comments',\n       where: fieldEquals('review', review),\n     );\n     if (comments.isEmpty) return;\n     final writes = <Write>[];\n     for (final document in comments) {\n-      document.fields['blamelist_start_index'] = taggedValue(index);\n-      document.fields['blamelist_end_index'] = taggedValue(index);\n+      document.doc.fields!['blamelist_start_index'] = taggedValue(index);",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "original_commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "These should be setters on CommentRecord.",
+    "created_at": "2026-07-01T09:24:40Z",
+    "updated_at": "2026-07-01T09:24:40Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504724214",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504724214"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504724214"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504724214/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 682,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 222,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504731615",
+    "pull_request_review_id": 4607554442,
+    "id": 3504731615,
+    "node_id": "PRRC_kwDOCp9iHs7Q5fXf",
+    "diff_hunk": "@@ -110,48 +118,52 @@ Future<void> removeBuildersAndResults() async {\n Future<void> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  index1 = firstReview.fields['landed_index']!.integerValue!;\n-  review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  index2 = secondReview.fields['landed_index']!.integerValue!;\n-  review2 = secondReview.name.split('/').last;\n+  final firstReview = ReviewRecord(reviews.first);\n+  index1 = firstReview.landedIndex!.toString();",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "original_commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "index1 should be an int.",
+    "created_at": "2026-07-01T09:25:44Z",
+    "updated_at": "2026-07-01T09:25:44Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504731615",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504731615"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504731615"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504731615/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 128,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 109,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504733993",
+    "pull_request_review_id": 4607557259,
+    "id": 3504733993,
+    "node_id": "PRRC_kwDOCp9iHs7Q5f8p",
+    "diff_hunk": "@@ -110,48 +118,52 @@ Future<void> removeBuildersAndResults() async {\n Future<void> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  index1 = firstReview.fields['landed_index']!.integerValue!;\n-  review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  index2 = secondReview.fields['landed_index']!.integerValue!;\n-  review2 = secondReview.name.split('/').last;\n+  final firstReview = ReviewRecord(reviews.first);\n+  index1 = firstReview.landedIndex!.toString();\n+  review = firstReview.review;\n+  final secondReview = ReviewRecord(reviews.last);\n+  index2 = secondReview.landedIndex!.toString();",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "original_commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "index2 should be an int",
+    "created_at": "2026-07-01T09:26:05Z",
+    "updated_at": "2026-07-01T09:26:05Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504733993",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504733993"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504733993"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504733993/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 131,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 112,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504782334",
+    "pull_request_review_id": 4607616949,
+    "id": 3504782334,
+    "node_id": "PRRC_kwDOCp9iHs7Q5rv-",
+    "diff_hunk": "@@ -67,52 +69,56 @@ Future<void> removeTryBuildersAndResults() async {\n Future<Map<String, String?>> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  final String? index = firstReview.fields['landed_index']!.integerValue;\n-  final String review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  final String landedIndex = secondReview.fields['landed_index']!.integerValue!;\n-  final String landedReview = secondReview.name.split('/').last;\n+  final firstReview = ReviewRecord(reviews.first);\n+  final int index = firstReview.landedIndex!;\n+  final String review = firstReview.review;\n+  final secondReview = ReviewRecord(reviews.last);\n+  final int landedIndex = secondReview.landedIndex!;\n+  final String landedReview = secondReview.review;\n   // expect(int.parse(index), greaterThan(int.parse(landedIndex)));\n-  final String baseIndex = (int.parse(landedIndex) - 1).toString();\n+  final String baseIndex = (landedIndex - 1).toString();",
+    "path": "builder/test/tryjob_test.dart",
+    "commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "original_commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should be an int",
+    "created_at": "2026-07-01T09:33:21Z",
+    "updated_at": "2026-07-01T09:33:21Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504782334",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504782334"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504782334"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504782334/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 85,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 68,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504785709",
+    "pull_request_review_id": 4607621513,
+    "id": 3504785709,
+    "node_id": "PRRC_kwDOCp9iHs7Q5skt",
+    "diff_hunk": "@@ -67,52 +69,56 @@ Future<void> removeTryBuildersAndResults() async {\n Future<Map<String, String?>> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  final String? index = firstReview.fields['landed_index']!.integerValue;\n-  final String review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  final String landedIndex = secondReview.fields['landed_index']!.integerValue!;\n-  final String landedReview = secondReview.name.split('/').last;\n+  final firstReview = ReviewRecord(reviews.first);\n+  final int index = firstReview.landedIndex!;\n+  final String review = firstReview.review;\n+  final secondReview = ReviewRecord(reviews.last);\n+  final int landedIndex = secondReview.landedIndex!;\n+  final String landedReview = secondReview.review;\n   // expect(int.parse(index), greaterThan(int.parse(landedIndex)));\n-  final String baseIndex = (int.parse(landedIndex) - 1).toString();\n+  final String baseIndex = (landedIndex - 1).toString();\n \n   final patchsets = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$review',\n-    orderBy: orderBy('number', true),\n   );\n-  final patchset = patchsets.last.fields['number']!.integerValue;\n+  final patchset = PatchsetRecord(patchsets.last).number.toString();\n   final previousPatchset = '1';\n   final landedPatchsets = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$landedReview',\n-    orderBy: orderBy('number', true),\n   );\n-  final landedPatchset = landedPatchsets.last.fields['number']!.integerValue;\n+  final landedPatchset = PatchsetRecord(landedPatchsets.last).number.toString();\n \n   // Get commit hashes for the landed reviews, and for a commit before them\n   var commits = {\n-    for (final index in [index, landedIndex, baseIndex])\n-      index: (await firestore.query(\n-        from: 'commits',\n-        where: fieldEquals('index', int.parse(index!)),\n-        limit: 1,\n-      )).first.name.split('/').last,\n+    for (final idx in [index.toString(), landedIndex.toString(), baseIndex])",
+    "path": "builder/test/tryjob_test.dart",
+    "commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "original_commit_id": "713b0fb18a386e87f1bbda500d1f7ee7c4de5a76",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "idx should be an int here\n\nThen below:\ncommits[index.toString()] -> commits[index]\netc.",
+    "created_at": "2026-07-01T09:33:52Z",
+    "updated_at": "2026-07-01T09:33:52Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504785709",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504785709"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504785709"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504785709/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 105,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 100,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504859195",
+    "pull_request_review_id": 4607718201,
+    "id": 3504859195,
+    "node_id": "PRRC_kwDOCp9iHs7Q5-g7",
+    "diff_hunk": "@@ -157,15 +140,15 @@ class FirestoreService {\n   }\n \n   Future<Commit> getCommitByIndex(int index) async {\n-    final response = await query(\n+    final response = await _query<Document>(\n       from: 'commits',\n       where: fieldEquals('index', index),\n     );\n     return _commit(response.first);\n   }\n \n   Future<Commit> getLastCommit() async {\n-    final lastCommit = await query(\n+    final lastCommit = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`final lastCommit = await _query<Document>(`\n->\n`final lastCommit = await _query<SafeDocument>(`",
+    "created_at": "2026-07-01T09:45:20Z",
+    "updated_at": "2026-07-01T09:45:20Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504859195",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504859195"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504859195"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504859195/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 153,
+    "original_line": 151,
+    "side": "RIGHT",
+    "in_reply_to_id": 3480610689,
+    "author_association": "MEMBER",
+    "original_position": 80,
+    "position": 99,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504860477",
+    "pull_request_review_id": 4607719511,
+    "id": 3504860477,
+    "node_id": "PRRC_kwDOCp9iHs7Q5-09",
+    "diff_hunk": "@@ -157,15 +140,15 @@ class FirestoreService {\n   }\n \n   Future<Commit> getCommitByIndex(int index) async {\n-    final response = await query(\n+    final response = await _query<Document>(",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`final response = await _query<Document>(`\n->\n`final response = await _query<SafeDocument>(`",
+    "created_at": "2026-07-01T09:45:32Z",
+    "updated_at": "2026-07-01T09:45:51Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504860477",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504860477"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504860477"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504860477/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 145,
+    "original_line": 143,
+    "side": "RIGHT",
+    "in_reply_to_id": 3480606267,
+    "author_association": "MEMBER",
+    "original_position": 71,
+    "position": 89,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504866224",
+    "pull_request_review_id": 4607725713,
+    "id": 3504866224,
+    "node_id": "PRRC_kwDOCp9iHs7Q6AOw",
+    "diff_hunk": "",
+    "path": "builder/lib/src/firestore.dart",
+    "commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "original_commit_id": "4ec7d29a69ca4babce2af44eb9fb13aa4d8b601f",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Like new ConfigurationRecord(...)",
+    "created_at": "2026-07-01T09:46:31Z",
+    "updated_at": "2026-07-01T09:46:32Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504866224",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504866224"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504866224"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504866224/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 186,
+    "original_line": 184,
+    "side": "RIGHT",
+    "in_reply_to_id": 3480641007,
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504874340",
+    "pull_request_review_id": 4607734864,
+    "id": 3504874340,
+    "node_id": "PRRC_kwDOCp9iHs7Q6CNk",
+    "diff_hunk": "@@ -110,51 +118,55 @@ Future<void> removeBuildersAndResults() async {\n Future<void> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  index1 = firstReview.fields['landed_index']!.integerValue!;\n-  review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  index2 = secondReview.fields['landed_index']!.integerValue!;\n-  review2 = secondReview.name.split('/').last;\n-  index3 = (int.parse(index2) - 1).toString();\n-  index4 = (int.parse(index2) - 2).toString();\n+  final firstReview = ReviewRecord(reviews.first);\n+  index1 = firstReview.landedIndex!;\n+  review = firstReview.review;\n+  final secondReview = ReviewRecord(reviews.last);\n+  index2 = secondReview.landedIndex!;\n+  review2 = secondReview.review;\n+  index3 = (index2 - 1).toString();\n+  index4 = (index2 - 2).toString();\n \n   final patchsets = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$review',\n-    orderBy: orderBy('number', true),\n   );\n-  final patchsetFields = patchsets.last.fields;\n-  lastPatchset = patchsetFields['number']!.integerValue!;\n+  final patchsetRecord = PatchsetRecord(patchsets.last);\n+  lastPatchset = patchsetRecord.number;\n   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';\n-  patchsetGroup = patchsetFields['patchset_group']!.integerValue!;\n+  patchsetGroup = patchsetRecord.patchsetGroup;\n   patchsetGroupRef = 'refs/changes/$review/$patchsetGroup';\n-  earlyPatchset = '1';\n+  earlyPatchset = 1;\n   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';\n   final patchsets2 = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$review2',\n-    orderBy: orderBy('number', true),\n   );\n-  patchset2 = patchsets2.last.fields['number']!.integerValue!;\n+  patchset2 = PatchsetRecord(patchsets2.last).number;\n   patchset2Ref = 'refs/changes/$review/$patchset2';\n \n   // Get commit hashes for the landed reviews, and for a commit before them\n   var commits = {\n-    for (final index in [index1, index2, index3, index4])\n-      index: (await firestore.query(\n-        from: 'commits',\n-        where: fieldEquals('index', int.parse(index)),\n-        limit: 1,\n-      )).first.name.split('/').last,\n+    for (final index in [index1, index2, int.parse(index3), int.parse(index4)])",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "index3 and index4 should be ints.",
+    "created_at": "2026-07-01T09:47:56Z",
+    "updated_at": "2026-07-01T09:47:56Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504874340",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504874340"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504874340"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504874340/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 160,
+    "original_line": 160,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 163,
+    "position": 163,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504877682",
+    "pull_request_review_id": 4607738454,
+    "id": 3504877682,
+    "node_id": "PRRC_kwDOCp9iHs7Q6DBy",
+    "diff_hunk": "@@ -110,51 +118,55 @@ Future<void> removeBuildersAndResults() async {\n Future<void> loadTestCommits(int startIndex) async {\n   // Get review data for the last two landed CLs before or at startIndex.\n   final reviews = await firestore.query(\n-    from: 'reviews',\n-    orderBy: orderBy('landed_index', false),\n-    where: fieldLessThanOrEqual('landed_index', startIndex),\n-    limit: 2,\n+    StructuredQuery()\n+      ..from = inCollection('reviews')\n+      ..orderBy = [orderBy('landed_index', false)]\n+      ..where = fieldLessThanOrEqual('landed_index', startIndex)\n+      ..limit = 2,\n   );\n-  final firstReview = reviews.first;\n-  index1 = firstReview.fields['landed_index']!.integerValue!;\n-  review = firstReview.name.split('/').last;\n-  final secondReview = reviews.last;\n-  index2 = secondReview.fields['landed_index']!.integerValue!;\n-  review2 = secondReview.name.split('/').last;\n-  index3 = (int.parse(index2) - 1).toString();\n-  index4 = (int.parse(index2) - 2).toString();\n+  final firstReview = ReviewRecord(reviews.first);\n+  index1 = firstReview.landedIndex!;\n+  review = firstReview.review;\n+  final secondReview = ReviewRecord(reviews.last);\n+  index2 = secondReview.landedIndex!;\n+  review2 = secondReview.review;\n+  index3 = (index2 - 1).toString();\n+  index4 = (index2 - 2).toString();\n \n   final patchsets = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$review',\n-    orderBy: orderBy('number', true),\n   );\n-  final patchsetFields = patchsets.last.fields;\n-  lastPatchset = patchsetFields['number']!.integerValue!;\n+  final patchsetRecord = PatchsetRecord(patchsets.last);\n+  lastPatchset = patchsetRecord.number;\n   lastPatchsetRef = 'refs/changes/$review/$lastPatchset';\n-  patchsetGroup = patchsetFields['patchset_group']!.integerValue!;\n+  patchsetGroup = patchsetRecord.patchsetGroup;\n   patchsetGroupRef = 'refs/changes/$review/$patchsetGroup';\n-  earlyPatchset = '1';\n+  earlyPatchset = 1;\n   earlyPatchsetRef = 'refs/changes/$review/$earlyPatchset';\n   final patchsets2 = await firestore.query(\n-    from: 'patchsets',\n+    StructuredQuery()\n+      ..from = inCollection('patchsets')\n+      ..orderBy = [orderBy('number', true)],\n     parent: 'reviews/$review2',\n-    orderBy: orderBy('number', true),\n   );\n-  patchset2 = patchsets2.last.fields['number']!.integerValue!;\n+  patchset2 = PatchsetRecord(patchsets2.last).number;\n   patchset2Ref = 'refs/changes/$review/$patchset2';\n \n   // Get commit hashes for the landed reviews, and for a commit before them\n   var commits = {\n-    for (final index in [index1, index2, index3, index4])\n-      index: (await firestore.query(\n-        from: 'commits',\n-        where: fieldEquals('index', int.parse(index)),\n-        limit: 1,\n-      )).first.name.split('/').last,\n+    for (final index in [index1, index2, int.parse(index3), int.parse(index4)])\n+      index.toString(): (await firestore.query(",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Remove the toString() here.",
+    "created_at": "2026-07-01T09:48:27Z",
+    "updated_at": "2026-07-01T09:48:27Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504877682",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504877682"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504877682"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504877682/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 161,
+    "original_line": 161,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 164,
+    "position": 164,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504887655",
+    "pull_request_review_id": 4607749237,
+    "id": 3504887655,
+    "node_id": "PRRC_kwDOCp9iHs7Q6Fdn",
+    "diff_hunk": "@@ -399,47 +416,48 @@ Future<void> checkTryBuild(\n }) async {\n   final buildbucketId = 'bbID_$name';\n   final buildDocuments = await firestore.query(\n-    from: 'try_builds',\n-    where: fieldEquals('buildbucket_id', buildbucketId),\n+    StructuredQuery()\n+      ..from = inCollection('try_builds')\n+      ..where = fieldEquals('buildbucket_id', buildbucketId),\n   );\n   expect(buildDocuments.length, 1);\n-  final document = buildDocuments.single;\n-  expect(document.getBool('success'), success);\n+  final record = TryBuildRecord(buildDocuments.single);\n+  expect(record.success, success);\n   if (truncated != null) {\n-    expect(document.getBool('truncated'), truncated);\n+    expect(record.truncated, truncated);\n   } else {\n-    expect(document.fields.containsKey('truncated'), isFalse);\n+    expect(record.doc.fields!.containsKey('truncated'), isFalse);\n   }\n }\n \n-Future<void> checkBuild(String? builder, String index, {bool? success}) async {\n-  final document = await firestore.getDocument(\n+Future<void> checkBuild(String? builder, Object index, {bool? success}) async {",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "index should be int.",
+    "created_at": "2026-07-01T09:50:09Z",
+    "updated_at": "2026-07-01T09:50:09Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504887655",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504887655"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504887655"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504887655/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 433,
+    "original_line": 433,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 292,
+    "position": 292,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504889369",
+    "pull_request_review_id": 4607751078,
+    "id": 3504889369,
+    "node_id": "PRRC_kwDOCp9iHs7Q6F4Z",
+    "diff_hunk": "@@ -399,47 +416,48 @@ Future<void> checkTryBuild(\n }) async {\n   final buildbucketId = 'bbID_$name';\n   final buildDocuments = await firestore.query(\n-    from: 'try_builds',\n-    where: fieldEquals('buildbucket_id', buildbucketId),\n+    StructuredQuery()\n+      ..from = inCollection('try_builds')\n+      ..where = fieldEquals('buildbucket_id', buildbucketId),\n   );\n   expect(buildDocuments.length, 1);\n-  final document = buildDocuments.single;\n-  expect(document.getBool('success'), success);\n+  final record = TryBuildRecord(buildDocuments.single);\n+  expect(record.success, success);\n   if (truncated != null) {\n-    expect(document.getBool('truncated'), truncated);\n+    expect(record.truncated, truncated);\n   } else {\n-    expect(document.fields.containsKey('truncated'), isFalse);\n+    expect(record.doc.fields!.containsKey('truncated'), isFalse);\n   }\n }\n \n-Future<void> checkBuild(String? builder, String index, {bool? success}) async {\n-  final document = await firestore.getDocument(\n+Future<void> checkBuild(String? builder, Object index, {bool? success}) async {\n+  final record = await firestore.getDocument<BuildRecord>(\n     '${firestore.documents}/builds/$builder:$index',\n   );\n-  expect(document.fields!['success']!.booleanValue, success);\n+  expect(record.success, success);\n }\n \n Future<void> checkResult(\n   ChangeRecord change,\n-  String startIndex,\n-  String endIndex,\n+  Object startIndex,",
+    "path": "builder/test/approvals_test.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "startIndex and endIndex should be ints",
+    "created_at": "2026-07-01T09:50:26Z",
+    "updated_at": "2026-07-01T09:50:26Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504889369",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504889369"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504889369"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504889369/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 442,
+    "original_line": 442,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 304,
+    "position": 304,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504892403",
+    "pull_request_review_id": 4607754689,
+    "id": 3504892403,
+    "node_id": "PRRC_kwDOCp9iHs7Q6Gnz",
+    "diff_hunk": "@@ -144,7 +144,7 @@ class FirestoreServiceFake implements FirestoreService {\n   @override\n   Future<bool> updateResult(\n     String resultId,\n-    String configuration,\n+    String? configuration,",
+    "path": "builder/test/fakes.dart",
+    "commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "original_commit_id": "888d1c6c8bafa9d941174c56cafd6647eee61559",
+    "user": {
+      "login": "athomas",
+      "id": 19993735,
+      "node_id": "MDQ6VXNlcjE5OTkzNzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19993735?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/athomas",
+      "html_url": "https://github.com/athomas",
+      "followers_url": "https://api.github.com/users/athomas/followers",
+      "following_url": "https://api.github.com/users/athomas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/athomas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/athomas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/athomas/subscriptions",
+      "organizations_url": "https://api.github.com/users/athomas/orgs",
+      "repos_url": "https://api.github.com/users/athomas/repos",
+      "events_url": "https://api.github.com/users/athomas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/athomas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should remain non-nullable",
+    "created_at": "2026-07-01T09:50:57Z",
+    "updated_at": "2026-07-01T09:50:57Z",
+    "html_url": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504892403",
+    "pull_request_url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504892403"
+      },
+      "html": {
+        "href": "https://github.com/dart-lang/dart_ci/pull/212#discussion_r3504892403"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/dart-lang/dart_ci/pulls/212"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/dart-lang/dart_ci/pulls/comments/3504892403/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 147,
+    "original_line": 147,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  }
+]

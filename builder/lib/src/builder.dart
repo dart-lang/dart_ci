@@ -25,8 +25,8 @@ class Build {
   final TestNameLock testNameLock = TestNameLock();
   late final int startIndex;
   late int endIndex;
-  late Commit endCommit;
-  late List<Commit> commits;
+  late CommitRecord endCommit;
+  late List<CommitRecord> commits;
   late final Future<void> reviewsFetched = _fetchReviewsAndReverts();
   Map<String, int> tryApprovals = {};
   List<RevertedChanges> allRevertedChanges = [];

@@ -48,9 +48,9 @@ late final String review2;
 late final int patchset2;
 late final String patchset2Ref;
 // Commits before commit2
-late final String index3;
+late final int index3;
 late final String commit3;
-late final String index4;
+late final int index4;
 late final String commit4;
 
 final buildersToRemove = <String>{};
@@ -130,8 +130,8 @@ Future<void> loadTestCommits(int startIndex) async {
   final secondReview = ReviewRecord(reviews.last);
   index2 = secondReview.landedIndex!;
   review2 = secondReview.review;
-  index3 = (index2 - 1).toString();
-  index4 = (index2 - 2).toString();
+  index3 = index2 - 1;
+  index4 = index2 - 2;
 
   final patchsets = await firestore.query(
     StructuredQuery()
@@ -157,16 +157,18 @@ Future<void> loadTestCommits(int startIndex) async {
 
   // Get commit hashes for the landed reviews, and for a commit before them
   var commits = {
-    for (final index in [index1, index2, int.parse(index3), int.parse(index4)])
-      index.toString(): (await firestore.query(
-        StructuredQuery()
-          ..from = inCollection('commits')
-          ..where = fieldEquals('index', index)
-          ..limit = 1,
-      )).first.name!.split('/').last,
+    for (final index in [index1, index2, index3, index4])
+      index: CommitRecord(
+        (await firestore.query(
+          StructuredQuery()
+            ..from = inCollection('commits')
+            ..where = fieldEquals('index', index)
+            ..limit = 1,
+        )).first,
+      ).hash,
   };
-  commit1 = commits[index1.toString()]!;
-  commit2 = commits[index2.toString()]!;
+  commit1 = commits[index1]!;
+  commit2 = commits[index2]!;
   commit3 = commits[index3]!;
   commit4 = commits[index4]!;
 }
@@ -235,7 +237,8 @@ ChangeRecord makeChange(
     'commit_hash': commit,
     'previous_commit_hash': previousCommit,
   };
-  return ChangeRecord.fromMap(change);
+  final record = ChangeRecord.fromMap(change);
+  return record;
 }
 
 Build makeBuild(String commit, ChangeRecord change) {
@@ -376,12 +379,12 @@ void main() async {
         fBlamelistEndIndex,
       ]);
     }
-    var reviewDocument = await firestore.getDocument<ReviewRecord>(
+    var reviewDocument = await firestore.getDocument(
       '${firestore.documents}/reviews/$reviewWithComments',
     );
-    expect(reviewDocument.landedIndex.toString(), landedIndex);
-    reviewDocument.doc.fields!.remove('landed_index');
-    await firestore.updateFields(reviewDocument.doc, ['landed_index']);
+    expect(reviewDocument.fields!['landed_index']!.integerValue, landedIndex);
+    reviewDocument.fields!.remove('landed_index');
+    await firestore.updateFields(reviewDocument, ['landed_index']);
 
     await firestore.linkReviewToCommit(
       int.parse(reviewWithComments),
@@ -402,10 +405,10 @@ void main() async {
       expect(fields[fBlamelistEndIndex]!.integerValue, landedIndex);
       expect(fields[fReview]!.integerValue, reviewWithComments);
     }
-    reviewDocument = await firestore.getDocument<ReviewRecord>(
+    reviewDocument = await firestore.getDocument(
       '${firestore.documents}/reviews/$reviewWithComments',
     );
-    expect(reviewDocument.landedIndex.toString(), landedIndex);
+    expect(reviewDocument.fields!['landed_index']!.integerValue, landedIndex);
   });
 }
 
@@ -430,34 +433,31 @@ Future<void> checkTryBuild(
   }
 }
 
-Future<void> checkBuild(String? builder, Object index, {bool? success}) async {
-  final record = await firestore.getDocument<BuildRecord>(
+Future<void> checkBuild(String? builder, int index, {bool? success}) async {
+  final document = await firestore.getDocument(
     '${firestore.documents}/builds/$builder:$index',
   );
+  final record = BuildRecord(document);
   expect(record.success, success);
 }
 
 Future<void> checkResult(
   ChangeRecord change,
-  Object startIndex,
-  Object endIndex,
+  int startIndex,
+  int endIndex,
   Map<String, dynamic> expected,
 ) async {
   expect([fConfigurations, fApproved], containsAll(expected.keys));
-  final start = startIndex is int
-      ? startIndex
-      : int.parse(startIndex as String);
-  final end = endIndex is int ? endIndex : int.parse(endIndex as String);
-  final resultName = await firestore.findResult(change, start, end);
+  final resultName = await firestore.findResult(change, startIndex, endIndex);
   expect(resultName, isNotNull);
-  final resultDocument = await firestore.getDocument<Document>(resultName!);
-  final data = ResultRecord(resultDocument);
-  expect(data.name, change.name);
-  expect(data.blamelistStartIndex, start);
-  expect(data.blamelistEndIndex, end);
+  final resultDocument = await firestore.getDocument(resultName!);
+  final record = ResultRecord(resultDocument);
+  expect(record.name, change.name);
+  expect(record.blamelistStartIndex, startIndex);
+  expect(record.blamelistEndIndex, endIndex);
   expect(
-    data.configurations,
-    unorderedEquals(expected[fConfigurations] ?? data.configurations),
+    record.configurations,
+    unorderedEquals(expected[fConfigurations] ?? record.configurations),
   );
-  expect(data.approved, expected[fApproved] ?? data.approved);
+  expect(record.approved, expected[fApproved] ?? record.approved);
 }

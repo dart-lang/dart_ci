@@ -17,15 +17,10 @@ extension type ResultRecord(Document doc) {
   String get expected => doc.fields![fExpected]!.stringValue!;
   int get blamelistStartIndex =>
       int.parse(doc.fields![fBlamelistStartIndex]!.integerValue!);
-  set blamelistStartIndex(int value) =>
-      doc.fields![fBlamelistStartIndex] = taggedValue(value);
   int get blamelistEndIndex =>
       int.parse(doc.fields![fBlamelistEndIndex]!.integerValue!);
-  set blamelistEndIndex(int value) =>
-      doc.fields![fBlamelistEndIndex] = taggedValue(value);
   bool get approved => doc.fields![fApproved]?.booleanValue ?? false;
   bool get active => doc.fields![fActive]?.booleanValue ?? false;
-  set active(bool value) => doc.fields![fActive] = taggedValue(value);
   List<String> get configurations => doc
       .fields![fConfigurations]!
       .arrayValue!
@@ -133,8 +128,6 @@ extension type ReviewRecord(Document doc) {
   String get subject => doc.fields!['subject']!.stringValue!;
   int? get landedIndex =>
       int.tryParse(doc.fields!['landed_index']?.integerValue ?? '');
-  set landedIndex(int? value) =>
-      doc.fields!['landed_index'] = taggedValue(value);
   String? get revertOf => doc.fields!['revert_of']?.stringValue;
 }
 
@@ -153,17 +146,27 @@ extension type CommentRecord(Document doc) {
   int get review => int.parse(doc.fields![fReview]!.integerValue!);
   int? get blamelistStartIndex =>
       int.tryParse(doc.fields![fBlamelistStartIndex]?.integerValue ?? '');
-  set blamelistStartIndex(int? value) {
-    doc.fields![fBlamelistStartIndex] = taggedValue(value);
-  }
-
   int? get blamelistEndIndex =>
       int.tryParse(doc.fields![fBlamelistEndIndex]?.integerValue ?? '');
-  set blamelistEndIndex(int? value) {
-    doc.fields![fBlamelistEndIndex] = taggedValue(value);
-  }
-
   bool get approved => doc.fields![fApproved]?.booleanValue ?? false;
+}
+
+extension type CommitRecord(Document doc) {
+  CommitRecord.fromJson(String hash, Map<String, dynamic> data)
+    : this(
+        Document(
+          fields: taggedMap(data),
+          name: 'projects/dummy/databases/(default)/documents/commits/$hash',
+        ),
+      );
+
+  int get index => int.parse(doc.fields![fIndex]!.integerValue!);
+  String? get revertOf => doc.fields![fRevertOf]?.stringValue;
+  bool get isRevert => doc.fields!.containsKey(fRevertOf);
+  int? get review => int.tryParse(doc.fields![fReview]?.integerValue ?? '');
+  String get hash => doc.name!.split('/').last;
+
+  Map<String, Object?> toJson() => untagMap(doc.fields!);
 }
 
 extension type ConfigurationRecord(Document doc) {

@@ -5,8 +5,6 @@
 // Field names and helper functions for result documents and
 // commit documents from Firestore.
 
-import 'package:googleapis/firestore/v1.dart' show Value;
-
 import 'firestore_helpers.dart';
 
 // Field names of Result document fields
@@ -45,17 +43,6 @@ const fTitle = 'title';
 const fReview = 'review';
 const fRevertOf = 'revert_of';
 const fRelandOf = 'reland_of';
-
-String? fromStringOrValue(dynamic value) {
-  return value is Value ? value.stringValue : value;
-}
-
-String testResult(Map<String, dynamic> change) => [
-  fromStringOrValue(change[fName]),
-  fromStringOrValue(change[fResult]),
-  fromStringOrValue(change[fPreviousResult]),
-  fromStringOrValue(change[fExpected]),
-].join(' ');
 
 /// The information about a builder, taken from a Result object,
 /// that is needed to process the results

@@ -18,14 +18,15 @@ import 'result.dart';
 class CommitsCache {
   FirestoreService firestore;
   final http.Client httpClient;
-  Map<String, FutureOr<Commit>> byHash = {};
-  Map<int, FutureOr<Commit>> byIndex = {};
+  Map<String, FutureOr<CommitRecord>> byHash = {};
+  Map<int, FutureOr<CommitRecord>> byIndex = {};
   late final Future<void> _fetchCommits = _getNewCommits();
 
   CommitsCache(this.firestore, this.httpClient);
 
-  FutureOr<Commit> getCommit(String hash) => byHash[hash] ??= _getCommit(hash);
-  Future<Commit> _getCommit(String hash) async {
+  FutureOr<CommitRecord> getCommit(String hash) =>
+      byHash[hash] ??= _getCommit(hash);
+  Future<CommitRecord> _getCommit(String hash) async {
     var commit = await _fetchByHash(hash);
     if (commit == null) {
       await _fetchCommits;
@@ -37,7 +38,7 @@ class CommitsCache {
     return commit;
   }
 
-  FutureOr<Commit> getCommitByIndex(int index) =>
+  FutureOr<CommitRecord> getCommitByIndex(int index) =>
       byIndex[index] ??= _fetchByIndex(index);
 
   String _makeError(String message) {
@@ -46,7 +47,7 @@ class CommitsCache {
     return error;
   }
 
-  Future<Commit?> _fetchByHash(String hash) async {
+  Future<CommitRecord?> _fetchByHash(String hash) async {
     final commit = await firestore.getCommit(hash);
     if (commit == null) return null;
     byHash[commit.hash] = commit;
@@ -54,7 +55,7 @@ class CommitsCache {
     return commit;
   }
 
-  Future<Commit> _fetchByIndex(int index) async {
+  Future<CommitRecord> _fetchByIndex(int index) async {
     final commit = await firestore.getCommitByIndex(index);
     byHash[commit.hash] = commit;
     byIndex[commit.index] = commit;

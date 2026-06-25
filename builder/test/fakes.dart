@@ -59,26 +59,26 @@ class FirestoreServiceFake implements FirestoreService {
       throw UnimplementedError(invocation.memberName.toString());
 
   @override
-  Future<Commit?> getCommit(String hash) async {
+  Future<CommitRecord?> getCommit(String hash) async {
     final commit = commits[hash];
     if (commit == null) {
       return null;
     }
-    return Commit.fromJson(hash, commits[hash]!);
+    return CommitRecord.fromJson(hash, commits[hash]!);
   }
 
   @override
-  Future<Commit> getCommitByIndex(int? index) {
+  Future<CommitRecord> getCommitByIndex(int? index) {
     for (final entry in commits.entries) {
       if (entry.value[fIndex] == index) {
-        return Future.value(Commit.fromJson(entry.key, entry.value));
+        return Future.value(CommitRecord.fromJson(entry.key, entry.value));
       }
     }
     throw 'No commit found with index $index';
   }
 
   @override
-  Future<Commit> getLastCommit() => getCommitByIndex(
+  Future<CommitRecord> getLastCommit() => getCommitByIndex(
     commits.values.map<int>((commit) => commit[fIndex]).reduce(max),
   );
 

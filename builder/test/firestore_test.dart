@@ -117,9 +117,7 @@ void main() async {
         activeResult,
         'configuration 2',
       );
-      final document = await firestore.getDocument<Document>(
-        createdResultDocument.name!,
-      );
+      final document = await firestore.getDocument(createdResultDocument.name!);
       expect(document.fields, isNot(contains('active')));
       expect(document.fields, isNot(contains('active_configurations')));
       await firestore.deleteDocument(createdResultDocument.name!);
