@@ -6,15 +6,12 @@ import 'package:googleapis/firestore/v1.dart';
 
 export 'data.dart';
 
-class SafeDocument {
-  final String name;
-  final Map<String, Value> fields;
+extension type SafeDocument(Document doc) {
+  String get name => doc.name!;
+  Map<String, Value> get fields => doc.fields!;
 
-  SafeDocument(Document document)
-    : name = document.name!,
-      fields = document.fields!;
+  Document toDocument() => doc;
 
-  Document toDocument() => Document(name: name, fields: fields);
   int? getInt(String name) {
     final value = fields[name]?.integerValue;
     if (value == null) {

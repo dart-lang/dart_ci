@@ -55,7 +55,7 @@ void main() async {
 
     tearDown(() async {
       // Delete database records created by the tests.
-      var snapshot = await firestore.runQuery(
+      var snapshot = await firestore.query(
         StructuredQuery()
           ..from = inCollection('try_builds')
           ..where = fieldEquals('review', testReview),
@@ -64,14 +64,14 @@ void main() async {
         await firestore.deleteDocument(doc.name!);
       }
 
-      snapshot = await firestore.runQuery(
+      snapshot = await firestore.query(
         StructuredQuery()..from = inCollection('patchsets'),
         parent: 'reviews/$testReview/',
       );
       for (final doc in snapshot) {
         await firestore.deleteDocument(doc.name!);
       }
-      snapshot = await firestore.runQuery(
+      snapshot = await firestore.query(
         StructuredQuery()
           ..from = inCollection('results')
           ..where = fieldEquals('name', removeActiveConfigurationTestName),
@@ -117,7 +117,9 @@ void main() async {
         activeResult,
         'configuration 2',
       );
-      final document = await firestore.getDocument(createdResultDocument.name!);
+      final document = await firestore.getDocument<Document>(
+        createdResultDocument.name!,
+      );
       expect(document.fields, isNot(contains('active')));
       expect(document.fields, isNot(contains('active_configurations')));
       await firestore.deleteDocument(createdResultDocument.name!);
@@ -176,7 +178,7 @@ void main() async {
       });
       await firestore.storeTryChange(tryResult3, testReview, 3);
       // Set the results on patchsets 1 and 2 to approved.
-      final snapshot = await firestore.runQuery(
+      final snapshot = await firestore.query(
         StructuredQuery()
           ..from = inCollection('try_results')
           ..where = compositeFilter([
@@ -199,7 +201,7 @@ void main() async {
         'approved': true,
       }..remove('configuration');
       expect(1, approvals.length);
-      final approval = untagMap(approvals.single.fields);
+      final approval = untagMap(approvals.single.doc.fields!);
       expect(approval, expectedApproval);
     });
   });

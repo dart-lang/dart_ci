@@ -66,8 +66,8 @@ class Tryjob {
   final TestNameLock testNameLock = TestNameLock();
   String baseRevision;
   bool success = true;
-  late List<SafeDocument> landedResults;
-  Map<String, SafeDocument> lastLandedResultByName = {};
+  late List<TryResultRecord> landedResults;
+  Map<String, TryResultRecord> lastLandedResultByName = {};
   final String buildbucketID;
 
   Tryjob(
@@ -91,8 +91,7 @@ class Tryjob {
   }
 
   bool isNotLandedResult(ChangeRecord change) {
-    return change.result !=
-        lastLandedResultByName[change.name]?.getString(fResult);
+    return change.result != lastLandedResultByName[change.name]?.result;
   }
 
   Future<BuildStatus> process(List<ChangeRecord> results) async {
@@ -108,7 +107,7 @@ class Tryjob {
         landedResults = await fetchLandedResults(configuration);
         // Map will contain the last result with each name.
         lastLandedResultByName = {
-          for (final result in landedResults) result.getString(fName): result,
+          for (final result in landedResults) result.name: result,
         };
       }
       final changes = resultsByConfiguration[configuration]!.where(
@@ -159,7 +158,7 @@ class Tryjob {
     }
   }
 
-  Future<List<SafeDocument>> fetchLandedResults(String configuration) async {
+  Future<List<TryResultRecord>> fetchLandedResults(String configuration) async {
     final resultsBase = await commits.getCommit(info.previousCommitHash!);
     final rebaseBase = await commits.getCommit(baseRevision);
     if (resultsBase.index > rebaseBase.index) {
