@@ -23,6 +23,7 @@ void main() {
   group('RestApi tests', () {
     late Slice slice;
     late RestApi restApi;
+    late MockResultsBucket bucket;
 
     setUp(() {
       slice = Slice();
@@ -52,7 +53,7 @@ void main() {
       when(notifications.initialize()).thenAnswer((_) async {});
       when(notifications.getMessages()).thenAnswer((_) async => []);
 
-      final bucket = MockResultsBucket();
+      bucket = MockResultsBucket();
       when(bucket.configurationDirectories()).thenAnswer((_) async => []);
       when(bucket.latestResults(any)).thenAnswer((_) async => []);
 
@@ -223,6 +224,147 @@ void main() {
 
       expect(response.statusCode, 200);
       expect(response.headers['Access-Control-Allow-Origin'], '*');
+    });
+
+    test('GET / - Returns front page HTML', () async {
+      final request = Request('GET', Uri.parse('http://localhost/'));
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Content-Type'], contains('text/html'));
+      final body = await response.readAsString();
+      expect(body, contains('Current Results REST API'));
+      expect(body, contains('Dart Test Logs'));
+      expect(body, contains('Dart Test Sources'));
+    });
+
+    test('GET /log - latest redirect for builder', () async {
+      when(
+        bucket.getLatestBuildNumber('my-builder'),
+      ).thenAnswer((_) async => '123');
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/my-builder/my-config/latest/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 302);
+      expect(
+        response.headers['location'],
+        '/log/my-builder/my-config/123/test_name',
+      );
+    });
+
+    test('GET /log - latest redirect for any builder', () async {
+      when(
+        bucket.getLatestConfigurationBuildNumber('my-config'),
+      ).thenAnswer((_) async => '456');
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/any/my-config/latest/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 302);
+      expect(response.headers['location'], '/log/any/my-config/456/test_name');
+    });
+
+    test('GET /log - serves log content', () async {
+      when(
+        bucket.getLog('my-builder', '123', 'my-config', 'test_name'),
+      ).thenAnswer((_) async => 'Test log output here');
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/my-builder/my-config/123/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      expect(response.headers['Content-Type'], 'text/plain; charset=utf-8');
+      expect(response.headers['Expires'], isNotNull);
+      final body = await response.readAsString();
+      expect(body, 'Test log output here');
+    });
+
+    test('GET /log - no log found', () async {
+      when(
+        bucket.getLog('my-builder', '123', 'my-config', 'test_name'),
+      ).thenAnswer((_) async => null);
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/my-builder/my-config/123/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      final body = await response.readAsString();
+      expect(body, contains('error: No logs found'));
+    });
+
+    test('GET /log - invalid log url', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/only-two-parts'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid log URL format'));
+    });
+
+    test('GET /test - redirect to source', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/test/main/corelib/apply2_test'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 302);
+      expect(
+        response.headers['location'],
+        'https://github.com/dart-lang/sdk/blob/main/tests/corelib/apply2_test.dart',
+      );
+    });
+
+    test('GET /test - not found', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/test/main/suite/not_a_basename'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 404);
+      final body = await response.readAsString();
+      expect(body, contains('No rules found'));
+    });
+
+    test('GET /test - invalid format', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/test/only-one-part'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid test URL format'));
+    });
+
+    test('GET /test - invalid CL format', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/test/cl/not-a-number/abc/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid review or patchset ID'));
     });
   });
 }

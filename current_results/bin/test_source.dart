@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import 'package:dart_ci/src/test_source.dart';
+import 'package:current_results/src/test_source.dart';
 
 Future<void> main(List<String> arguments) async {
   if (arguments.isEmpty || arguments.length > 2) {

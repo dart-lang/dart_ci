@@ -7,7 +7,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_ci/src/test_source.dart';
+import 'package:current_results/src/test_source.dart';
 
 const revision = '245705e23c9ec290b10cbb981c1941d7e600b00c';
 

@@ -1,9 +1,0 @@
-.dart_tool/
-.git/
-.github/
-.idea/
-.vscode/
-test/
-build/
-coverage/
-Dockerfile

@@ -9,7 +9,7 @@
 
 import 'dart:io';
 
-import 'package:dart_ci/src/test_source.dart' show computeTestSource;
+import 'package:current_results/src/test_source.dart' show computeTestSource;
 import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 

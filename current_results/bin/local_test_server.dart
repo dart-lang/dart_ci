@@ -37,6 +37,25 @@ class DirectoryBasedBucket implements ResultsBucket {
   Future<DateTime> latestResultsDate(String configurationDirectory) {
     return Future.value(DateTime.now());
   }
+
+  @override
+  Future<String> getCloudFile(String path) => throw UnimplementedError();
+
+  @override
+  Future<String> getLatestBuildNumber(String builder) =>
+      throw UnimplementedError();
+
+  @override
+  Future<String> getLatestConfigurationBuildNumber(String configuration) =>
+      throw UnimplementedError();
+
+  @override
+  Future<String?> getLog(
+    String builder,
+    String build,
+    String configuration,
+    String test,
+  ) => throw UnimplementedError();
 }
 
 void main(List<String> args) async {
