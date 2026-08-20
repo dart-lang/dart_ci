@@ -58,10 +58,10 @@ void main(List<String> args) async {
 
   if (build == 'latest') {
     if (builder != 'any') {
-      build = await bucket.getLatestBuildNumber(builder);
+      build = await bucket.latestBuild(builder);
     } else if (configuration != '*') {
-      build = await bucket.getLatestConfigurationBuildNumber(configuration);
+      build = await bucket.latestConfigurationBuild(configuration);
     }
   }
-  print(await bucket.getLog(builder, build, configuration, test));
+  print(await bucket.logs(builder, build, configuration, test));
 }

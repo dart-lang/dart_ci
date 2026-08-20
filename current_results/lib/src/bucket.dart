@@ -20,6 +20,66 @@ class UserVisibleFailure implements Exception {
   String toString() => 'error: $message';
 }
 
+void validateLogRequest({
+  required String builder,
+  required String build,
+  required String configuration,
+}) {
+  final safeRegExp = RegExp(r'^[-\w]*$');
+  final digitsRegExp = RegExp(r'^\d*$');
+  if (!safeRegExp.hasMatch(builder)) {
+    throw UserVisibleFailure(
+      'Builder name $builder contains illegal characters',
+    );
+  }
+  if (builder == 'any') {
+    if (configuration.endsWith('*')) {
+      throw UserVisibleFailure(
+        'Wildcard not allowed in configuration with builder "any"',
+      );
+    }
+    if (!safeRegExp.hasMatch(configuration)) {
+      throw UserVisibleFailure(
+        'Configuration name $configuration contains illegal characters',
+      );
+    }
+  }
+  if (!digitsRegExp.hasMatch(build)) {
+    throw UserVisibleFailure('Build number $build is not a number');
+  }
+}
+
+String? filterLogs(
+  String jsonLogs, {
+  required String configuration,
+  required String test,
+}) {
+  final logs = LineSplitter.split(jsonLogs)
+      .where((line) => line.isNotEmpty)
+      .map(jsonDecode)
+      .cast<Map<String, dynamic>>();
+  bool Function(Map<String, dynamic>) testFilter = (Map<String, dynamic> log) =>
+      log['name'] == test;
+  if (test.endsWith('*')) {
+    final prefix = test.substring(0, test.length - 1);
+    testFilter = (Map<String, dynamic> log) =>
+        (log['name'] as String).startsWith(prefix);
+  }
+  bool Function(Map<String, dynamic>) configurationFilter =
+      (Map<String, dynamic> log) => log['configuration'] == configuration;
+  if (configuration.endsWith('*')) {
+    final prefix = configuration.substring(0, configuration.length - 1);
+    configurationFilter = (Map<String, dynamic> log) =>
+        (log['configuration'] as String).startsWith(prefix);
+  }
+  final result = logs
+      .where((log) => testFilter(log) && configurationFilter(log))
+      .map((log) => log['log'] as String)
+      .join('\n\n======================================================\n\n');
+  if (result.isEmpty) return null;
+  return result;
+}
+
 class ResultsBucket {
   final Bucket _bucket;
 
@@ -58,7 +118,7 @@ class ResultsBucket {
     }
   }
 
-  Future<String> getCloudFile(String path) async {
+  Future<String> _read(String path) async {
     try {
       return await _bucket.read(path).transform(utf8.decoder).join();
     } catch (e) {
@@ -68,76 +128,33 @@ class ResultsBucket {
     }
   }
 
-  Future<String> getLatestBuildNumber(String builder) async {
-    final content = await getCloudFile('builders/$builder/latest');
+  Future<String> latestBuild(String builder) async {
+    final content = await _read('builders/$builder/latest');
     return content.trim();
   }
 
-  Future<String> getLatestConfigurationBuildNumber(String configuration) async {
-    final content = await getCloudFile(
-      'configuration/main/$configuration/latest',
-    );
+  Future<String> latestConfigurationBuild(String configuration) async {
+    final content = await _read('configuration/main/$configuration/latest');
     return content.trim();
   }
 
-  /// Fetches a log or logs and formats them for output.
-  Future<String?> getLog(
+  /// Fetches logs for a test and formats them for output.
+  Future<String?> logs(
     String builder,
     String build,
     String configuration,
     String test,
   ) async {
-    final safeRegExp = RegExp(r'^[-\w]*$');
-    final digitsRegExp = RegExp(r'^\d*$');
-    if (!safeRegExp.hasMatch(builder)) {
-      throw UserVisibleFailure(
-        'Builder name $builder contains illegal characters',
-      );
-    }
-    if (builder == 'any') {
-      if (configuration.endsWith('*')) {
-        throw UserVisibleFailure(
-          'Wildcard not allowed in configuration with builder "any"',
-        );
-      }
-      if (!safeRegExp.hasMatch(configuration)) {
-        throw UserVisibleFailure(
-          'Configuration name $configuration contains illegal characters',
-        );
-      }
-    }
-    if (!digitsRegExp.hasMatch(build)) {
-      throw UserVisibleFailure('Build number $build is not a number');
-    }
+    validateLogRequest(
+      builder: builder,
+      build: build,
+      configuration: configuration,
+    );
 
     final cloudFile = builder == 'any'
         ? 'configuration/main/$configuration/$build/logs.json'
         : 'builders/$builder/$build/logs.json';
-    final jsonLogs = await getCloudFile(cloudFile);
-
-    final logs = LineSplitter.split(jsonLogs)
-        .where((line) => line.isNotEmpty)
-        .map(jsonDecode)
-        .cast<Map<String, dynamic>>();
-    bool Function(Map<String, dynamic>) testFilter =
-        (Map<String, dynamic> log) => log['name'] == test;
-    if (test.endsWith('*')) {
-      final prefix = test.substring(0, test.length - 1);
-      testFilter = (Map<String, dynamic> log) =>
-          (log['name'] as String).startsWith(prefix);
-    }
-    bool Function(Map<String, dynamic>) configurationFilter =
-        (Map<String, dynamic> log) => log['configuration'] == configuration;
-    if (configuration.endsWith('*')) {
-      final prefix = configuration.substring(0, configuration.length - 1);
-      configurationFilter = (Map<String, dynamic> log) =>
-          (log['configuration'] as String).startsWith(prefix);
-    }
-    final result = logs
-        .where((log) => testFilter(log) && configurationFilter(log))
-        .map((log) => log['log'] as String)
-        .join('\n\n======================================================\n\n');
-    if (result.isEmpty) return null;
-    return result;
+    final jsonLogs = await _read(cloudFile);
+    return filterLogs(jsonLogs, configuration: configuration, test: test);
   }
 }

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:current_results/src/api_impl.dart';
 import 'package:current_results/src/bucket.dart';
@@ -16,6 +17,7 @@ import 'package:mockito/mockito.dart';
 import 'package:shelf/shelf.dart';
 import 'package:test/test.dart';
 
+import '../bin/local_test_server.dart' show DirectoryBasedBucket;
 import 'rest_api_test.mocks.dart';
 
 @GenerateMocks([BucketNotifications, ResultsBucket])
@@ -239,9 +241,7 @@ void main() {
     });
 
     test('GET /log - latest redirect for builder', () async {
-      when(
-        bucket.getLatestBuildNumber('my-builder'),
-      ).thenAnswer((_) async => '123');
+      when(bucket.latestBuild('my-builder')).thenAnswer((_) async => '123');
 
       final request = Request(
         'GET',
@@ -258,7 +258,7 @@ void main() {
 
     test('GET /log - latest redirect for any builder', () async {
       when(
-        bucket.getLatestConfigurationBuildNumber('my-config'),
+        bucket.latestConfigurationBuild('my-config'),
       ).thenAnswer((_) async => '456');
 
       final request = Request(
@@ -273,7 +273,7 @@ void main() {
 
     test('GET /log - serves log content', () async {
       when(
-        bucket.getLog('my-builder', '123', 'my-config', 'test_name'),
+        bucket.logs('my-builder', '123', 'my-config', 'test_name'),
       ).thenAnswer((_) async => 'Test log output here');
 
       final request = Request(
@@ -291,7 +291,7 @@ void main() {
 
     test('GET /log - no log found', () async {
       when(
-        bucket.getLog('my-builder', '123', 'my-config', 'test_name'),
+        bucket.logs('my-builder', '123', 'my-config', 'test_name'),
       ).thenAnswer((_) async => null);
 
       final request = Request(
@@ -365,6 +365,65 @@ void main() {
       expect(response.statusCode, 400);
       final body = await response.readAsString();
       expect(body, contains('error: Invalid review or patchset ID'));
+    });
+  });
+
+  group('DirectoryBasedBucket tests', () {
+    late Directory tempDir;
+    late DirectoryBasedBucket localBucket;
+
+    setUp(() async {
+      tempDir = await Directory.systemTemp.createTemp('local_bucket_test_');
+      localBucket = DirectoryBasedBucket(tempDir.path);
+    });
+
+    tearDown(() async {
+      await tempDir.delete(recursive: true);
+    });
+
+    test(
+      'latestBuild and latestConfigurationBuild from local directory',
+      () async {
+        final builderLatest = File(
+          '${tempDir.path}/builders/test-builder/latest',
+        );
+        await builderLatest.parent.create(recursive: true);
+        await builderLatest.writeAsString('42\n');
+
+        final configLatest = File(
+          '${tempDir.path}/configuration/main/test-config/latest',
+        );
+        await configLatest.parent.create(recursive: true);
+        await configLatest.writeAsString('100\n');
+
+        expect(await localBucket.latestBuild('test-builder'), '42');
+        expect(
+          await localBucket.latestConfigurationBuild('test-config'),
+          '100',
+        );
+      },
+    );
+
+    test('logs from local directory', () async {
+      final logsFile = File(
+        '${tempDir.path}/builders/test-builder/42/logs.json',
+      );
+      await logsFile.parent.create(recursive: true);
+      await logsFile.writeAsString(
+        jsonEncode({
+          'name': 'pkg/test_name',
+          'configuration': 'test-config',
+          'log': 'Test log from local file',
+        }),
+      );
+
+      final log = await localBucket.logs(
+        'test-builder',
+        '42',
+        'test-config',
+        'pkg/test_name',
+      );
+      expect(log, 'Test log from local file');
     });
   });
 }

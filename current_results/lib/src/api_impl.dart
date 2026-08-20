@@ -69,8 +69,8 @@ class RestApi {
     if (build == 'latest') {
       try {
         final actualBuild = builder == 'any'
-            ? await bucket.getLatestConfigurationBuildNumber(configuration)
-            : await bucket.getLatestBuildNumber(builder);
+            ? await bucket.latestConfigurationBuild(configuration)
+            : await bucket.latestBuild(builder);
         return Response.found(
           '/log/$builder/$configuration/$actualBuild/$test',
           headers: _corsHeaders,
@@ -93,7 +93,7 @@ class RestApi {
     }
 
     try {
-      final log = await bucket.getLog(builder, build, configuration, test);
+      final log = await bucket.logs(builder, build, configuration, test);
       if (log == null) {
         return Response.ok(
           'error: No logs found for test $test on build $build of '
