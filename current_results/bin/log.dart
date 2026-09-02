@@ -7,6 +7,8 @@
 /// Displays the log for a failing test on a given runner and build
 library;
 
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:current_results/src/bucket.dart';
 import 'package:gcloud/storage.dart';
@@ -50,18 +52,40 @@ void main(List<String> args) async {
   final configuration = options['configuration'] as String;
   final test = options['test'] as String;
 
+  if (builder == 'any' && configuration == '*') {
+    stderr.writeln(
+      'error: Must specify either a --builder or a specific --configuration (without wildcard).',
+    );
+    exit(1);
+  }
+
   final client = await clientViaApplicationDefaultCredentials(
     scopes: ['https://www.googleapis.com/auth/devstorage.read_only'],
   );
-  final storage = Storage(client, 'dart-ci');
-  final bucket = ResultsBucket(storage.bucket('dart-test-results'));
+  try {
+    final storage = Storage(client, 'dart-ci');
+    final bucket = ResultsBucket(storage.bucket('dart-test-results'));
 
-  if (build == 'latest') {
-    if (builder != 'any') {
-      build = await bucket.latestBuild(builder);
-    } else if (configuration != '*') {
-      build = await bucket.latestConfigurationBuild(configuration);
+    if (build == 'latest') {
+      if (builder != 'any') {
+        build = await bucket.latestBuild(builder);
+      } else if (configuration != '*') {
+        build = await bucket.latestConfigurationBuild(configuration);
+      }
     }
+    final log = await bucket.logs(builder, build, configuration, test);
+    if (log != null) {
+      print(log);
+    } else {
+      stderr.writeln(
+        'No logs found for test $test on build $build of '
+        'builder $builder, configuration $configuration',
+      );
+    }
+  } on UserVisibleFailure catch (e) {
+    stderr.writeln(e);
+    exit(1);
+  } finally {
+    client.close();
   }
-  print(await bucket.logs(builder, build, configuration, test));
 }

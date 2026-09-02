@@ -271,6 +271,40 @@ void main() {
       expect(response.headers['location'], '/log/any/my-config/456/test_name');
     });
 
+    test(
+      'GET /log - latest with wildcard configuration for builder any',
+      () async {
+        final request = Request(
+          'GET',
+          Uri.parse('http://localhost/log/any/*/latest/test_name'),
+        );
+        final response = await restApi.handleRequest(request);
+
+        expect(response.statusCode, 200);
+        final body = await response.readAsString();
+        expect(
+          body,
+          contains('Wildcard not allowed in configuration with builder "any"'),
+        );
+        verifyZeroInteractions(bucket);
+      },
+    );
+
+    test('GET /log - latest with invalid builder name', () async {
+      final request = Request(
+        'GET',
+        Uri.parse(
+          'http://localhost/log/invalid\$builder/config/latest/test_name',
+        ),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 200);
+      final body = await response.readAsString();
+      expect(body, contains('contains illegal characters'));
+      verifyZeroInteractions(bucket);
+    });
+
     test('GET /log - serves log content', () async {
       when(
         bucket.logs('my-builder', '123', 'my-config', 'test_name'),
@@ -365,6 +399,18 @@ void main() {
       expect(response.statusCode, 400);
       final body = await response.readAsString();
       expect(body, contains('error: Invalid review or patchset ID'));
+    });
+
+    test('GET /test - CL review lookup failure returns 404', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/test/cl/999999999/1/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 404);
+      final body = await response.readAsString();
+      expect(body, contains('error:'));
     });
   });
 

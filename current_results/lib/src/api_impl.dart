@@ -66,6 +66,19 @@ class RestApi {
     final build = parts[2];
     final test = parts.skip(3).join('/');
 
+    try {
+      validateLogRequest(
+        builder: builder,
+        build: build,
+        configuration: configuration,
+      );
+    } on UserVisibleFailure catch (e) {
+      return Response.ok(
+        e.toString(),
+        headers: {'Content-Type': 'text/plain; charset=utf-8', ..._corsHeaders},
+      );
+    }
+
     if (build == 'latest') {
       try {
         final actualBuild = builder == 'any'
@@ -168,8 +181,13 @@ class RestApi {
       }
       try {
         revision = await getPatchsetRevision(review, patchset);
-      } catch (e) {
-        return Response.ok(
+      } catch (e, st) {
+        _log.severe(
+          'Error getting patchset revision for review $review, patchset $patchset',
+          e,
+          st,
+        );
+        return Response.notFound(
           'error: $e',
           headers: {
             'Content-Type': 'text/plain; charset=utf-8',
@@ -196,8 +214,13 @@ class RestApi {
           },
         );
       }
-    } catch (e) {
-      return Response.ok(
+    } catch (e, st) {
+      _log.severe(
+        'Error computing test source for revision $revision, test $testName',
+        e,
+        st,
+      );
+      return Response.notFound(
         'error: $e',
         headers: {'Content-Type': 'text/plain; charset=utf-8', ..._corsHeaders},
       );

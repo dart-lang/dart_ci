@@ -9,8 +9,8 @@ import 'package:current_results/src/test_source.dart';
 Future<void> main(List<String> arguments) async {
   if (arguments.isEmpty || arguments.length > 2) {
     print(
-      'Finds the source of the given test. If a revision is provided,'
-      'returns a link to the source at that revision, otherwise the latest'
+      'Finds the source of the given test. If a revision is provided, '
+      'returns a link to the source at that revision, otherwise the latest '
       'revision at main.\n\n'
       'Usage: test_source <full test name> [<revision>]',
     );

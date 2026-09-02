@@ -148,7 +148,7 @@ Future<String> findDepsRevision(String revision, String package) async {
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
     throw Exception(
-      "Unable to download DEPS for revision '$revision'"
+      "Unable to download DEPS for revision '$revision' "
       "at $url",
     );
   }

@@ -20,6 +20,15 @@ class UserVisibleFailure implements Exception {
   String toString() => 'error: $message';
 }
 
+/// Validates request parameters for fetching test logs.
+///
+/// Preconditions:
+/// - [builder] must contain only alphanumeric characters, underscores, or dashes.
+/// - If [builder] is `'any'`, [configuration] must not contain wildcard `'*'`
+///   and must contain only alphanumeric characters, underscores, or dashes.
+/// - [build] must be either `'latest'` or a string of digits.
+///
+/// Throws [UserVisibleFailure] if any precondition is violated.
 void validateLogRequest({
   required String builder,
   required String build,
@@ -44,11 +53,16 @@ void validateLogRequest({
       );
     }
   }
-  if (!digitsRegExp.hasMatch(build)) {
+  if (build != 'latest' && !digitsRegExp.hasMatch(build)) {
     throw UserVisibleFailure('Build number $build is not a number');
   }
 }
 
+/// Filters [jsonLogs] by [configuration] and [test] name or prefix.
+///
+/// Both [configuration] and [test] may end with `'*'` to specify a prefix match.
+/// Multiple matching logs are separated by a visual divider. Returns `null` if no
+/// matching logs are found.
 String? filterLogs(
   String jsonLogs, {
   required String configuration,
@@ -128,17 +142,30 @@ class ResultsBucket {
     }
   }
 
+  /// Returns the latest build number for [builder].
+  ///
+  /// Throws [UserVisibleFailure] if the file cannot be retrieved from cloud storage.
   Future<String> latestBuild(String builder) async {
     final content = await _read('builders/$builder/latest');
     return content.trim();
   }
 
+  /// Returns the latest build number for [configuration].
+  ///
+  /// Throws [UserVisibleFailure] if the file cannot be retrieved from cloud storage.
   Future<String> latestConfigurationBuild(String configuration) async {
     final content = await _read('configuration/main/$configuration/latest');
     return content.trim();
   }
 
   /// Fetches logs for a test and formats them for output.
+  ///
+  /// [builder] may be `'any'` to search across all builders for the given
+  /// [configuration]. [test] and [configuration] may end with `'*'` for prefix matching.
+  ///
+  /// Throws [UserVisibleFailure] if the request parameters fail validation or if
+  /// the log file cannot be retrieved from cloud storage. Returns `null` if no logs
+  /// match the filter.
   Future<String?> logs(
     String builder,
     String build,
