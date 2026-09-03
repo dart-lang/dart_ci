@@ -28,6 +28,7 @@ bool verifyEventSignature(dynamic body, String signature) {
   // Timing-safe compare
   final aUnits = signature.codeUnits;
   final bUnits = expectedSignature.codeUnits;
+  if (aUnits.length != bUnits.length) return false;
   var result = true;
   for (var i = 0; i < aUnits.length; i++) {
     if (aUnits[i] != bUnits[i]) result = false;
@@ -42,6 +43,7 @@ bool verifyEventSignatureRaw(List<int> body, String signature) {
   // Timing-safe compare
   final aUnits = signature.codeUnits;
   final bUnits = expectedSignature.codeUnits;
+  if (aUnits.length != bUnits.length) return false;
   var result = true;
   for (var i = 0; i < aUnits.length; i++) {
     if (aUnits[i] != bUnits[i]) result = false;
