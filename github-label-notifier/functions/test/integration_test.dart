@@ -219,6 +219,17 @@ void main() async {
         equals('sha1=2a997eeaf8fda3069018e00b03ca105c875f365b'));
   });
 
+  test('verify signature', () {
+    final body = utf8.encode(jsonEncode(makeLabeledEvent(labelName: 'bug')));
+    final sig = signEvent(body);
+    expect(verifyEventSignatureRaw(body, sig), isTrue);
+    expect(verifyEventSignatureRaw(body, 's'), isFalse);
+    expect(verifyEventSignatureRaw(body, 'sha1='), isFalse);
+    expect(verifyEventSignatureRaw(body, ''), isFalse);
+    expect(verifyEventSignatureRaw(body, '${sig}extra'), isFalse);
+    expect(verifyEventSignatureRaw(body, 'sha1=${'0' * 40}'), isFalse);
+  });
+
   test('reject malformed request - no delivery', () async {
     final rs = await sendEvent(body: {}, delivery: null);
     expect(rs.statusCode, equals(HttpStatus.badRequest));
@@ -242,6 +253,30 @@ void main() async {
     final rs = await sendEvent(
         body: makeLabeledEvent(labelName: 'bug'),
         signature: 'sha1=76af51cdb9c7a43b246d4df721ac8f83e53182e5');
+    expect(rs.statusCode, equals(HttpStatus.unauthorized));
+    expect(sendgridRequests, isEmpty);
+  });
+
+  test('reject request with signature prefix', () async {
+    final rs = await sendEvent(
+        body: makeLabeledEvent(labelName: 'bug'), signature: 's');
+    expect(rs.statusCode, equals(HttpStatus.unauthorized));
+    expect(sendgridRequests, isEmpty);
+  });
+
+  test('reject request with sha1= prefix only', () async {
+    final rs = await sendEvent(
+        body: makeLabeledEvent(labelName: 'bug'), signature: 'sha1=');
+    expect(rs.statusCode, equals(HttpStatus.unauthorized));
+    expect(sendgridRequests, isEmpty);
+  });
+
+  test('reject request with signature too long', () async {
+    final validSignature =
+        signEvent(utf8.encode(jsonEncode(makeLabeledEvent(labelName: 'bug'))));
+    final rs = await sendEvent(
+        body: makeLabeledEvent(labelName: 'bug'),
+        signature: '${validSignature}extra');
     expect(rs.statusCode, equals(HttpStatus.unauthorized));
     expect(sendgridRequests, isEmpty);
   });
