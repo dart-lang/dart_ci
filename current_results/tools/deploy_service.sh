@@ -41,4 +41,5 @@ gcloud run deploy current-results \
   --min-instances=1 \
   --max-instances=1 \
   --cpu=1 \
-  --memory=2Gi
+  --memory=2Gi \
+  --clear-vpc-connector
