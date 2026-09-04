@@ -7,8 +7,9 @@ library;
 
 import 'dart:async' show Future;
 import 'dart:convert' show base64Decode, jsonDecode;
-import 'package:http/http.dart' as http;
 import 'dart:io' show HttpStatus;
+
+import 'package:http/http.dart' as http;
 
 final testDirectories = {
   "observatory_ui": "runtime/observatory/tests/observatory_ui",
@@ -146,10 +147,7 @@ Future<String> findDepsRevision(String revision, String package) async {
   );
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
-    throw Exception(
-      "Unable to download DEPS for revision '$revision'"
-      "at $url",
-    );
+    throw Exception("Unable to download DEPS for revision '$revision' at $url");
   }
   final body = String.fromCharCodes(base64Decode(response.body));
   final match = RegExp('"${package}_rev": "(.*)",').firstMatch(body);

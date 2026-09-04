@@ -68,3 +68,11 @@ updated from that build.
 A REST service is defined, with a query message type and a response message
 type defined by protocol buffers.  It allows test result queries by test name or
 test name prefix and by configuration or configuration prefix.
+
+### Test logs and sources
+
+The server also serves logs and test source redirects:
+- `/log/[builder]/[configuration]/[build]/[test]`: Fetches logs for failing tests.
+- `/test/[revision]/[test-name]`: Redirects to the test source at the given SDK revision.
+- `/test/cl/[review-id]/[patchset-id]/[test-name]`: Redirects to the test source at the given CL patchset revision.
+

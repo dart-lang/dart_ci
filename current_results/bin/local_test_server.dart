@@ -4,7 +4,8 @@
 
 import 'dart:io';
 
-import 'package:current_results/src/bucket.dart' show ResultsBucket;
+import 'package:current_results/src/bucket.dart'
+    show ResultsBucket, UserVisibleFailure, filterLogs, validateLogRequest;
 
 import 'server.dart' show startServer;
 
@@ -36,6 +37,53 @@ class DirectoryBasedBucket implements ResultsBucket {
   @override
   Future<DateTime> latestResultsDate(String configurationDirectory) {
     return Future.value(DateTime.now());
+  }
+
+  Future<String> _read(String path) async {
+    final file = File('${base.path}/$path');
+    if (await file.exists()) {
+      return await file.readAsString();
+    }
+    final stripped = path
+        .replaceFirst('configuration/main/', '')
+        .replaceFirst('builders/', '');
+    final altFile = File('${base.path}/$stripped');
+    if (await altFile.exists()) {
+      return await altFile.readAsString();
+    }
+    throw UserVisibleFailure('File $path not found in ${base.path}');
+  }
+
+  @override
+  Future<String> latestBuild(String builder) async {
+    final content = await _read('builders/$builder/latest');
+    return content.trim();
+  }
+
+  @override
+  Future<String> latestConfigurationBuild(String configuration) async {
+    final content = await _read('configuration/main/$configuration/latest');
+    return content.trim();
+  }
+
+  @override
+  Future<String?> logs(
+    String builder,
+    String build,
+    String configuration,
+    String test,
+  ) async {
+    validateLogRequest(
+      builder: builder,
+      build: build,
+      configuration: configuration,
+    );
+
+    final localPath = builder == 'any'
+        ? 'configuration/main/$configuration/$build/logs.json'
+        : 'builders/$builder/$build/logs.json';
+    final jsonLogs = await _read(localPath);
+    return filterLogs(jsonLogs, configuration: configuration, test: test);
   }
 }
 
