@@ -158,7 +158,7 @@ class Slice {
   }
 
   query_api.GetResultsResponse results(query_api.GetResultsRequest query) {
-    final limit = min(100000, query.pageSize == 0 ? 100000 : query.pageSize);
+    final limit = min(100000, query.pageSize <= 0 ? 100000 : query.pageSize);
     final pageStart = query.pageToken.isEmpty
         ? null
         : PageStart.parse(query.pageToken);
@@ -351,8 +351,18 @@ class PageStart {
   PageStart(this.test, this.configuration);
 
   factory PageStart.parse(String token) {
-    final decoded = jsonDecode(ascii.decode(base64Decode(token)));
-    return PageStart(decoded['test'], decoded['configuration']);
+    try {
+      final decoded = jsonDecode(ascii.decode(base64Decode(token)));
+      if (decoded case {
+        'test': final String test,
+        'configuration': final String configuration,
+      }) {
+        return PageStart(test, configuration);
+      }
+    } catch (_) {
+      throw FormatException('Invalid pageToken: $token');
+    }
+    throw FormatException('Invalid pageToken: $token');
   }
 
   String encode() {

@@ -147,10 +147,7 @@ Future<String> findDepsRevision(String revision, String package) async {
   );
   final response = await http.get(url);
   if (response.statusCode != HttpStatus.ok) {
-    throw Exception(
-      "Unable to download DEPS for revision '$revision' "
-      "at $url",
-    );
+    throw Exception("Unable to download DEPS for revision '$revision' at $url");
   }
   final body = String.fromCharCodes(base64Decode(response.body));
   final match = RegExp('"${package}_rev": "(.*)",').firstMatch(body);

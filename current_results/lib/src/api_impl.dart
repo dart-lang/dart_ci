@@ -73,8 +73,8 @@ class RestApi {
         configuration: configuration,
       );
     } on UserVisibleFailure catch (e) {
-      return Response.ok(
-        e.toString(),
+      return Response.badRequest(
+        body: e.toString(),
         headers: {'Content-Type': 'text/plain; charset=utf-8', ..._corsHeaders},
       );
     }
@@ -89,7 +89,7 @@ class RestApi {
           headers: _corsHeaders,
         );
       } on UserVisibleFailure catch (e) {
-        return Response.ok(
+        return Response.notFound(
           e.toString(),
           headers: {
             'Content-Type': 'text/plain; charset=utf-8',
@@ -108,7 +108,7 @@ class RestApi {
     try {
       final log = await bucket.logs(builder, build, configuration, test);
       if (log == null) {
-        return Response.ok(
+        return Response.notFound(
           'error: No logs found for test $test on build $build of '
           'builder $builder, configuration $configuration',
           headers: {
@@ -128,7 +128,7 @@ class RestApi {
         },
       );
     } on UserVisibleFailure catch (e) {
-      return Response.ok(
+      return Response.notFound(
         e.toString(),
         headers: {'Content-Type': 'text/plain; charset=utf-8', ..._corsHeaders},
       );
@@ -242,14 +242,31 @@ class RestApi {
     if (params['filter'] case final filter?) {
       protoRequest.filter = filter;
     }
-    if (params['pageSize'] case final pageSize?) {
-      protoRequest.pageSize = int.tryParse(pageSize) ?? 0;
+    if (params['pageSize'] case final pageSizeString?) {
+      final pageSize = int.tryParse(pageSizeString);
+      if (pageSize == null || pageSize < 0) {
+        return Response.badRequest(
+          body: 'error: Invalid pageSize: $pageSizeString',
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            ..._corsHeaders,
+          },
+        );
+      }
+      protoRequest.pageSize = pageSize;
     }
     if (params['pageToken'] case final pageToken?) {
       protoRequest.pageToken = pageToken;
     }
-    final response = current.results(protoRequest);
-    return _respond(request, response);
+    try {
+      final response = current.results(protoRequest);
+      return _respond(request, response);
+    } on FormatException catch (e) {
+      return Response.badRequest(
+        body: 'error: ${e.message}',
+        headers: {'Content-Type': 'text/plain; charset=utf-8', ..._corsHeaders},
+      );
+    }
   }
 
   @Route.get('/v1/tests')
@@ -259,8 +276,18 @@ class RestApi {
     if (params['prefix'] case final prefix?) {
       protoRequest.prefix = prefix;
     }
-    if (params['limit'] case final limit?) {
-      protoRequest.limit = int.tryParse(limit) ?? 0;
+    if (params['limit'] case final limitString?) {
+      final limit = int.tryParse(limitString);
+      if (limit == null || limit < 0) {
+        return Response.badRequest(
+          body: 'error: Invalid limit: $limitString',
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            ..._corsHeaders,
+          },
+        );
+      }
+      protoRequest.limit = limit;
     }
     final response = current.listTests(protoRequest);
     return _respond(request, response);

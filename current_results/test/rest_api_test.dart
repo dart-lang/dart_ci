@@ -114,6 +114,52 @@ void main() {
       final body = jsonDecode(await response.readAsString());
       expect(body['results'], hasLength(1));
       expect(body['nextPageToken'], isNotNull);
+
+      // Verify valid nextPageToken can be requested
+      final page2Request = Request(
+        'GET',
+        Uri.parse(
+          'http://localhost/v1/results?pageSize=1&pageToken=${body['nextPageToken']}',
+        ),
+      );
+      final page2Response = await restApi.handleRequest(page2Request);
+      expect(page2Response.statusCode, 200);
+    });
+
+    test('GET /v1/results - Invalid PageSize returns 400', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/results?pageSize=not_a_number'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid pageSize'));
+    });
+
+    test('GET /v1/results - Negative PageSize returns 400', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/results?pageSize=-5'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid pageSize'));
+    });
+
+    test('GET /v1/results - Invalid PageToken returns 400', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/results?pageToken=not_valid_base64!'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid pageToken'));
     });
 
     test('GET /v1/tests', () async {
@@ -125,6 +171,18 @@ void main() {
       expect(body['names'], isList);
       expect(body['names'], contains('test1'));
       expect(body['names'], contains('test2'));
+    });
+
+    test('GET /v1/tests - Invalid Limit returns 400', () async {
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/v1/tests?limit=invalid'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 400);
+      final body = await response.readAsString();
+      expect(body, contains('error: Invalid limit'));
     });
 
     test('GET /v1/tests - Returns Binary Protobuf', () async {
@@ -280,7 +338,7 @@ void main() {
         );
         final response = await restApi.handleRequest(request);
 
-        expect(response.statusCode, 200);
+        expect(response.statusCode, 400);
         final body = await response.readAsString();
         expect(
           body,
@@ -299,10 +357,26 @@ void main() {
       );
       final response = await restApi.handleRequest(request);
 
-      expect(response.statusCode, 200);
+      expect(response.statusCode, 400);
       final body = await response.readAsString();
       expect(body, contains('contains illegal characters'));
       verifyZeroInteractions(bucket);
+    });
+
+    test('GET /log - latest build not found in bucket', () async {
+      when(bucket.latestBuild('my-builder')).thenThrow(
+        UserVisibleFailure('Failure when fetching builders/my-builder/latest'),
+      );
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/my-builder/my-config/latest/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 404);
+      final body = await response.readAsString();
+      expect(body, contains('Failure when fetching'));
     });
 
     test('GET /log - serves log content', () async {
@@ -334,9 +408,27 @@ void main() {
       );
       final response = await restApi.handleRequest(request);
 
-      expect(response.statusCode, 200);
+      expect(response.statusCode, 404);
       final body = await response.readAsString();
       expect(body, contains('error: No logs found'));
+    });
+
+    test('GET /log - log file not found in bucket', () async {
+      when(
+        bucket.logs('my-builder', '123', 'my-config', 'test_name'),
+      ).thenThrow(
+        UserVisibleFailure('Failure when fetching logs in cloud storage'),
+      );
+
+      final request = Request(
+        'GET',
+        Uri.parse('http://localhost/log/my-builder/my-config/123/test_name'),
+      );
+      final response = await restApi.handleRequest(request);
+
+      expect(response.statusCode, 404);
+      final body = await response.readAsString();
+      expect(body, contains('Failure when fetching'));
     });
 
     test('GET /log - invalid log url', () async {
