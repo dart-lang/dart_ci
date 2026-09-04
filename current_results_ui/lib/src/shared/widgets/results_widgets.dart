@@ -260,16 +260,14 @@ Widget _link(String text, Function onClick) {
 
 Function _openTestSource(String revision, String name) {
   return () {
-    url_launcher.launchUrl(
-      Uri.https('dart-ci.appspot.com', '/test/$revision/$name'),
-    );
+    url_launcher.launchUrl(Uri.https(apiHost, '/test/$revision/$name'));
   };
 }
 
 Function _openTestLog(String configuration, String name) {
   return () {
     url_launcher.launchUrl(
-      Uri.https('dart-ci.appspot.com', '/log/any/$configuration/latest/$name'),
+      Uri.https(apiHost, '/log/any/$configuration/latest/$name'),
     );
   };
 }
